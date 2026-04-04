@@ -12,19 +12,23 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 Phase: 2 of 8 (Domain, persistence & prediction v1)
 
-Plan: — of — in current phase
+**Current Plan:** 2
 
-Status: Phase 1 executed
+**Total Plans in Phase:** 4
 
-Last activity: 2026-04-04 — Phase 1 foundation complete (FVM, Melos workspace, CI, SECURITY, Dependabot).
+Plan: 2 of 4 in current phase (next: 02-02)
 
-Progress: [███░░░░░░░] ~12%
+Status: Ready to execute
+
+Last activity: 2026-04-04 — Completed 02-01 domain types and validation.
+
+**Progress:** [██████░░░░] 57%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 3
+- Total plans completed: 4
 - Average duration: —
 - Total execution time: —
 
@@ -33,10 +37,11 @@ Progress: [███░░░░░░░] ~12%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 | 3 | 3 | — |
+| 2 | 1 | 4 | 20 min (02-01) |
 
 **Recent Trend:**
 
-- Last 5 plans: 01-01, 01-02, 01-03
+- Last 5 plans: 01-01, 01-02, 01-03, 02-01
 - Trend: —
 
 *Updated after each plan completion*
@@ -48,6 +53,8 @@ Progress: [███░░░░░░░] ~12%
 Decisions are logged in `PROJECT.md` Key Decisions table.
 
 - Phase 1 (2026-04-04): Dart pub workspace + Melos 7; Flutter 3.41.2 via FVM; CI uses FVM then `melos exec`; pubspec policy script runs with **uv** (`uv run --with pyyaml`), not pip.
+- [Phase 2]: Period validation uses PeriodCalendarContext (IANA Location) for duplicate start-day checks; call timezone initializeTimeZones() before fromTimeZoneName.
+- [Phase 2]: Completed-cycle length is inclusive local days from period start through the day before next start (see completedCycleBetweenStarts).
 
 ### Pending Todos
 
@@ -61,6 +68,6 @@ None yet.
 
 Last session: 2026-04-04
 
-Stopped at: Phase 1 execute complete; next `/gsd-discuss-phase 2` or `/gsd-plan-phase 2`.
+Stopped at: Completed `02-01-PLAN.md` (domain types); next `02-02-PLAN.md` or `/gsd-execute-phase`.
 
-Resume file: `.planning/phases/02-*-CONTEXT.md` (when created)
+Resume file: `.planning/phases/02-domain-persistence-prediction-v1/02-02-PLAN.md`
