@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 
+import 'migrations.dart';
 import 'tables.dart';
 
 part 'ptrack_database.g.dart';
@@ -60,6 +61,11 @@ class PtrackDatabase extends _$PtrackDatabase {
           await m.createAll();
         },
         onUpgrade: (Migrator m, int from, int to) async {
+          assertSupportedSchemaUpgrade(
+            fromVersion: from,
+            toVersion: to,
+            supported: ptrackSupportedSchemaVersion,
+          );
           await m.database.transaction(() async {
             if (from >= to) return;
             // Future schema bumps: perform steps here inside this transaction.

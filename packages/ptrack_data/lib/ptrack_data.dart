@@ -1,12 +1,19 @@
 /// Data layer for ptrack: Drift-backed local persistence.
 library;
 
+export 'src/db/migrations.dart'
+    show PtrackUnsupportedDatabaseSchemaException;
 export 'src/db/ptrack_database.dart'
     show
         PtrackDatabase,
         openPtrackDatabase,
         openPtrackQueryExecutor,
         ptrackSupportedSchemaVersion;
+export 'src/mappers/period_mapper.dart'
+    show
+        periodRowToDomain,
+        periodSpanToInsertCompanion,
+        periodSpanToUpdateCompanion;
 
 /// Identifies the data package; used to verify monorepo wiring.
 class PtrackData {
