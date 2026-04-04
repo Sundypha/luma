@@ -39,7 +39,13 @@ Decimal phases appear between their surrounding integers in numeric order.
 3. The app bundle does not include analytics, ad identifiers, or third-party ads/profiling SDKs as shipped for Phase 1.
 4. There is a documented, reviewable way to verify dependency choices against the privacy constraints (e.g. policy checklist or automated check referenced in repo docs).
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+
+- [ ] `01-01-PLAN.md` — Melos monorepo, FVM stable pin, `packages/ptrack_domain` + `packages/ptrack_data`, minimal `apps/ptrack` with lints, mocktail, and tests (no Riverpod)
+- [ ] `01-02-PLAN.md` — GitHub Actions (Ubuntu, PR + main), FVM + Melos CI, Python `tool/ci/verify_pubspec_policy.py`, README CI parity
+- [ ] `01-03-PLAN.md` — `SECURITY.md` + README link, Dependabot pub entries, final analyze/test/policy verification
 
 ### Phase 2: Domain, persistence & prediction v1
 
@@ -169,7 +175,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & engineering guardrails | 0/TBD | Not started | - |
+| 1. Foundation & engineering guardrails | 0/3 | Not started | - |
 | 2. Domain, persistence & prediction v1 | 0/TBD | Not started | - |
 | 3. Onboarding | 0/TBD | Not started | - |
 | 4. Core logging | 0/TBD | Not started | - |
