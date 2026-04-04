@@ -1,0 +1,53 @@
+# CI uses the same Flutter version as `.fvm/fvm_config.json` via FVM (not ad-hoc channels).
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  analyze-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Pub get (workspace root)
+        run: dart pub get
+
+      - name: Install FVM
+        run: |
+          dart pub global activate fvm
+          echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
+          fvm install
+
+      - name: Use FVM Flutter on PATH
+        run: |
+          VER=$(python3 -c "import json; print(json.load(open('.fvm/fvm_config.json'))['flutterSdkVersion'])")
+          echo "$HOME/fvm/versions/${VER}/bin" >> "$GITHUB_PATH"
+          flutter --version
+
+      - name: Melos
+        run: |
+          dart pub global activate melos
+          melos bootstrap
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Pubspec policy (no git deps; path only under apps/ & packages/)
+        run: |
+          pip install pyyaml
+          python3 tool/ci/verify_pubspec_policy.py
+
+      - name: Analyze (errors fail the job)
+        run: melos exec -c 1 -- flutter analyze
+
+      - name: Test all packages with test/
+        run: melos exec -c 1 --dir-exists=test -- flutter test

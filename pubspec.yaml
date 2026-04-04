@@ -1,0 +1,22 @@
+name: ptrack_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.11.0
+
+workspace:
+  - apps/ptrack
+  - packages/ptrack_domain
+  - packages/ptrack_data
+
+dev_dependencies:
+  melos: ^7.5.0
+
+melos:
+  scripts:
+    ci:analyze:
+      run: melos exec -c 1 -- fvm flutter analyze
+      description: Run flutter analyze in every package via FVM.
+    ci:test:
+      run: melos exec -c 1 --dir-exists=test -- fvm flutter test
+      description: Run all test/ suites via FVM Flutter.

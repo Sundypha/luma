@@ -1,0 +1,7 @@
+# Workspace root: Flutter packages use package:flutter_lints in their own
+# analysis_options.yaml. This file excludes common generated/build noise when
+# analyzing from the repo root.
+analyzer:
+  exclude:
+    - "**/build/**"
+    - "**/.dart_tool/**"

@@ -1,0 +1,18 @@
+version: 2
+updates:
+  - package-ecosystem: pub
+    directory: "/"
+    schedule:
+      interval: weekly
+  - package-ecosystem: pub
+    directory: "/apps/ptrack"
+    schedule:
+      interval: weekly
+  - package-ecosystem: pub
+    directory: "/packages/ptrack_domain"
+    schedule:
+      interval: weekly
+  - package-ecosystem: pub
+    directory: "/packages/ptrack_data"
+    schedule:
+      interval: weekly

@@ -13,7 +13,7 @@ Phase 1 delivers a local-first menstrual cycle tracker in Flutter (FVM, TDD): en
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation & engineering guardrails** — FVM-pinned Flutter scaffold, CI test gate, dependency policy aligned with privacy NFRs
+- [x] **Phase 1: Foundation & engineering guardrails** — FVM-pinned Flutter scaffold, CI test gate, dependency policy aligned with privacy NFRs
 - [ ] **Phase 2: Domain, persistence & prediction v1** — Schema, migrations, deterministic explainable prediction, no silent data loss
 - [ ] **Phase 3: Onboarding** — Local-first and estimates messaging, fast path to first log, offline-capable
 - [ ] **Phase 4: Core logging** — Period, flow, symptoms, notes, validation, reliable day context and edits
@@ -43,9 +43,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 
-- [ ] `01-01-PLAN.md` — Melos monorepo, FVM stable pin, `packages/ptrack_domain` + `packages/ptrack_data`, minimal `apps/ptrack` with lints, mocktail, and tests (no Riverpod)
-- [ ] `01-02-PLAN.md` — GitHub Actions (Ubuntu, PR + main), FVM + Melos CI, Python `tool/ci/verify_pubspec_policy.py`, README CI parity
-- [ ] `01-03-PLAN.md` — `SECURITY.md` + README link, Dependabot pub entries, final analyze/test/policy verification
+- [x] `01-01-PLAN.md` — Melos monorepo, FVM stable pin, `packages/ptrack_domain` + `packages/ptrack_data`, minimal `apps/ptrack` with lints, mocktail, and tests (no Riverpod)
+- [x] `01-02-PLAN.md` — GitHub Actions (Ubuntu, PR + main), FVM + Melos CI, Python `tool/ci/verify_pubspec_policy.py`, README CI parity
+- [x] `01-03-PLAN.md` — `SECURITY.md` + README link, Dependabot pub entries, final analyze/test/policy verification
 
 ### Phase 2: Domain, persistence & prediction v1
 
@@ -175,7 +175,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & engineering guardrails | 0/3 | Not started | - |
+| 1. Foundation & engineering guardrails | 3/3 | Complete   | 2026-04-04 |
 | 2. Domain, persistence & prediction v1 | 0/TBD | Not started | - |
 | 3. Onboarding | 0/TBD | Not started | - |
 | 4. Core logging | 0/TBD | Not started | - |
