@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation & engineering guardrails** — FVM-pinned Flutter scaffold, CI test gate, dependency policy aligned with privacy NFRs
 - [x] **Phase 2: Domain, persistence & prediction v1** — Schema, migrations, deterministic explainable prediction, no silent data loss
-- [ ] **Phase 3: Onboarding** — Local-first and estimates messaging, fast path to first log, offline-capable
+- [x] **Phase 3: Onboarding** — Local-first and estimates messaging, fast path to first log, offline-capable (completed 2026-04-04)
 - [ ] **Phase 4: Core logging** — Period, flow, symptoms, notes, validation, reliable day context and edits
 - [ ] **Phase 5: Calendar, home & cycle surfaces** — Month navigation, actual vs predicted distinction, home summary and quick actions
 - [ ] **Phase 6: Export & import** — Documented full export, validated import, deterministic duplicate handling
@@ -87,12 +87,13 @@ Plans:
 3. The user can reach the first logging action in under one minute along the intended minimal path.
 4. The user can skip non-essential education and continue; the entire onboarding flow works with network disabled.
 
-**Plans**: 2 plans
+**Plans**: 3 plans
 
 Plans:
 
 - [x] `03-01-PLAN.md` — Onboarding wizard (privacy + estimates + quick-start screens), first-log screen, app-launch routing with state persistence — complete 2026-04-05
 - [ ] `03-02-PLAN.md` — Settings About replay screen, comprehensive widget tests, human-verify checkpoint — **Task 1 complete 2026-04-05**; Task 2 human-verify pending
+- [x] `03-03-PLAN.md` — Gap closure: reconcile `03-UAT.md` with shipped onboarding/first-log UX (post-`37471f7`), CI verify — complete 2026-04-05
 
 ### Phase 4: Core logging
 
@@ -189,7 +190,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 |-------|----------------|--------|-----------|
 | 1. Foundation & engineering guardrails | 3/3 | Complete   | 2026-04-04 |
 | 2. Domain, persistence & prediction v1 | 4/4 | Complete | 2026-04-04 |
-| 3. Onboarding | 1/2 | In Progress|  |
+| 3. Onboarding | 3/3 | Complete   | 2026-04-04 |
 | 4. Core logging | 0/TBD | Not started | - |
 | 5. Calendar, home & cycle surfaces | 0/TBD | Not started | - |
 | 6. Export & import | 0/TBD | Not started | - |

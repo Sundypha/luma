@@ -6,29 +6,29 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** Phase 3 (Onboarding); `03-02-PLAN.md` Task 1 done — Task 2 human verification pending.
+**Current focus:** Phase 3 (Onboarding); gap plan **`03-03-PLAN.md`** complete. **`03-02-PLAN.md`** Task 2 (human-verify) still optional if you want a formal sign-off.
 
 ## Current Position
 
 Phase: 3 of 8 (Onboarding)
 
-**Current Plan:** 2
+**Current Plan:** 3
 
-**Total Plans in Phase:** 2
+**Total Plans in Phase:** 3
 
-Plan: 2 of 2 in current phase
+Plan: 3 of 3 in current phase (gap closure doc plan executed)
 
-Status: **`03-02-PLAN.md` Task 1 complete** (About replay, widget tests, CI green). **Task 2** (`checkpoint:human-verify`) **awaiting human verification** — see `.planning/phases/03-onboarding/03-02-SUMMARY.md` checkpoint section.
+Status: **`03-03-PLAN.md` complete** — `03-UAT.md` reconciled with code (`37471f7`); all UAT tests documented pass; gaps resolved. **`03-02-PLAN.md`** Task 2 human verification remains available per original checkpoint.
 
-Last activity: 2026-04-05 — Executed `03-02` Task 1; documented Task 2 checkpoint for orchestrator.
+Last activity: 2026-04-05 — Executed `03-03` (gap_closure): UAT + SUMMARY + ROADMAP.
 
-**Progress:** [█████████░] 89%
+**Progress:** [██████████] 100% (Phase 3 plan slots); optional 03-02 manual UAT checkpoint still listed below.
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 7
+- Total plans completed: 8
 - Average duration: —
 - Total execution time: —
 
@@ -41,7 +41,7 @@ Last activity: 2026-04-05 — Executed `03-02` Task 1; documented Task 2 checkpo
 
 **Recent Trend:**
 
-- Last 5 plans: 01-02, 01-03, 02-03, 02-04, 03-01
+- Last 5 plans: 02-04, 03-01, 03-02, 03-03, —
 - Trend: —
 
 *Updated after each plan completion*
@@ -52,6 +52,7 @@ Last activity: 2026-04-05 — Executed `03-02` Task 1; documented Task 2 checkpo
 | Phase 02-domain-persistence-prediction-v1 P04 | 42 min | 3 tasks | 11 files |
 | Phase 3 P01 | 28min | 3 tasks | 8 files |
 | Phase 03-onboarding P02 | 35min | 1 tasks | 7 files |
+| Phase 03-onboarding P03 (gap_closure) | 15min | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -67,19 +68,20 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 3]: First-run routing: wizard completion flag plus empty period list gates first-log vs home on cold start.
 - [Phase 3]: Onboarding step index persisted on PageView onPageChanged for optional swipe path.
 - [Phase 03-onboarding]: Onboarding tests use InMemorySharedPreferencesAsync for SharedPreferencesWithCache
+- [Phase 03 gap closure]: UAT gaps (swipe, final Skip, first-log end) documented resolved; implementation `37471f7`, planning `03-03`.
 
 ### Pending Todos
 
-None yet.
+- Optional: Complete **`03-02-PLAN.md` Task 2** manual checklist if you want explicit human-verify closure.
 
 ### Blockers/Concerns
 
-- **03-02 Task 2:** Human verification of full onboarding flow (manual checklist in plan) not yet performed by user.
+None blocking delivery. Optional: formal run-through of `03-02-PLAN.md` Task 2 manual steps.
 
 ## Session Continuity
 
 Last session: 2026-04-05
 
-Stopped at: **Checkpoint** — `03-02-PLAN.md` Task 2 (`human-verify`). Task 1 delivered; see `03-02-SUMMARY.md`.
+Stopped at: Phase 3 — `03-03` gap_closure executed; see `03-03-SUMMARY.md`.
 
-Resume: Complete manual verification in Task 2, then mark plan done / advance phase as appropriate. Automated code: `24470d5`, `4896070`, `2655723`; planning updates in latest `docs(03-02):` commit on this branch.
+Resume: Phase 4 planning/execution when ready, or optional `03-02` Task 2 manual verify.

@@ -5,7 +5,7 @@ source:
   - 03-01-SUMMARY.md
   - 03-02-SUMMARY.md
 started: 2026-04-05T12:00:00Z
-updated: 2026-04-05T23:00:00Z
+updated: 2026-04-05T23:59:00Z
 ---
 
 ## Current Test
@@ -15,24 +15,21 @@ updated: 2026-04-05T23:00:00Z
 ## Tests
 
 ### 1. Privacy screen (required first step)
-expected: First screen shows local-only / on-device storage messaging; Continue only (no Skip); swipe does not advance.
+expected: First screen shows local-only / on-device storage messaging; **Continue** only (no **Skip**). A **horizontal swipe** (forward) advances to the next step the same way **Continue** would; step index still persists.
 result: pass
 
 ### 2. Estimates screen (required second step)
-expected: After Continue, second screen explains predictions are estimates, not medical advice or a substitute for a professional; Continue only (no Skip); dot indicator reflects step 2 of 3.
+expected: After Continue or swipe from step 1, second screen explains predictions are estimates, not medical advice or a substitute for a professional; Continue only (no Skip); dot indicator reflects step 2 of 3.
 result: pass
 
 ### 3. Quick-start screen (optional third step)
-expected: Third screen mentions logging period start / predictions improving with history; both Skip and Continue (or Get Started) are visible; you can advance with either.
+expected: Third screen mentions logging period start / predictions improving with history. As the **final** optional step it shows **Get Started** (full-width) **only** — no **Skip** (middle optional pages, if added later, may still use Skip + primary).
 result: pass
-notes: "Pass — behavior matched spec. User finds Skip redundant on the last page (only path is forward); logged under Gaps."
 
 ### 4. First period log and home
-expected: After the wizard, you see first-log UI with a short hint about when the period started; selected date defaults to today; Change date opens a picker; Save & Continue persists and you reach the home screen with a success-style message (e.g. snackbar).
-result: issue
-reported: "fail, only start date can be entered, no end date in case one enters a previous period"
-severity: major
-notes: "Code: FirstLogScreen inserts PeriodSpan with startUtc only (open period). No end-date UI for a completed past period."
+expected: After the wizard, first-log UI shows a short hint about period start; **Change date** for start; optional **This period has already ended** with **Change end date** when enabled; **Save & Continue** persists an open or closed `PeriodSpan` and reaches home with a success SnackBar. Widget tests in `first_log_screen_test.dart` cover open and same-day closed spans.
+result: pass
+notes: "Optional manual check with end date after start (multi-day) on device."
 
 ### 5. About replay from home
 expected: On home, the AppBar info (About) icon opens About; you can read again the privacy/local-first and estimates-not-medical-advice content (cards or similar), without redoing the wizard.
@@ -53,60 +50,50 @@ result: pass
 ## Summary
 
 total: 8
-passed: 7
-issues: 1
+passed: 8
+issues: 0
 pending: 0
 skipped: 0
-feedback_logged: 2
+feedback_logged: 0
 
-## Gaps
+## Gaps (resolved — see `03-03-PLAN.md` / `03-03-SUMMARY.md`)
 
-<!-- Design / UX feedback — optional follow-up (not counted as test failures) -->
 - truth: "Optional third onboarding screen shows Skip plus Continue/Get Started (per ONBD-04 / plan)"
-  status: failed
+  status: resolved
   reason: "User feedback (test 3 passed): Skip on the final wizard page feels unnecessary — user must continue to first log anyway."
   severity: minor
   test: 3
-  root_cause: "Plan ONBD-04 calls for optional step with Skip; UI mirrors that pattern even though last step only advances to first log (redundant Skip)."
+  resolution: "Last optional page uses full-width Get Started only (`onboarding_screen.dart`); commit `37471f7`."
+  root_cause: "(historical) Redundant Skip on final step — addressed in gap closure."
   artifacts:
     - path: "apps/ptrack/lib/features/onboarding/onboarding_screen.dart"
-      issue: "Optional step shows TextButton Skip + FilledButton per plan"
-  missing:
-    - "Product decision: drop Skip on final step or replace with single primary CTA"
+  missing: []
   debug_session: ""
 
 - truth: "Required onboarding pages block horizontal swipe; user must tap Continue"
-  status: failed
+  status: resolved
   reason: "User feedback: allow swipe on all onboarding pages — equivalent to Continue for them."
   severity: minor
   test: 1
-  root_cause: "OnboardingScreen sets NeverScrollableScrollPhysics on PageView when current page isRequired (Phase 3 plan) so disclosures are not swiped past without an explicit Continue."
+  resolution: "Removed `NeverScrollableScrollPhysics` on required pages; default PageView physics; `onPageChanged` persists step — commit `37471f7`."
+  root_cause: "(historical) Swipe blocked on required pages — addressed in gap closure."
   artifacts:
     - path: "apps/ptrack/lib/features/onboarding/onboarding_screen.dart"
-      issue: "physics: isRequired ? NeverScrollableScrollPhysics() : null"
-  missing:
-    - "Product decision: allow swipe to advance same as Continue on required pages"
+  missing: []
   debug_session: ""
 
 - truth: "First-log screen lets user record start (and optionally end) for a past period when the period is already over"
-  status: failed
+  status: resolved
   reason: "User reported: only start date can be entered, no end date when logging a previous period"
   severity: major
   test: 4
-  root_cause: "FirstLogScreen builds PeriodSpan with startUtc only; no end date picker or closed-period path."
+  resolution: "`FirstLogScreen`: toggle **This period has already ended**, **Change end date**, `PeriodSpan` with `endUtc` — commit `37471f7`; tests in `first_log_screen_test.dart`."
+  root_cause: "(historical) Open span only — addressed in gap closure."
   artifacts:
     - path: "apps/ptrack/lib/features/onboarding/first_log_screen.dart"
-      issue: "Single-date flow; open span only via insertPeriod"
-  missing:
-    - "Optional end date (on or after start) for completed past periods, with repository/validation alignment"
+  missing: []
   debug_session: ""
 
-## Gap closure (implemented in repo, 2026-04-05)
+## Gap closure note
 
-Addressed outside formal `gap_closure` PLAN files (none existed for Phase 3):
-
-- **Swipe:** `OnboardingScreen` no longer applies `NeverScrollableScrollPhysics` on required pages; horizontal swipe advances like **Continue**; step still persisted in `onPageChanged`.
-- **Skip on last step:** For the final optional page only, controls are a full-width **Get Started** (no redundant **Skip**). Middle optional pages would still show Skip + primary if added later.
-- **First log end date:** `FirstLogScreen` adds **This period has already ended** with optional **Change end date**; save sends `PeriodSpan` with `endUtc` when enabled (same-day default allowed).
-
-Re-run **Test 4** manually after install to confirm.
+Implementation: commit **`37471f7`** (`fix(onboarding): Close Phase 3 UAT gaps`). Planning traceability: **`03-03-PLAN.md`** executed → **`03-03-SUMMARY.md`**.
