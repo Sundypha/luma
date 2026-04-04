@@ -23,19 +23,45 @@ fvm flutter --version
 
 Packages live under `apps/` and `packages/`. The root `pubspec.yaml` declares a [pub workspace](https://dart.dev/tools/pub/workspaces).
 
-```bash
-# Ensure the pinned Flutter SDK is on PATH so `melos` can run `flutter pub get`
-# (example: prepend FVM’s SDK bin — adjust to your FVM cache path)
-# macOS/Linux:
-#   export PATH="$HOME/fvm/versions/3.41.2/bin:$PATH"
-# Windows (PowerShell): prepend C:\Users\<you>\fvm\versions\3.41.2\bin
+**Melos calls `flutter` internally.** If `flutter` is not on your `PATH`, bootstrap fails with `'flutter' is not recognized` (common on Windows).
 
-dart pub get
-dart pub global activate melos
-melos bootstrap
+### Recommended (all platforms): run Melos through FVM
+
+From the repo root, use **`fvm exec`** so Melos sees the project’s Flutter SDK:
+
+```bash
+fvm dart pub get
+fvm dart pub global activate melos
+fvm exec melos bootstrap
 ```
 
-If `melos bootstrap` fails with `'flutter' is not recognized`, add the FVM Flutter `bin` directory for **3.41.2** to `PATH`, then retry.
+Analyze / test across packages:
+
+```bash
+fvm exec melos run ci:analyze
+fvm exec melos run ci:test
+```
+
+There is no `fvm melos` subcommand — wrap Melos with `fvm exec` as above.
+
+### Alternative: put Flutter on `PATH`
+
+If you prefer bare `melos`:
+
+- **macOS/Linux:** `export PATH="$HOME/fvm/versions/3.41.2/bin:$PATH"` (adjust version if `.fvm/fvm_config.json` changes).
+- **Windows (PowerShell):** `$env:PATH = "C:\Users\<you>\fvm\versions\3.41.2\bin;" + $env:PATH`
+
+Then `dart pub get`, `melos bootstrap`, etc.
+
+### Windows: “Can’t load Kernel binary” when running `melos`
+
+That usually means the global **Melos** binary was built with a different Dart than the one running it. Activate Melos with the **same** SDK as the project:
+
+```powershell
+fvm dart pub global activate melos
+```
+
+Then always run **`fvm exec melos …`** from this repo (or fix `PATH` as above).
 
 ## Run the app (Android-first)
 
@@ -53,24 +79,39 @@ cd apps/ptrack && fvm flutter analyze
 cd apps/ptrack && fvm flutter test
 ```
 
-Run tests in every package (from repo root, with `flutter` on PATH as above):
+From repo root (all packages), with FVM wrapping Melos:
 
 ```bash
-melos run ci:test
+fvm exec melos run ci:analyze
+fvm exec melos run ci:test
 ```
 
 ## CI parity (same idea as GitHub Actions)
 
-From the repository root, after `fvm use` / `fvm install` and with **FVM’s Flutter `bin` on `PATH`** (see above):
+From the repository root (after `fvm install` / `fvm use`):
+
+**Linux/macOS (CI adds FVM Flutter to `PATH`, then runs Melos):**
 
 ```bash
 dart pub get
 dart pub global activate melos
 melos bootstrap
-pip install pyyaml   # or pip3
+pip install pyyaml
 python3 tool/ci/verify_pubspec_policy.py
 melos exec -c 1 -- flutter analyze
 melos exec -c 1 --dir-exists=test -- flutter test
 ```
 
-These steps mirror `.github/workflows/ci.yml` (Ubuntu). On Windows, use `python` instead of `python3` if needed.
+**Windows (PowerShell) — use `fvm exec` so `flutter` is found:**
+
+```powershell
+fvm dart pub get
+fvm dart pub global activate melos
+fvm exec melos bootstrap
+pip install pyyaml
+python tool\ci\verify_pubspec_policy.py
+fvm exec melos exec -c 1 -- flutter analyze
+fvm exec melos exec -c 1 --dir-exists=test -- flutter test
+```
+
+These steps mirror `.github/workflows/ci.yml` (Ubuntu adds FVM’s `bin` to `PATH` before `melos`).
