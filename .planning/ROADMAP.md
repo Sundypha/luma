@@ -111,7 +111,13 @@ Plans:
 4. Impossible or inconsistent date ranges are prevented or clearly flagged before they are saved.
 5. Entries save reliably and appear on the correct calendar day, including when entered retroactively.
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+
+- [ ] `04-01-PLAN.md` — Domain enums (flow/pain/mood), DayEntries Drift table, schema v1→v2 migration with FK enforcement, mappers
+- [ ] `04-02-PLAN.md` — Repository extensions (watch, delete, day entry CRUD), home screen with period history list
+- [ ] `04-03-PLAN.md` — Logging bottom sheet (create + edit), delete with confirmation, hybrid validation, widget tests, human-verify
 
 ### Phase 5: Calendar, home & cycle surfaces
 
@@ -191,7 +197,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 | 1. Foundation & engineering guardrails | 3/3 | Complete   | 2026-04-04 |
 | 2. Domain, persistence & prediction v1 | 4/4 | Complete | 2026-04-04 |
 | 3. Onboarding | 3/3 | Complete    | 2026-04-05 |
-| 4. Core logging | 0/TBD | Not started | - |
+| 4. Core logging | 0/3 | Not started | - |
 | 5. Calendar, home & cycle surfaces | 0/TBD | Not started | - |
 | 6. Export & import | 0/TBD | Not started | - |
 | 7. App protection (lock) | 0/TBD | Not started | - |
