@@ -1,5 +1,12 @@
-/// Data layer for ptrack (Phase 1 placeholder).
+/// Data layer for ptrack: Drift-backed local persistence.
 library;
+
+export 'src/db/ptrack_database.dart'
+    show
+        PtrackDatabase,
+        openPtrackDatabase,
+        openPtrackQueryExecutor,
+        ptrackSupportedSchemaVersion;
 
 /// Identifies the data package; used to verify monorepo wiring.
 class PtrackData {
