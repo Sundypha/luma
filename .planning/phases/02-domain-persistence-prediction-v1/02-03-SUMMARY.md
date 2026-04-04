@@ -69,7 +69,7 @@ completed: 2026-04-04
 2. **Task 2: GREEN — implement PredictionEngine** — `8926fa8` (feat)
 3. **Task 3: REFACTOR — docs and edge cases** — `1c2f350` (ref)
 
-**Plan metadata:** `3bb82bc` (docs: SUMMARY, STATE, ROADMAP, REQUIREMENTS).
+**Plan metadata:** Single docs commit bundles this SUMMARY with `STATE.md`, `ROADMAP.md`, and `REQUIREMENTS.md` updates.
 
 ## Files Created/Modified
 
@@ -88,9 +88,9 @@ completed: 2026-04-04
 
 ### Auto-fixed Issues
 
-**1. [Rule 3 - Blocking] Invalid Dart in placeholderExplanationSteps**
+**1. [Rule 3 - Blocking] placeholderExplanationSteps analyzer hygiene**
 - **Found during:** Task 1 (RED)
-- **Issue:** `payload: {'reasonCode': ?reasonCode}` was not valid in the analyzer version initially used; replaced with Dart null-aware map value syntax so analyze passes.
+- **Issue:** `PredictionRangeOnly` payload needed a nullable `reasonCode`; analyzer required Dart null-aware collection syntax (`'reasonCode': ?reasonCode`) instead of a verbose conditional map entry.
 - **Files modified:** `packages/ptrack_domain/lib/src/prediction/explanation_step.dart`
 - **Verification:** `fvm flutter analyze` (ptrack_domain) clean
 - **Committed in:** `d6b64bf` (Task 1 commit)
@@ -125,7 +125,7 @@ None - no external service configuration required.
 ## Self-Check: PASSED
 
 - `02-03-SUMMARY.md` present at `.planning/phases/02-domain-persistence-prediction-v1/02-03-SUMMARY.md`
-- Commits `d6b64bf`, `8926fa8`, `1c2f350`, `3bb82bc` on branch history
+- Task commits `d6b64bf`, `8926fa8`, `1c2f350` plus docs commit updating planning files (see `git log --oneline -- .planning/phases/02-domain-persistence-prediction-v1/02-03-SUMMARY.md`)
 - `packages/ptrack_domain/lib/src/prediction/prediction_engine.dart` exists
 
 ---
