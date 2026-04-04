@@ -7,6 +7,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'features/onboarding/first_log_screen.dart';
 import 'features/onboarding/onboarding_screen.dart';
 import 'features/onboarding/onboarding_state.dart';
+import 'features/settings/about_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -141,6 +142,19 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('ptrack'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            tooltip: 'About',
+            onPressed: () {
+              Navigator.of(context).push<void>(
+                MaterialPageRoute<void>(
+                  builder: (context) => const AboutScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Column(
