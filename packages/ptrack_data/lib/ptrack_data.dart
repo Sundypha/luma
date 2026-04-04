@@ -22,6 +22,11 @@ export 'src/repositories/period_repository.dart'
         PeriodWriteRejected,
         PeriodWriteSuccess,
         StoredPeriod;
+export 'src/prediction/prediction_coordinator.dart'
+    show
+        PredictionCoordinator,
+        PredictionCoordinatorResult,
+        predictionCycleInputsFromStored;
 
 /// Identifies the data package; used to verify monorepo wiring.
 class PtrackData {
