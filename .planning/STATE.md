@@ -82,6 +82,6 @@ None.
 
 Last session: 2026-04-05
 
-Stopped at: **Phase 4 context gathered** — decisions captured in `.planning/phases/04-core-logging/04-CONTEXT.md`.
+Stopped at: **Phase 4 planned** — 3 plans in 3 waves, verified by plan checker.
 
-Resume: `/gsd-plan-phase 4` to research and plan core logging implementation.
+Resume: `/gsd-execute-phase 4` to execute core logging plans.
