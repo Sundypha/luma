@@ -68,7 +68,7 @@ Plans:
 Plans:
 
 - [x] `02-01-PLAN.md` — Domain period types, validation, cycle-length definition, prediction/explanation value types (`ptrack_domain`) — complete 2026-04-04
-- [ ] `02-02-PLAN.md` — Drift SQLite schema v1, mappers, transactional migrations, fixture migration tests, newer-schema guard (`ptrack_data`)
+- [x] `02-02-PLAN.md` — Drift SQLite schema v1, mappers, transactional migrations, fixture migration tests, newer-schema guard (`ptrack_data`) — complete 2026-04-04
 - [x] `02-03-PLAN.md` — TDD deterministic `PredictionEngine` (median, exclusions, uncertainty tiers, explanation steps) — complete 2026-04-04
 - [ ] `02-04-PLAN.md` — Repository + prediction coordinator, PRED-04 copy helpers, integration tests, widget test for readable explanation
 
