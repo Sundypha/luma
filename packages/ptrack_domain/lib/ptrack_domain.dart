@@ -1,5 +1,8 @@
-/// Domain layer for ptrack (Phase 1 placeholder).
+/// Domain layer for ptrack: period semantics, validation, cycle length, prediction types.
 library;
+
+export 'src/period/period_models.dart';
+export 'src/period/period_validation.dart';
 
 /// Identifies the domain package; used to verify monorepo wiring.
 class PtrackDomain {
