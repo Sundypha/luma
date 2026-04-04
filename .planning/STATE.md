@@ -61,6 +61,6 @@ None yet.
 
 Last session: 2026-04-04
 
-Stopped at: Roadmap and traceability written; next step `/gsd-discuss-phase 1` (or `/gsd-plan-phase 1` to skip discussion).
+Stopped at: Phase 1 context gathered (`01-CONTEXT.md`); next step `/gsd-plan-phase 1`.
 
-Resume file: None
+Resume file: `.planning/phases/01-foundation-engineering-guardrails/01-CONTEXT.md`
