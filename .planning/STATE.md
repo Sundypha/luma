@@ -10,15 +10,15 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 ## Current Position
 
-Phase: 2 of 8 (Domain, persistence & prediction v1)
+Phase: 3 of 8 (Onboarding)
 
-**Current Plan:** 4
+**Current Plan:** —
 
-**Total Plans in Phase:** 4
+**Total Plans in Phase:** TBD
 
-Plan: 4 of 4 in current phase (last plan in phase complete)
+Plan: — of — in current phase
 
-Status: Phase 2 complete — ready for verification / Phase 3 planning
+Status: Phase 2 verified complete (`02-VERIFICATION.md` passed). Next: plan or discuss Phase 3.
 
 Last activity: 2026-04-04 — Completed `02-04-PLAN.md` (repository, coordinator, PRED-04 copy, widget test).
 
@@ -75,6 +75,6 @@ None yet.
 
 Last session: 2026-04-04
 
-Stopped at: Completed `02-04-PLAN.md` (repository + coordinator + widget explanation test).
+Stopped at: Phase 2 execution + verification complete.
 
-Resume file: None (Phase 2 all plans summarized; next: Phase 3 onboarding or `/gsd-verify-work` phase 2).
+Resume file: `.planning/phases/03-*-CONTEXT.md` when created; next `/gsd-discuss-phase 3` or `/gsd-plan-phase 3`.
