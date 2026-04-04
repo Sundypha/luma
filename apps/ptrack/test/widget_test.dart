@@ -5,7 +5,11 @@ import 'package:ptrack_domain/ptrack_domain.dart';
 
 void main() {
   testWidgets('shows domain and data package labels', (WidgetTester tester) async {
-    await tester.pumpWidget(const PtrackApp());
+    await tester.pumpWidget(
+      const PtrackApp(
+        homeOverride: HomePage(),
+      ),
+    );
 
     expect(find.textContaining(PtrackDomain.packageName), findsWidgets);
     expect(find.byType(MaterialApp), findsOneWidget);
