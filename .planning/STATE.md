@@ -18,7 +18,7 @@ Phase: 3 of 8 (Onboarding)
 
 Plan: — of — in current phase
 
-Status: Phase 2 verified complete (`02-VERIFICATION.md` passed). Next: plan or discuss Phase 3.
+Status: Phase 2 verified complete. Phase 3 context captured; ready to plan Phase 3.
 
 Last activity: 2026-04-04 — Completed `02-04-PLAN.md` (repository, coordinator, PRED-04 copy, widget test).
 
@@ -75,6 +75,6 @@ None yet.
 
 Last session: 2026-04-04
 
-Stopped at: Phase 2 execution + verification complete.
+Stopped at: Phase 3 context gathered (`03-CONTEXT.md`).
 
-Resume file: `.planning/phases/03-*-CONTEXT.md` when created; next `/gsd-discuss-phase 3` or `/gsd-plan-phase 3`.
+Resume file: `.planning/phases/03-onboarding/03-CONTEXT.md` — next `/gsd-plan-phase 3` (optionally `/gsd-plan-phase 3 --skip-research`).
