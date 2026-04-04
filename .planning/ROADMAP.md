@@ -1,0 +1,182 @@
+# Roadmap: Period Tracker (ptrack)
+
+## Overview
+
+Phase 1 delivers a local-first menstrual cycle tracker in Flutter (FVM, TDD): engineering guardrails and persistence first, then explainable prediction wired to data, onboarding and logging, calendar and home surfaces, documented round-trip export/import, optional app lock, and a closing pass for performance, clarity, inclusive copy, and full offline assurance—without accounts or required network access.
+
+## Phases
+
+**Phase Numbering:**
+
+- Integer phases (1, 2, 3): Planned milestone work
+- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
+
+Decimal phases appear between their surrounding integers in numeric order.
+
+- [ ] **Phase 1: Foundation & engineering guardrails** — FVM-pinned Flutter scaffold, CI test gate, dependency policy aligned with privacy NFRs
+- [ ] **Phase 2: Domain, persistence & prediction v1** — Schema, migrations, deterministic explainable prediction, no silent data loss
+- [ ] **Phase 3: Onboarding** — Local-first and estimates messaging, fast path to first log, offline-capable
+- [ ] **Phase 4: Core logging** — Period, flow, symptoms, notes, validation, reliable day context and edits
+- [ ] **Phase 5: Calendar, home & cycle surfaces** — Month navigation, actual vs predicted distinction, home summary and quick actions
+- [ ] **Phase 6: Export & import** — Documented full export, validated import, deterministic duplicate handling
+- [ ] **Phase 7: App protection (lock)** — Optional PIN/biometric lock with honest limitations
+- [ ] **Phase 8: Release quality, offline assurance & inclusive copy** — Snappy UX, clear actions, non-gendered non-medical copy, airplane-mode verification
+
+## Phase Details
+
+### Phase 1: Foundation & engineering guardrails
+
+**Goal**: The project is reproducibly buildable and testable with pinned tooling, and dependency choices are demonstrably consistent with a privacy-first, no-telemetry product posture.
+
+**Depends on**: Nothing (first phase)
+
+**Requirements**: NFR-03, NFR-04
+
+**Success Criteria** (what must be TRUE):
+
+1. A fresh checkout builds and runs tests using the FVM-pinned Flutter SDK documented for the repo.
+2. Continuous integration (or an equivalent automated gate) runs the test suite on changes and fails the pipeline when tests fail.
+3. The app bundle does not include analytics, ad identifiers, or third-party ads/profiling SDKs as shipped for Phase 1.
+4. There is a documented, reviewable way to verify dependency choices against the privacy constraints (e.g. policy checklist or automated check referenced in repo docs).
+
+**Plans**: TBD
+
+### Phase 2: Domain, persistence & prediction v1
+
+**Goal**: Local data and deterministic prediction behavior are correct, test-driven, and survive app upgrades without silent loss—before the full UI stack depends on them.
+
+**Depends on**: Phase 1
+
+**Requirements**: PRED-01, PRED-02, PRED-03, PRED-04, NFR-02
+
+**Success Criteria** (what must be TRUE):
+
+1. Given sufficient period history, the app derives a next-period estimate using the documented deterministic rules (averages, basic outlier handling), not opaque ML.
+2. When history is insufficient or highly variable, the user sees uncertainty rather than false precision in prediction-related outputs.
+3. The user can read a plain-language explanation of how the current prediction was derived from their history.
+4. All prediction-related copy and UI avoid framing results as contraception guidance or medically authoritative.
+5. After simulated or real app upgrades that include schema migrations, existing user data round-trips without silent loss; migration and critical persistence paths are covered by automated tests.
+
+**Plans**: TBD
+
+### Phase 3: Onboarding
+
+**Goal**: A new user understands local storage and non-medical estimates, reaches first logging quickly, and can complete or skip onboarding fully offline.
+
+**Depends on**: Phase 2
+
+**Requirements**: ONBD-01, ONBD-02, ONBD-03, ONBD-04
+
+**Success Criteria** (what must be TRUE):
+
+1. During onboarding, the user sees that data stays on the device and no account is required.
+2. The user sees that predictions are estimates from entered history, not medical advice.
+3. The user can reach the first logging action in under one minute along the intended minimal path.
+4. The user can skip non-essential education and continue; the entire onboarding flow works with network disabled.
+
+**Plans**: TBD
+
+### Phase 4: Core logging
+
+**Goal**: Users can record and edit period and symptom data with validation that prevents impossible ranges and preserves adjacent cycle integrity.
+
+**Depends on**: Phase 3
+
+**Requirements**: LOG-01, LOG-02, LOG-03, LOG-04, LOG-05, LOG-06
+
+**Success Criteria** (what must be TRUE):
+
+1. The user can mark a period start (today or past), add or change the end date later, and log flow intensity for days or spans without being forced to enter symptoms.
+2. The user can add or edit notes, pain score, and mood on relevant days.
+3. Editing a past period does not corrupt or scramble data for neighboring cycles in the timeline.
+4. Impossible or inconsistent date ranges are prevented or clearly flagged before they are saved.
+5. Entries save reliably and appear on the correct calendar day, including when entered retroactively.
+
+**Plans**: TBD
+
+### Phase 5: Calendar, home & cycle surfaces
+
+**Goal**: Users navigate time, distinguish logged from predicted days accessibly, drill into days from the calendar, and see an honest home summary with a quick path back to logging.
+
+**Depends on**: Phase 4
+
+**Requirements**: CAL-01, CAL-02, CAL-03, CAL-04, CAL-05, HOME-01, HOME-02, HOME-03, HOME-04, NFR-06
+
+**Success Criteria** (what must be TRUE):
+
+1. The user can view a month-based calendar, move across months smoothly, and the view stays responsive with multi-year local history on supported devices.
+2. Logged period days and predicted future days are visually distinguishable without relying on color alone; after edits to underlying data, prediction display on the calendar updates accordingly.
+3. Tapping a day opens that day’s detail so the user can view or edit entries.
+4. The home screen shows cycle position and next expected period status (or a clear insufficient-data state), what was logged today at a glance, and a visible quick action to log or edit without deep navigation—without unsupported “cycle health” scores or overconfident precision.
+
+**Plans**: TBD
+
+### Phase 6: Export & import
+
+**Goal**: Users own their data through a documented full export and a safe import path with readable errors and explained duplicate behavior.
+
+**Depends on**: Phase 5
+
+**Requirements**: XPRT-01, XPRT-02, XPRT-03, IMPT-01, IMPT-02, IMPT-03
+
+**Success Criteria** (what must be TRUE):
+
+1. The user can start a full local data export without an account; the file includes periods, symptoms, notes, and restoration metadata with schema/version markers, and the format is documented in the repository.
+2. The user can import from a prior valid export file and see data restored according to the documented semantics.
+3. Invalid or corrupted import files fail with readable validation errors and do not silently corrupt existing data.
+4. Duplicate-handling during import is deterministic and explained in product copy.
+
+**Plans**: TBD
+
+### Phase 7: App protection (lock)
+
+**Goal**: Users who want extra privacy can opt into PIN or biometric lock without being forced, with reliable resume behavior and honest limitations.
+
+**Depends on**: Phase 6
+
+**Requirements**: LOCK-01, LOCK-02, LOCK-03
+
+**Success Criteria** (what must be TRUE):
+
+1. From settings, the user can enable an optional PIN or biometric lock (not required on first launch).
+2. With lock enabled, returning from background reliably prompts for unlock on supported devices.
+3. Product copy does not claim full cryptographic protection; failure modes are described so users are not stranded without a credible recovery narrative where applicable.
+
+**Plans**: TBD
+
+### Phase 8: Release quality, offline assurance & inclusive copy
+
+**Goal**: The Phase 1 feature set feels immediate, understandable, and respectful in language, and works end-to-end without network after install.
+
+**Depends on**: Phase 7
+
+**Requirements**: NFR-01, NFR-05, NFR-07, NFR-08
+
+**Success Criteria** (what must be TRUE):
+
+1. Common screens and primary logging actions feel immediate on mainstream supported devices.
+2. Primary actions and labels are understandable without dense tutorial text.
+3. Copy across the app avoids unnecessary gendered assumptions and unsupported medical claims (beyond what earlier phases already enforced for prediction).
+4. With network disabled after install, the full Phase 1 feature set (onboarding through lock) works without login and without network-required errors on core flows.
+
+**Plans**: TBD
+
+## Progress
+
+**Execution Order:**
+
+Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 1. Foundation & engineering guardrails | 0/TBD | Not started | - |
+| 2. Domain, persistence & prediction v1 | 0/TBD | Not started | - |
+| 3. Onboarding | 0/TBD | Not started | - |
+| 4. Core logging | 0/TBD | Not started | - |
+| 5. Calendar, home & cycle surfaces | 0/TBD | Not started | - |
+| 6. Export & import | 0/TBD | Not started | - |
+| 7. App protection (lock) | 0/TBD | Not started | - |
+| 8. Release quality, offline assurance & inclusive copy | 0/TBD | Not started | - |
+
+---
+*Roadmap created: 2026-04-04 — depth: standard; 40/40 v1 requirements mapped.*
