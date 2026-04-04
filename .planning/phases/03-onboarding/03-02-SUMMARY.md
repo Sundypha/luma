@@ -71,13 +71,13 @@ checkpoint_task2: human-verify
 2. **feat: About screen and home entry** — `4896070`
 3. **test: onboarding and first-log tests** — `2655723`
 
-**Task 2 (checkpoint:human-verify, blocking):** Not executed by executor — **awaiting human verification** per `03-02-PLAN.md` manual steps (full onboarding flow, resume, offline, About replay).
+**Task 2 (checkpoint:human-verify):** **Approved** 2026-04-05 — user sign-off (“pass, phase can be finalized”) after manual / UAT coverage of onboarding flow, About replay, resume, and offline behavior.
 
 **Plan metadata:** `docs(03-02): Add plan summary and planning state for Task 1` (committed with this SUMMARY, STATE, and ROADMAP)
 
-## Checkpoint: Task 2 — Human verification (pending)
+## Checkpoint: Task 2 — Human verification (complete)
 
-The orchestrator or user should run through `03-02-PLAN.md` Task 2 manual checklist: fresh install flow, required vs optional gating, first-log save, About from home, resume after completion, resume mid-wizard, and airplane mode. **Do not mark this plan fully complete until Task 2 is approved.**
+Manual checklist in `03-02-PLAN.md` Task 2 satisfied; phase finalized with user approval.
 
 ## Files Created/Modified
 

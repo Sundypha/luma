@@ -6,29 +6,29 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** Phase 3 (Onboarding); gap plan **`03-03-PLAN.md`** complete. **`03-02-PLAN.md`** Task 2 (human-verify) still optional if you want a formal sign-off.
+**Current focus:** Phase 4 (Core logging) — next milestone after completed onboarding.
 
 ## Current Position
 
-Phase: 3 of 8 (Onboarding)
+Phase: **4** of 8 (Core logging)
 
-**Current Plan:** 3
+**Current Plan:** —
 
-**Total Plans in Phase:** 3
+**Total Plans in Phase:** TBD (roadmap: plans not yet authored)
 
-Plan: 3 of 3 in current phase (gap closure doc plan executed)
+Plan: — of — in current phase
 
-Status: **`03-03-PLAN.md` complete** — `03-UAT.md` reconciled with code (`37471f7`); all UAT tests documented pass; gaps resolved. **`03-02-PLAN.md`** Task 2 human verification remains available per original checkpoint.
+Status: **Phase 3 complete** (2026-04-05). All Phase 3 plans delivered including **`03-02` Task 2 human verification** (user approved). Gap closure documented in **`03-03`**.
 
-Last activity: 2026-04-05 — Executed `03-03` (gap_closure): UAT + SUMMARY + ROADMAP.
+Last activity: 2026-04-05 — Phase 3 finalized; focus advances to Phase 4.
 
-**Progress:** [██████████] 100% (Phase 3 plan slots); optional 03-02 manual UAT checkpoint still listed below.
+**Progress:** [███░░░░░░░] 38% (3/8 phases complete)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 8
+- Total plans completed: 9
 - Average duration: —
 - Total execution time: —
 
@@ -38,18 +38,17 @@ Last activity: 2026-04-05 — Executed `03-03` (gap_closure): UAT + SUMMARY + RO
 |-------|-------|-------|----------|
 | 1 | 3 | 3 | — |
 | 2 | 4 | 4 | 20 min (02-01); 38 min (02-02); 35 min (02-03); 42 min (02-04) |
+| 3 | 3 | 3 | 28 min (03-01); 35 min (03-02 T1); 15 min (03-03) |
 
 **Recent Trend:**
 
-- Last 5 plans: 02-04, 03-01, 03-02, 03-03, —
+- Last 5 plans: 03-01, 03-02, 03-03, —
 - Trend: —
 
 *Updated after each plan completion*
 
 | Phase / plan | Duration | Tasks | Files |
 |--------------|----------|-------|-------|
-| 02-domain-persistence-prediction-v1 P03 | 35 min | 3 | 5 |
-| Phase 02-domain-persistence-prediction-v1 P04 | 42 min | 3 tasks | 11 files |
 | Phase 3 P01 | 28min | 3 tasks | 8 files |
 | Phase 03-onboarding P02 | 35min | 1 tasks | 7 files |
 | Phase 03-onboarding P03 (gap_closure) | 15min | 3 tasks | 4 files |
@@ -66,22 +65,23 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 02-domain-persistence-prediction-v1]: Prediction thresholds: long gap >45d, long bleed >10d, outlier |L-median|>7, high-variability spread >=12d, six-cycle window.
 - [Phase 02]: PeriodRepository returns PeriodWriteOutcome (success/rejected/not found) instead of throwing on validation failures. — Stable error typing for UI and tests; no silent drops.
 - [Phase 3]: First-run routing: wizard completion flag plus empty period list gates first-log vs home on cold start.
-- [Phase 3]: Onboarding step index persisted on PageView onPageChanged for optional swipe path.
-- [Phase 03-onboarding]: Onboarding tests use InMemorySharedPreferencesAsync for SharedPreferencesWithCache
-- [Phase 03 gap closure]: UAT gaps (swipe, final Skip, first-log end) documented resolved; implementation `37471f7`, planning `03-03`.
+- [Phase 3]: Onboarding step index persisted on PageView onPageChanged (swipe or button).
+- [Phase 03-onboarding]: Onboarding tests use InMemorySharedPreferencesAsync for SharedPreferencesWithCache.
+- [Phase 03 gap closure]: UAT gaps resolved in `37471f7` + `03-03` planning.
+- [Phase 3 closeout 2026-04-05]: **`03-02` Task 2** human verification approved by user (“pass”); phase milestone finalized.
 
 ### Pending Todos
 
-- Optional: Complete **`03-02-PLAN.md` Task 2** manual checklist if you want explicit human-verify closure.
+None yet for Phase 4 until plans exist.
 
 ### Blockers/Concerns
 
-None blocking delivery. Optional: formal run-through of `03-02-PLAN.md` Task 2 manual steps.
+None.
 
 ## Session Continuity
 
 Last session: 2026-04-05
 
-Stopped at: Phase 3 — `03-03` gap_closure executed; see `03-03-SUMMARY.md`.
+Stopped at: **Phase 3 finalized** — ready for **`/gsd-plan-phase 4`** (or equivalent) when you want core logging plans.
 
-Resume: Phase 4 planning/execution when ready, or optional `03-02` Task 2 manual verify.
+Resume: Plan and execute Phase 4 per roadmap.
