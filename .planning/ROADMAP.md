@@ -92,7 +92,7 @@ Plans:
 Plans:
 
 - [x] `03-01-PLAN.md` — Onboarding wizard (privacy + estimates + quick-start screens), first-log screen, app-launch routing with state persistence — complete 2026-04-05
-- [ ] `03-02-PLAN.md` — Settings About replay screen, comprehensive widget tests, human-verify checkpoint
+- [ ] `03-02-PLAN.md` — Settings About replay screen, comprehensive widget tests, human-verify checkpoint — **Task 1 complete 2026-04-05**; Task 2 human-verify pending
 
 ### Phase 4: Core logging
 

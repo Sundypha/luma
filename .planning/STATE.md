@@ -6,7 +6,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** Phase 3 (Onboarding); next executable plan is 03-02.
+**Current focus:** Phase 3 (Onboarding); `03-02-PLAN.md` Task 1 done — Task 2 human verification pending.
 
 ## Current Position
 
@@ -18,9 +18,9 @@ Phase: 3 of 8 (Onboarding)
 
 Plan: 2 of 2 in current phase
 
-Status: Completed `03-01-PLAN.md` (onboarding wizard, first log, routing). Ready to execute `03-02-PLAN.md`.
+Status: **`03-02-PLAN.md` Task 1 complete** (About replay, widget tests, CI green). **Task 2** (`checkpoint:human-verify`) **awaiting human verification** — see `.planning/phases/03-onboarding/03-02-SUMMARY.md` checkpoint section.
 
-Last activity: 2026-04-05 — Completed `03-01-PLAN.md` (onboarding, first-log, main routing).
+Last activity: 2026-04-05 — Executed `03-02` Task 1; documented Task 2 checkpoint for orchestrator.
 
 **Progress:** [█████████░] 89%
 
@@ -51,6 +51,7 @@ Last activity: 2026-04-05 — Completed `03-01-PLAN.md` (onboarding, first-log, 
 | 02-domain-persistence-prediction-v1 P03 | 35 min | 3 | 5 |
 | Phase 02-domain-persistence-prediction-v1 P04 | 42 min | 3 tasks | 11 files |
 | Phase 3 P01 | 28min | 3 tasks | 8 files |
+| Phase 03-onboarding P02 | 35min | 1 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -65,6 +66,7 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 02]: PeriodRepository returns PeriodWriteOutcome (success/rejected/not found) instead of throwing on validation failures. — Stable error typing for UI and tests; no silent drops.
 - [Phase 3]: First-run routing: wizard completion flag plus empty period list gates first-log vs home on cold start.
 - [Phase 3]: Onboarding step index persisted on PageView onPageChanged for optional swipe path.
+- [Phase 03-onboarding]: Onboarding tests use InMemorySharedPreferencesAsync for SharedPreferencesWithCache
 
 ### Pending Todos
 
@@ -72,12 +74,12 @@ None yet.
 
 ### Blockers/Concerns
 
-None yet.
+- **03-02 Task 2:** Human verification of full onboarding flow (manual checklist in plan) not yet performed by user.
 
 ## Session Continuity
 
 Last session: 2026-04-05
 
-Stopped at: Completed `03-01-PLAN.md` — see `.planning/phases/03-onboarding/03-01-SUMMARY.md`.
+Stopped at: **Checkpoint** — `03-02-PLAN.md` Task 2 (`human-verify`). Task 1 delivered; see `03-02-SUMMARY.md`.
 
-Resume file: `.planning/phases/03-onboarding/03-02-PLAN.md` for the next onboarding plan.
+Resume: Complete manual verification in Task 2, then mark plan done / advance phase as appropriate. Automated code: `24470d5`, `4896070`, `2655723`; planning updates in latest `docs(03-02):` commit on this branch.
