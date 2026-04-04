@@ -80,7 +80,9 @@ List<ExplanationStep> placeholderExplanationSteps(PredictionResult result) {
     PredictionRangeOnly(:final reasonCode) => [
         ExplanationStep(
           kind: ExplanationFactKind.highVariabilityRange,
-          payload: {'reasonCode': ?reasonCode},
+          payload: {
+            'reasonCode': ?reasonCode,
+          },
         ),
       ],
     PredictionPointWithRange(:final pointStartUtc) => [
