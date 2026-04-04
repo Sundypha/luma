@@ -82,6 +82,6 @@ None.
 
 Last session: 2026-04-05
 
-Stopped at: **Phase 3 finalized** — ready for **`/gsd-plan-phase 4`** (or equivalent) when you want core logging plans.
+Stopped at: **Phase 4 context gathered** — decisions captured in `.planning/phases/04-core-logging/04-CONTEXT.md`.
 
-Resume: Plan and execute Phase 4 per roadmap.
+Resume: `/gsd-plan-phase 4` to research and plan core logging implementation.
