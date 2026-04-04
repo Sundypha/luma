@@ -87,7 +87,12 @@ Plans:
 3. The user can reach the first logging action in under one minute along the intended minimal path.
 4. The user can skip non-essential education and continue; the entire onboarding flow works with network disabled.
 
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+
+- [ ] `03-01-PLAN.md` — Onboarding wizard (privacy + estimates + quick-start screens), first-log screen, app-launch routing with state persistence
+- [ ] `03-02-PLAN.md` — Settings About replay screen, comprehensive widget tests, human-verify checkpoint
 
 ### Phase 4: Core logging
 
@@ -184,7 +189,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 |-------|----------------|--------|-----------|
 | 1. Foundation & engineering guardrails | 3/3 | Complete   | 2026-04-04 |
 | 2. Domain, persistence & prediction v1 | 4/4 | Complete | 2026-04-04 |
-| 3. Onboarding | 0/TBD | Not started | - |
+| 3. Onboarding | 0/2 | Not started | - |
 | 4. Core logging | 0/TBD | Not started | - |
 | 5. Calendar, home & cycle surfaces | 0/TBD | Not started | - |
 | 6. Export & import | 0/TBD | Not started | - |
