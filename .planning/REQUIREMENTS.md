@@ -9,10 +9,10 @@ Phase 1 MVP — derived from `period_tracker_prds/PRD_Phase_1_MVP.md` (functiona
 
 ### Onboarding
 
-- [ ] **ONBD-01**: User sees that data is stored locally on the device and no account is required
-- [ ] **ONBD-02**: User sees that predictions are estimates based on entered history (not medical advice)
-- [ ] **ONBD-03**: User can reach the first logging action in under one minute (minimal friction path)
-- [ ] **ONBD-04**: User can skip non-essential education and continue; onboarding works fully offline
+- [x] **ONBD-01**: User sees that data is stored locally on the device and no account is required
+- [x] **ONBD-02**: User sees that predictions are estimates based on entered history (not medical advice)
+- [x] **ONBD-03**: User can reach the first logging action in under one minute (minimal friction path)
+- [x] **ONBD-04**: User can skip non-essential education and continue; onboarding works fully offline
 
 ### Core logging
 
@@ -100,10 +100,10 @@ Explicit Phase 1 exclusions per PRD §8:
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ONBD-01 | Phase 3 | Pending |
-| ONBD-02 | Phase 3 | Pending |
-| ONBD-03 | Phase 3 | Pending |
-| ONBD-04 | Phase 3 | Pending |
+| ONBD-01 | Phase 3 | Complete |
+| ONBD-02 | Phase 3 | Complete |
+| ONBD-03 | Phase 3 | Complete |
+| ONBD-04 | Phase 3 | Complete |
 | LOG-01 | Phase 4 | Pending |
 | LOG-02 | Phase 4 | Pending |
 | LOG-03 | Phase 4 | Pending |

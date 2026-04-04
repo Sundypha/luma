@@ -91,7 +91,7 @@ Plans:
 
 Plans:
 
-- [ ] `03-01-PLAN.md` — Onboarding wizard (privacy + estimates + quick-start screens), first-log screen, app-launch routing with state persistence
+- [x] `03-01-PLAN.md` — Onboarding wizard (privacy + estimates + quick-start screens), first-log screen, app-launch routing with state persistence — complete 2026-04-05
 - [ ] `03-02-PLAN.md` — Settings About replay screen, comprehensive widget tests, human-verify checkpoint
 
 ### Phase 4: Core logging
@@ -189,7 +189,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 |-------|----------------|--------|-----------|
 | 1. Foundation & engineering guardrails | 3/3 | Complete   | 2026-04-04 |
 | 2. Domain, persistence & prediction v1 | 4/4 | Complete | 2026-04-04 |
-| 3. Onboarding | 0/2 | Not started | - |
+| 3. Onboarding | 1/2 | In Progress|  |
 | 4. Core logging | 0/TBD | Not started | - |
 | 5. Calendar, home & cycle surfaces | 0/TBD | Not started | - |
 | 6. Export & import | 0/TBD | Not started | - |
