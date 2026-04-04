@@ -6,7 +6,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** Phase 2 — Domain, persistence & prediction v1
+**Current focus:** Phase 2 complete; next milestone work is Phase 3 (Onboarding).
 
 ## Current Position
 
@@ -16,13 +16,13 @@ Phase: 2 of 8 (Domain, persistence & prediction v1)
 
 **Total Plans in Phase:** 4
 
-Plan: 4 of 4 in current phase (next: 02-04)
+Plan: 4 of 4 in current phase (last plan in phase complete)
 
-Status: Ready to execute
+Status: Phase 2 complete — ready for verification / Phase 3 planning
 
-Last activity: 2026-04-04 — Completed 02-02 Drift persistence, mappers, and migration tests (`ptrack_data`).
+Last activity: 2026-04-04 — Completed `02-04-PLAN.md` (repository, coordinator, PRED-04 copy, widget test).
 
-**Progress:** [███████░░░] 71%
+**Progress:** [██████████] 100%
 
 ## Performance Metrics
 
@@ -37,7 +37,7 @@ Last activity: 2026-04-04 — Completed 02-02 Drift persistence, mappers, and mi
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 | 3 | 3 | — |
-| 2 | 3 | 4 | 20 min (02-01); 38 min (02-02); 35 min (02-03) |
+| 2 | 4 | 4 | 20 min (02-01); 38 min (02-02); 35 min (02-03); 42 min (02-04) |
 
 **Recent Trend:**
 
@@ -49,6 +49,7 @@ Last activity: 2026-04-04 — Completed 02-02 Drift persistence, mappers, and mi
 | Phase / plan | Duration | Tasks | Files |
 |--------------|----------|-------|-------|
 | 02-domain-persistence-prediction-v1 P03 | 35 min | 3 | 5 |
+| Phase 02-domain-persistence-prediction-v1 P04 | 42 min | 3 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -60,6 +61,7 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 2]: Period validation uses PeriodCalendarContext (IANA Location) for duplicate start-day checks; call timezone initializeTimeZones() before fromTimeZoneName.
 - [Phase 2]: Completed-cycle length is inclusive local days from period start through the day before next start (see completedCycleBetweenStarts).
 - [Phase 02-domain-persistence-prediction-v1]: Prediction thresholds: long gap >45d, long bleed >10d, outlier |L-median|>7, high-variability spread >=12d, six-cycle window.
+- [Phase 02]: PeriodRepository returns PeriodWriteOutcome (success/rejected/not found) instead of throwing on validation failures. — Stable error typing for UI and tests; no silent drops.
 
 ### Pending Todos
 
@@ -73,6 +75,6 @@ None yet.
 
 Last session: 2026-04-04
 
-Stopped at: Completed `02-02-PLAN.md` (Drift persistence); next `02-04-PLAN.md` or `/gsd-execute-phase`.
+Stopped at: Completed `02-04-PLAN.md` (repository + coordinator + widget explanation test).
 
-Resume file: `.planning/phases/02-domain-persistence-prediction-v1/02-04-PLAN.md`
+Resume file: None (Phase 2 all plans summarized; next: Phase 3 onboarding or `/gsd-verify-work` phase 2).

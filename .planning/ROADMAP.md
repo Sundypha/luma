@@ -14,7 +14,7 @@ Phase 1 delivers a local-first menstrual cycle tracker in Flutter (FVM, TDD): en
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation & engineering guardrails** — FVM-pinned Flutter scaffold, CI test gate, dependency policy aligned with privacy NFRs
-- [ ] **Phase 2: Domain, persistence & prediction v1** — Schema, migrations, deterministic explainable prediction, no silent data loss
+- [x] **Phase 2: Domain, persistence & prediction v1** — Schema, migrations, deterministic explainable prediction, no silent data loss
 - [ ] **Phase 3: Onboarding** — Local-first and estimates messaging, fast path to first log, offline-capable
 - [ ] **Phase 4: Core logging** — Period, flow, symptoms, notes, validation, reliable day context and edits
 - [ ] **Phase 5: Calendar, home & cycle surfaces** — Month navigation, actual vs predicted distinction, home summary and quick actions
@@ -70,7 +70,7 @@ Plans:
 - [x] `02-01-PLAN.md` — Domain period types, validation, cycle-length definition, prediction/explanation value types (`ptrack_domain`) — complete 2026-04-04
 - [x] `02-02-PLAN.md` — Drift SQLite schema v1, mappers, transactional migrations, fixture migration tests, newer-schema guard (`ptrack_data`) — complete 2026-04-04
 - [x] `02-03-PLAN.md` — TDD deterministic `PredictionEngine` (median, exclusions, uncertainty tiers, explanation steps) — complete 2026-04-04
-- [ ] `02-04-PLAN.md` — Repository + prediction coordinator, PRED-04 copy helpers, integration tests, widget test for readable explanation
+- [x] `02-04-PLAN.md` — Repository + prediction coordinator, PRED-04 copy helpers, integration tests, widget test for readable explanation — complete 2026-04-04
 
 ### Phase 3: Onboarding
 
@@ -183,7 +183,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & engineering guardrails | 3/3 | Complete   | 2026-04-04 |
-| 2. Domain, persistence & prediction v1 | 0/TBD | Not started | - |
+| 2. Domain, persistence & prediction v1 | 4/4 | Complete | 2026-04-04 |
 | 3. Onboarding | 0/TBD | Not started | - |
 | 4. Core logging | 0/TBD | Not started | - |
 | 5. Calendar, home & cycle surfaces | 0/TBD | Not started | - |

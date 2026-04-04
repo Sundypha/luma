@@ -43,7 +43,7 @@ Phase 1 MVP — derived from `period_tracker_prds/PRD_Phase_1_MVP.md` (functiona
 - [x] **PRED-01**: Next-period estimate uses documented deterministic rules from user’s period history (e.g. averages, basic outlier handling)
 - [x] **PRED-02**: When history is insufficient or highly variable, app surfaces uncertainty instead of false precision
 - [x] **PRED-03**: User can read a plain-language explanation of how the current prediction was derived
-- [ ] **PRED-04**: Copy and UI never frame prediction as contraception or medically authoritative
+- [x] **PRED-04**: Copy and UI never frame prediction as contraception or medically authoritative
 
 ### Data export
 
@@ -122,7 +122,7 @@ Explicit Phase 1 exclusions per PRD §8:
 | PRED-01 | Phase 2 | Complete |
 | PRED-02 | Phase 2 | Complete |
 | PRED-03 | Phase 2 | Complete |
-| PRED-04 | Phase 2 | Pending |
+| PRED-04 | Phase 2 | Complete |
 | XPRT-01 | Phase 6 | Pending |
 | XPRT-02 | Phase 6 | Pending |
 | XPRT-03 | Phase 6 | Pending |
