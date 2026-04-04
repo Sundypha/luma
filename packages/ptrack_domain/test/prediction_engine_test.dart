@@ -6,6 +6,17 @@ void main() {
   final engine = PredictionEngine();
 
   group('PredictionEngine', () {
+    test('empty history is insufficient with zero completed cycles', () {
+      final out = engine.predict([]);
+      expect(out.result, isA<PredictionInsufficientHistory>());
+      final ins = out.result as PredictionInsufficientHistory;
+      expect(ins.completedCyclesAvailable, 0);
+      expect(
+        out.explanation.single.kind,
+        ExplanationFactKind.insufficientHistory,
+      );
+    });
+
     test('insufficient history when fewer than two cycles after exclusions', () {
       final cycles = [
         PredictionCycleInput(
@@ -132,6 +143,22 @@ void main() {
         out.explanation.map((e) => e.kind),
         contains(ExplanationFactKind.highVariabilityRange),
       );
+    });
+
+    test('uses at most the last six completed cycles for statistics', () {
+      final cycles = <PredictionCycleInput>[
+        for (var i = 0; i < 7; i++)
+          PredictionCycleInput(
+            periodStartUtc: DateTime.utc(2026, 1, 1 + i),
+            lengthInDays: 28,
+          ),
+      ];
+      final out = engine.predict(cycles);
+      final considered = out.explanation.firstWhere(
+        (e) => e.kind == ExplanationFactKind.cyclesConsidered,
+      );
+      expect(considered.payload['count'], 6);
+      expect((considered.payload['lengthsInDays'] as List<dynamic>).length, 6);
     });
   });
 }

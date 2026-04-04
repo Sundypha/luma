@@ -7,6 +7,9 @@ enum ExplanationFactKind {
   /// Which completed cycles were included in a statistic.
   cyclesConsidered,
 
+  /// One cycle excluded from median/spread with machine-readable reason.
+  cycleExcluded,
+
   /// Central tendency (e.g. median) over included cycles.
   medianCycleLength,
 

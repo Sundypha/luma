@@ -5,7 +5,9 @@ Deterministic, no-ML next-period estimation. Thresholds below match `prediction_
 ## Input
 
 - Ordered completed cycles, **oldest first** (`periodStartUtc`, `lengthInDays`, optional `bleedingDays`).
+- **Open / incomplete cycles** are not passed in; callers derive completed lengths first (Phase 2 boundary).
 - Engine uses the **last six** cycles by time (tail of the list).
+- Empty input → `PredictionInsufficientHistory` with `completedCyclesAvailable: 0`.
 
 ## Exclusions (machine-readable reasons)
 
@@ -19,7 +21,7 @@ Outlier pass is **one shot** on the set after gap/bleed exclusions (no iterative
 
 ## Central tendency
 
-- **Median** of **included** cycle lengths (integer days).
+- **Median** of **included** cycle lengths (integer days). For an **even** count of lengths, median is the **arithmetic mean of the two middle values, rounded to the nearest integer** (`.round()` in Dart).
 - Need **≥2** included cycles after all exclusions to emit a concrete next-start **interval** or point.
 - With **<2** included cycles → `PredictionInsufficientHistory` (`minCompletedCyclesNeeded: 2`).
 
@@ -36,4 +38,10 @@ Outlier pass is **one shot** on the set after gap/bleed exclusions (no iterative
 
 ## Explanation (PRED-03)
 
-Ordered `ExplanationStep` list: cycles considered, exclusions with reasons, median, then either insufficient history, high-variability range, or point + spread interval.
+Ordered `ExplanationStep` list:
+
+1. `cyclesConsidered` — window size, lengths, UTC starts.
+2. `cycleExcluded` — one step per excluded row (`exclusionReason`: `long_gap` \| `long_bleed` \| `statistical_outlier`).
+3. `medianCycleLength` — median, min/max included lengths, spread, anchor instant (when history suffices).
+4. `insufficientHistory` — when included count \< 2 after exclusions.
+5. `highVariabilityRange` — when tier is range-only (payload includes ISO range and `reasonCode: high_variability`).

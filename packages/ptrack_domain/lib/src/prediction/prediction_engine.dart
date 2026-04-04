@@ -271,7 +271,7 @@ class PredictionEngine {
   static Iterable<ExplanationStep> _exclusionSteps(List<_WindowEntry> entries) {
     return entries.where((e) => e.exclusionReason != null).map(
           (e) => ExplanationStep(
-            kind: ExplanationFactKind.cyclesConsidered,
+            kind: ExplanationFactKind.cycleExcluded,
             payload: {
               'windowIndex': e.windowIndex,
               'lengthInDays': e.input.lengthInDays,
