@@ -14,6 +14,14 @@ export 'src/mappers/period_mapper.dart'
         periodRowToDomain,
         periodSpanToInsertCompanion,
         periodSpanToUpdateCompanion;
+export 'src/repositories/period_repository.dart'
+    show
+        PeriodRepository,
+        PeriodWriteNotFound,
+        PeriodWriteOutcome,
+        PeriodWriteRejected,
+        PeriodWriteSuccess,
+        StoredPeriod;
 
 /// Identifies the data package; used to verify monorepo wiring.
 class PtrackData {
