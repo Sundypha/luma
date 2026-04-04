@@ -7,7 +7,7 @@ completed: 2026-04-04
 
 # Phase 1 plan 02 summary
 
-GitHub Actions **CI** on Ubuntu for `pull_request` and `push` to `main`: Dart pub get, FVM install from `.fvm`, Melos bootstrap, Python **pubspec policy** script (`tool/ci/verify_pubspec_policy.py`, requires PyYAML), `melos exec` **flutter analyze** and **flutter test** across packages.
+GitHub Actions **CI** on Ubuntu for `pull_request` and `push` to `main`: Dart pub get, FVM install from `.fvm`, Melos bootstrap, **uv** + `uv run --with pyyaml` for `tool/ci/verify_pubspec_policy.py`, `melos exec` **flutter analyze** and **flutter test** across packages.
 
 ## Key files
 

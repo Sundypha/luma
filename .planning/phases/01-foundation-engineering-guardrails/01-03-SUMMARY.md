@@ -16,4 +16,4 @@ completed: 2026-04-04
 ## Self-Check: PASSED
 
 - `grep`-style: README contains `SECURITY.md` link
-- `python tool/ci/verify_pubspec_policy.py`, `melos exec` analyze/test succeed locally with FVM on PATH
+- `uv run --python 3.12 --with pyyaml python tool/ci/verify_pubspec_policy.py`, `melos exec` analyze/test succeed locally with FVM on PATH

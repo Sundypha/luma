@@ -47,7 +47,7 @@ Progress: [███░░░░░░░] ~12%
 
 Decisions are logged in `PROJECT.md` Key Decisions table.
 
-- Phase 1 (2026-04-04): Dart pub workspace + Melos 7; Flutter 3.41.2 via FVM; CI uses FVM then `melos exec`; Python pubspec policy requires PyYAML in CI.
+- Phase 1 (2026-04-04): Dart pub workspace + Melos 7; Flutter 3.41.2 via FVM; CI uses FVM then `melos exec`; pubspec policy script runs with **uv** (`uv run --with pyyaml`), not pip.
 
 ### Pending Todos
 

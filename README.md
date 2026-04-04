@@ -88,6 +88,14 @@ fvm exec melos run ci:test
 
 ## CI parity (same idea as GitHub Actions)
 
+The pubspec policy script needs **PyYAML**. Use **[uv](https://docs.astral.sh/uv/getting-started/installation/)** (not `pip`) so dependencies stay explicit and reproducible:
+
+```bash
+uv run --python 3.12 --with pyyaml python3 tool/ci/verify_pubspec_policy.py
+```
+
+(`uv` downloads a compatible Python if needed.)
+
 From the repository root (after `fvm install` / `fvm use`):
 
 **Linux/macOS (CI adds FVM Flutter to `PATH`, then runs Melos):**
@@ -96,8 +104,7 @@ From the repository root (after `fvm install` / `fvm use`):
 dart pub get
 dart pub global activate melos
 melos bootstrap
-pip install pyyaml
-python3 tool/ci/verify_pubspec_policy.py
+uv run --python 3.12 --with pyyaml python3 tool/ci/verify_pubspec_policy.py
 melos exec -c 1 -- flutter analyze
 melos exec -c 1 --dir-exists=test -- flutter test
 ```
@@ -108,10 +115,9 @@ melos exec -c 1 --dir-exists=test -- flutter test
 fvm dart pub get
 fvm dart pub global activate melos
 fvm exec melos bootstrap
-pip install pyyaml
-python tool\ci\verify_pubspec_policy.py
+uv run --python 3.12 --with pyyaml python tool\ci\verify_pubspec_policy.py
 fvm exec melos exec -c 1 -- flutter analyze
 fvm exec melos exec -c 1 --dir-exists=test -- flutter test
 ```
 
-These steps mirror `.github/workflows/ci.yml` (Ubuntu adds FVM’s `bin` to `PATH` before `melos`).
+These steps mirror `.github/workflows/ci.yml` (Ubuntu adds FVM’s `bin` to `PATH` before `melos`; CI installs **uv** via `astral-sh/setup-uv`).
