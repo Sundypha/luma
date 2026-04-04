@@ -56,7 +56,8 @@ void main() {
     expect(find.widgetWithText(FilledButton, 'Continue'), findsOneWidget);
   });
 
-  testWidgets('optional page shows Skip and primary action', (tester) async {
+  testWidgets('last optional page shows Get Started only, no Skip',
+      (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: OnboardingScreen(
@@ -69,11 +70,11 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(FilledButton, 'Continue'));
     await tester.pumpAndSettle();
-    expect(find.text('Skip'), findsOneWidget);
+    expect(find.text('Skip'), findsNothing);
     expect(find.widgetWithText(FilledButton, 'Get Started'), findsOneWidget);
   });
 
-  testWidgets('swipe on required page does not advance', (tester) async {
+  testWidgets('swipe on required page advances like Continue', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: OnboardingScreen(
@@ -82,9 +83,9 @@ void main() {
         ),
       ),
     );
-    await tester.drag(find.byType(PageView), const Offset(-300, 0));
+    await tester.drag(find.byType(PageView), const Offset(-400, 0));
     await tester.pumpAndSettle();
-    expect(find.bySemanticsLabel('Step 1 of 3'), findsOneWidget);
+    expect(find.bySemanticsLabel('Step 2 of 3'), findsOneWidget);
   });
 
   testWidgets('primary action on last page invokes onComplete', (tester) async {

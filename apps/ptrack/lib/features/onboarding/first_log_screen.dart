@@ -18,25 +18,49 @@ class FirstLogScreen extends StatefulWidget {
 }
 
 class _FirstLogScreenState extends State<FirstLogScreen> {
-  late DateTime _selectedDate;
+  late DateTime _startDate;
+  late DateTime _endDate;
+  bool _periodHasEnded = false;
   bool _isSaving = false;
 
   @override
   void initState() {
     super.initState();
     final n = DateTime.now();
-    _selectedDate = DateTime(n.year, n.month, n.day);
+    _startDate = DateTime(n.year, n.month, n.day);
+    _endDate = _startDate;
   }
 
-  Future<void> _pickDate() async {
+  void _syncEndAfterStartChange() {
+    if (_endDate.isBefore(_startDate)) {
+      _endDate = _startDate;
+    }
+  }
+
+  Future<void> _pickStartDate() async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate,
+      initialDate: _startDate,
       firstDate: DateTime.now().subtract(const Duration(days: 365)),
       lastDate: DateTime.now(),
     );
     if (picked != null && mounted) {
-      setState(() => _selectedDate = picked);
+      setState(() {
+        _startDate = picked;
+        _syncEndAfterStartChange();
+      });
+    }
+  }
+
+  Future<void> _pickEndDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _endDate,
+      firstDate: _startDate,
+      lastDate: DateTime.now(),
+    );
+    if (picked != null && mounted) {
+      setState(() => _endDate = picked);
     }
   }
 
@@ -44,13 +68,20 @@ class _FirstLogScreenState extends State<FirstLogScreen> {
     if (_isSaving) return;
     setState(() => _isSaving = true);
 
-    final span = PeriodSpan(
-      startUtc: DateTime.utc(
-        _selectedDate.year,
-        _selectedDate.month,
-        _selectedDate.day,
-      ),
+    final startUtc = DateTime.utc(
+      _startDate.year,
+      _startDate.month,
+      _startDate.day,
     );
+    final endUtc = _periodHasEnded
+        ? DateTime.utc(
+            _endDate.year,
+            _endDate.month,
+            _endDate.day,
+          )
+        : null;
+
+    final span = PeriodSpan(startUtc: startUtc, endUtc: endUtc);
 
     final outcome = await widget.repository.insertPeriod(span);
 
@@ -83,7 +114,8 @@ class _FirstLogScreenState extends State<FirstLogScreen> {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final loc = MaterialLocalizations.of(context);
-    final dateLabel = loc.formatFullDate(_selectedDate);
+    final startLabel = loc.formatFullDate(_startDate);
+    final endLabel = loc.formatFullDate(_endDate);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Log your first period')),
@@ -101,18 +133,56 @@ class _FirstLogScreenState extends State<FirstLogScreen> {
             const SizedBox(height: 24),
             Card(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   children: [
-                    Expanded(child: Text(dateLabel)),
+                    Expanded(child: Text(startLabel)),
                     TextButton(
-                      onPressed: _isSaving ? null : _pickDate,
+                      onPressed: _isSaving ? null : _pickStartDate,
                       child: const Text('Change date'),
                     ),
                   ],
                 ),
               ),
             ),
+            const SizedBox(height: 8),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('This period has already ended'),
+              subtitle: const Text(
+                'Optional — add a last bleeding day if it is not ongoing.',
+              ),
+              value: _periodHasEnded,
+              onChanged: _isSaving
+                  ? null
+                  : (v) {
+                      setState(() {
+                        _periodHasEnded = v;
+                        if (v && _endDate.isBefore(_startDate)) {
+                          _endDate = _startDate;
+                        }
+                      });
+                    },
+            ),
+            if (_periodHasEnded) ...[
+              const SizedBox(height: 8),
+              Card(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Row(
+                    children: [
+                      Expanded(child: Text(endLabel)),
+                      TextButton(
+                        onPressed: _isSaving ? null : _pickEndDate,
+                        child: const Text('Change end date'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
             const Spacer(),
             FilledButton(
               onPressed: _isSaving ? null : _save,

@@ -100,3 +100,13 @@ feedback_logged: 2
   missing:
     - "Optional end date (on or after start) for completed past periods, with repository/validation alignment"
   debug_session: ""
+
+## Gap closure (implemented in repo, 2026-04-05)
+
+Addressed outside formal `gap_closure` PLAN files (none existed for Phase 3):
+
+- **Swipe:** `OnboardingScreen` no longer applies `NeverScrollableScrollPhysics` on required pages; horizontal swipe advances like **Continue**; step still persisted in `onPageChanged`.
+- **Skip on last step:** For the final optional page only, controls are a full-width **Get Started** (no redundant **Skip**). Middle optional pages would still show Skip + primary if added later.
+- **First log end date:** `FirstLogScreen` adds **This period has already ended** with optional **Change end date**; save sends `PeriodSpan` with `endUtc` when enabled (same-day default allowed).
+
+Re-run **Test 4** manually after install to confirm.

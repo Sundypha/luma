@@ -79,9 +79,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               child: PageView.builder(
                 controller: _controller,
                 itemCount: onboardingPages.length,
-                physics: requiredNow
-                    ? const NeverScrollableScrollPhysics()
-                    : null,
                 onPageChanged: (index) {
                   setState(() => _currentPage = index);
                   widget.onboardingState.saveStep(index);
@@ -113,6 +110,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                   const SizedBox(height: 24),
                   if (requiredNow)
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        onPressed: _isAdvancing ? null : _goToNext,
+                        child: Text(_primaryLabel),
+                      ),
+                    )
+                  else if (_isLastPage)
                     SizedBox(
                       width: double.infinity,
                       child: FilledButton(
