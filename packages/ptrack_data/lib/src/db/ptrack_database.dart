@@ -13,7 +13,7 @@ import 'tables.dart';
 part 'ptrack_database.g.dart';
 
 /// Supported on-disk schema version (`PRAGMA user_version` after migrations).
-const int ptrackSupportedSchemaVersion = 1;
+const int ptrackSupportedSchemaVersion = 2;
 
 /// Opens a [QueryExecutor] for the ptrack SQLite database.
 ///
@@ -48,7 +48,7 @@ PtrackDatabase openPtrackDatabase({String? databasePath}) {
   return PtrackDatabase(openPtrackQueryExecutor(databasePath: databasePath));
 }
 
-@DriftDatabase(tables: [Periods])
+@DriftDatabase(tables: [Periods, DayEntries])
 class PtrackDatabase extends _$PtrackDatabase {
   PtrackDatabase(super.e);
 
@@ -68,8 +68,13 @@ class PtrackDatabase extends _$PtrackDatabase {
           );
           await m.database.transaction(() async {
             if (from >= to) return;
-            // Future schema bumps: perform steps here inside this transaction.
+            if (from < 2) {
+              await m.createTable(dayEntries);
+            }
           });
+        },
+        beforeOpen: (details) async {
+          await customStatement('PRAGMA foreign_keys = ON');
         },
       );
 }

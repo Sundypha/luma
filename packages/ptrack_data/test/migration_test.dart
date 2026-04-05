@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ptrack_data/ptrack_data.dart';
+import 'package:ptrack_data/src/db/ptrack_database.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
@@ -11,7 +12,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('migrations and schema guard', () {
-    test('fresh database creates v1 schema and rows persist', () async {
+    test('fresh database creates current schema and rows persist', () async {
       final path = createTempSqlitePath();
       var db = openPtrackDatabase(databasePath: path);
       final start = DateTime.utc(2024, 5, 1);
@@ -51,9 +52,92 @@ void main() {
       expect(second.endUtc, isNull);
 
       final uv = await _readUserVersion(db);
-      expect(uv, 1);
+      expect(uv, ptrackSupportedSchemaVersion);
       await db.close();
     });
+
+    test('committed v2 fixture opens at schema 2 with expected rows', () async {
+      final fixture = File('test/fixtures/ptrack_v2.sqlite');
+      expect(fixture.existsSync(), isTrue, reason: 'run tool/create_v2_fixture.dart');
+
+      final path = createTempSqlitePath();
+      await fixture.copy(path);
+
+      final db = openPtrackDatabase(databasePath: path);
+      try {
+        expect(await _readUserVersion(db), ptrackSupportedSchemaVersion);
+        final periods = await db.select(db.periods).get();
+        expect(periods, hasLength(2));
+        final days = await db.select(db.dayEntries).get();
+        expect(days, hasLength(1));
+        expect(
+          dayEntryRowToDomain(days.single),
+          DayEntryData(
+            dateUtc: DateTime.utc(2024, 2, 2),
+            flowIntensity: FlowIntensity.medium,
+            painScore: PainScore.mild,
+            mood: Mood.good,
+            notes: 'fixture v2',
+          ),
+        );
+      } finally {
+        await db.close();
+      }
+    });
+
+    test(
+      'v1 fixture upgrades to v2 with DayEntries table and preserves periods',
+      () async {
+        final fixture = File('test/fixtures/ptrack_v1.sqlite');
+        expect(fixture.existsSync(), isTrue, reason: 'run tool/create_v1_fixture.dart');
+
+        final path = createTempSqlitePath();
+        await fixture.copy(path);
+
+        final db = openPtrackDatabase(databasePath: path);
+        try {
+          expect(await _readUserVersion(db), ptrackSupportedSchemaVersion);
+
+          final periods = await db.select(db.periods).get();
+          expect(periods, hasLength(2));
+          expect(periodRowToDomain(periods[0]).startUtc, DateTime.utc(2024, 2, 1));
+          expect(periodRowToDomain(periods[1]).startUtc, DateTime.utc(2024, 3, 1));
+
+          final day = DayEntryData(
+            dateUtc: DateTime.utc(2024, 2, 3),
+            flowIntensity: FlowIntensity.light,
+            painScore: PainScore.none,
+            mood: Mood.good,
+            notes: 'ok',
+          );
+          await db.into(db.dayEntries).insert(
+                dayEntryDataToInsertCompanion(periods.first.id, day),
+              );
+
+          final days = await db.select(db.dayEntries).get();
+          expect(days, hasLength(1));
+          expect(dayEntryRowToDomain(days.single), day);
+
+          await expectLater(
+            db.into(db.dayEntries).insert(
+                  DayEntriesCompanion.insert(
+                    periodId: 99999,
+                    dateUtc: DateTime.utc(2024, 1, 1),
+                  ),
+                ),
+            throwsA(
+              predicate<Object>(
+                (e) =>
+                    e.toString().contains('FOREIGN KEY') ||
+                    e.toString().contains('foreign key'),
+              ),
+            ),
+          );
+        } finally {
+          await db.close();
+        }
+      },
+    );
 
     test('on-disk user_version newer than app fails closed', () async {
       final path = createTempSqlitePath();

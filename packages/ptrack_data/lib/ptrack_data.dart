@@ -9,6 +9,11 @@ export 'src/db/ptrack_database.dart'
         openPtrackDatabase,
         openPtrackQueryExecutor,
         ptrackSupportedSchemaVersion;
+export 'src/mappers/day_entry_mapper.dart'
+    show
+        dayEntryDataToInsertCompanion,
+        dayEntryDataToUpdateCompanion,
+        dayEntryRowToDomain;
 export 'src/mappers/period_mapper.dart'
     show
         periodRowToDomain,
