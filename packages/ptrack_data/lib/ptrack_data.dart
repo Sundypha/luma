@@ -9,6 +9,7 @@ export 'src/db/ptrack_database.dart'
         openPtrackDatabase,
         openPtrackQueryExecutor,
         ptrackSupportedSchemaVersion;
+export 'package:ptrack_domain/ptrack_domain.dart' show DayEntryData;
 export 'src/mappers/day_entry_mapper.dart'
     show
         dayEntryDataToInsertCompanion,
@@ -26,7 +27,9 @@ export 'src/repositories/period_repository.dart'
         PeriodWriteOutcome,
         PeriodWriteRejected,
         PeriodWriteSuccess,
-        StoredPeriod;
+        StoredDayEntry,
+        StoredPeriod,
+        StoredPeriodWithDays;
 export 'src/prediction/prediction_coordinator.dart'
     show
         PredictionCoordinator,
