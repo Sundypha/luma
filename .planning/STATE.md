@@ -12,15 +12,15 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 Phase: **4** of 8 (Core logging)
 
-**Current Plan:** 3 — next: `04-03-PLAN.md` (logging bottom sheet)
+**Current Plan:** 3 — **`04-03-PLAN.md`** blocked at **Task 3** (`checkpoint:human-verify`)
 
 **Total Plans in Phase:** 3
 
-Plan: **2** of **3** complete in Phase 4 (`04-01`, `04-02` delivered 2026-04-05)
+Plan: **2** of **3** automated tasks complete for `04-03` (Tasks 1–2 committed); **Task 3** awaits on-device verification per `04-03-PLAN.md`.
 
-Status: **Phase 4 in progress** — repository watch/cascade/day CRUD and home period list shipped. Next: `04-03`.
+Status: **Phase 4 in progress** — logging bottom sheet, list edit/delete, and widget tests are shipped; **human verification** of the full logging flow is **pending** (see `.planning/phases/04-core-logging/04-03-SUMMARY.md`).
 
-Last activity: 2026-04-05 — Completed **`04-02`** (repository extensions + HomeScreen).
+Last activity: 2026-04-05 — **`04-03`** Tasks 1–2 executed; checkpoint documented.
 
 **Progress:** [█████████░] 92%
 
@@ -54,6 +54,7 @@ Last activity: 2026-04-05 — Completed **`04-02`** (repository extensions + Hom
 | Phase 03-onboarding P03 (gap_closure) | 15min | 3 tasks | 4 files |
 | Phase 04-core-logging P01 | 40min | 2 tasks | 12 files |
 | Phase 04-core-logging P02 | 45min | 2 tasks | 7 files |
+| Phase 04-core-logging P03 (partial) | — | 2 tasks auto; Task 3 verify pending | 7 files |
 
 ## Accumulated Context
 
@@ -78,16 +79,18 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 
 ### Pending Todos
 
-Execute **`04-03-PLAN.md`** (logging bottom sheet: FAB, create/edit, confirmations).
+**`04-03` Task 3 (human-verify):** Run `fvm flutter run` in `apps/ptrack` and follow the manual checklist in **`04-03-PLAN.md`** (Task 3). Confirm with “approved” or file issues. Until then, do not mark LOG requirements complete for this plan.
+
+After approval: refresh `04-03-SUMMARY.md` frontmatter (`requirements-completed`, remove checkpoint), advance plan state, and mark requirements in `REQUIREMENTS.md` if applicable.
 
 ### Blockers/Concerns
 
-None.
+**Checkpoint:** `04-03` Task 3 requires human verification on a real device/emulator (not automatable approval).
 
 ## Session Continuity
 
 Last session: 2026-04-05
 
-Stopped at: **Completed `04-02-PLAN.md`** — SUMMARY and planning metadata committed.
+Stopped at: **`04-03-PLAN.md` Task 3** — human-verify checkpoint (Tasks 1–2 committed; see `04-03-SUMMARY.md`).
 
-Resume: `/gsd-execute-phase 4` or execute **`04-03-PLAN.md`** next.
+Resume: Complete Task 3 manual steps, then update planning docs / requirements; or continue other work with checkpoint noted above.

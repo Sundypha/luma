@@ -117,7 +117,7 @@ Plans:
 
 - [x] `04-01-PLAN.md` — Domain enums (flow/pain/mood), DayEntries Drift table, schema v1→v2 migration with FK enforcement, mappers — complete 2026-04-05
 - [x] `04-02-PLAN.md` — Repository extensions (watch, delete, day entry CRUD), home screen with period history list — complete 2026-04-05
-- [ ] `04-03-PLAN.md` — Logging bottom sheet (create + edit), delete with confirmation, hybrid validation, widget tests, human-verify
+- [ ] `04-03-PLAN.md` — Logging bottom sheet (create + edit), delete with confirmation, hybrid validation, widget tests, human-verify *(Tasks 1–2 done 2026-04-05; **Task 3 human-verify pending** — see `04-03-SUMMARY.md`)*
 
 ### Phase 5: Calendar, home & cycle surfaces
 
