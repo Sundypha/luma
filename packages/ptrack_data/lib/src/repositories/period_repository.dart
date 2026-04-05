@@ -93,7 +93,9 @@ class PeriodRepository {
   /// Inserts [candidate] after validation, or returns [PeriodWriteRejected].
   Future<PeriodWriteOutcome> insertPeriod(PeriodSpan candidate) {
     return _db.transaction(() async {
-      final rows = await _db.select(_db.periods).get();
+      final rows = await (_db.select(_db.periods)
+            ..orderBy([(t) => OrderingTerm.asc(t.startUtc)]))
+          .get();
       final existing = rows.map(periodRowToDomain).toList();
       final result = PeriodValidation.validateForSave(
         candidate: candidate,
@@ -113,7 +115,9 @@ class PeriodRepository {
   /// Updates the row [id] to [candidate] after validation, or rejects / not-found.
   Future<PeriodWriteOutcome> updatePeriod(int id, PeriodSpan candidate) {
     return _db.transaction(() async {
-      final rows = await _db.select(_db.periods).get();
+      final rows = await (_db.select(_db.periods)
+            ..orderBy([(t) => OrderingTerm.asc(t.startUtc)]))
+          .get();
       final byId = {for (final r in rows) r.id: r};
       if (!byId.containsKey(id)) {
         return PeriodWriteNotFound(id);

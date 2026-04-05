@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:ptrack/features/logging/home_screen.dart';
 import 'package:ptrack_data/ptrack_data.dart';
+import 'package:ptrack_domain/ptrack_domain.dart';
 
 class MockPeriodRepository extends Mock implements PeriodRepository {}
 
@@ -13,10 +14,12 @@ void main() {
 
   late MockPeriodRepository mockRepo;
   late MockPtrackDatabase mockDb;
+  late PeriodCalendarContext calendar;
 
   setUp(() {
     mockRepo = MockPeriodRepository();
     mockDb = MockPtrackDatabase();
+    calendar = PeriodCalendarContext.fromTimeZoneName('UTC');
     when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
       (_) => Stream<List<StoredPeriodWithDays>>.value(const []),
     );
@@ -25,7 +28,11 @@ void main() {
   testWidgets('home shows empty state and ptrack title', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: HomeScreen(repository: mockRepo, database: mockDb),
+        home: HomeScreen(
+          repository: mockRepo,
+          database: mockDb,
+          calendar: calendar,
+        ),
       ),
     );
     await tester.pump();
@@ -37,7 +44,11 @@ void main() {
   testWidgets('About opens from home AppBar', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: HomeScreen(repository: mockRepo, database: mockDb),
+        home: HomeScreen(
+          repository: mockRepo,
+          database: mockDb,
+          calendar: calendar,
+        ),
       ),
     );
     await tester.pump();

@@ -33,6 +33,7 @@ Future<void> main() async {
       onboardingState: onboardingState,
       repository: repository,
       database: db,
+      calendar: calendar,
       initialScreen: initialScreen,
     ),
   );
@@ -62,6 +63,7 @@ class PtrackApp extends StatefulWidget {
     this.onboardingState,
     this.repository,
     this.database,
+    this.calendar,
     this.initialScreen,
     this.homeOverride,
   }) : assert(
@@ -69,6 +71,7 @@ class PtrackApp extends StatefulWidget {
               (onboardingState != null &&
                   repository != null &&
                   database != null &&
+                  calendar != null &&
                   initialScreen != null),
         );
 
@@ -78,6 +81,7 @@ class PtrackApp extends StatefulWidget {
   final OnboardingState? onboardingState;
   final PeriodRepository? repository;
   final PtrackDatabase? database;
+  final PeriodCalendarContext? calendar;
   final AppScreen? initialScreen;
 
   @override
@@ -113,6 +117,7 @@ class _PtrackAppState extends State<PtrackApp> {
     final onboardingState = widget.onboardingState!;
     final repository = widget.repository!;
     final database = widget.database!;
+    final calendar = widget.calendar!;
 
     Widget home;
     switch (_screen) {
@@ -127,7 +132,11 @@ class _PtrackAppState extends State<PtrackApp> {
           onComplete: () => setState(() => _screen = AppScreen.home),
         );
       case AppScreen.home:
-        home = HomeScreen(repository: repository, database: database);
+        home = HomeScreen(
+          repository: repository,
+          database: database,
+          calendar: calendar,
+        );
     }
 
     return MaterialApp(

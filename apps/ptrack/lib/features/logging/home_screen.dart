@@ -3,6 +3,8 @@ import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 
 import '../settings/about_screen.dart';
+import '../settings/mood_settings.dart';
+import 'logging_bottom_sheet.dart';
 
 /// Home logging surface: reverse-chronological periods with expandable day rows.
 class HomeScreen extends StatelessWidget {
@@ -10,12 +12,32 @@ class HomeScreen extends StatelessWidget {
     super.key,
     required this.repository,
     required this.database,
+    required this.calendar,
   });
 
   final PeriodRepository repository;
   // Reserved for plan 03 bottom sheet / direct DB access; kept for wiring from main.
   // ignore: unused_field
   final PtrackDatabase database;
+  final PeriodCalendarContext calendar;
+
+  void _openSettings(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Settings'),
+        content: const SingleChildScrollView(
+          child: MoodSettingsTile(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +45,11 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('ptrack'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: 'Settings',
+            onPressed: () => _openSettings(context),
+          ),
           IconButton(
             icon: const Icon(Icons.info_outline),
             tooltip: 'About',
@@ -71,8 +98,10 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         tooltip: 'Log period',
         onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Coming in next plan')),
+          showLoggingBottomSheet(
+            context,
+            repository: repository,
+            calendar: calendar,
           );
         },
         child: const Icon(Icons.add),
@@ -128,24 +157,24 @@ class _PeriodExpansionTile extends StatelessWidget {
         : '${_inclusiveUtcDaySpan(span)} days';
 
     return ExpansionTile(
-        title: Text(title),
-        subtitle: Text(subtitle),
-        children: item.dayEntries.isEmpty
-            ? [
-                const ListTile(
-                  title: Text('No daily details logged'),
-                ),
-              ]
-            : [
-                for (final day in item.dayEntries)
-                  ListTile(
-                    title: Text(
-                      loc.formatMediumDate(day.data.dateUtc.toLocal()),
-                    ),
-                    subtitle: Text(_dayEntrySummary(day.data)),
-                    isThreeLine: true,
+      title: Text(title),
+      subtitle: Text(subtitle),
+      children: item.dayEntries.isEmpty
+          ? [
+              const ListTile(
+                title: Text('No daily details logged'),
+              ),
+            ]
+          : [
+              for (final day in item.dayEntries)
+                ListTile(
+                  title: Text(
+                    loc.formatMediumDate(day.data.dateUtc.toLocal()),
                   ),
-              ],
+                  subtitle: Text(_dayEntrySummary(day.data)),
+                  isThreeLine: true,
+                ),
+            ],
     );
   }
 }
