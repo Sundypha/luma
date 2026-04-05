@@ -12,23 +12,23 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 Phase: **4** of 8 (Core logging)
 
-**Current Plan:** —
+**Current Plan:** `04-02-PLAN.md` (next)
 
-**Total Plans in Phase:** TBD (roadmap: plans not yet authored)
+**Total Plans in Phase:** 3
 
-Plan: — of — in current phase
+Plan: **1** of **3** complete in Phase 4 (`04-01` delivered 2026-04-05)
 
-Status: **Phase 3 complete** (2026-04-05). All Phase 3 plans delivered including **`03-02` Task 2 human verification** (user approved). Gap closure documented in **`03-03`**.
+Status: **Phase 4 in progress** — `04-01` complete (DayEntries schema v2, domain enums, mappers, fixtures). Next: `04-02`.
 
-Last activity: 2026-04-05 — Phase 3 finalized; focus advances to Phase 4.
+Last activity: 2026-04-05 — Completed **`04-01`** (core logging data foundation).
 
-**Progress:** [███░░░░░░░] 38% (3/8 phases complete)
+**Progress:** [█████████░] 85%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: —
 - Total execution time: —
 
@@ -42,7 +42,7 @@ Last activity: 2026-04-05 — Phase 3 finalized; focus advances to Phase 4.
 
 **Recent Trend:**
 
-- Last 5 plans: 03-01, 03-02, 03-03, —
+- Last 5 plans: 03-03, 04-01, —
 - Trend: —
 
 *Updated after each plan completion*
@@ -52,6 +52,7 @@ Last activity: 2026-04-05 — Phase 3 finalized; focus advances to Phase 4.
 | Phase 3 P01 | 28min | 3 tasks | 8 files |
 | Phase 03-onboarding P02 | 35min | 1 tasks | 7 files |
 | Phase 03-onboarding P03 (gap_closure) | 15min | 3 tasks | 4 files |
+| Phase 04-core-logging P01 | 40min | 2 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -69,10 +70,12 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 03-onboarding]: Onboarding tests use InMemorySharedPreferencesAsync for SharedPreferencesWithCache.
 - [Phase 03 gap closure]: UAT gaps resolved in `37471f7` + `03-03` planning.
 - [Phase 3 closeout 2026-04-05]: **`03-02` Task 2** human verification approved by user (“pass”); phase milestone finalized.
+- [Phase 04-core-logging]: create_v2_fixture uses raw sqlite3 so fvm dart run works without dart:ui
+- [Phase 04-core-logging]: day_entry mapper normalizes dateUtc to UTC calendar midnight for Drift DateTime round-trip
 
 ### Pending Todos
 
-None yet for Phase 4 until plans exist.
+Execute **`04-02-PLAN.md`** (repository / home list), then **`04-03-PLAN.md`** (logging bottom sheet).
 
 ### Blockers/Concerns
 
@@ -82,6 +85,6 @@ None.
 
 Last session: 2026-04-05
 
-Stopped at: **Phase 4 planned** — 3 plans in 3 waves, verified by plan checker.
+Stopped at: **Completed `04-01-PLAN.md`** — SUMMARY and planning metadata committed.
 
-Resume: `/gsd-execute-phase 4` to execute core logging plans.
+Resume: `/gsd-execute-phase 4` or execute **`04-02-PLAN.md`** next.
