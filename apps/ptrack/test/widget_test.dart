@@ -1,26 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ptrack/main.dart';
-import 'package:ptrack_domain/ptrack_domain.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:ptrack/features/logging/home_screen.dart';
+import 'package:ptrack_data/ptrack_data.dart';
+
+class MockPeriodRepository extends Mock implements PeriodRepository {}
+
+class MockPtrackDatabase extends Mock implements PtrackDatabase {}
 
 void main() {
-  testWidgets('shows domain and data package labels', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const PtrackApp(
-        homeOverride: HomePage(),
-      ),
-    );
+  TestWidgetsFlutterBinding.ensureInitialized();
 
-    expect(find.textContaining(PtrackDomain.packageName), findsWidgets);
-    expect(find.byType(MaterialApp), findsOneWidget);
+  late MockPeriodRepository mockRepo;
+  late MockPtrackDatabase mockDb;
+
+  setUp(() {
+    mockRepo = MockPeriodRepository();
+    mockDb = MockPtrackDatabase();
+    when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
+      (_) => Stream<List<StoredPeriodWithDays>>.value(const []),
+    );
   });
 
-  testWidgets('About opens from home AppBar', (WidgetTester tester) async {
+  testWidgets('home shows empty state and ptrack title', (tester) async {
     await tester.pumpWidget(
-      const PtrackApp(
-        homeOverride: HomePage(),
+      MaterialApp(
+        home: HomeScreen(repository: mockRepo, database: mockDb),
       ),
     );
+    await tester.pump();
+    expect(find.text('ptrack'), findsWidgets);
+    expect(find.text('No periods logged yet'), findsOneWidget);
+    expect(find.textContaining('Tap + to log'), findsOneWidget);
+  });
+
+  testWidgets('About opens from home AppBar', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: HomeScreen(repository: mockRepo, database: mockDb),
+      ),
+    );
+    await tester.pump();
     await tester.tap(find.byTooltip('About'));
     await tester.pumpAndSettle();
     expect(find.text('About ptrack'), findsOneWidget);

@@ -4,10 +4,10 @@ import 'package:ptrack_domain/ptrack_domain.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
+import 'features/logging/home_screen.dart';
 import 'features/onboarding/first_log_screen.dart';
 import 'features/onboarding/onboarding_screen.dart';
 import 'features/onboarding/onboarding_state.dart';
-import 'features/settings/about_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +32,7 @@ Future<void> main() async {
     PtrackApp(
       onboardingState: onboardingState,
       repository: repository,
+      database: db,
       initialScreen: initialScreen,
     ),
   );
@@ -60,12 +61,14 @@ class PtrackApp extends StatefulWidget {
     super.key,
     this.onboardingState,
     this.repository,
+    this.database,
     this.initialScreen,
     this.homeOverride,
   }) : assert(
           homeOverride != null ||
               (onboardingState != null &&
                   repository != null &&
+                  database != null &&
                   initialScreen != null),
         );
 
@@ -74,6 +77,7 @@ class PtrackApp extends StatefulWidget {
 
   final OnboardingState? onboardingState;
   final PeriodRepository? repository;
+  final PtrackDatabase? database;
   final AppScreen? initialScreen;
 
   @override
@@ -108,6 +112,7 @@ class _PtrackAppState extends State<PtrackApp> {
 
     final onboardingState = widget.onboardingState!;
     final repository = widget.repository!;
+    final database = widget.database!;
 
     Widget home;
     switch (_screen) {
@@ -122,49 +127,13 @@ class _PtrackAppState extends State<PtrackApp> {
           onComplete: () => setState(() => _screen = AppScreen.home),
         );
       case AppScreen.home:
-        home = const HomePage();
+        home = HomeScreen(repository: repository, database: database);
     }
 
     return MaterialApp(
       title: 'ptrack',
       theme: theme,
       home: home,
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('ptrack'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.info_outline),
-            tooltip: 'About',
-            onPressed: () {
-              Navigator.of(context).push<void>(
-                MaterialPageRoute<void>(
-                  builder: (context) => const AboutScreen(),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Domain: ${PtrackDomain.packageName}'),
-            Text('Data: ${PtrackData.packageName}'),
-          ],
-        ),
-      ),
     );
   }
 }
