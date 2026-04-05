@@ -107,6 +107,14 @@ class _FirstLogScreenState extends State<FirstLogScreen> {
           ),
         );
         setState(() => _isSaving = false);
+      case PeriodWriteBlockedByOrphanDayEntries():
+        // insertPeriod does not return this outcome.
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not save — please try again.'),
+          ),
+        );
+        setState(() => _isSaving = false);
     }
   }
 

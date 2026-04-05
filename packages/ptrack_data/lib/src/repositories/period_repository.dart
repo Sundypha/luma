@@ -69,6 +69,20 @@ final class PeriodWriteNotFound extends PeriodWriteOutcome {
   final int id;
 }
 
+/// [updatePeriod] only: day entries would fall outside the new span unless
+/// resolved (delete or split into another period).
+final class PeriodWriteBlockedByOrphanDayEntries extends PeriodWriteOutcome {
+  const PeriodWriteBlockedByOrphanDayEntries({
+    required this.periodId,
+    required this.orphanEntryIds,
+    required this.orphanDatesUtc,
+  });
+
+  final int periodId;
+  final List<int> orphanEntryIds;
+  final List<DateTime> orphanDatesUtc;
+}
+
 /// Validates against existing rows and persists using Drift transactions.
 class PeriodRepository {
   PeriodRepository({
@@ -113,6 +127,9 @@ class PeriodRepository {
   }
 
   /// Updates the row [id] to [candidate] after validation, or rejects / not-found.
+  ///
+  /// If any day entry's calendar day falls outside the inclusive new span,
+  /// returns [PeriodWriteBlockedByOrphanDayEntries] without writing.
   Future<PeriodWriteOutcome> updatePeriod(int id, PeriodSpan candidate) {
     return _db.transaction(() async {
       final rows = await (_db.select(_db.periods)
@@ -134,6 +151,10 @@ class PeriodRepository {
       if (!result.isValid) {
         return PeriodWriteRejected(result.issues);
       }
+      final blocked = await _orphanDayEntriesOutsideSpan(id, candidate);
+      if (blocked != null) {
+        return blocked;
+      }
       final updated = await (_db.update(_db.periods)
             ..where((t) => t.id.equals(id)))
           .write(periodSpanToUpdateCompanion(candidate));
@@ -142,6 +163,190 @@ class PeriodRepository {
       }
       return PeriodWriteSuccess(id);
     });
+  }
+
+  /// Deletes listed day rows (must match [updatePeriod]'s orphan report), then
+  /// applies the period update.
+  Future<PeriodWriteOutcome> updatePeriodDeletingOrphanDayEntries(
+    int id,
+    PeriodSpan candidate,
+    List<int> orphanDayEntryIds,
+  ) {
+    return _db.transaction(() async {
+      final blocked = await _orphanDayEntriesOutsideSpan(id, candidate);
+      if (blocked == null) {
+        return _updatePeriodAfterOrphansHandled(id, candidate);
+      }
+      final expected = blocked.orphanEntryIds.toSet();
+      if (expected.length != orphanDayEntryIds.length ||
+          !orphanDayEntryIds.every(expected.contains)) {
+        return PeriodWriteNotFound(id);
+      }
+      for (final oid in orphanDayEntryIds) {
+        await (_db.delete(_db.dayEntries)..where((t) => t.id.equals(oid))).go();
+      }
+      return _updatePeriodAfterOrphansHandled(id, candidate);
+    });
+  }
+
+  /// Moves orphan day rows to a new period spanning their min–max calendar
+  /// days (inclusive), then applies [candidate] to the original period.
+  Future<PeriodWriteOutcome> updatePeriodSplittingOrphansIntoNewPeriod(
+    int id,
+    PeriodSpan candidate,
+    List<int> orphanDayEntryIds,
+  ) {
+    return _db.transaction(() async {
+      final blocked = await _orphanDayEntriesOutsideSpan(id, candidate);
+      if (blocked == null) {
+        return _updatePeriodAfterOrphansHandled(id, candidate);
+      }
+      final expected = blocked.orphanEntryIds.toSet();
+      if (expected.length != orphanDayEntryIds.length ||
+          !orphanDayEntryIds.every(expected.contains)) {
+        return PeriodWriteNotFound(id);
+      }
+
+      final rows = await (_db.select(_db.periods)
+            ..orderBy([(t) => OrderingTerm.asc(t.startUtc)]))
+          .get();
+      if (!rows.any((r) => r.id == id)) {
+        return PeriodWriteNotFound(id);
+      }
+
+      final orphanRows = await (_db.select(_db.dayEntries)
+            ..where((t) => t.id.isIn(orphanDayEntryIds)))
+          .get();
+      if (orphanRows.length != orphanDayEntryIds.length) {
+        return PeriodWriteNotFound(id);
+      }
+      for (final r in orphanRows) {
+        if (r.periodId != id) {
+          return PeriodWriteNotFound(id);
+        }
+      }
+
+      DateTime cal(DateTime d) => DateTime.utc(d.year, d.month, d.day);
+
+      var minD = cal(orphanRows.first.dateUtc);
+      var maxD = minD;
+      for (final r in orphanRows) {
+        final c = cal(r.dateUtc);
+        if (c.isBefore(minD)) minD = c;
+        if (c.isAfter(maxD)) maxD = c;
+      }
+      final newChildSpan = PeriodSpan(startUtc: minD, endUtc: maxD);
+
+      final existingForNewChild = <PeriodSpan>[
+        for (final r in rows)
+          if (r.id == id) candidate else periodRowToDomain(r),
+      ];
+      final newChildResult = PeriodValidation.validateForSave(
+        candidate: newChildSpan,
+        existing: existingForNewChild,
+        calendar: _calendar,
+      );
+      if (!newChildResult.isValid) {
+        return PeriodWriteRejected(newChildResult.issues);
+      }
+
+      final existingForShrink = <PeriodSpan>[
+        for (final r in rows)
+          if (r.id != id) periodRowToDomain(r),
+      ];
+      final shrinkResult = PeriodValidation.validateForSave(
+        candidate: candidate,
+        existing: existingForShrink,
+        calendar: _calendar,
+      );
+      if (!shrinkResult.isValid) {
+        return PeriodWriteRejected(shrinkResult.issues);
+      }
+
+      final newPeriodId = await _db.into(_db.periods).insert(
+            periodSpanToInsertCompanion(newChildSpan),
+          );
+      for (final oid in orphanDayEntryIds) {
+        await (_db.update(_db.dayEntries)..where((t) => t.id.equals(oid)))
+            .write(DayEntriesCompanion(periodId: Value(newPeriodId)));
+      }
+
+      final updated = await (_db.update(_db.periods)
+            ..where((t) => t.id.equals(id)))
+          .write(periodSpanToUpdateCompanion(candidate));
+      if (updated == 0) {
+        return PeriodWriteNotFound(id);
+      }
+      return PeriodWriteSuccess(id);
+    });
+  }
+
+  Future<PeriodWriteOutcome> _updatePeriodAfterOrphansHandled(
+    int id,
+    PeriodSpan candidate,
+  ) async {
+    final rows = await (_db.select(_db.periods)
+          ..orderBy([(t) => OrderingTerm.asc(t.startUtc)]))
+        .get();
+    if (!rows.any((r) => r.id == id)) {
+      return PeriodWriteNotFound(id);
+    }
+    final existing = <PeriodSpan>[
+      for (final r in rows)
+        if (r.id != id) periodRowToDomain(r),
+    ];
+    final result = PeriodValidation.validateForSave(
+      candidate: candidate,
+      existing: existing,
+      calendar: _calendar,
+    );
+    if (!result.isValid) {
+      return PeriodWriteRejected(result.issues);
+    }
+    final blocked = await _orphanDayEntriesOutsideSpan(id, candidate);
+    if (blocked != null) {
+      return blocked;
+    }
+    final updated = await (_db.update(_db.periods)
+          ..where((t) => t.id.equals(id)))
+        .write(periodSpanToUpdateCompanion(candidate));
+    if (updated == 0) {
+      return PeriodWriteNotFound(id);
+    }
+    return PeriodWriteSuccess(id);
+  }
+
+  Future<PeriodWriteBlockedByOrphanDayEntries?> _orphanDayEntriesOutsideSpan(
+    int periodId,
+    PeriodSpan span,
+  ) async {
+    final dayRows = await (_db.select(_db.dayEntries)
+          ..where((t) => t.periodId.equals(periodId)))
+        .get();
+    final orphans = <DayEntry>[];
+    for (final r in dayRows) {
+      final d = DateTime.utc(
+        r.dateUtc.year,
+        r.dateUtc.month,
+        r.dateUtc.day,
+      );
+      if (!span.containsCalendarDayUtc(d)) {
+        orphans.add(r);
+      }
+    }
+    if (orphans.isEmpty) return null;
+    return PeriodWriteBlockedByOrphanDayEntries(
+      periodId: periodId,
+      orphanEntryIds: [for (final o in orphans) o.id],
+      orphanDatesUtc: [
+        for (final o in orphans)
+          DateTime.utc(
+            o.dateUtc.year,
+            o.dateUtc.month,
+            o.dateUtc.day,
+          ),
+      ],
+    );
   }
 
   /// Reactive list of periods (newest [PeriodSpan.startUtc] first) with nested
@@ -283,16 +488,23 @@ class PeriodRepository {
         data.dateUtc.month,
         data.dateUtc.day,
       );
-      final existing = await (_db.select(_db.dayEntries)
-            ..where((t) => t.periodId.equals(periodId))
-            ..where((t) => t.dateUtc.equals(dateUtc)))
+      final dayRows = await (_db.select(_db.dayEntries)
+            ..where((t) => t.periodId.equals(periodId)))
           .get();
-      if (existing.isEmpty) {
+      DayEntry? match;
+      for (final r in dayRows) {
+        final rd = DateTime.utc(r.dateUtc.year, r.dateUtc.month, r.dateUtc.day);
+        if (rd == dateUtc) {
+          match = r;
+          break;
+        }
+      }
+      if (match == null) {
         return _db
             .into(_db.dayEntries)
             .insert(dayEntryDataToInsertCompanion(periodId, data));
       }
-      final id = existing.single.id;
+      final id = match.id;
       await (_db.update(_db.dayEntries)..where((t) => t.id.equals(id)))
           .write(dayEntryDataToUpdateCompanion(data));
       return id;

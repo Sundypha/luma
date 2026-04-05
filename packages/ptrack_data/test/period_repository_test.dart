@@ -251,6 +251,105 @@ void main() {
       await db.close();
     });
 
+    test('updatePeriod returns blocked when day entries fall outside new span',
+        () async {
+      final path = createTempSqlitePath();
+      final db = openPtrackDatabase(databasePath: path);
+      final repo = PeriodRepository(database: db, calendar: utcCtx);
+      final periodId = (await repo.insertPeriod(
+        PeriodSpan(
+          startUtc: DateTime.utc(2024, 8, 1),
+          endUtc: DateTime.utc(2024, 8, 10),
+        ),
+      ) as PeriodWriteSuccess)
+          .id;
+      await repo.saveDayEntry(
+        periodId,
+        DayEntryData(dateUtc: DateTime.utc(2024, 8, 9)),
+      );
+      final out = await repo.updatePeriod(
+        periodId,
+        PeriodSpan(
+          startUtc: DateTime.utc(2024, 8, 1),
+          endUtc: DateTime.utc(2024, 8, 5),
+        ),
+      );
+      expect(out, isA<PeriodWriteBlockedByOrphanDayEntries>());
+      final blocked = out as PeriodWriteBlockedByOrphanDayEntries;
+      expect(blocked.orphanEntryIds, hasLength(1));
+      await db.close();
+    });
+
+    test('updatePeriodDeletingOrphanDayEntries applies shrink', () async {
+      final path = createTempSqlitePath();
+      final db = openPtrackDatabase(databasePath: path);
+      final repo = PeriodRepository(database: db, calendar: utcCtx);
+      final periodId = (await repo.insertPeriod(
+        PeriodSpan(
+          startUtc: DateTime.utc(2024, 8, 1),
+          endUtc: DateTime.utc(2024, 8, 10),
+        ),
+      ) as PeriodWriteSuccess)
+          .id;
+      await repo.saveDayEntry(
+        periodId,
+        DayEntryData(dateUtc: DateTime.utc(2024, 8, 9)),
+      );
+      final newSpan = PeriodSpan(
+        startUtc: DateTime.utc(2024, 8, 1),
+        endUtc: DateTime.utc(2024, 8, 5),
+      );
+      final blocked = await repo.updatePeriod(periodId, newSpan);
+      expect(blocked, isA<PeriodWriteBlockedByOrphanDayEntries>());
+      final ids = (blocked as PeriodWriteBlockedByOrphanDayEntries).orphanEntryIds;
+      final done = await repo.updatePeriodDeletingOrphanDayEntries(
+        periodId,
+        newSpan,
+        ids,
+      );
+      expect(done, isA<PeriodWriteSuccess>());
+      expect(await db.select(db.dayEntries).get(), isEmpty);
+      final p = await (db.select(db.periods)..where((t) => t.id.equals(periodId)))
+          .getSingle();
+      expect(periodRowToDomain(p).endUtc, DateTime.utc(2024, 8, 5));
+      await db.close();
+    });
+
+    test('updatePeriodSplittingOrphansIntoNewPeriod moves rows', () async {
+      final path = createTempSqlitePath();
+      final db = openPtrackDatabase(databasePath: path);
+      final repo = PeriodRepository(database: db, calendar: utcCtx);
+      final periodId = (await repo.insertPeriod(
+        PeriodSpan(
+          startUtc: DateTime.utc(2024, 9, 1),
+          endUtc: DateTime.utc(2024, 9, 20),
+        ),
+      ) as PeriodWriteSuccess)
+          .id;
+      await repo.saveDayEntry(
+        periodId,
+        DayEntryData(dateUtc: DateTime.utc(2024, 9, 18)),
+      );
+      final newSpan = PeriodSpan(
+        startUtc: DateTime.utc(2024, 9, 1),
+        endUtc: DateTime.utc(2024, 9, 15),
+      );
+      final blocked = await repo.updatePeriod(periodId, newSpan);
+      final ids = (blocked as PeriodWriteBlockedByOrphanDayEntries).orphanEntryIds;
+      final done = await repo.updatePeriodSplittingOrphansIntoNewPeriod(
+        periodId,
+        newSpan,
+        ids,
+      );
+      expect(done, isA<PeriodWriteSuccess>());
+      final periods = await db.select(db.periods).get();
+      expect(periods, hasLength(2));
+      final days = await db.select(db.dayEntries).get();
+      expect(days, hasLength(1));
+      expect(days.single.periodId, isNot(periodId));
+      await db.close();
+    });
+
     test('upsertDayEntryForPeriod inserts then updates same calendar day',
         () async {
       final path = createTempSqlitePath();

@@ -181,11 +181,25 @@ class _PeriodExpansionTile extends StatelessWidget {
                   calendar: calendar,
                   existingPeriod: item.period,
                 );
+              } else if (value == 'log_day') {
+                final s = item.period.span.startUtc;
+                await showLoggingBottomSheet(
+                  context,
+                  repository: repository,
+                  calendar: calendar,
+                  existingPeriod: item.period,
+                  addDayEntryForPeriod: true,
+                  initialDate: DateTime(s.year, s.month, s.day),
+                );
               } else if (value == 'delete_period') {
                 await _confirmDeletePeriod(context, repository, item.period);
               }
             },
             itemBuilder: (ctx) => const [
+              PopupMenuItem(
+                value: 'log_day',
+                child: Text('Log day in period'),
+              ),
               PopupMenuItem(
                 value: 'edit_period',
                 child: Text('Edit period dates'),
@@ -215,8 +229,20 @@ class _PeriodExpansionTile extends StatelessWidget {
       ),
       children: item.dayEntries.isEmpty
           ? [
-              const ListTile(
-                title: Text('No daily details logged'),
+              ListTile(
+                title: const Text('No daily details logged'),
+                trailing: const Icon(Icons.add_circle_outline),
+                onTap: () {
+                  final s = item.period.span.startUtc;
+                  showLoggingBottomSheet(
+                    context,
+                    repository: repository,
+                    calendar: calendar,
+                    existingPeriod: item.period,
+                    addDayEntryForPeriod: true,
+                    initialDate: DateTime(s.year, s.month, s.day),
+                  );
+                },
               ),
             ]
           : [

@@ -31,6 +31,27 @@ class PeriodSpan {
 
   bool get isCompleted => endUtc != null;
 
+  /// Whether [dayUtc]'s calendar date (UTC year–month–day) lies within this
+  /// span's inclusive start/end calendar days. Open spans allow through
+  /// [todayLocal]'s calendar date (same convention as logging: local Y-M-D as
+  /// UTC midnight components).
+  bool containsCalendarDayUtc(
+    DateTime dayUtc, {
+    DateTime? todayLocal,
+  }) {
+    final d = DateTime.utc(dayUtc.year, dayUtc.month, dayUtc.day);
+    final s = DateTime.utc(startUtc.year, startUtc.month, startUtc.day);
+    if (d.isBefore(s)) return false;
+    final end = endUtc;
+    if (end == null) {
+      final n = todayLocal ?? DateTime.now();
+      final t = DateTime.utc(n.year, n.month, n.day);
+      return !d.isAfter(t);
+    }
+    final e = DateTime.utc(end.year, end.month, end.day);
+    return !d.isAfter(e);
+  }
+
   /// Returns only periods with a non-null [endUtc], preserving iteration order.
   static Iterable<PeriodSpan> completedOnly(Iterable<PeriodSpan> periods) sync* {
     for (final p in periods) {

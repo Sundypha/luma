@@ -14,7 +14,47 @@ enum _SheetCreateIntent {
 
 bool _isLiveDateErrorText(String? e) =>
     e == 'End date cannot be before start date' ||
-    e == 'This date is before the current period started.';
+    e == 'This date is before the current period started.' ||
+    e == 'This date is outside this period\'s range.';
+
+enum _OrphanResolution { dismissed, deleteOrphans, splitToNewPeriod }
+
+Future<_OrphanResolution> _promptOrphanDayEntries(
+  BuildContext context,
+  MaterialLocalizations loc,
+  List<DateTime> datesUtc,
+) async {
+  final label = datesUtc
+      .map((d) => loc.formatMediumDate(d.toLocal()))
+      .join(', ');
+  final result = await showDialog<_OrphanResolution>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: const Text('Day logs outside new dates'),
+      content: Text(
+        'Some day entries fall outside the period you entered: $label.\n\n'
+        'Remove those day logs, or move them into a new period spanning '
+        'their dates (may fail if that would overlap another period).',
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx, _OrphanResolution.dismissed),
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(ctx, _OrphanResolution.deleteOrphans),
+          child: const Text('Remove day logs'),
+        ),
+        FilledButton(
+          onPressed: () =>
+              Navigator.pop(ctx, _OrphanResolution.splitToNewPeriod),
+          child: const Text('New period'),
+        ),
+      ],
+    ),
+  );
+  return result ?? _OrphanResolution.dismissed;
+}
 
 /// Opens the create / edit logging bottom sheet.
 Future<void> showLoggingBottomSheet(
@@ -24,6 +64,7 @@ Future<void> showLoggingBottomSheet(
   StoredPeriod? existingPeriod,
   StoredDayEntry? existingDayEntry,
   DateTime? initialDate,
+  bool addDayEntryForPeriod = false,
 }) {
   return showModalBottomSheet<void>(
     context: context,
@@ -41,6 +82,7 @@ Future<void> showLoggingBottomSheet(
           existingPeriod: existingPeriod,
           existingDayEntry: existingDayEntry,
           initialDate: initialDate,
+          addDayEntryForPeriod: addDayEntryForPeriod,
         ),
       );
     },
@@ -56,6 +98,7 @@ class LoggingBottomSheet extends StatefulWidget {
     this.existingPeriod,
     this.existingDayEntry,
     this.initialDate,
+    this.addDayEntryForPeriod = false,
   });
 
   final PeriodRepository repository;
@@ -63,6 +106,10 @@ class LoggingBottomSheet extends StatefulWidget {
   final StoredPeriod? existingPeriod;
   final StoredDayEntry? existingDayEntry;
   final DateTime? initialDate;
+
+  /// When true with [existingPeriod], add a day entry for that period instead
+  /// of editing period dates.
+  final bool addDayEntryForPeriod;
 
   @override
   State<LoggingBottomSheet> createState() => _LoggingBottomSheetState();
@@ -91,8 +138,13 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
   bool get _isEditDayMode =>
       widget.existingPeriod != null && widget.existingDayEntry != null;
 
+  bool get _isAddDayForPeriodMode =>
+      widget.addDayEntryForPeriod && widget.existingPeriod != null;
+
   bool get _isEditPeriodOnlyMode =>
-      widget.existingPeriod != null && widget.existingDayEntry == null;
+      widget.existingPeriod != null &&
+      widget.existingDayEntry == null &&
+      !_isAddDayForPeriodMode;
 
   @override
   void initState() {
@@ -125,6 +177,9 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
         _periodEditEndLocal = _periodEditStartLocal;
       }
       _selectedDate = todayLocal;
+      _notesController = TextEditingController();
+    } else if (_isAddDayForPeriodMode) {
+      _selectedDate = widget.initialDate ?? todayLocal;
       _notesController = TextEditingController();
     } else {
       _selectedDate = widget.initialDate ?? todayLocal;
@@ -190,15 +245,27 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
   }
 
   void _validateEndBeforeStartLive() {
-    if (_isEditMode || _loadingContext) return;
+    if (_loadingContext) return;
+    if (_isEditPeriodOnlyMode || _isEditDayMode) return;
     String? next;
+    if (_isAddDayForPeriodMode) {
+      final span = widget.existingPeriod!.span;
+      final dayUtc = _utcMidnightFromLocalDate(_selectedDate);
+      if (!span.containsCalendarDayUtc(dayUtc)) {
+        next = 'This date is outside this period\'s range.';
+      }
+    }
     final open = _openPeriod;
-    if (open != null && _createIntent == _SheetCreateIntent.endOpenPeriod) {
+    if (next == null &&
+        open != null &&
+        _createIntent == _SheetCreateIntent.endOpenPeriod) {
       final endUtc = _utcMidnightFromLocalDate(_selectedDate);
       if (endUtc.isBefore(open.span.startUtc)) {
         next = 'End date cannot be before start date';
       }
-    } else if (open != null &&
+    }
+    if (next == null &&
+        open != null &&
         _createIntent == _SheetCreateIntent.logDayForOpenPeriod) {
       final dayUtc = _utcMidnightFromLocalDate(_selectedDate);
       if (dayUtc.isBefore(open.span.startUtc)) {
@@ -282,6 +349,36 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
       return;
     }
 
+    if (_isAddDayForPeriodMode) {
+      final span = widget.existingPeriod!.span;
+      final dayUtc = _utcMidnightFromLocalDate(_selectedDate);
+      if (!span.containsCalendarDayUtc(dayUtc)) {
+        setState(() {
+          _errorText = 'This date is outside this period\'s range.';
+        });
+        return;
+      }
+      setState(() {
+        _isSaving = true;
+        _errorText = null;
+      });
+      try {
+        await widget.repository.upsertDayEntryForPeriod(
+          widget.existingPeriod!.id,
+          _buildDayEntryData(),
+        );
+        if (!mounted) return;
+        Navigator.of(context).pop();
+      } on Object catch (_) {
+        if (!mounted) return;
+        setState(() {
+          _isSaving = false;
+          _errorText = 'Could not save. Please try again.';
+        });
+      }
+      return;
+    }
+
     if (_createIntent == _SheetCreateIntent.logDayForOpenPeriod) {
       final open = _openPeriod;
       if (open == null) return;
@@ -347,7 +444,22 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
           startUtc: open.span.startUtc,
           endUtc: _utcMidnightFromLocalDate(_selectedDate),
         );
-        periodOutcome = await widget.repository.updatePeriod(open.id, newSpan);
+        var o = await widget.repository.updatePeriod(open.id, newSpan);
+        if (!mounted) return;
+        o = await _resolveOrphanDayBlocking(
+          periodId: open.id,
+          span: newSpan,
+          outcome: o,
+          loc: loc,
+        );
+        if (!mounted) return;
+        if (o is PeriodWriteBlockedByOrphanDayEntries) {
+          setState(() {
+            _isSaving = false;
+          });
+          return;
+        }
+        periodOutcome = o;
       }
 
       switch (periodOutcome) {
@@ -365,6 +477,13 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
           setState(() {
             _isSaving = false;
             _errorText = 'Could not update period. Try again.';
+          });
+          return;
+        case PeriodWriteBlockedByOrphanDayEntries():
+          if (!mounted) return;
+          setState(() {
+            _isSaving = false;
+            _errorText = 'Could not resolve day logs outside the new dates.';
           });
           return;
       }
@@ -420,6 +539,49 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
     }
   }
 
+  Future<PeriodWriteOutcome> _resolveOrphanDayBlocking({
+    required int periodId,
+    required PeriodSpan span,
+    required PeriodWriteOutcome outcome,
+    required MaterialLocalizations loc,
+  }) async {
+    var o = outcome;
+    while (o is PeriodWriteBlockedByOrphanDayEntries) {
+      final blocked = o;
+      setState(() => _isSaving = false);
+      final choice = await _promptOrphanDayEntries(
+        context,
+        loc,
+        blocked.orphanDatesUtc,
+      );
+      if (!mounted) return blocked;
+      if (choice == _OrphanResolution.dismissed) {
+        return blocked;
+      }
+      setState(() {
+        _isSaving = true;
+        _errorText = null;
+      });
+      o = switch (choice) {
+        _OrphanResolution.deleteOrphans =>
+          await widget.repository.updatePeriodDeletingOrphanDayEntries(
+            periodId,
+            span,
+            blocked.orphanEntryIds,
+          ),
+        _OrphanResolution.splitToNewPeriod =>
+          await widget.repository.updatePeriodSplittingOrphansIntoNewPeriod(
+            periodId,
+            span,
+            blocked.orphanEntryIds,
+          ),
+        _OrphanResolution.dismissed => blocked,
+      };
+      if (!mounted) return o;
+    }
+    return o;
+  }
+
   Future<void> _savePeriodEdit(MaterialLocalizations loc) async {
     setState(() {
       _isSaving = true;
@@ -432,11 +594,23 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
           ? _utcMidnightFromLocalDate(_periodEditEndLocal!)
           : null;
       final span = PeriodSpan(startUtc: startUtc, endUtc: endUtc);
-      final outcome = await widget.repository.updatePeriod(
+      var outcome = await widget.repository.updatePeriod(
         widget.existingPeriod!.id,
         span,
       );
       if (!mounted) return;
+      outcome = await _resolveOrphanDayBlocking(
+        periodId: widget.existingPeriod!.id,
+        span: span,
+        outcome: outcome,
+        loc: loc,
+      );
+      if (!mounted) return;
+      if (outcome is PeriodWriteBlockedByOrphanDayEntries) {
+        setState(() => _isSaving = false);
+        return;
+      }
+
       switch (outcome) {
         case PeriodWriteSuccess():
           Navigator.of(context).pop();
@@ -449,6 +623,11 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
           setState(() {
             _isSaving = false;
             _errorText = 'Period not found.';
+          });
+        case PeriodWriteBlockedByOrphanDayEntries():
+          setState(() {
+            _isSaving = false;
+            _errorText = 'Could not resolve day logs outside the new dates.';
           });
       }
     } on Object catch (_) {
@@ -563,7 +742,11 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
               ),
             ] else ...[
               Text(
-                _isEditDayMode ? 'Edit day' : 'Log period',
+                _isEditDayMode
+                    ? 'Edit day'
+                    : _isAddDayForPeriodMode
+                        ? 'Log day in period'
+                        : 'Log period',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 8),
@@ -724,7 +907,7 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
             FilledButton(
               onPressed: _isSaving ? null : _save,
               child: Text(
-                _isEditMode ? 'Update' : 'Save',
+                _isEditDayMode || _isEditPeriodOnlyMode ? 'Update' : 'Save',
               ),
             ),
           ],

@@ -23,6 +23,7 @@ export 'src/mappers/period_mapper.dart'
 export 'src/repositories/period_repository.dart'
     show
         PeriodRepository,
+        PeriodWriteBlockedByOrphanDayEntries,
         PeriodWriteNotFound,
         PeriodWriteOutcome,
         PeriodWriteRejected,

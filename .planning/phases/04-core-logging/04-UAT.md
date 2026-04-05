@@ -6,7 +6,7 @@ source:
   - 04-02-SUMMARY.md
   - 04-03-SUMMARY.md
 started: 2026-04-05T18:00:00Z
-updated: 2026-04-05T20:00:00Z
+updated: 2026-04-05T22:00:00Z
 ---
 
 ## Current Test
@@ -65,3 +65,17 @@ skipped: 0
     - path: "Flutter SDK date_picker / calendar_date_picker"
   missing:
     - "Upgrade Flutter when framework fix ships; no reliable app-only workaround without replacing showDatePicker"
+
+- truth: "User can add day logs to any period (including closed) from the home list; FAB log-day only covered open period"
+  status: resolved
+  severity: blocker
+  test: 1
+  root_cause: "`existingPeriod` without `existingDayEntry` always opened edit-dates sheet; no `addDayEntryForPeriod` path."
+  resolution: "`addDayEntryForPeriod` + menu 'Log day in period' + tappable empty day row; `initialDate` defaults to period start; `upsertDayEntryForPeriod` matches rows by calendar UTC day."
+
+- truth: "Shrinking period dates flags day entries that would fall outside the new span"
+  status: resolved
+  severity: major
+  test: 1
+  root_cause: "`updatePeriod` did not check day rows against new span."
+  resolution: "`PeriodWriteBlockedByOrphanDayEntries`; dialog Remove vs New period; `updatePeriodDeletingOrphanDayEntries` / `updatePeriodSplittingOrphansIntoNewPeriod`; end-open flow uses same orphan resolver."

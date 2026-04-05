@@ -160,6 +160,38 @@ void main() {
     expect(find.textContaining('overlaps'), findsOneWidget);
   });
 
+  testWidgets('log day in closed period from menu uses upsert', (tester) async {
+    final now = DateTime.now();
+    final startUtc = DateTime.utc(now.year, now.month, now.day)
+        .subtract(const Duration(days: 2));
+    final endUtc = DateTime.utc(now.year, now.month, now.day)
+        .add(const Duration(days: 2));
+    final closed = StoredPeriodWithDays(
+      period: StoredPeriod(
+        id: 3,
+        span: PeriodSpan(startUtc: startUtc, endUtc: endUtc),
+      ),
+      dayEntries: const [],
+    );
+    when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
+      (_) => Stream<List<StoredPeriodWithDays>>.value([closed]),
+    );
+    when(() => mockRepo.upsertDayEntryForPeriod(3, any())).thenAnswer(
+      (_) async => 1,
+    );
+
+    await pumpHome(tester);
+    await tester.pump();
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Log day in period'));
+    await tester.pumpAndSettle();
+    await tapBottomSheetSave(tester);
+    verifyNever(() => mockRepo.insertPeriod(any()));
+    verify(() => mockRepo.upsertDayEntryForPeriod(3, any())).called(1);
+    expect(find.byType(LoggingBottomSheet), findsNothing);
+  });
+
   testWidgets('log day on open period upserts without insertPeriod',
       (tester) async {
     final open = StoredPeriod(
