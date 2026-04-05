@@ -1,31 +1,34 @@
 ---
-status: diagnosed
+status: complete
 phase: 04-core-logging
 source:
   - 04-01-SUMMARY.md
   - 04-02-SUMMARY.md
   - 04-03-SUMMARY.md
 started: 2026-04-05T18:00:00Z
-updated: 2026-04-05T22:00:00Z
+updated: 2026-04-05T23:59:00Z
 ---
 
 ## Current Test
 
-[code fixes landed — re-run Task 3 manual UAT on device]
+[testing complete — Phase 4 Task 3 pass 2026-04-05]
 
 ## Tests
 
 ### 1. Phase 4 Task 3 — full logging flow (manual)
-expected: FAB, bottom sheet, three-way period intent, edit period end buttons, pain labels, day logs on open period, validation, deletes
-result: issue
-reported: "Edit period: Ongoing/Change buttons wrong; day log on ongoing overlaps error; Pain Moderate truncated; date picker accessibility deprecation log on Android"
-severity: major
+expected: FAB, bottom sheet, three-way period intent, edit period end buttons, pain labels, day logs (open + per-period), span shrink orphans, validation, deletes
+result: pass
+notes: "First round: issues filed → fixed in `1856a99`, `28f0d25`. Re-verify: user **pass**. Known: date picker Android deprecation log (upstream Flutter)."
+
+### 2. Phase 4 Task 3 — re-verify after gap fixes (manual)
+expected: Same as test 1 with fixes applied
+result: pass
 
 ## Summary
 
-total: 1
-passed: 0
-issues: 1
+total: 2
+passed: 2
+issues: 0
 pending: 0
 skipped: 0
 

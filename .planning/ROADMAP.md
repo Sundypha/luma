@@ -16,7 +16,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation & engineering guardrails** — FVM-pinned Flutter scaffold, CI test gate, dependency policy aligned with privacy NFRs
 - [x] **Phase 2: Domain, persistence & prediction v1** — Schema, migrations, deterministic explainable prediction, no silent data loss
 - [x] **Phase 3: Onboarding** — Local-first and estimates messaging, fast path to first log, offline-capable (completed 2026-04-05)
-- [ ] **Phase 4: Core logging** — Period, flow, symptoms, notes, validation, reliable day context and edits
+- [x] **Phase 4: Core logging** — Period, flow, symptoms, notes, validation, reliable day context and edits
+ (completed 2026-04-05)
 - [ ] **Phase 5: Calendar, home & cycle surfaces** — Month navigation, actual vs predicted distinction, home summary and quick actions
 - [ ] **Phase 6: Export & import** — Documented full export, validated import, deterministic duplicate handling
 - [ ] **Phase 7: App protection (lock)** — Optional PIN/biometric lock with honest limitations
@@ -117,7 +118,7 @@ Plans:
 
 - [x] `04-01-PLAN.md` — Domain enums (flow/pain/mood), DayEntries Drift table, schema v1→v2 migration with FK enforcement, mappers — complete 2026-04-05
 - [x] `04-02-PLAN.md` — Repository extensions (watch, delete, day entry CRUD), home screen with period history list — complete 2026-04-05
-- [ ] `04-03-PLAN.md` — Logging bottom sheet (create + edit), delete with confirmation, hybrid validation, widget tests, human-verify *(Tasks 1–2 done 2026-04-05; **Task 3 human-verify pending** — see `04-03-SUMMARY.md`)*
+- [x] `04-03-PLAN.md` — Logging bottom sheet (create + edit), delete with confirmation, hybrid validation, widget tests, human-verify — complete 2026-04-05 (Task 3: pass)
 
 ### Phase 5: Calendar, home & cycle surfaces
 
@@ -197,7 +198,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 | 1. Foundation & engineering guardrails | 3/3 | Complete   | 2026-04-04 |
 | 2. Domain, persistence & prediction v1 | 4/4 | Complete | 2026-04-04 |
 | 3. Onboarding | 3/3 | Complete    | 2026-04-05 |
-| 4. Core logging | 2/3 | In Progress|  |
+| 4. Core logging | 3/3 | Complete    | 2026-04-05 |
 | 5. Calendar, home & cycle surfaces | 0/TBD | Not started | - |
 | 6. Export & import | 0/TBD | Not started | - |
 | 7. App protection (lock) | 0/TBD | Not started | - |

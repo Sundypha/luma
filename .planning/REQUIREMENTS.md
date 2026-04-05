@@ -20,7 +20,7 @@ Phase 1 MVP — derived from `period_tracker_prds/PRD_Phase_1_MVP.md` (functiona
 - [x] **LOG-02**: User can log flow intensity for days or span without making symptoms mandatory
 - [x] **LOG-03**: User can add or edit notes, pain score, and mood on relevant days
 - [x] **LOG-04**: User can edit previously entered periods without corrupting adjacent cycle data
-- [ ] **LOG-05**: App prevents impossible date ranges or flags them clearly
+- [x] **LOG-05**: App prevents impossible date ranges or flags them clearly
 - [x] **LOG-06**: Entries save reliably and display in the correct day context (retroactive entry supported)
 
 ### Calendar and timeline
@@ -108,7 +108,7 @@ Explicit Phase 1 exclusions per PRD §8:
 | LOG-02 | Phase 4 | Complete |
 | LOG-03 | Phase 4 | Complete |
 | LOG-04 | Phase 4 | Complete |
-| LOG-05 | Phase 4 | Pending |
+| LOG-05 | Phase 4 | Complete |
 | LOG-06 | Phase 4 | Complete |
 | CAL-01 | Phase 5 | Pending |
 | CAL-02 | Phase 5 | Pending |

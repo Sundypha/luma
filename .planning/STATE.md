@@ -6,29 +6,29 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** Phase 4 (Core logging) — next milestone after completed onboarding.
+**Current focus:** Phase 5 (Calendar, home & cycle surfaces) — next after completed core logging.
 
 ## Current Position
 
-Phase: **4** of 8 (Core logging)
+Phase: **5** of 8 (Calendar, home & cycle surfaces)
 
-**Current Plan:** 3 — **`04-03-PLAN.md`** blocked at **Task 3** (`checkpoint:human-verify`)
+**Current Plan:** — (Phase 5 plans TBD in `ROADMAP.md`)
 
-**Total Plans in Phase:** 3
+**Total Plans in Phase:** TBD
 
-Plan: **2** of **3** automated tasks complete for `04-03` (Tasks 1–2 committed); **Task 3** awaits on-device verification per `04-03-PLAN.md`.
+Plan: — of — in current phase
 
-Status: **Phase 4 in progress** — logging bottom sheet, list edit/delete, and widget tests are shipped; **human verification** of the full logging flow is **pending** (see `.planning/phases/04-core-logging/04-03-SUMMARY.md`).
+Status: **Phase 4 complete** (2026-04-05). Core logging shipped including **`04-03` Task 3** human verification (**pass**). LOG-01–LOG-06 complete in `REQUIREMENTS.md`.
 
-Last activity: 2026-04-05 — **`04-03`** Tasks 1–2 executed; checkpoint documented.
+Last activity: 2026-04-05 — Phase 4 closeout: `04-03-SUMMARY.md` finalized, `LOG-05` marked complete, roadmap progress 3/3 for Phase 4.
 
-**Progress:** [█████████░] 92%
+**Progress:** [████░░░░░░] 50% (4/8 phases complete)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 11
+- Total plans completed: 12
 - Average duration: —
 - Total execution time: —
 
@@ -39,10 +39,11 @@ Last activity: 2026-04-05 — **`04-03`** Tasks 1–2 executed; checkpoint docum
 | 1 | 3 | 3 | — |
 | 2 | 4 | 4 | 20 min (02-01); 38 min (02-02); 35 min (02-03); 42 min (02-04) |
 | 3 | 3 | 3 | 28 min (03-01); 35 min (03-02 T1); 15 min (03-03) |
+| 4 | 3 | 3 | 40 min (04-01); 45 min (04-02); — (04-03 + UAT) |
 
 **Recent Trend:**
 
-- Last 5 plans: 04-02, 04-01, 03-03, —
+- Last 5 plans: 04-03, 04-02, 04-01, 03-03, —
 - Trend: —
 
 *Updated after each plan completion*
@@ -54,7 +55,7 @@ Last activity: 2026-04-05 — **`04-03`** Tasks 1–2 executed; checkpoint docum
 | Phase 03-onboarding P03 (gap_closure) | 15min | 3 tasks | 4 files |
 | Phase 04-core-logging P01 | 40min | 2 tasks | 12 files |
 | Phase 04-core-logging P02 | 45min | 2 tasks | 7 files |
-| Phase 04-core-logging P03 (partial) | — | 2 tasks auto; Task 3 verify pending | 7 files |
+| Phase 04-core-logging P03 | — | 3 tasks (incl. Task 3 pass); UAT gaps `1856a99`, `28f0d25` | 7+ files |
 
 ## Accumulated Context
 
@@ -76,21 +77,21 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 04-core-logging]: day_entry mapper normalizes dateUtc to UTC calendar midnight for Drift DateTime round-trip
 - [Phase 04-core-logging]: watchPeriodsWithDays dedupes consecutive identical snapshots when both periods and dayEntries Drift watches fire
 - [Phase 04-core-logging]: Home widget tests stub watchPeriodsWithDays with Stream.value([]) for stable HomeScreen empty-state coverage
+- [Phase 04 closeout 2026-04-05]: **`04-03` Task 3** human verification **pass**; LOG-01–LOG-06 complete; Phase 4 marked complete in roadmap.
+- [Phase 04 UAT]: Per-period day logging (`addDayEntryForPeriod`), orphan day handling on span shrink (`PeriodWriteBlockedByOrphanDayEntries`), upsert by calendar day.
 
 ### Pending Todos
 
-**`04-03` Task 3 (human-verify):** Run `fvm flutter run` in `apps/ptrack` and follow the manual checklist in **`04-03-PLAN.md`** (Task 3). Confirm with “approved” or file issues. Until then, do not mark LOG requirements complete for this plan.
-
-After approval: refresh `04-03-SUMMARY.md` frontmatter (`requirements-completed`, remove checkpoint), advance plan state, and mark requirements in `REQUIREMENTS.md` if applicable.
+None for Phase 4. Phase 5 planning/execution TBD (`ROADMAP.md`).
 
 ### Blockers/Concerns
 
-**Checkpoint:** `04-03` Task 3 requires human verification on a real device/emulator (not automatable approval).
+None.
 
 ## Session Continuity
 
 Last session: 2026-04-05
 
-Stopped at: **`04-03-PLAN.md` Task 3** — human-verify checkpoint (Tasks 1–2 committed; see `04-03-SUMMARY.md`).
+Stopped at: **Phase 4 complete** — user confirmed logging UAT **pass**; planning closeout applied (`04-03-SUMMARY.md`, `LOG-05`, roadmap 3/3).
 
-Resume: Complete Task 3 manual steps, then update planning docs / requirements; or continue other work with checkpoint noted above.
+Resume: **`/gsd-plan-phase 5`** or start Phase 5 work per roadmap when ready.

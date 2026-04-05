@@ -1,26 +1,27 @@
 ---
 phase: 04-core-logging
-verified: 2026-04-05T12:00:00Z
-status: human_needed
-score: 5/5 roadmap success criteria supported by code; phase closure blocked on Task 3 UAT
+verified: 2026-04-05T23:59:00Z
+status: passed
+score: 5/5 roadmap success criteria; Task 3 human verification pass 2026-04-05
 human_verification:
   - test: "Full logging flow on device/emulator (04-03 Task 3)"
-    expected: "FAB opens sheet; past-only date picker; create/end period; optional flow/pain/mood/notes; day tap prefill; overlap blocked with clear message; delete confirmations; list order correct for old periods."
-    why_human: "Plan 04-03 is explicitly paused at human-verify; widget tests mock repository and do not replace end-to-end UX, accessibility, or real Drift persistence on device."
+    expected: "FAB opens sheet; past-only date picker; create/end/log-day; optional flow/pain/mood/notes; day tap prefill; overlap blocked; span-edit orphan handling; delete confirmations."
+    result: pass
+    notes: "User confirmed pass after UAT gap fixes (per-period day log, orphans, UI nits)."
   - test: "Error copy clarity for validation (LOG-05)"
-    expected: "End-before-start, overlap, and duplicate-start messages are understandable without reading code."
-    why_human: "Automated checks confirm issues are mapped to user-visible strings; tone and clarity need human judgment."
+    expected: "End-before-start, overlap, duplicate-start, and orphan messages understandable."
+    result: pass
 ---
 
 # Phase 4: Core logging verification report
 
 **Phase goal:** Users can record and edit period and symptom data with validation that prevents impossible ranges and preserves adjacent cycle integrity.
 
-**Verified:** 2026-04-05T12:00:00Z
+**Verified:** 2026-04-05T23:59:00Z
 
-**Status:** human_needed
+**Status:** passed
 
-**Re-verification:** No — initial verification (no prior `04-VERIFICATION.md`).
+**Re-verification:** Yes — Task 3 **pass** after gap-fix commits; `LOG-05` marked complete in `REQUIREMENTS.md`.
 
 ## Goal achievement
 
@@ -67,7 +68,7 @@ human_verification:
 | LOG-02 | 04-01, 04-03 | Flow optional, not all symptoms required | ✓ SATISFIED (code) | Nullable columns + optional UI controls |
 | LOG-03 | 04-01, 04-03 | Notes, pain, mood on days | ✓ SATISFIED (code) | Day edit path + `DayEntryData` |
 | LOG-04 | 04-02, 04-03 | Edits without corrupting adjacent cycles | ✓ SATISFIED (code) | Self-excluded `existing` list on update |
-| LOG-05 | 04-03 | Prevent/flag impossible ranges | ✓ SATISFIED (code) | Domain + UI messages; **REQUIREMENTS.md checkbox still [ ] and traceability “Pending”** — documentation lags code until Task 3 sign-off |
+| LOG-05 | 04-03 | Prevent/flag impossible ranges | ✓ SATISFIED (code + UAT) | Domain + UI messages; human pass 2026-04-05; `REQUIREMENTS.md` LOG-05 complete |
 | LOG-06 | 04-01, 04-02, 04-03 | Reliable save, correct day context | ✓ SATISFIED (code) | Transactions + stream + UTC day mapping |
 
 No orphaned requirement IDs: all LOG-* appear in at least one phase plan frontmatter.
@@ -80,9 +81,9 @@ No orphaned requirement IDs: all LOG-* appear in at least one phase plan frontma
 
 ### Gaps summary
 
-No **code** gaps found for the phase goal against automatable checks. **Process gap:** `04-03-PLAN.md` Task 3 (human-verify) is not user-approved; `04-03-SUMMARY.md` marks `requirements-completed: []` and instructs not to close LOG-* until approval. **Documentation gap:** `.planning/REQUIREMENTS.md` leaves **LOG-05** unchecked and traceability “Pending” even though validation logic ships — align after UAT.
+No open gaps for the phase goal. Task 3 human verification **passed**; planning and `REQUIREMENTS.md` aligned with Phase 4 complete.
 
 ---
 
-_Verified: 2026-04-05T12:00:00Z_  
-_Verifier: Claude (gsd-verifier)_
+_Verified: 2026-04-05T23:59:00Z_  
+_Verifier: planning closeout (post user pass)_
