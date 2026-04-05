@@ -12,23 +12,23 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 Phase: **4** of 8 (Core logging)
 
-**Current Plan:** `04-02-PLAN.md` (next)
+**Current Plan:** 3 — next: `04-03-PLAN.md` (logging bottom sheet)
 
 **Total Plans in Phase:** 3
 
-Plan: **1** of **3** complete in Phase 4 (`04-01` delivered 2026-04-05)
+Plan: **2** of **3** complete in Phase 4 (`04-01`, `04-02` delivered 2026-04-05)
 
-Status: **Phase 4 in progress** — `04-01` complete (DayEntries schema v2, domain enums, mappers, fixtures). Next: `04-02`.
+Status: **Phase 4 in progress** — repository watch/cascade/day CRUD and home period list shipped. Next: `04-03`.
 
-Last activity: 2026-04-05 — Completed **`04-01`** (core logging data foundation).
+Last activity: 2026-04-05 — Completed **`04-02`** (repository extensions + HomeScreen).
 
-**Progress:** [█████████░] 85%
+**Progress:** [█████████░] 92%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 10
+- Total plans completed: 11
 - Average duration: —
 - Total execution time: —
 
@@ -42,7 +42,7 @@ Last activity: 2026-04-05 — Completed **`04-01`** (core logging data foundatio
 
 **Recent Trend:**
 
-- Last 5 plans: 03-03, 04-01, —
+- Last 5 plans: 04-02, 04-01, 03-03, —
 - Trend: —
 
 *Updated after each plan completion*
@@ -53,6 +53,7 @@ Last activity: 2026-04-05 — Completed **`04-01`** (core logging data foundatio
 | Phase 03-onboarding P02 | 35min | 1 tasks | 7 files |
 | Phase 03-onboarding P03 (gap_closure) | 15min | 3 tasks | 4 files |
 | Phase 04-core-logging P01 | 40min | 2 tasks | 12 files |
+| Phase 04-core-logging P02 | 45min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -72,10 +73,12 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 3 closeout 2026-04-05]: **`03-02` Task 2** human verification approved by user (“pass”); phase milestone finalized.
 - [Phase 04-core-logging]: create_v2_fixture uses raw sqlite3 so fvm dart run works without dart:ui
 - [Phase 04-core-logging]: day_entry mapper normalizes dateUtc to UTC calendar midnight for Drift DateTime round-trip
+- [Phase 04-core-logging]: watchPeriodsWithDays dedupes consecutive identical snapshots when both periods and dayEntries Drift watches fire
+- [Phase 04-core-logging]: Home widget tests stub watchPeriodsWithDays with Stream.value([]) for stable HomeScreen empty-state coverage
 
 ### Pending Todos
 
-Execute **`04-02-PLAN.md`** (repository / home list), then **`04-03-PLAN.md`** (logging bottom sheet).
+Execute **`04-03-PLAN.md`** (logging bottom sheet: FAB, create/edit, confirmations).
 
 ### Blockers/Concerns
 
@@ -85,6 +88,6 @@ None.
 
 Last session: 2026-04-05
 
-Stopped at: **Completed `04-01-PLAN.md`** — SUMMARY and planning metadata committed.
+Stopped at: **Completed `04-02-PLAN.md`** — SUMMARY and planning metadata committed.
 
-Resume: `/gsd-execute-phase 4` or execute **`04-02-PLAN.md`** next.
+Resume: `/gsd-execute-phase 4` or execute **`04-03-PLAN.md`** next.
