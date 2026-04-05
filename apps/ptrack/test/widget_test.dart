@@ -4,6 +4,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:ptrack/features/logging/home_screen.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
+import 'package:timezone/data/latest.dart' as tzdata;
 
 class MockPeriodRepository extends Mock implements PeriodRepository {}
 
@@ -11,6 +12,7 @@ class MockPtrackDatabase extends Mock implements PtrackDatabase {}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  tzdata.initializeTimeZones();
 
   late MockPeriodRepository mockRepo;
   late MockPtrackDatabase mockDb;

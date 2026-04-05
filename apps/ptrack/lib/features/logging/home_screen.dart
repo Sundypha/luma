@@ -89,7 +89,11 @@ class HomeScreen extends StatelessWidget {
               final item = data[index];
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: _PeriodExpansionTile(item: item),
+                child: _PeriodExpansionTile(
+                  item: item,
+                  repository: repository,
+                  calendar: calendar,
+                ),
               );
             },
           );
@@ -143,22 +147,72 @@ class _EmptyPeriodsBody extends StatelessWidget {
 }
 
 class _PeriodExpansionTile extends StatelessWidget {
-  const _PeriodExpansionTile({required this.item});
+  const _PeriodExpansionTile({
+    required this.item,
+    required this.repository,
+    required this.calendar,
+  });
 
   final StoredPeriodWithDays item;
+  final PeriodRepository repository;
+  final PeriodCalendarContext calendar;
 
   @override
   Widget build(BuildContext context) {
     final loc = MaterialLocalizations.of(context);
     final span = item.period.span;
     final title = _periodRangeTitle(loc, span);
-    final subtitle = span.isOpen
+    final subtitleText = span.isOpen
         ? 'ongoing'
         : '${_inclusiveUtcDaySpan(span)} days';
 
     return ExpansionTile(
-      title: Text(title),
-      subtitle: Text(subtitle),
+      title: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: Text(title)),
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert),
+            onSelected: (value) async {
+              if (value == 'edit_period') {
+                await showLoggingBottomSheet(
+                  context,
+                  repository: repository,
+                  calendar: calendar,
+                  existingPeriod: item.period,
+                );
+              } else if (value == 'delete_period') {
+                await _confirmDeletePeriod(context, repository, item.period);
+              }
+            },
+            itemBuilder: (ctx) => const [
+              PopupMenuItem(
+                value: 'edit_period',
+                child: Text('Edit period dates'),
+              ),
+              PopupMenuItem(
+                value: 'delete_period',
+                child: Text('Delete period'),
+              ),
+            ],
+          ),
+        ],
+      ),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(subtitleText),
+          if (span.isOpen)
+            Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: Chip(
+                label: const Text('ongoing'),
+                visualDensity: VisualDensity.compact,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+            ),
+        ],
+      ),
       children: item.dayEntries.isEmpty
           ? [
               const ListTile(
@@ -168,14 +222,94 @@ class _PeriodExpansionTile extends StatelessWidget {
           : [
               for (final day in item.dayEntries)
                 ListTile(
+                  key: ValueKey<int>(day.id),
                   title: Text(
                     loc.formatMediumDate(day.data.dateUtc.toLocal()),
                   ),
                   subtitle: Text(_dayEntrySummary(day.data)),
                   isThreeLine: true,
+                  onTap: () {
+                    showLoggingBottomSheet(
+                      context,
+                      repository: repository,
+                      calendar: calendar,
+                      existingPeriod: item.period,
+                      existingDayEntry: day,
+                    );
+                  },
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete_outline),
+                    tooltip: 'Delete day entry',
+                    onPressed: () => _confirmDeleteDayEntry(
+                      context,
+                      repository,
+                      day,
+                      loc,
+                    ),
+                  ),
                 ),
             ],
     );
+  }
+}
+
+Future<void> _confirmDeleteDayEntry(
+  BuildContext context,
+  PeriodRepository repository,
+  StoredDayEntry dayEntry,
+  MaterialLocalizations loc,
+) async {
+  final dateLabel = loc.formatMediumDate(dayEntry.data.dateUtc.toLocal());
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: const Text('Delete day entry?'),
+      content: Text('This will remove the logged details for $dateLabel.'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(false),
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(foregroundColor: Colors.red),
+          onPressed: () => Navigator.of(ctx).pop(true),
+          child: const Text('Delete'),
+        ),
+      ],
+    ),
+  );
+  if (ok == true && context.mounted) {
+    await repository.deleteDayEntry(dayEntry.id);
+  }
+}
+
+Future<void> _confirmDeletePeriod(
+  BuildContext context,
+  PeriodRepository repository,
+  StoredPeriod period,
+) async {
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: const Text('Delete period?'),
+      content: const Text(
+        'This will permanently delete this period and all its daily entries.',
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(false),
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(foregroundColor: Colors.red),
+          onPressed: () => Navigator.of(ctx).pop(true),
+          child: const Text('Delete'),
+        ),
+      ],
+    ),
+  );
+  if (ok == true && context.mounted) {
+    await repository.deletePeriod(period.id);
   }
 }
 

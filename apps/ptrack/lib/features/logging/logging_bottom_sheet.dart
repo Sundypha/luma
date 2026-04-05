@@ -560,6 +560,7 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
               const Text('Flow'),
               const SizedBox(height: 8),
               SegmentedButton<FlowIntensity>(
+                key: const Key('flow_intensity_segments'),
                 emptySelectionAllowed: true,
                 showSelectedIcon: false,
                 segments: [
