@@ -32,6 +32,11 @@ void main() {
     test('fromDbValue(0) throws RangeError', () {
       expect(() => PainScore.fromDbValue(0), throwsRangeError);
     });
+
+    test('compactLabel is short enough for tight UI', () {
+      expect(PainScore.moderate.compactLabel, 'Mod.');
+      expect(PainScore.verySevere.compactLabel, 'V. sev.');
+    });
   });
 
   group('Mood', () {

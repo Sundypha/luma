@@ -267,6 +267,38 @@ class PeriodRepository {
     });
   }
 
+  /// Inserts or updates the row for [periodId] on the calendar day of
+  /// [data.dateUtc] (unique with period). Throws [StateError] if the period
+  /// does not exist.
+  Future<int> upsertDayEntryForPeriod(int periodId, DayEntryData data) {
+    return _db.transaction(() async {
+      final periodRows = await (_db.select(_db.periods)
+            ..where((t) => t.id.equals(periodId)))
+          .get();
+      if (periodRows.isEmpty) {
+        throw StateError('No period with id $periodId');
+      }
+      final dateUtc = DateTime.utc(
+        data.dateUtc.year,
+        data.dateUtc.month,
+        data.dateUtc.day,
+      );
+      final existing = await (_db.select(_db.dayEntries)
+            ..where((t) => t.periodId.equals(periodId))
+            ..where((t) => t.dateUtc.equals(dateUtc)))
+          .get();
+      if (existing.isEmpty) {
+        return _db
+            .into(_db.dayEntries)
+            .insert(dayEntryDataToInsertCompanion(periodId, data));
+      }
+      final id = existing.single.id;
+      await (_db.update(_db.dayEntries)..where((t) => t.id.equals(id)))
+          .write(dayEntryDataToUpdateCompanion(data));
+      return id;
+    });
+  }
+
   /// Updates an existing day entry row; returns whether a row was updated.
   Future<bool> updateDayEntry(int dayEntryId, DayEntryData data) async {
     final updated = await (_db.update(_db.dayEntries)

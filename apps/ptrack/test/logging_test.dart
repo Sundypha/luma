@@ -160,6 +160,32 @@ void main() {
     expect(find.textContaining('overlaps'), findsOneWidget);
   });
 
+  testWidgets('log day on open period upserts without insertPeriod',
+      (tester) async {
+    final open = StoredPeriod(
+      id: 1,
+      span: PeriodSpan(
+        startUtc: DateTime.utc(2024, 6, 1),
+        endUtc: null,
+      ),
+    );
+    when(() => mockRepo.listOrderedByStartUtc()).thenAnswer(
+      (_) async => [open],
+    );
+    when(() => mockRepo.upsertDayEntryForPeriod(any(), any())).thenAnswer(
+      (_) async => 1,
+    );
+
+    await pumpHome(tester);
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pumpAndSettle();
+    expect(find.text('Log day'), findsOneWidget);
+    await tapBottomSheetSave(tester);
+    verifyNever(() => mockRepo.insertPeriod(any()));
+    verify(() => mockRepo.upsertDayEntryForPeriod(1, any())).called(1);
+    expect(find.byType(LoggingBottomSheet), findsNothing);
+  });
+
   testWidgets('edit mode pre-fills existing data', (tester) async {
     final day = StoredDayEntry(
       id: 7,

@@ -251,6 +251,42 @@ void main() {
       await db.close();
     });
 
+    test('upsertDayEntryForPeriod inserts then updates same calendar day',
+        () async {
+      final path = createTempSqlitePath();
+      final db = openPtrackDatabase(databasePath: path);
+      final repo = PeriodRepository(database: db, calendar: utcCtx);
+      final periodId = (await repo.insertPeriod(
+        PeriodSpan(
+          startUtc: DateTime.utc(2024, 10, 1),
+          endUtc: null,
+        ),
+      ) as PeriodWriteSuccess)
+          .id;
+      final id1 = await repo.upsertDayEntryForPeriod(
+        periodId,
+        DayEntryData(
+          dateUtc: DateTime.utc(2024, 10, 2),
+          flowIntensity: FlowIntensity.light,
+        ),
+      );
+      final id2 = await repo.upsertDayEntryForPeriod(
+        periodId,
+        DayEntryData(
+          dateUtc: DateTime.utc(2024, 10, 2),
+          flowIntensity: FlowIntensity.heavy,
+        ),
+      );
+      expect(id2, id1);
+      final rows = await db.select(db.dayEntries).get();
+      expect(rows, hasLength(1));
+      expect(
+        FlowIntensity.fromDbValue(rows.single.flowIntensity!),
+        FlowIntensity.heavy,
+      );
+      await db.close();
+    });
+
     test('watchPeriodsWithDays emits updated list after insert', () async {
       final path = createTempSqlitePath();
       final db = openPtrackDatabase(databasePath: path);

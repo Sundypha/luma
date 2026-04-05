@@ -34,6 +34,15 @@ enum PainScore {
         PainScore.verySevere => 'Very Severe',
       };
 
+  /// Short labels for tight UI (e.g. [SegmentedButton]); [label] stays full text elsewhere.
+  String get compactLabel => switch (this) {
+        PainScore.none => 'None',
+        PainScore.mild => 'Mild',
+        PainScore.moderate => 'Mod.',
+        PainScore.severe => 'Severe',
+        PainScore.verySevere => 'V. sev.',
+      };
+
   int get dbValue => index + 1;
 
   static PainScore fromDbValue(int v) => values[v - 1];
