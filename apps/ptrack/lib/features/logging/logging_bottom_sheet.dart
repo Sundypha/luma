@@ -6,13 +6,9 @@ import '../settings/mood_settings.dart';
 
 /// Create flow when an open period may exist: start another, log a day on the
 /// open period, or set the open period's end date.
-///
-/// When there is **no** open period but the selected date lies inside a
-/// **completed** period, [logDayForPeriod] attaches the entry to that period
-/// instead of inserting a new one.
 enum _SheetCreateIntent {
   startNewPeriod,
-  logDayForPeriod,
+  logDayForOpenPeriod,
   endOpenPeriod,
 }
 
@@ -135,14 +131,6 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
   bool _periodEditHasEnd = true;
 
   StoredPeriod? _openPeriod;
-
-  /// Periods from the last [listOrderedByStartUtc] load (for containing-date lookup).
-  List<StoredPeriod> _orderedPeriods = const [];
-
-  /// When there is no [open] period, the completed (or any) period that
-  /// contains [_selectedDate], if any.
-  StoredPeriod? _containingPeriodForSelection;
-
   bool _loadingContext = true;
 
   bool get _isEditMode => widget.existingPeriod != null;
@@ -208,18 +196,11 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
             break;
           }
         }
-        final containing = _findContainingPeriod(list, _selectedDate);
         setState(() {
-          _orderedPeriods = list;
           _openPeriod = open;
-          _containingPeriodForSelection = containing;
-          if (open != null) {
-            _createIntent = _SheetCreateIntent.logDayForPeriod;
-          } else if (containing != null) {
-            _createIntent = _SheetCreateIntent.logDayForPeriod;
-          } else {
-            _createIntent = _SheetCreateIntent.startNewPeriod;
-          }
+          _createIntent = open != null
+              ? _SheetCreateIntent.logDayForOpenPeriod
+              : _SheetCreateIntent.startNewPeriod;
           _loadingContext = false;
         });
       });
@@ -236,24 +217,6 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
 
   DateTime _utcMidnightFromLocalDate(DateTime localDate) {
     return DateTime.utc(localDate.year, localDate.month, localDate.day);
-  }
-
-  StoredPeriod? _findContainingPeriod(
-    List<StoredPeriod> list,
-    DateTime localDate,
-  ) {
-    final dayUtc = _utcMidnightFromLocalDate(localDate);
-    for (final p in list) {
-      if (p.span.containsCalendarDayUtc(dayUtc)) return p;
-    }
-    return null;
-  }
-
-  /// Period that receives a day log when [_createIntent] is [logDayForPeriod].
-  StoredPeriod? _periodTargetForDayLog() {
-    if (_createIntent != _SheetCreateIntent.logDayForPeriod) return null;
-    if (_openPeriod != null) return _openPeriod;
-    return _containingPeriodForSelection;
   }
 
   Future<void> _pickDate({
@@ -276,19 +239,6 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
       setState(() {
         onPicked(picked);
         _errorText = null;
-        if (!_isEditMode) {
-          _containingPeriodForSelection =
-              _findContainingPeriod(_orderedPeriods, _selectedDate);
-          if (_openPeriod == null) {
-            if (_createIntent == _SheetCreateIntent.logDayForPeriod &&
-                _containingPeriodForSelection == null) {
-              _createIntent = _SheetCreateIntent.startNewPeriod;
-            } else if (_createIntent == _SheetCreateIntent.startNewPeriod &&
-                _containingPeriodForSelection != null) {
-              _createIntent = _SheetCreateIntent.logDayForPeriod;
-            }
-          }
-        }
       });
       _validateEndBeforeStartLive();
     }
@@ -315,13 +265,11 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
       }
     }
     if (next == null &&
-        _createIntent == _SheetCreateIntent.logDayForPeriod) {
-      final target = _periodTargetForDayLog();
-      if (target != null) {
-        final dayUtc = _utcMidnightFromLocalDate(_selectedDate);
-        if (!target.span.containsCalendarDayUtc(dayUtc)) {
-          next = 'This date is outside this period\'s range.';
-        }
+        open != null &&
+        _createIntent == _SheetCreateIntent.logDayForOpenPeriod) {
+      final dayUtc = _utcMidnightFromLocalDate(_selectedDate);
+      if (dayUtc.isBefore(open.span.startUtc)) {
+        next = 'This date is before the current period started.';
       }
     }
     setState(() {
@@ -331,17 +279,6 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
         _errorText = null;
       }
     });
-  }
-
-  String _formatPeriodRangeLine(
-    MaterialLocalizations loc,
-    StoredPeriod p,
-  ) {
-    final span = p.span;
-    final startLabel = loc.formatMediumDate(span.startUtc.toLocal());
-    if (span.isOpen) return '$startLabel–ongoing';
-    final endLabel = loc.formatMediumDate(span.endUtc!.toLocal());
-    return '$startLabel–$endLabel';
   }
 
   String _formatPeriodWriteIssues(
@@ -442,13 +379,13 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
       return;
     }
 
-    if (_createIntent == _SheetCreateIntent.logDayForPeriod) {
-      final target = _periodTargetForDayLog();
-      if (target == null) return;
+    if (_createIntent == _SheetCreateIntent.logDayForOpenPeriod) {
+      final open = _openPeriod;
+      if (open == null) return;
       final dayUtc = _utcMidnightFromLocalDate(_selectedDate);
-      if (!target.span.containsCalendarDayUtc(dayUtc)) {
+      if (dayUtc.isBefore(open.span.startUtc)) {
         setState(() {
-          _errorText = 'This date is outside this period\'s range.';
+          _errorText = 'This date is before the current period started.';
         });
         return;
       }
@@ -458,7 +395,7 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
       });
       try {
         await widget.repository.upsertDayEntryForPeriod(
-          target.id,
+          open.id,
           _buildDayEntryData(),
         );
         if (!mounted) return;
@@ -480,20 +417,6 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
       if (endUtc.isBefore(open.span.startUtc)) {
         setState(() {
           _errorText = 'End date cannot be before start date';
-        });
-        return;
-      }
-    }
-
-    if (_createIntent == _SheetCreateIntent.startNewPeriod &&
-        _openPeriod == null) {
-      final dayUtc = _utcMidnightFromLocalDate(_selectedDate);
-      final c = _findContainingPeriod(_orderedPeriods, _selectedDate);
-      if (c != null && c.span.containsCalendarDayUtc(dayUtc)) {
-        setState(() {
-          _errorText =
-              'To start a new period, choose a date outside your existing '
-              'periods, or switch to Log day to add details to this one.';
         });
         return;
       }
@@ -659,6 +582,84 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
     return o;
   }
 
+  void _navigateToPeriodOnlyEdit(StoredPeriod period) {
+    final navigator = Navigator.of(context);
+    final overlay = navigator.overlay;
+    navigator.pop();
+    if (overlay == null) return;
+    final overlayCtx = overlay.context;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!overlayCtx.mounted) return;
+      showLoggingBottomSheet(
+        overlayCtx,
+        repository: widget.repository,
+        calendar: widget.calendar,
+        existingPeriod: period,
+      );
+    });
+  }
+
+  Future<void> _confirmDeletePeriod(StoredPeriod period) async {
+    final loc = MaterialLocalizations.of(context);
+    final startLabel = loc.formatMediumDate(
+      DateTime(
+        period.span.startUtc.year,
+        period.span.startUtc.month,
+        period.span.startUtc.day,
+      ),
+    );
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete period?'),
+        content: Text(
+          period.span.isOpen
+              ? 'Remove the ongoing period that started $startLabel and all '
+                  'day logs saved under it. You can start a new period afterward.'
+              : 'Remove this period ($startLabel) and all day logs saved under '
+                  'it. This cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(ctx).colorScheme.error,
+              foregroundColor: Theme.of(ctx).colorScheme.onError,
+            ),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    setState(() {
+      _isSaving = true;
+      _errorText = null;
+    });
+    try {
+      final ok = await widget.repository.deletePeriod(period.id);
+      if (!mounted) return;
+      if (!ok) {
+        setState(() {
+          _isSaving = false;
+          _errorText = 'Could not delete period.';
+        });
+        return;
+      }
+      Navigator.of(context).pop();
+    } on Object catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _isSaving = false;
+        _errorText = 'Could not delete period. Try again.';
+      });
+    }
+  }
+
   Future<void> _savePeriodEdit(MaterialLocalizations loc) async {
     setState(() {
       _isSaving = true;
@@ -754,13 +755,13 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
                       ? null
                       : () => _pickDate(
                             initial: _periodEditStartLocal,
-                            onPicked: (d) {
+                            onPicked: (d) => setState(() {
                               _periodEditStartLocal = d;
                               if (_periodEditEndLocal != null &&
                                   _periodEditEndLocal!.isBefore(d)) {
                                 _periodEditEndLocal = d;
                               }
-                            },
+                            }),
                           ),
                   child: const Text('Change'),
                 ),
@@ -793,10 +794,10 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
                                       initial: _periodEditEndLocal ??
                                           _periodEditStartLocal,
                                       firstDate: _periodEditStartLocal,
-                                      onPicked: (d) {
+                                      onPicked: (d) => setState(() {
                                         _periodEditHasEnd = true;
                                         _periodEditEndLocal = d;
-                                      },
+                                      }),
                                     ),
                             child: const Text('Change'),
                           ),
@@ -809,13 +810,24 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
                                   initial: _periodEditEndLocal ??
                                       _periodEditStartLocal,
                                   firstDate: _periodEditStartLocal,
-                                  onPicked: (d) {
+                                  onPicked: (d) => setState(() {
                                     _periodEditHasEnd = true;
                                     _periodEditEndLocal = d;
-                                  },
+                                  }),
                                 ),
                         child: const Text('Change'),
                       ),
+              ),
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                  onPressed: _isSaving
+                      ? null
+                      : () => _confirmDeletePeriod(widget.existingPeriod!),
+                  style: TextButton.styleFrom(foregroundColor: scheme.error),
+                  child: const Text('Delete period'),
+                ),
               ),
             ] else ...[
               Text(
@@ -836,9 +848,7 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
                       ? null
                       : () => _pickDate(
                             initial: _selectedDate,
-                            // Assignment only; [_pickDate] wraps in setState and
-                            // refreshes containing-period context.
-                            onPicked: (d) => _selectedDate = d,
+                            onPicked: (d) => setState(() => _selectedDate = d),
                           ),
                   child: const Text('Change date'),
                 ),
@@ -861,7 +871,7 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
                         label: Text('Start new'),
                       ),
                       const ButtonSegment<_SheetCreateIntent>(
-                        value: _SheetCreateIntent.logDayForPeriod,
+                        value: _SheetCreateIntent.logDayForOpenPeriod,
                         label: Text('Log day'),
                       ),
                       ButtonSegment<_SheetCreateIntent>(
@@ -887,54 +897,28 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
                             _validateEndBeforeStartLive();
                           },
                   ),
-                ] else if (_containingPeriodForSelection != null) ...[
-                  SegmentedButton<_SheetCreateIntent>(
-                    segments: const [
-                      ButtonSegment<_SheetCreateIntent>(
-                        value: _SheetCreateIntent.logDayForPeriod,
-                        label: Text('Log day'),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: _isSaving
+                            ? null
+                            : () => _navigateToPeriodOnlyEdit(_openPeriod!),
+                        child: const Text('Adjust period dates'),
                       ),
-                      ButtonSegment<_SheetCreateIntent>(
-                        value: _SheetCreateIntent.startNewPeriod,
-                        label: Text('Start new'),
+                      TextButton(
+                        onPressed: _isSaving
+                            ? null
+                            : () => _confirmDeletePeriod(_openPeriod!),
+                        style: TextButton.styleFrom(
+                          foregroundColor: scheme.error,
+                        ),
+                        child: const Text('Delete period'),
                       ),
                     ],
-                    selected: {_createIntent},
-                    onSelectionChanged: _isSaving
-                        ? null
-                        : (selected) {
-                            if (selected.isEmpty) return;
-                            final intent = selected.first;
-                            setState(() {
-                              _createIntent = intent;
-                              if (_isLiveDateErrorText(_errorText)) {
-                                _errorText = null;
-                              }
-                              if (intent == _SheetCreateIntent.startNewPeriod) {
-                                final dayUtc =
-                                    _utcMidnightFromLocalDate(_selectedDate);
-                                final c = _containingPeriodForSelection;
-                                if (c != null &&
-                                    c.span.containsCalendarDayUtc(dayUtc)) {
-                                  _errorText =
-                                      'To start a new period, choose a date '
-                                      'outside your existing periods, or use '
-                                      'Log day to add details to this one.';
-                                }
-                              }
-                            });
-                            _validateEndBeforeStartLive();
-                          },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Text(
-                      _createIntent == _SheetCreateIntent.logDayForPeriod
-                          ? 'Adding details to your period '
-                              '${_formatPeriodRangeLine(loc, _containingPeriodForSelection!)}.'
-                          : 'New period will start on the date above.',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
                   ),
                 ] else
                   Padding(
@@ -1035,7 +1019,11 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
             FilledButton(
               onPressed: _isSaving ? null : _save,
               child: Text(
-                _isEditDayMode || _isEditPeriodOnlyMode ? 'Update' : 'Save',
+                _isEditPeriodOnlyMode
+                    ? 'Save dates'
+                    : _isEditDayMode
+                        ? 'Update'
+                        : 'Save',
               ),
             ),
           ],
