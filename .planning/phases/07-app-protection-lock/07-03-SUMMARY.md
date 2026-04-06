@@ -71,6 +71,7 @@ status: partial
 ## Task Commits
 
 1. **Task 1: LockGate, main wiring, TabShell, tests** — `993a892` (feat)
+2. **Follow-up: Navigator when opening lock settings from dialog** — `a8126a0` (fix)
 
 **Task 2:** Human verification (plan checklist items 1–10) — **pending** (not run; no results fabricated).
 
@@ -98,6 +99,11 @@ status: partial
 - **Found during:** Task 1
 - **Issue:** `OnboardingState` uses `SharedPreferencesWithCache`; clearing via `SharedPreferences.getInstance().clear()` can leave in-memory wizard state stale.
 - **Fix:** `reloadFromPlatform()` on `OnboardingState` after clear.
+
+**3. [Rule 1 - Bug] Settings dialog navigation**
+- **Found during:** Post-commit review
+- **Issue:** `LockSettingsTile` called `Navigator.of(context)` again after `pop()`, which can be unsafe if the tile’s context unmounts with the dialog.
+- **Fix:** Capture `NavigatorState` once, then `pop` and `push` (`a8126a0`).
 
 ## Human verification (Task 2) — pending
 
