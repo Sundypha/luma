@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 
 import 'export_wizard_screen.dart';
+import 'import_screen.dart';
 
-/// Entry point for backup and restore (export wired; import in a later plan).
+/// Entry point for backup and restore (export and import).
 class DataSettingsScreen extends StatelessWidget {
   const DataSettingsScreen({super.key, required this.repository});
 
@@ -33,7 +34,18 @@ class DataSettingsScreen extends StatelessWidget {
             leading: const Icon(Icons.download_outlined),
             title: const Text('Import Backup'),
             subtitle: const Text('Restore data from a .luma file'),
-            onTap: () {},
+            onTap: () {
+              final db = repository.database;
+              final backup = BackupService(db);
+              Navigator.of(context).push<void>(
+                MaterialPageRoute<void>(
+                  builder: (_) => ImportScreen(
+                    importService: ImportService(db, backupService: backup),
+                    db: db,
+                  ),
+                ),
+              );
+            },
           ),
           const Divider(),
           ListTile(
