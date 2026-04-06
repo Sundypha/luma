@@ -135,12 +135,12 @@ Plans:
 3. Tapping a day opens that day’s detail so the user can view or edit entries.
 4. The home screen shows cycle position and next expected period status (or a clear insufficient-data state), what was logged today at a glance, and a visible quick action to log or edit without deep navigation—without unsupported “cycle health” scores or overconfident precision.
 
-**Plans**: 4 plans
+**Plans**: 1/4 plans executed
 
 Plans:
 
 - [ ] `05-01-PLAN.md` — Tab shell (Home + Calendar tabs, drawer, FAB) and refactored home summary with cycle position, today card, prediction range
-- [ ] `05-02-PLAN.md` — Calendar day-data model (PeriodDayState, CalendarDayData, buildCalendarDayDataMap) and custom painters (solid band, hatched circle, dot, today ring)
+- [x] `05-02-PLAN.md` — Calendar day-data model (PeriodDayState, CalendarDayData, buildCalendarDayDataMap) and custom painters (solid band, hatched circle, dot, today ring) — complete 2026-04-06
 - [ ] `05-03-PLAN.md` — Calendar screen with table_calendar integration, reactive stream, month navigation, "Today" button, widget tests
 - [ ] `05-04-PLAN.md` — Day detail bottom sheet (read-only view, adjacent-day swipe, edit bridge, predicted day info) and human verification
 
@@ -206,7 +206,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 | 2. Domain, persistence & prediction v1 | 4/4 | Complete | 2026-04-04 |
 | 3. Onboarding | 3/3 | Complete    | 2026-04-05 |
 | 4. Core logging | 3/3 | Complete    | 2026-04-05 |
-| 5. Calendar, home & cycle surfaces | 0/4 | Not started | - |
+| 5. Calendar, home & cycle surfaces | 1/4 | In Progress|  |
 | 6. Export & import | 0/TBD | Not started | - |
 | 7. App protection (lock) | 0/TBD | Not started | - |
 | 8. Release quality, offline assurance & inclusive copy | 0/TBD | Not started | - |

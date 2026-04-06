@@ -12,23 +12,23 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 Phase: **5** of 8 (Calendar, home & cycle surfaces)
 
-**Current Plan:** — (Phase 5 plans TBD in `ROADMAP.md`)
+**Current Plan:** 3
 
-**Total Plans in Phase:** TBD
+**Total Plans in Phase:** 4
 
-Plan: — of — in current phase
+Plan: **05-03** next (`05-02` complete 2026-04-06); 2 of 4 phase plans have execution progress (parallel wave: `05-01` may still be open).
 
-Status: **Phase 4 complete** (2026-04-05). Core logging shipped including **`04-03` Task 3** human verification (**pass**). LOG-01–LOG-06 complete in `REQUIREMENTS.md`.
+Status: **Phase 5 in progress** — `05-02-SUMMARY.md` complete; CAL-02 and NFR-06 marked complete in `REQUIREMENTS.md`.
 
-Last activity: 2026-04-05 — Phase 4 closeout: `04-03-SUMMARY.md` finalized, `LOG-05` marked complete, roadmap progress 3/3 for Phase 4.
+Last activity: 2026-04-06 — Plan `05-02` executed (calendar day data + painters).
 
-**Progress:** [████░░░░░░] 50% (4/8 phases complete)
+**Progress:** [████████░░] 82%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 12
+- Total plans completed: 13
 - Average duration: —
 - Total execution time: —
 
@@ -43,7 +43,7 @@ Last activity: 2026-04-05 — Phase 4 closeout: `04-03-SUMMARY.md` finalized, `L
 
 **Recent Trend:**
 
-- Last 5 plans: 04-03, 04-02, 04-01, 03-03, —
+- Last 5 plans: 05-02, 04-03, 04-02, 04-01, 03-03
 - Trend: —
 
 *Updated after each plan completion*
@@ -56,6 +56,7 @@ Last activity: 2026-04-05 — Phase 4 closeout: `04-03-SUMMARY.md` finalized, `L
 | Phase 04-core-logging P01 | 40min | 2 tasks | 12 files |
 | Phase 04-core-logging P02 | 45min | 2 tasks | 7 files |
 | Phase 04-core-logging P03 | — | 3 tasks (incl. Task 3 pass); UAT gaps `1856a99`, `28f0d25` | 7+ files |
+| Phase 05-calendar-home-cycle-surfaces P02 | 30min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -79,10 +80,12 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 04-core-logging]: Home widget tests stub watchPeriodsWithDays with Stream.value([]) for stable HomeScreen empty-state coverage
 - [Phase 04 closeout 2026-04-05]: **`04-03` Task 3** human verification **pass**; LOG-01–LOG-06 complete; Phase 4 marked complete in roadmap.
 - [Phase 04 UAT]: Per-period day logging (`addDayEntryForPeriod`), orphan day handling on span shrink (`PeriodWriteBlockedByOrphanDayEntries`), upsert by calendar day.
+- [Phase 05-calendar]: Calendar painters use kPeriodColorLight for predicted hatch/outline vs solid kPeriodColor band for logged days (pattern + tone, NFR-06)
+- [Phase 05-calendar]: buildCalendarDayCell uses Positioned.fill around CustomPaint layers for valid Stack constraints
 
 ### Pending Todos
 
-None for Phase 4. Phase 5 planning/execution TBD (`ROADMAP.md`).
+Continue Phase 5: `05-01`, `05-03`, `05-04` per `ROADMAP.md` (wave 1 allowed parallel with `05-02`).
 
 ### Blockers/Concerns
 
@@ -90,8 +93,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-04-05
+**Last session:** 2026-04-06T12:06:44.566Z
 
-Stopped at: **Phase 4 complete** — user confirmed logging UAT **pass**; planning closeout applied (`04-03-SUMMARY.md`, `LOG-05`, roadmap 3/3).
+**Stopped at:** Completed 05-02-PLAN.md
 
-Resume: **`/gsd-plan-phase 5`** or start Phase 5 work per roadmap when ready.
+**Resume file:** None

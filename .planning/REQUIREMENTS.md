@@ -26,7 +26,7 @@ Phase 1 MVP — derived from `period_tracker_prds/PRD_Phase_1_MVP.md` (functiona
 ### Calendar and timeline
 
 - [ ] **CAL-01**: User can view a month-based calendar and navigate past and future months smoothly
-- [ ] **CAL-02**: Logged period days and predicted future days are visually distinguishable (not color-only)
+- [x] **CAL-02**: Logged period days and predicted future days are visually distinguishable (not color-only)
 - [ ] **CAL-03**: User can tap a day to view or edit entries for that day
 - [ ] **CAL-04**: Calendar remains performant with multi-year local history
 - [ ] **CAL-05**: Prediction display on the calendar updates after edits to underlying data
@@ -70,7 +70,7 @@ Phase 1 MVP — derived from `period_tracker_prds/PRD_Phase_1_MVP.md` (functiona
 - [x] **NFR-03**: No analytics collection, ad identifiers, or third-party ads/profiling SDKs; no hidden telemetry of reproductive events
 - [x] **NFR-04**: Dependency and build choices are reviewable for the above privacy constraints
 - [ ] **NFR-05**: Primary actions are understandable without dense tutorial text
-- [ ] **NFR-06**: Predicted vs actual periods distinguishable without relying on color alone
+- [x] **NFR-06**: Predicted vs actual periods distinguishable without relying on color alone
 - [ ] **NFR-07**: Copy avoids unnecessary gendered assumptions and unsupported medical claims
 - [ ] **NFR-08**: Full Phase 1 feature set works in airplane mode after install (no login, no network-required errors on core flows)
 
@@ -111,7 +111,7 @@ Explicit Phase 1 exclusions per PRD §8:
 | LOG-05 | Phase 4 | Complete |
 | LOG-06 | Phase 4 | Complete |
 | CAL-01 | Phase 5 | Pending |
-| CAL-02 | Phase 5 | Pending |
+| CAL-02 | Phase 5 | Complete |
 | CAL-03 | Phase 5 | Pending |
 | CAL-04 | Phase 5 | Pending |
 | CAL-05 | Phase 5 | Pending |
@@ -137,7 +137,7 @@ Explicit Phase 1 exclusions per PRD §8:
 | NFR-03 | Phase 1 | Complete |
 | NFR-04 | Phase 1 | Complete |
 | NFR-05 | Phase 8 | Pending |
-| NFR-06 | Phase 5 | Pending |
+| NFR-06 | Phase 5 | Complete |
 | NFR-07 | Phase 8 | Pending |
 | NFR-08 | Phase 8 | Pending |
 
