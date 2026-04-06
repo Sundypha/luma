@@ -12,15 +12,15 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 Phase: **5** of 8 (Calendar, home & cycle surfaces)
 
-**Current Plan:** 3
+**Current Plan:** 4
 
 **Total Plans in Phase:** 4
 
-Plan: **05-03** next (`05-01` and `05-02` complete 2026-04-06).
+Plan: **05-04** next (`05-01`–`05-03` complete 2026-04-06).
 
-Status: **Phase 5 in progress** — Tab shell + home cycle summary shipped (`05-01`); calendar day model (`05-02`); HOME-01–HOME-04 marked complete.
+Status: **Phase 5 in progress** — Tab shell + home (`05-01`); calendar day model + painters (`05-02`); `table_calendar` CalendarScreen + tests (`05-03`); HOME-01–HOME-04; CAL-01, CAL-04, CAL-05.
 
-Last activity: 2026-04-06 — Plan `05-01` executed (TabShell, home summary, tests).
+Last activity: 2026-04-06 — Plan `05-03` executed (CalendarScreen, TabShell integration, widget tests).
 
 **Progress:** [█████████░] 88%
 
@@ -58,6 +58,7 @@ Last activity: 2026-04-06 — Plan `05-01` executed (TabShell, home summary, tes
 | Phase 04-core-logging P03 | — | 3 tasks (incl. Task 3 pass); UAT gaps `1856a99`, `28f0d25` | 7+ files |
 | Phase 05-calendar-home-cycle-surfaces P02 | 30min | 2 tasks | 3 files |
 | Phase 05-calendar-home-cycle-surfaces P01 | 25 min | 2 tasks | 8 files |
+| Phase 05-calendar-home-cycle-surfaces P03 | 35min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -86,10 +87,11 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 05-calendar-home-cycle-surfaces]: 05-01 Task 1: minimal HomeScreen stub required so TabShell compiles before Task 2 full home
 - [Phase 05-calendar-home-cycle-surfaces]: 05-01: cycle_position uses flutter/foundation @immutable for analyzer depend_on_referenced_packages
 - [Phase 05-calendar-home-cycle-surfaces]: 05-01: drawer Settings widget test uses bounded pump instead of pumpAndSettle after openDrawer
+- [Phase 05-calendar-home-cycle-surfaces]: 05-03: month-change widget test taps header chevron (horizontal PageView drag unreliable in tests)
 
 ### Pending Todos
 
-Continue Phase 5: `05-03`, `05-04` per `ROADMAP.md`.
+Continue Phase 5: `05-04` per `ROADMAP.md`.
 
 ### Blockers/Concerns
 
@@ -97,8 +99,8 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-06T12:10:49.102Z
+**Last session:** 2026-04-06T12:21:29.426Z
 
-**Stopped at:** Completed 05-01-PLAN.md
+**Stopped at:** Completed 05-03-PLAN.md
 
 **Resume file:** None
