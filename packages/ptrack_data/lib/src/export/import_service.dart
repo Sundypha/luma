@@ -1,11 +1,16 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
+import 'package:drift/drift.dart';
 
 import '../db/ptrack_database.dart';
+import 'backup_service.dart';
 import 'export_schema.dart';
+import 'export_service.dart';
 import 'luma_crypto.dart';
+
+DateTime _utcCalendarDate(DateTime d) =>
+    DateTime.utc(d.year, d.month, d.day);
 
 /// Base class for import failures with a user-facing [message].
 sealed class LumaImportException implements Exception {
@@ -55,9 +60,13 @@ final class ImportResult {
 
 /// Parses and applies `.luma` backups.
 final class ImportService {
-  ImportService(this._db);
+  ImportService(
+    this._db, {
+    BackupService? backupService,
+  }) : _backup = backupService ?? BackupService(_db);
 
   final PtrackDatabase _db;
+  final BackupService _backup;
 
   LumaExportMeta parseFileMeta(Uint8List bytes) {
     late final Map<String, dynamic> root;
@@ -179,5 +188,90 @@ final class ImportService {
         'File is not a valid Luma backup',
       );
     }
+  }
+
+  /// Creates an auto-backup, then imports [data] in a single transaction.
+  Future<ImportResult> applyImport({
+    required LumaExportData data,
+    required DuplicateStrategy strategy,
+    ProgressCallback? onProgress,
+  }) async {
+    await _backup.createBackup();
+
+    return _db.transaction(() async {
+      final refMap = <int, int>{};
+      var periodsCreated = 0;
+      var entriesCreated = 0;
+      var entriesSkipped = 0;
+      var entriesReplaced = 0;
+
+      final periods = data.periods ?? [];
+      for (final ip in periods) {
+        final startUtc = DateTime.parse(ip.startUtc).toUtc();
+        final endUtc =
+            ip.endUtc != null ? DateTime.parse(ip.endUtc!).toUtc() : null;
+        final id = await _db.into(_db.periods).insert(
+              PeriodsCompanion.insert(
+                startUtc: startUtc,
+                endUtc: endUtc != null
+                    ? Value(endUtc)
+                    : const Value.absent(),
+              ),
+            );
+        refMap[ip.refId] = id;
+        periodsCreated++;
+      }
+
+      final entries = data.dayEntries ?? [];
+      final totalEntries = entries.length;
+      for (var i = 0; i < entries.length; i++) {
+        final ie = entries[i];
+        onProgress?.call(i + 1, totalEntries);
+        final periodId = refMap[ie.periodRefId]!;
+        final dateUtc = _utcCalendarDate(DateTime.parse(ie.dateUtc).toUtc());
+
+        final existing = await (_db.select(_db.dayEntries)
+              ..where((t) => t.dateUtc.equals(dateUtc)))
+            .getSingleOrNull();
+
+        if (existing != null) {
+          if (strategy == DuplicateStrategy.skip) {
+            entriesSkipped++;
+            continue;
+          }
+          await (_db.update(_db.dayEntries)
+                ..where((t) => t.id.equals(existing.id)))
+              .write(
+            DayEntriesCompanion(
+              periodId: Value(periodId),
+              flowIntensity: Value(ie.flowIntensity),
+              painScore: Value(ie.painScore),
+              mood: Value(ie.mood),
+              notes: Value(ie.notes),
+            ),
+          );
+          entriesReplaced++;
+        } else {
+          await _db.into(_db.dayEntries).insert(
+                DayEntriesCompanion.insert(
+                  periodId: periodId,
+                  dateUtc: dateUtc,
+                  flowIntensity: Value(ie.flowIntensity),
+                  painScore: Value(ie.painScore),
+                  mood: Value(ie.mood),
+                  notes: Value(ie.notes),
+                ),
+              );
+          entriesCreated++;
+        }
+      }
+
+      return ImportResult(
+        periodsCreated: periodsCreated,
+        entriesCreated: entriesCreated,
+        entriesSkipped: entriesSkipped,
+        entriesReplaced: entriesReplaced,
+      );
+    });
   }
 }

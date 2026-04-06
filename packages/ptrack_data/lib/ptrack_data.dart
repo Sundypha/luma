@@ -13,6 +13,19 @@ export 'src/export/export_schema.dart'
         lumaFormatVersion;
 export 'src/export/export_service.dart'
     show ExportResult, ExportService, ProgressCallback;
+export 'src/export/backup_service.dart'
+    show BackupInfo, BackupService;
+export 'src/export/import_preview.dart'
+    show ImportPreview, ImportPreviewResult;
+export 'src/export/import_service.dart'
+    show
+        DuplicateStrategy,
+        ImportResult,
+        ImportService,
+        LumaDecryptionException,
+        LumaImportException,
+        LumaInvalidFileException,
+        LumaVersionException;
 export 'src/export/luma_crypto.dart' show LumaCrypto;
 export 'src/db/ptrack_database.dart'
     show
