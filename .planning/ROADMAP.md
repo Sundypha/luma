@@ -199,7 +199,13 @@ Plans:
 2. With lock enabled, returning from background reliably prompts for unlock on supported devices.
 3. Product copy does not claim full cryptographic protection; failure modes are described so users are not stranded without a credible recovery narrative where applicable.
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+
+- [ ] `07-01-PLAN.md` — Dependencies (local_auth, flutter_secure_storage), platform setup (Android + iOS), LockService with Argon2id PIN hashing and unit tests
+- [ ] `07-02-PLAN.md` — Lock UI: PinEntryWidget, LockViewModel, LockScreen, PinSetupSheet (ack → PIN → biometric offer), ForgotPinSheet (honest copy + destructive reset), LockSettingsScreen
+- [ ] `07-03-PLAN.md` — LockGate (AppLifecycleListener + cold-start lock), main.dart wiring, TabShell Privacy & Security tile, destructive-reset-to-onboarding, human verification
 
 ### Phase 8: Release quality, offline assurance & inclusive copy
 
