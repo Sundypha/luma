@@ -20,7 +20,7 @@ Decimal phases appear between their surrounding integers in numeric order.
  (completed 2026-04-05)
 - [ ] **Phase 5: Calendar, home & cycle surfaces** — Month navigation, actual vs predicted distinction, home summary and quick actions
 - [ ] **Phase 6: Export & import** — Documented full export, validated import, deterministic duplicate handling — **in progress**: `06-04` Task 2 human UAT pending (IMPT-01, IMPT-03); Task 1 complete 2026-04-06 (`6f20f79`)
-- [ ] **Phase 7: App protection (lock)** — Optional PIN/biometric lock with honest limitations
+- [ ] **Phase 7: App protection (lock)** — Optional PIN/biometric lock with honest limitations — **in progress**: `07-01` complete 2026-04-06 (`ce72342`, `4082ebb`; see `07-01-SUMMARY.md`)
 - [ ] **Phase 8: Release quality, offline assurance & inclusive copy** — Snappy UX, clear actions, non-gendered non-medical copy, airplane-mode verification
 
 ## Phase Details
@@ -203,7 +203,7 @@ Plans:
 
 Plans:
 
-- [ ] `07-01-PLAN.md` — Dependencies (local_auth, flutter_secure_storage), platform setup (Android + iOS), LockService with Argon2id PIN hashing and unit tests
+- [x] `07-01-PLAN.md` — Dependencies (local_auth, flutter_secure_storage), platform setup (Android + iOS), LockService with Argon2id PIN hashing and unit tests — complete 2026-04-06 (`ce72342`, `4082ebb`; see `07-01-SUMMARY.md`)
 - [ ] `07-02-PLAN.md` — Lock UI: PinEntryWidget, LockViewModel, LockScreen, PinSetupSheet (ack → PIN → biometric offer), ForgotPinSheet (honest copy + destructive reset), LockSettingsScreen
 - [ ] `07-03-PLAN.md` — LockGate (AppLifecycleListener + cold-start lock), main.dart wiring, TabShell Privacy & Security tile, destructive-reset-to-onboarding, human verification
 
@@ -238,7 +238,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 | 4. Core logging | 3/3 | Complete    | 2026-04-05 |
 | 5. Calendar, home & cycle surfaces | 3/4 | In Progress|  |
 | 6. Export & import | 4/4 | Complete   | 2026-04-06 |
-| 7. App protection (lock) | 0/TBD | Not started | - |
+| 7. App protection (lock) | 1/3 | In Progress|  |
 | 8. Release quality, offline assurance & inclusive copy | 0/TBD | Not started | - |
 
 ---
