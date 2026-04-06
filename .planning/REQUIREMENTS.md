@@ -48,8 +48,8 @@ Phase 1 MVP — derived from `period_tracker_prds/PRD_Phase_1_MVP.md` (functiona
 ### Data export
 
 - [ ] **XPRT-01**: User can initiate full local export without an account
-- [ ] **XPRT-02**: Export includes periods, symptoms, notes, and metadata needed for round-trip restoration
-- [ ] **XPRT-03**: Export format is documented in the repository and includes schema/version markers
+- [x] **XPRT-02**: Export includes periods, symptoms, notes, and metadata needed for round-trip restoration
+- [x] **XPRT-03**: Export format is documented in the repository and includes schema/version markers
 
 ### Data import
 
@@ -124,8 +124,8 @@ Explicit Phase 1 exclusions per PRD §8:
 | PRED-03 | Phase 2 | Complete |
 | PRED-04 | Phase 2 | Complete |
 | XPRT-01 | Phase 6 | Pending |
-| XPRT-02 | Phase 6 | Pending |
-| XPRT-03 | Phase 6 | Pending |
+| XPRT-02 | Phase 6 | Complete |
+| XPRT-03 | Phase 6 | Complete |
 | IMPT-01 | Phase 6 | Pending |
 | IMPT-02 | Phase 6 | Pending |
 | IMPT-03 | Phase 6 | Pending |

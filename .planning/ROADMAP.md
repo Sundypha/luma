@@ -180,7 +180,7 @@ Plans:
 
 Plans:
 
-- [ ] `06-01-PLAN.md` — Export schema types, AES-256-GCM crypto, ExportService, and format documentation (XPRT-02, XPRT-03)
+- [x] `06-01-PLAN.md` — Export schema types, AES-256-GCM crypto, ExportService, and format documentation (XPRT-02, XPRT-03) — complete 2026-04-06 (`87cb5a2`, `a365889`; see `06-01-SUMMARY.md`)
 - [ ] `06-02-PLAN.md` — ImportService validation, ImportPreview duplicate detection, BackupService, atomic import apply (IMPT-02)
 - [ ] `06-03-PLAN.md` — ExportViewModel, ExportWizardScreen, DataSettingsScreen, drawer integration (XPRT-01)
 - [ ] `06-04-PLAN.md` — ImportViewModel, ImportScreen, DataSettingsScreen wiring, human verification (IMPT-01, IMPT-03)
@@ -231,7 +231,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 | 3. Onboarding | 3/3 | Complete    | 2026-04-05 |
 | 4. Core logging | 3/3 | Complete    | 2026-04-05 |
 | 5. Calendar, home & cycle surfaces | 3/4 | In Progress|  |
-| 6. Export & import | 0/4 | Not started | - |
+| 6. Export & import | 1/4 | In Progress|  |
 | 7. App protection (lock) | 0/TBD | Not started | - |
 | 8. Release quality, offline assurance & inclusive copy | 0/TBD | Not started | - |
 

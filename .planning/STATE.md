@@ -65,6 +65,7 @@ Last activity: 2026-04-06 — Completed **`05.1-05` Task 1**; `05-04` and `05.1-
 | Phase 05.1 P02 | 30min | 2 tasks | 5 files |
 | Phase 05.1 P03 | 30min | 2 tasks | 11 files |
 | Phase 05.1 P05 T1 | 25min | 1 task (auto) | 8 files |
+| Phase 06-export-import P01 | 35min | 2 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -100,6 +101,7 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 05.1]: 05.1-03 ViewModels expose `hasInitialEvent`/`loadError` and `repository`/`calendar` for sheet parity after removing StreamBuilder from calendar/home screens
 - [Phase 05.1]: TabShell FAB marks today via `HomeViewModel.markToday` when `!isTodayMarked`; otherwise opens `showSymptomFormSheet` with `todayPeriodId` / `todayStoredEntry` (tooltip Mark today / Add symptoms)
 - [Phase 05.1]: 05.1-04 Calendar opens `showDayDetailSheet` for every day tap; symptoms use `showSymptomFormSheet` from period day actions; CAL-03 marked complete in REQUIREMENTS
+- [Phase 06-export-import]: 06-01 complete — `ExportService`, `LumaCrypto` (AES-256-GCM + Argon2id), export schema types, `docs/luma-export-format.md`; commits `87cb5a2`, `a365889`; XPRT-02/XPRT-03 marked complete in REQUIREMENTS
 
 ### Pending Todos
 
@@ -117,8 +119,8 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-06T16:21:29.510Z
+**Last session:** 2026-04-06 (06-01 plan execution)
 
-**Stopped at:** Phase 6 context gathered
+**Stopped at:** Completed `06-01-PLAN.md` (export data layer); next: `06-02-PLAN.md` import path
 
 **Resume file:** .planning/phases/06-export-import/06-CONTEXT.md
