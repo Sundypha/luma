@@ -101,6 +101,7 @@ class LumaApp extends StatefulWidget {
 class _LumaAppState extends State<LumaApp> {
   late AppScreen _screen;
   final ValueNotifier<int> _lockNowSignal = ValueNotifier<int>(0);
+  final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
@@ -164,6 +165,9 @@ class _LumaAppState extends State<LumaApp> {
         home = LockGate(
           lockService: widget.lockService!,
           lockNowSignal: _lockNowSignal,
+          onBeforeLock: () {
+            _rootNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+          },
           onReset: () {
             _resetApp();
           },
@@ -180,6 +184,7 @@ class _LumaAppState extends State<LumaApp> {
     }
 
     return MaterialApp(
+      navigatorKey: _rootNavigatorKey,
       title: 'Luma',
       theme: theme,
       home: home,
