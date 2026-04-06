@@ -27,7 +27,7 @@ Phase 1 MVP — derived from `period_tracker_prds/PRD_Phase_1_MVP.md` (functiona
 
 - [x] **CAL-01**: User can view a month-based calendar and navigate past and future months smoothly
 - [x] **CAL-02**: Logged period days and predicted future days are visually distinguishable (not color-only)
-- [ ] **CAL-03**: User can tap a day to view or edit entries for that day
+- [x] **CAL-03**: User can tap a day to view or edit entries for that day
 - [x] **CAL-04**: Calendar remains performant with multi-year local history
 - [x] **CAL-05**: Prediction display on the calendar updates after edits to underlying data
 
@@ -112,7 +112,7 @@ Explicit Phase 1 exclusions per PRD §8:
 | LOG-06 | Phase 4 | Complete |
 | CAL-01 | Phase 5 | Complete |
 | CAL-02 | Phase 5 | Complete |
-| CAL-03 | Phase 5 | Pending |
+| CAL-03 | Phase 5 | Complete |
 | CAL-04 | Phase 5 | Complete |
 | CAL-05 | Phase 5 | Complete |
 | HOME-01 | Phase 5 | Complete |

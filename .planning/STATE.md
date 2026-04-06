@@ -10,7 +10,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 ## Current Position
 
-Phase: **5** of 8 (Calendar, home & cycle surfaces) — **05.1-01 through 05.1-03 complete** (see below).
+Phase: **5** of 8 (Calendar, home & cycle surfaces) — **05.1-01 through 05.1-04 complete** (see below).
 
 **Current Plan (Phase 5):** 4 (`05-04`)
 
@@ -18,13 +18,13 @@ Phase: **5** of 8 (Calendar, home & cycle surfaces) — **05.1-01 through 05.1-0
 
 Plan: **05-04** — Task 1 (day detail sheet + calendar routing) **complete** 2026-04-06; **Task 2 human verification pending** (see `05-04-SUMMARY.md`).
 
-**Phase 05.1 (inserted):** Plans **01–03** of **5** complete — domain + repository + MVVM (`260727a`, `950520a`); **next:** `05.1-04-PLAN.md` (SymptomFormSheet + day detail).
+**Phase 05.1 (inserted):** Plans **01–04** of **5** complete — includes SymptomFormSheet + day detail rewrite (`7f84edb`, `35abfde`); **next:** `05.1-05-PLAN.md` (dead code removal + first_log + human verification).
 
-Status: **Phase 5 in progress** — same as above; **Phase 05.1 in progress** (3/5 plans).
+Status: **Phase 5 in progress** — same as above; **Phase 05.1 in progress** (4/5 plans).
 
-Last activity: 2026-04-06 — Completed **`05.1-03`** (CalendarViewModel, HomeViewModel, TabShell FAB mark-today); `05-04` Task 2 human checkpoint still open.
+Last activity: 2026-04-06 — Completed **`05.1-04`** (symptom form, day-marking day detail, all-tap routing); `05-04` Task 2 human checkpoint still open.
 
-**Progress:** [█████████░] ~90% Phase 5 (05-04 awaiting UX sign-off); Phase 05.1 **3/5** plans
+**Progress:** [█████████░] ~90% Phase 5 (05-04 awaiting UX sign-off); Phase 05.1 **4/5** plans
 
 ## Performance Metrics
 
@@ -98,6 +98,7 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 05.1]: Schema v3 closes NULL `end_utc` via SQL; Drift column stays nullable so `PeriodSpan(endUtc: null)` remains valid for in-memory use until all writers use closed spans
 - [Phase 05.1]: 05.1-03 ViewModels expose `hasInitialEvent`/`loadError` and `repository`/`calendar` for sheet parity after removing StreamBuilder from calendar/home screens
 - [Phase 05.1]: TabShell FAB marks today via `HomeViewModel.markToday` when `!isTodayMarked`; otherwise opens `showLoggingBottomSheet` (tooltip Mark today / Add symptoms)
+- [Phase 05.1]: 05.1-04 Calendar opens `showDayDetailSheet` for every day tap; symptoms use `showSymptomFormSheet` from period day actions; CAL-03 marked complete in REQUIREMENTS
 
 ### Pending Todos
 
@@ -116,6 +117,6 @@ None.
 
 **Last session:** 2026-04-06T12:00:00.000Z
 
-**Stopped at:** Completed 05.1-03-PLAN.md; next 05.1-04
+**Stopped at:** Completed 05.1-04-PLAN.md; next 05.1-05
 
 **Resume file:** None
