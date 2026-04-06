@@ -17,6 +17,16 @@ bool _isLiveDateErrorText(String? e) =>
     e == 'This date is before the current period started.' ||
     e == 'This date is outside this period\'s range.';
 
+/// Open period with the **latest** start in [list] (current cycle). If only one
+/// is open, returns it. Ascending sort + last match avoids stale duplicates.
+StoredPeriod? _ongoingPeriodFromList(List<StoredPeriod> list) {
+  StoredPeriod? open;
+  for (final p in list) {
+    if (p.span.isOpen) open = p;
+  }
+  return open;
+}
+
 enum _OrphanResolution { dismissed, deleteOrphans, splitToNewPeriod }
 
 Future<_OrphanResolution> _promptOrphanDayEntries(
@@ -189,13 +199,7 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
     if (!_isEditMode) {
       widget.repository.listOrderedByStartUtc().then((list) {
         if (!mounted) return;
-        StoredPeriod? open;
-        for (final p in list) {
-          if (p.span.isOpen) {
-            open = p;
-            break;
-          }
-        }
+        final open = _ongoingPeriodFromList(list);
         setState(() {
           _openPeriod = open;
           _createIntent = open != null
@@ -582,6 +586,19 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
     return o;
   }
 
+  Future<void> _deleteOngoingPeriodFromFab() async {
+    final list = await widget.repository.listOrderedByStartUtc();
+    if (!mounted) return;
+    final ongoing = _ongoingPeriodFromList(list);
+    if (ongoing == null) {
+      setState(() {
+        _errorText = 'There is no ongoing period to delete.';
+      });
+      return;
+    }
+    await _confirmDeletePeriod(ongoing);
+  }
+
   void _navigateToPeriodOnlyEdit(StoredPeriod period) {
     final navigator = Navigator.of(context);
     final overlay = navigator.overlay;
@@ -600,24 +617,49 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
   }
 
   Future<void> _confirmDeletePeriod(StoredPeriod period) async {
+    final list = await widget.repository.listOrderedByStartUtc();
+    if (!mounted) return;
+    StoredPeriod? fresh;
+    for (final p in list) {
+      if (p.id == period.id) {
+        fresh = p;
+        break;
+      }
+    }
+    if (fresh == null) {
+      if (mounted) {
+        setState(() {
+          _errorText =
+              'That period no longer exists. Close this sheet and try again.';
+        });
+      }
+      return;
+    }
+
+    final target = fresh;
     final loc = MaterialLocalizations.of(context);
-    final startLabel = loc.formatMediumDate(
-      DateTime(
-        period.span.startUtc.year,
-        period.span.startUtc.month,
-        period.span.startUtc.day,
-      ),
-    );
+    String localDay(DateTime utc) =>
+        loc.formatMediumDate(DateTime(utc.year, utc.month, utc.day));
+    final startLabel = localDay(target.span.startUtc);
+    final endLabel = target.span.isOpen
+        ? null
+        : localDay(target.span.endUtc!);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete period?'),
+        title: Text(
+          target.span.isOpen
+              ? 'Delete ongoing period?'
+              : 'Delete this period?',
+        ),
         content: Text(
-          period.span.isOpen
-              ? 'Remove the ongoing period that started $startLabel and all '
-                  'day logs saved under it. You can start a new period afterward.'
-              : 'Remove this period ($startLabel) and all day logs saved under '
-                  'it. This cannot be undone.',
+          target.span.isOpen
+              ? 'Remove only the ongoing period that starts $startLabel '
+                  '(still open). Older, finished periods are not affected.\n\n'
+                  'To remove a past period instead, open a day inside that '
+                  'period on the calendar and use Delete entire period there.'
+              : 'Remove the period $startLabel–$endLabel and all day logs '
+                  'saved under it. This cannot be undone.',
         ),
         actions: [
           TextButton(
@@ -641,7 +683,7 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
       _errorText = null;
     });
     try {
-      final ok = await widget.repository.deletePeriod(period.id);
+      final ok = await widget.repository.deletePeriod(target.id);
       if (!mounted) return;
       if (!ok) {
         setState(() {
@@ -910,15 +952,23 @@ class _LoggingBottomSheetState extends State<LoggingBottomSheet> {
                         child: const Text('Adjust period dates'),
                       ),
                       TextButton(
-                        onPressed: _isSaving
-                            ? null
-                            : () => _confirmDeletePeriod(_openPeriod!),
+                        onPressed: _isSaving ? null : _deleteOngoingPeriodFromFab,
                         style: TextButton.styleFrom(
                           foregroundColor: scheme.error,
                         ),
-                        child: const Text('Delete period'),
+                        child: const Text('Delete ongoing period'),
                       ),
                     ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(
+                      'Past (ended) periods are not removed here. Open a day '
+                      'in that older span on the calendar → Delete entire period.',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
+                    ),
                   ),
                 ] else
                   Padding(

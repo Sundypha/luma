@@ -219,6 +219,55 @@ class _DayDetailSheetState extends State<DayDetailSheet> {
     );
   }
 
+  Future<void> _confirmDeleteEntirePeriod(
+    MaterialLocalizations loc,
+    StoredPeriod period,
+  ) async {
+    String localDay(DateTime utc) =>
+        loc.formatMediumDate(DateTime(utc.year, utc.month, utc.day));
+    final startLabel = localDay(period.span.startUtc);
+    final endLabel = period.span.isOpen
+        ? 'ongoing'
+        : localDay(period.span.endUtc!);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete entire period?'),
+        content: Text(
+          period.span.isOpen
+              ? 'Remove the ongoing period starting $startLabel and all of '
+                  'its day logs.'
+              : 'Remove the period $startLabel–$endLabel and all of its day '
+                  'logs. This cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(ctx).colorScheme.error,
+              foregroundColor: Theme.of(ctx).colorScheme.onError,
+            ),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    final ok = await widget.repository.deletePeriod(period.id);
+    if (!mounted) return;
+    if (!ok) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not delete period.')),
+      );
+      return;
+    }
+    Navigator.of(context).pop();
+  }
+
   Future<void> _confirmAndDelete(
     BuildContext dialogContext,
     MaterialLocalizations loc,
@@ -372,6 +421,14 @@ class _DayDetailSheetState extends State<DayDetailSheet> {
           FilledButton(
             onPressed: () => _edit(pwd.period, entry),
             child: const Text('Edit'),
+          ),
+          const SizedBox(height: 8),
+          TextButton(
+            onPressed: () => _confirmDeleteEntirePeriod(loc, pwd.period),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
+            child: const Text('Delete entire period'),
           ),
         ],
       ),
