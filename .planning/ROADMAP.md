@@ -152,7 +152,7 @@ Plans:
 
 **Requirements:** LOG-01, LOG-02, LOG-03, LOG-04, LOG-05, LOG-06, CAL-01, CAL-03, CAL-05, HOME-01, HOME-02, HOME-03, HOME-04
 
-**Plans:** 2/5 plans executed
+**Plans:** 3/5 plans executed
 
 Plans:
 - [x] `05.1-01-PLAN.md` — TDD: Day-marking domain pure functions (computeMarkDay, computeUnmarkDay — 6 span operations) — complete 2026-04-06 (`83703d0` test, `5d88893` feat; see `05.1-01-SUMMARY.md`)
