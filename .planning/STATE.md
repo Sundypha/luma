@@ -10,7 +10,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 ## Current Position
 
-Phase: **5** of 8 (Calendar, home & cycle surfaces) — **05.1-01 and 05.1-02 complete** (see below).
+Phase: **5** of 8 (Calendar, home & cycle surfaces) — **05.1-01 through 05.1-03 complete** (see below).
 
 **Current Plan (Phase 5):** 4 (`05-04`)
 
@@ -18,19 +18,19 @@ Phase: **5** of 8 (Calendar, home & cycle surfaces) — **05.1-01 and 05.1-02 co
 
 Plan: **05-04** — Task 1 (day detail sheet + calendar routing) **complete** 2026-04-06; **Task 2 human verification pending** (see `05-04-SUMMARY.md`).
 
-**Phase 05.1 (inserted):** Plans **01–02** of **5** complete — domain (`83703d0`, `5d88893`) + repository migration (`0698c49`, `c0a8b4f`); **next:** `05.1-03-PLAN.md` (ViewModels + MVVM refactor).
+**Phase 05.1 (inserted):** Plans **01–03** of **5** complete — domain + repository + MVVM (`260727a`, `950520a`); **next:** `05.1-04-PLAN.md` (SymptomFormSheet + day detail).
 
-Status: **Phase 5 in progress** — same as above; **Phase 05.1 in progress** (2/5 plans).
+Status: **Phase 5 in progress** — same as above; **Phase 05.1 in progress** (3/5 plans).
 
-Last activity: 2026-04-06 — Completed **`05.1-02`** (schema v3 close-open-periods migration, `markDay` / `unmarkDay`); `05-04` Task 2 human checkpoint still open.
+Last activity: 2026-04-06 — Completed **`05.1-03`** (CalendarViewModel, HomeViewModel, TabShell FAB mark-today); `05-04` Task 2 human checkpoint still open.
 
-**Progress:** [█████████░] ~90% Phase 5 (05-04 awaiting UX sign-off); Phase 05.1 **2/5** plans
+**Progress:** [█████████░] ~90% Phase 5 (05-04 awaiting UX sign-off); Phase 05.1 **3/5** plans
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 15
+- Total plans completed: 16
 - Average duration: —
 - Total execution time: —
 
@@ -63,6 +63,7 @@ Last activity: 2026-04-06 — Completed **`05.1-02`** (schema v3 close-open-peri
 | Phase 05-calendar-home-cycle-surfaces P03 | 35min | 2 tasks | 5 files |
 | Phase 05.1 P01 | 25min | 2 tasks | 3 files |
 | Phase 05.1 P02 | 30min | 2 tasks | 5 files |
+| Phase 05.1 P03 | 30min | 2 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -95,6 +96,8 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 05-calendar-home-cycle-surfaces]: 05-04 Task 1: calendar tap routing uses `!hasLoggedData && !isPredictedPeriod` so period-band days without a day entry open logging directly; day detail uses `anchorContext` after pop for `showLoggingBottomSheet`
 - [Phase 05.1]: Day-marking merge: keepId=min(adjacent ids), absorbId=max for deterministic DB apply order
 - [Phase 05.1]: Schema v3 closes NULL `end_utc` via SQL; Drift column stays nullable so `PeriodSpan(endUtc: null)` remains valid for in-memory use until all writers use closed spans
+- [Phase 05.1]: 05.1-03 ViewModels expose `hasInitialEvent`/`loadError` and `repository`/`calendar` for sheet parity after removing StreamBuilder from calendar/home screens
+- [Phase 05.1]: TabShell FAB marks today via `HomeViewModel.markToday` when `!isTodayMarked`; otherwise opens `showLoggingBottomSheet` (tooltip Mark today / Add symptoms)
 
 ### Pending Todos
 
@@ -111,8 +114,8 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-06T00:00:00.000Z
+**Last session:** 2026-04-06T12:00:00.000Z
 
-**Stopped at:** Completed 05.1-02-PLAN.md; next 05.1-03
+**Stopped at:** Completed 05.1-03-PLAN.md; next 05.1-04
 
 **Resume file:** None
