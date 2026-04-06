@@ -133,6 +133,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
               formatButtonVisible: false,
               titleCentered: true,
             ),
+            // Tight cells + no default today circle (we paint today in buildCalendarDayCell).
+            calendarStyle: const CalendarStyle(
+              cellMargin: EdgeInsets.zero,
+              cellPadding: EdgeInsets.zero,
+              isTodayHighlighted: false,
+            ),
             calendarBuilders: CalendarBuilders<void>(
               prioritizedBuilder: _dayBuilder,
             ),

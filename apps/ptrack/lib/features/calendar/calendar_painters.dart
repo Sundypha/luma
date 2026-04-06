@@ -18,16 +18,25 @@ class PeriodBandPainter extends CustomPainter {
   final PeriodDayState state;
   final Color color;
 
-  /// Horizontal overlap into neighbour cells so bands read as one strip despite grid gutters.
-  static const double _horizontalBleed = 5.0;
+  /// Overlap into neighbour cells (table cells are flush; seams come from geometry).
+  static double _bleedX(double cellWidth) =>
+      (cellWidth * 0.22).clamp(10.0, 18.0);
+
+  Radius _endRadius(double bandHeight) {
+    final isRowBreak = state == PeriodDayState.middleRowStart ||
+        state == PeriodDayState.middleRowEnd;
+    // Full pill on true span ends; subtler arcs at week row breaks so spans feel less "bubbly".
+    final cap = isRowBreak ? 5.5 : bandHeight / 2;
+    return Radius.circular(cap.clamp(3.0, bandHeight / 2));
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
     if (state == PeriodDayState.none) return;
 
-    final bandHeight = size.height * 0.58;
+    final bandHeight = (size.height * 0.44).clamp(20.0, 40.0);
     final top = (size.height - bandHeight) / 2;
-    final b = _horizontalBleed;
+    final b = _bleedX(size.width);
     final rect = switch (state) {
       PeriodDayState.none => Rect.zero,
       PeriodDayState.start ||
@@ -37,9 +46,10 @@ class PeriodBandPainter extends CustomPainter {
       PeriodDayState.middleRowEnd =>
         Rect.fromLTWH(-b, top, size.width + b, bandHeight),
       PeriodDayState.middle => Rect.fromLTWH(-b, top, size.width + 2 * b, bandHeight),
-      PeriodDayState.single => Rect.fromLTWH(-b * 0.35, top, size.width + b * 0.7, bandHeight),
+      PeriodDayState.single =>
+        Rect.fromLTWH(-b * 0.25, top, size.width + b * 0.5, bandHeight),
     };
-    final r = Radius.circular(bandHeight / 2);
+    final r = _endRadius(bandHeight);
     final rrect = _rrectForState(rect, r);
     canvas.drawRRect(rrect, Paint()..color = color);
   }
@@ -49,6 +59,13 @@ class PeriodBandPainter extends CustomPainter {
       case PeriodDayState.none:
         return RRect.fromRectAndRadius(rect, Radius.zero);
       case PeriodDayState.start:
+        return RRect.fromRectAndCorners(
+          rect,
+          topLeft: corner,
+          bottomLeft: corner,
+          topRight: Radius.zero,
+          bottomRight: Radius.zero,
+        );
       case PeriodDayState.middleRowStart:
         return RRect.fromRectAndCorners(
           rect,
@@ -58,6 +75,13 @@ class PeriodBandPainter extends CustomPainter {
           bottomRight: Radius.zero,
         );
       case PeriodDayState.end:
+        return RRect.fromRectAndCorners(
+          rect,
+          topLeft: Radius.zero,
+          bottomLeft: Radius.zero,
+          topRight: corner,
+          bottomRight: corner,
+        );
       case PeriodDayState.middleRowEnd:
         return RRect.fromRectAndCorners(
           rect,
@@ -133,34 +157,6 @@ class HatchedCirclePainter extends CustomPainter {
   }
 }
 
-/// Small dot below center for days with logged symptoms/notes/mood.
-class DotIndicatorPainter extends CustomPainter {
-  DotIndicatorPainter({this.color = kPeriodColor});
-
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height * 0.86);
-    final r = 3.8;
-    final fill = Paint()..color = color;
-    canvas.drawCircle(center, r, fill);
-    canvas.drawCircle(
-      center,
-      r,
-      Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.25,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant DotIndicatorPainter oldDelegate) {
-    return oldDelegate.color != color;
-  }
-}
-
 /// Ring around today's date cell.
 class TodayRingPainter extends CustomPainter {
   TodayRingPainter({this.color = kPeriodColor});
@@ -187,39 +183,109 @@ class TodayRingPainter extends CustomPainter {
   }
 }
 
-/// Stacks period band, prediction hatch, today ring, day number, and data dot.
+/// Height reserved under the day number for the optional log marker (keeps grid even).
+const double kCalendarLogMarkerStripHeight = 11.0;
+
+/// Logged-symptoms marker: separate from band so spacing stays predictable.
+Widget _logMarkerChip() {
+  return Container(
+    width: 7,
+    height: 7,
+    decoration: BoxDecoration(
+      color: kPeriodColor,
+      shape: BoxShape.circle,
+      border: Border.all(color: Colors.white, width: 1.25),
+      boxShadow: [
+        BoxShadow(
+          color: kPeriodColor.withValues(alpha: 0.35),
+          blurRadius: 3,
+          spreadRadius: 0,
+        ),
+      ],
+    ),
+  );
+}
+
+/// Stacks period band, prediction hatch, today ring, and day number; marker sits below.
 Widget buildCalendarDayCell(DateTime day, CalendarDayData data) {
-  return Stack(
-    alignment: Alignment.center,
-    clipBehavior: Clip.none,
+  final hasPeriod = data.loggedPeriodState != PeriodDayState.none;
+
+  return Column(
+    mainAxisSize: MainAxisSize.max,
+    crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      if (data.loggedPeriodState != PeriodDayState.none)
-        Positioned.fill(
-          child: CustomPaint(
-            painter: PeriodBandPainter(state: data.loggedPeriodState),
-          ),
-        ),
-      if (data.isPredictedPeriod && data.loggedPeriodState == PeriodDayState.none)
-        Positioned.fill(
-          child: CustomPaint(painter: HatchedCirclePainter()),
-        ),
-      if (data.isToday)
-        Positioned.fill(
-          child: CustomPaint(painter: TodayRingPainter()),
-        ),
-      Text(
-        '${day.day}',
-        style: TextStyle(
-          color: data.loggedPeriodState != PeriodDayState.none
-              ? Colors.white
-              : null,
-          fontWeight: data.isToday ? FontWeight.bold : null,
+      Expanded(
+        child: Stack(
+          alignment: Alignment.center,
+          clipBehavior: Clip.none,
+          children: [
+            if (hasPeriod)
+              Positioned.fill(
+                child: CustomPaint(
+                  painter: PeriodBandPainter(state: data.loggedPeriodState),
+                ),
+              ),
+            if (data.isPredictedPeriod && !hasPeriod)
+              Positioned.fill(
+                child: CustomPaint(painter: HatchedCirclePainter()),
+              ),
+            if (data.isToday && !hasPeriod)
+              Positioned.fill(
+                child: CustomPaint(painter: TodayRingPainter()),
+              ),
+            if (data.isToday && hasPeriod)
+              Positioned.fill(
+                child: CustomPaint(painter: TodayOnPeriodPainter()),
+              ),
+            Text(
+              '${day.day}',
+              style: TextStyle(
+                color: hasPeriod ? Colors.white : null,
+                fontWeight: data.isToday ? FontWeight.bold : null,
+              ),
+            ),
+          ],
         ),
       ),
-      if (data.hasLoggedData)
-        Positioned.fill(
-          child: CustomPaint(painter: DotIndicatorPainter()),
+      SizedBox(
+        height: kCalendarLogMarkerStripHeight,
+        child: Center(
+          child: data.hasLoggedData ? _logMarkerChip() : const SizedBox.shrink(),
         ),
+      ),
     ],
   );
+}
+
+/// Soft outline when today falls on a period band (avoids fighting a full circle ring).
+class TodayOnPeriodPainter extends CustomPainter {
+  TodayOnPeriodPainter({this.color = Colors.white});
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const inset = 2.0;
+    final r = RRect.fromRectAndRadius(
+      Rect.fromLTWH(
+        inset,
+        inset,
+        size.width - 2 * inset,
+        size.height - 2 * inset,
+      ),
+      const Radius.circular(6),
+    );
+    canvas.drawRRect(
+      r,
+      Paint()
+        ..color = color.withValues(alpha: 0.55)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.75,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant TodayOnPeriodPainter oldDelegate) {
+    return oldDelegate.color != color;
+  }
 }
