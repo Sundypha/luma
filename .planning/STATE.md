@@ -16,13 +16,13 @@ Phase: **5** of 8 (Calendar, home & cycle surfaces)
 
 **Total Plans in Phase:** 4
 
-Plan: **05-03** next (`05-02` complete 2026-04-06); 2 of 4 phase plans have execution progress (parallel wave: `05-01` may still be open).
+Plan: **05-03** next (`05-01` and `05-02` complete 2026-04-06).
 
-Status: **Phase 5 in progress** — `05-02-SUMMARY.md` complete; CAL-02 and NFR-06 marked complete in `REQUIREMENTS.md`.
+Status: **Phase 5 in progress** — Tab shell + home cycle summary shipped (`05-01`); calendar day model (`05-02`); HOME-01–HOME-04 marked complete.
 
-Last activity: 2026-04-06 — Plan `05-02` executed (calendar day data + painters).
+Last activity: 2026-04-06 — Plan `05-01` executed (TabShell, home summary, tests).
 
-**Progress:** [████████░░] 82%
+**Progress:** [█████████░] 88%
 
 ## Performance Metrics
 
@@ -57,6 +57,7 @@ Last activity: 2026-04-06 — Plan `05-02` executed (calendar day data + painter
 | Phase 04-core-logging P02 | 45min | 2 tasks | 7 files |
 | Phase 04-core-logging P03 | — | 3 tasks (incl. Task 3 pass); UAT gaps `1856a99`, `28f0d25` | 7+ files |
 | Phase 05-calendar-home-cycle-surfaces P02 | 30min | 2 tasks | 3 files |
+| Phase 05-calendar-home-cycle-surfaces P01 | 25 min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -82,10 +83,13 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 04 UAT]: Per-period day logging (`addDayEntryForPeriod`), orphan day handling on span shrink (`PeriodWriteBlockedByOrphanDayEntries`), upsert by calendar day.
 - [Phase 05-calendar]: Calendar painters use kPeriodColorLight for predicted hatch/outline vs solid kPeriodColor band for logged days (pattern + tone, NFR-06)
 - [Phase 05-calendar]: buildCalendarDayCell uses Positioned.fill around CustomPaint layers for valid Stack constraints
+- [Phase 05-calendar-home-cycle-surfaces]: 05-01 Task 1: minimal HomeScreen stub required so TabShell compiles before Task 2 full home
+- [Phase 05-calendar-home-cycle-surfaces]: 05-01: cycle_position uses flutter/foundation @immutable for analyzer depend_on_referenced_packages
+- [Phase 05-calendar-home-cycle-surfaces]: 05-01: drawer Settings widget test uses bounded pump instead of pumpAndSettle after openDrawer
 
 ### Pending Todos
 
-Continue Phase 5: `05-01`, `05-03`, `05-04` per `ROADMAP.md` (wave 1 allowed parallel with `05-02`).
+Continue Phase 5: `05-03`, `05-04` per `ROADMAP.md`.
 
 ### Blockers/Concerns
 
@@ -93,8 +97,8 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-06T12:06:44.566Z
+**Last session:** 2026-04-06T12:10:49.102Z
 
-**Stopped at:** Completed 05-02-PLAN.md
+**Stopped at:** Completed 05-01-PLAN.md
 
 **Resume file:** None

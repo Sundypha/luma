@@ -33,10 +33,10 @@ Phase 1 MVP — derived from `period_tracker_prds/PRD_Phase_1_MVP.md` (functiona
 
 ### Home summary
 
-- [ ] **HOME-01**: User sees where they are in the cycle and status of the next expected period (or clear insufficient-data state)
-- [ ] **HOME-02**: User sees what they logged today at a glance
-- [ ] **HOME-03**: User has a visible quick action to log or edit without deep navigation
-- [ ] **HOME-04**: Home does not present unsupported “cycle health” scores or overconfident precision
+- [x] **HOME-01**: User sees where they are in the cycle and status of the next expected period (or clear insufficient-data state)
+- [x] **HOME-02**: User sees what they logged today at a glance
+- [x] **HOME-03**: User has a visible quick action to log or edit without deep navigation
+- [x] **HOME-04**: Home does not present unsupported “cycle health” scores or overconfident precision
 
 ### Prediction v1
 
@@ -115,10 +115,10 @@ Explicit Phase 1 exclusions per PRD §8:
 | CAL-03 | Phase 5 | Pending |
 | CAL-04 | Phase 5 | Pending |
 | CAL-05 | Phase 5 | Pending |
-| HOME-01 | Phase 5 | Pending |
-| HOME-02 | Phase 5 | Pending |
-| HOME-03 | Phase 5 | Pending |
-| HOME-04 | Phase 5 | Pending |
+| HOME-01 | Phase 5 | Complete |
+| HOME-02 | Phase 5 | Complete |
+| HOME-03 | Phase 5 | Complete |
+| HOME-04 | Phase 5 | Complete |
 | PRED-01 | Phase 2 | Complete |
 | PRED-02 | Phase 2 | Complete |
 | PRED-03 | Phase 2 | Complete |
