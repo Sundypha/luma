@@ -22,7 +22,7 @@ Plan: **05-04** — Task 1 (day detail sheet + calendar routing) **complete** 20
 
 Status: **Phase 5 in progress** — same as above; **Phase 05.1** automation done for plan 05; **human UAT** outstanding for `05.1-05`.
 
-Last activity: 2026-04-06 — Completed **`06-02-PLAN.md`** (import data layer: `29c6883`, `02b59ef`); **`05.1-05` Task 1** done earlier; `05-04` and `05.1-05` Task 2 human checkpoints still open.
+Last activity: 2026-04-06 — Completed **`06-03-PLAN.md`** (export UI: `eb1f956`, `b72d902`; XPRT-01); earlier **`06-02-PLAN.md`** (`29c6883`, `02b59ef`); `05-04` and `05.1-05` Task 2 human checkpoints still open.
 
 **Progress:** [█████████░] 92%
 
@@ -30,7 +30,7 @@ Last activity: 2026-04-06 — Completed **`06-02-PLAN.md`** (import data layer: 
 
 **Velocity:**
 
-- Total plans completed: 16
+- Total plans completed: 17
 - Average duration: —
 - Total execution time: —
 
@@ -45,7 +45,7 @@ Last activity: 2026-04-06 — Completed **`06-02-PLAN.md`** (import data layer: 
 
 **Recent Trend:**
 
-- Last 5 plans: 05.1-02, 05.1-01, 05-02, 04-03, 04-02
+- Last 5 plans: 06-03, 06-02, 05.1-05 T1, 05.1-04, 05.1-03
 - Trend: —
 
 *Updated after each plan completion*
@@ -67,6 +67,7 @@ Last activity: 2026-04-06 — Completed **`06-02-PLAN.md`** (import data layer: 
 | Phase 05.1 P05 T1 | 25min | 1 task (auto) | 8 files |
 | Phase 06-export-import P01 | 35min | 2 tasks | 11 files |
 | Phase 06-export-import P02 | 45min | 2 tasks | 6 files |
+| Phase 06-export-import P03 | 45min | 2 tasks | 14 files |
 
 ## Accumulated Context
 
@@ -104,7 +105,9 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 05.1]: 05.1-04 Calendar opens `showDayDetailSheet` for every day tap; symptoms use `showSymptomFormSheet` from period day actions; CAL-03 marked complete in REQUIREMENTS
 - [Phase 06-export-import]: 06-01 complete — `ExportService`, `LumaCrypto` (AES-256-GCM + Argon2id), export schema types, `docs/luma-export-format.md`; commits `87cb5a2`, `a365889`; XPRT-02/XPRT-03 marked complete in REQUIREMENTS
 - [Phase 06-export-import]: 06-02 complete — `ImportService` (parse/validate/decrypt, transactional `applyImport`), `ImportPreview`, `BackupService` with keep-3 pruning; commits `29c6883`, `02b59ef`; IMPT-02 marked complete in REQUIREMENTS
+- [Phase 06-export-import]: 06-03 complete — `ExportViewModel`, `ExportWizardScreen`, `DataSettingsScreen`, drawer Data entry, `PeriodRepository.database`; commits `eb1f956`, `b72d902`; XPRT-01 marked complete in REQUIREMENTS
 - [Phase 06-export-import]: ImportService optional BackupService injection for testable applyImport without path_provider.
+- [Phase 06-export-import]: 06-03: runExport(ExportDataRun) supplements startExport for testable failure path; file_picker v11 uses FilePicker.saveFile with bytes on Linux
 
 ### Pending Todos
 
@@ -122,10 +125,10 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-06T17:11:02.034Z
+**Last session:** 2026-04-06T17:14:32.974Z
 
-**Stopped at:** Completed 06-02-PLAN.md (import data layer)
+**Stopped at:** Completed 06-03-PLAN.md (export UI); next: 06-04-PLAN.md
 
 **Resume file:** `.planning/phases/06-export-import/06-CONTEXT.md`
 
-**Next (Phase 6):** `06-03-PLAN.md` (export UI).
+**Next (Phase 6):** `06-04-PLAN.md` (import UI wiring + human verify).
