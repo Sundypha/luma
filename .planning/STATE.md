@@ -6,7 +6,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** Phase 5 (calendar surfaces) and **Phase 05.1** (day-marking UX + MVVM refactor) in parallel until 05-04 sign-off; **Phase 6 plan 06-04** Task 2 (export/import UAT) pending; **Phase 7 plans `07-01`–`07-02`** complete 2026-04-06 (`ce72342`, `4082ebb`, `4ab53aa`, `630ace9`; see `07-01-SUMMARY.md`, `07-02-SUMMARY.md`) — next **`07-03`** LockGate + app wiring.
+**Current focus:** Phase 5 (calendar surfaces) and **Phase 05.1** (day-marking UX + MVVM refactor) in parallel until 05-04 sign-off; **Phase 6 plan 06-04** Task 2 (export/import UAT) pending; **Phase 7 plan `07-03` Task 1** complete 2026-04-06 (`993a892`; LockGate + wiring — see `07-03-SUMMARY.md`); **`07-03` Task 2** human UAT pending (LOCK-01/LOCK-02 sign-off).
 
 ## Current Position
 
@@ -111,6 +111,7 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 06-export-import]: 06-04 Task 1 complete — `ImportViewModel`, `ImportScreen`, Data import tile wiring, `import_view_model_test.dart`; `FilePicker.pickFiles` (v11); shared `BackupService` injected into `ImportService` at navigation; commit `6f20f79`; **Task 2 full export/import UAT pending** (`06-04-SUMMARY.md` checklist)
 - [Phase 07-app-protection-lock]: 07-01 complete — `local_auth` + `flutter_secure_storage`, Android `FlutterFragmentActivity` + `USE_BIOMETRIC` + `allowBackup=false`, iOS Face ID + keychain entitlements; `LockService` with Argon2id PIN + unit tests; commits `ce72342`, `4082ebb` (see `07-01-SUMMARY.md`).
 - [Phase 07-app-protection-lock]: 07-02 complete — `PinEntryWidget`, `LockViewModel`, `LockScreen`, `showPinSetupSheet`, `showForgotPinSheet`, `LockSettingsScreen`, `lock_view_model_test.dart`; commits `4ab53aa`, `630ace9` (see `07-02-SUMMARY.md`). **LOCK-03** marked complete in REQUIREMENTS; **LOCK-01** / **LOCK-02** await `07-03` (settings navigation + LockGate).
+- [Phase 07-app-protection-lock]: 07-03 Task 1 complete — `LockGate`, `main.dart` LockService + `_resetApp`, `TabShell` + `LockSettingsTile`, `lock_gate_test.dart`, `993a892`; **LOCK-01** / **LOCK-02** await Task 2 human UAT (`07-03-SUMMARY.md`).
 - [Phase 06-export-import]: ImportService optional BackupService injection for testable applyImport without path_provider.
 - [Phase 06-export-import]: 06-03: runExport(ExportDataRun) supplements startExport for testable failure path; file_picker v11 uses FilePicker.saveFile with bytes on Linux
 - [Phase 07-app-protection-lock]: 07-02: LockViewModel tests use real LockService with mocked storage/local_auth because LockService is final.
@@ -118,6 +119,7 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 
 ### Pending Todos
 
+- Run **07-03 Task 2** manual checklist (`07-03-PLAN.md` / `07-03-SUMMARY.md`) for full lock UAT on device or simulator; reply `pass` or file issues. After pass: mark `07-03` complete in ROADMAP, run `gsd-tools requirements mark-complete LOCK-01 LOCK-02` (and plan closure) if appropriate.
 - Run **06-04 Task 2** manual checklist (`06-04-SUMMARY.md`) for full export → import round-trip; reply `pass` or file issues. After pass: mark `06-04` complete in ROADMAP, run `gsd-tools requirements mark-complete IMPT-01 IMPT-03` if appropriate.
 - Run **05-04 Task 2** manual checklist (`05-04-SUMMARY.md`); reply `pass` or file issues.
 - Run **05.1-05 Task 2** manual checklist (`05.1-05-SUMMARY.md`); reply `pass` or file issues. After pass: check off `05.1-05` in ROADMAP, run `gsd-tools requirements mark-complete` for plan requirement IDs if appropriate.
@@ -133,10 +135,10 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-06T19:06:30.424Z
+**Last session:** 2026-04-06 (07-03 Task 1 committed)
 
-**Stopped at:** Completed 07-02-PLAN.md (lock UI); next 07-03 LockGate wiring
+**Stopped at:** 07-03 Task 1 complete (`993a892`); Task 2 human UAT pending — see `07-03-SUMMARY.md`
 
-**Resume file:** `.planning/phases/07-app-protection-lock/07-03-PLAN.md`
+**Resume file:** `.planning/phases/07-app-protection-lock/07-03-PLAN.md` (Task 2 checklist)
 
-**Next (Phase 7):** Execute **`07-03-PLAN.md`** (LockGate, main wiring, settings tile, destructive reset). **Phase 6:** Human verification for **06-04 Task 2** still open.
+**Next (Phase 7):** Run **`07-03-PLAN.md` Task 2** human verification (10 items); then mark plan complete in ROADMAP / requirements as appropriate. **Phase 6:** Human verification for **06-04 Task 2** still open.
