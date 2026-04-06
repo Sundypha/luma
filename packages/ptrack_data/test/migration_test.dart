@@ -49,14 +49,14 @@ void main() {
 
       final second = periodRowToDomain(rows[1]);
       expect(second.startUtc, DateTime.utc(2024, 3, 1));
-      expect(second.endUtc, isNull);
+      expect(second.endUtc, DateTime.utc(2024, 3, 1));
 
       final uv = await _readUserVersion(db);
       expect(uv, ptrackSupportedSchemaVersion);
       await db.close();
     });
 
-    test('committed v2 fixture opens at schema 2 with expected rows', () async {
+    test('committed v2 fixture migrates to schema 3 and closes open period', () async {
       final fixture = File('test/fixtures/ptrack_v2.sqlite');
       expect(fixture.existsSync(), isTrue, reason: 'run tool/create_v2_fixture.dart');
 
@@ -68,6 +68,13 @@ void main() {
         expect(await _readUserVersion(db), ptrackSupportedSchemaVersion);
         final periods = await db.select(db.periods).get();
         expect(periods, hasLength(2));
+        expect(periodRowToDomain(periods[0]).endUtc, DateTime.utc(2024, 2, 5));
+        expect(periodRowToDomain(periods[1]).startUtc, DateTime.utc(2024, 3, 1));
+        expect(
+          periodRowToDomain(periods[1]).endUtc,
+          DateTime.utc(2024, 3, 1),
+          reason: 'open period without day entries closes to start_utc',
+        );
         final days = await db.select(db.dayEntries).get();
         expect(days, hasLength(1));
         expect(
@@ -84,6 +91,75 @@ void main() {
         await db.close();
       }
     });
+
+    test(
+      'v2 database migrates to v3: closes open periods using day entry max or start',
+      () async {
+        int sec(DateTime d) => d.toUtc().millisecondsSinceEpoch ~/ 1000;
+
+        final path = createTempSqlitePath();
+        final raw = sqlite.sqlite3.open(path);
+        try {
+          raw.execute('''
+CREATE TABLE periods (
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  start_utc INTEGER NOT NULL,
+  end_utc INTEGER
+);
+''');
+          raw.execute('''
+CREATE TABLE day_entries (
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  period_id INTEGER NOT NULL REFERENCES periods (id),
+  date_utc INTEGER NOT NULL,
+  flow_intensity INTEGER,
+  pain_score INTEGER,
+  mood INTEGER,
+  notes TEXT,
+  UNIQUE (period_id, date_utc)
+);
+''');
+
+          final s1 = sec(DateTime.utc(2024, 6, 1));
+          final s2 = sec(DateTime.utc(2024, 7, 1));
+          final s3 = sec(DateTime.utc(2024, 8, 1));
+          final e3 = sec(DateTime.utc(2024, 8, 10));
+          raw.execute(
+            'INSERT INTO periods (start_utc, end_utc) VALUES ($s1, NULL)',
+          );
+          raw.execute(
+            'INSERT INTO periods (start_utc, end_utc) VALUES ($s2, NULL)',
+          );
+          raw.execute(
+            'INSERT INTO periods (start_utc, end_utc) VALUES ($s3, $e3)',
+          );
+          final dLow = sec(DateTime.utc(2024, 7, 3));
+          final dHigh = sec(DateTime.utc(2024, 7, 20));
+          raw.execute('''
+INSERT INTO day_entries (period_id, date_utc, flow_intensity)
+VALUES (2, $dLow, 1), (2, $dHigh, 1);
+''');
+          raw.execute('PRAGMA user_version = 2');
+        } finally {
+          raw.dispose();
+        }
+
+        final db = openPtrackDatabase(databasePath: path);
+        try {
+          expect(await _readUserVersion(db), 3);
+          final periods = await db.select(db.periods).get()..sort((a, b) => a.id.compareTo(b.id));
+          expect(periods, hasLength(3));
+
+          expect(periodRowToDomain(periods[0]).endUtc, DateTime.utc(2024, 6, 1));
+
+          expect(periodRowToDomain(periods[1]).endUtc, DateTime.utc(2024, 7, 20));
+
+          expect(periodRowToDomain(periods[2]).endUtc, DateTime.utc(2024, 8, 10));
+        } finally {
+          await db.close();
+        }
+      },
+    );
 
     test(
       'v1 fixture upgrades to v2 with DayEntries table and preserves periods',
