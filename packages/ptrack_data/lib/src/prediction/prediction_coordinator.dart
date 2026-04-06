@@ -16,6 +16,12 @@ class PredictionCoordinatorResult {
 }
 
 /// Derives [PredictionCycleInput] rows from completed periods only (open spans skipped).
+///
+/// Periods are ordered by UTC start. Consecutive rows can still share the same
+/// **local** calendar start day (different UTC instants). Those pairs cannot be
+/// turned into a positive cycle length via [completedCycleBetweenStarts], so we
+/// link each period to the next completed period whose local start day is
+/// strictly later—skipping same-day duplicates without throwing.
 List<PredictionCycleInput> predictionCycleInputsFromStored({
   required List<StoredPeriod> stored,
   required PeriodCalendarContext calendar,
@@ -28,18 +34,32 @@ List<PredictionCycleInput> predictionCycleInputsFromStored({
     return const [];
   }
   final out = <PredictionCycleInput>[];
-  for (var i = 0; i < completed.length - 1; i++) {
-    final cycle = completedCycleBetweenStarts(
-      periodStartUtc: completed[i].startUtc,
-      nextPeriodStartUtc: completed[i + 1].startUtc,
-      calendar: calendar,
-    );
-    out.add(
-      PredictionCycleInput(
-        periodStartUtc: cycle.periodStartUtc,
-        lengthInDays: cycle.lengthInDays,
-      ),
-    );
+  var i = 0;
+  while (i < completed.length - 1) {
+    final startLocal = calendar.localCalendarDateForUtc(completed[i].startUtc);
+    var j = i + 1;
+    while (j < completed.length) {
+      final nextLocal = calendar.localCalendarDateForUtc(completed[j].startUtc);
+      if (nextLocal.compareTo(startLocal) > 0) {
+        final cycle = completedCycleBetweenStarts(
+          periodStartUtc: completed[i].startUtc,
+          nextPeriodStartUtc: completed[j].startUtc,
+          calendar: calendar,
+        );
+        out.add(
+          PredictionCycleInput(
+            periodStartUtc: cycle.periodStartUtc,
+            lengthInDays: cycle.lengthInDays,
+          ),
+        );
+        i = j;
+        break;
+      }
+      j++;
+    }
+    if (j >= completed.length) {
+      break;
+    }
   }
   return out;
 }

@@ -80,6 +80,48 @@ void main() {
       expect(direct.explanationText, contains('2026-03-26'));
     });
 
+    test('skips same-local-day consecutive starts; uses next later local start', () {
+      final la = PeriodCalendarContext.fromTimeZoneName('America/Los_Angeles');
+      final stored = [
+        StoredPeriod(
+          id: 1,
+          span: PeriodSpan(
+            startUtc: DateTime.utc(2024, 6, 15, 8),
+            endUtc: DateTime.utc(2024, 6, 17),
+          ),
+        ),
+        StoredPeriod(
+          id: 2,
+          span: PeriodSpan(
+            startUtc: DateTime.utc(2024, 6, 15, 20),
+            endUtc: DateTime.utc(2024, 6, 18),
+          ),
+        ),
+        StoredPeriod(
+          id: 3,
+          span: PeriodSpan(
+            startUtc: DateTime.utc(2024, 7, 14, 12),
+            endUtc: DateTime.utc(2024, 7, 16),
+          ),
+        ),
+      ];
+
+      final inputs = predictionCycleInputsFromStored(
+        stored: stored,
+        calendar: la,
+      );
+
+      expect(inputs, hasLength(1));
+      expect(inputs.single.periodStartUtc, DateTime.utc(2024, 6, 15, 8));
+      expect(inputs.single.lengthInDays, greaterThan(0));
+
+      final coordinator = PredictionCoordinator();
+      final out = coordinator.predictNext(storedPeriods: stored, calendar: la);
+      // Only one usable cycle length after skipping the duplicate local-day start;
+      // engine may still report insufficient history — must not throw.
+      expect(out.result, isA<PredictionInsufficientHistory>());
+    });
+
     test('open period at end excluded from cycle stats', () {
       final stored = [
         StoredPeriod(
