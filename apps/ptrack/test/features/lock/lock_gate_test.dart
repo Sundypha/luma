@@ -66,4 +66,81 @@ void main() {
     expect(find.byType(LockScreen), findsOneWidget);
     expect(find.text('inside_tab_shell'), findsNothing);
   });
+
+  testWidgets(
+    'Lock now pops pushed route so LockScreen is on top when lock enabled',
+    (tester) async {
+      final lockService = await buildService(prefsValues: {'lock_enabled': true});
+      final navKey = GlobalKey<NavigatorState>();
+      final signal = ValueNotifier<int>(0);
+      addTearDown(signal.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          navigatorKey: navKey,
+          home: LockGate(
+            lockService: lockService,
+            onReset: () {},
+            onBeforeLock: () =>
+                navKey.currentState?.popUntil((route) => route.isFirst),
+            lockNowSignal: signal,
+            child: const Text('inside_tab_shell'),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      navKey.currentState!.push(
+        MaterialPageRoute<void>(
+          builder: (_) => const Scaffold(body: Text('dummy_overlay_route')),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('dummy_overlay_route'), findsOneWidget);
+
+      signal.value++;
+      await tester.pumpAndSettle();
+
+      expect(find.byType(LockScreen), findsOneWidget);
+      expect(find.text('dummy_overlay_route'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'Lock now signal does not pop routes when lock is disabled',
+    (tester) async {
+      final lockService = await buildService(prefsValues: {});
+      final navKey = GlobalKey<NavigatorState>();
+      final signal = ValueNotifier<int>(0);
+      addTearDown(signal.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          navigatorKey: navKey,
+          home: LockGate(
+            lockService: lockService,
+            onReset: () {},
+            onBeforeLock: () =>
+                navKey.currentState?.popUntil((route) => route.isFirst),
+            lockNowSignal: signal,
+            child: const Text('inside_tab_shell'),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      navKey.currentState!.push(
+        MaterialPageRoute<void>(
+          builder: (_) => const Scaffold(body: Text('dummy_overlay_route')),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      signal.value++;
+      await tester.pumpAndSettle();
+
+      expect(find.byType(LockScreen), findsNothing);
+      expect(find.text('dummy_overlay_route'), findsOneWidget);
+    },
+  );
 }
