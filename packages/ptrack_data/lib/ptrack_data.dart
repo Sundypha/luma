@@ -28,11 +28,9 @@ export 'src/export/import_service.dart'
         LumaVersionException;
 export 'src/export/luma_crypto.dart' show LumaCrypto;
 export 'src/db/ptrack_database.dart'
-    show
-        PtrackDatabase,
-        openPtrackDatabase,
-        openPtrackQueryExecutor,
-        ptrackSupportedSchemaVersion;
+    show PtrackDatabase, ptrackSupportedSchemaVersion;
+export 'src/db/ptrack_database_open.dart'
+    show openPtrackDatabase, openPtrackQueryExecutor;
 export 'package:ptrack_domain/ptrack_domain.dart' show DayEntryData;
 export 'src/mappers/day_entry_mapper.dart'
     show
