@@ -199,6 +199,30 @@ void main() {
     expect(find.text('Settings'), findsWidgets);
   });
 
+  testWidgets('Settings dialog shows Privacy & Security tile that opens lock screen', (tester) async {
+    await pumpHome(tester);
+    final scaffoldState = tester.state<ScaffoldState>(find.byType(Scaffold));
+    scaffoldState.openDrawer();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Settings'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Privacy & Security'), findsOneWidget);
+    expect(
+      find.text('Lock with PIN or biometrics when returning from background'),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.text('Privacy & Security'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('App lock'), findsWidgets);
+    expect(
+      find.text('Lock with PIN or biometrics when returning from background.'),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('FAB opens symptom form on Calendar tab when today marked',
       (tester) async {
     when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
