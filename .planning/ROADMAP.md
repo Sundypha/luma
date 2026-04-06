@@ -144,11 +144,28 @@ Plans:
 - [x] `05-03-PLAN.md` — Calendar screen with table_calendar integration, reactive stream, month navigation, "Today" button, widget tests — complete 2026-04-06
 - [ ] `05-04-PLAN.md` — Day detail bottom sheet (read-only view, adjacent-day swipe, edit bridge, predicted day info) and human verification — **Task 1 complete 2026-04-06 (`f6658f1`); Task 2 human verification pending** (do not mark plan complete until user signs off)
 
+### Phase 05.1: UX refactor - day-marking model and MVVM (INSERTED)
+
+**Goal:** Replace explicit start/end period actions with a day-marking toggle model (mark/unmark days, system derives spans) and refactor the presentation layer from ad-hoc StatefulWidget state to MVVM with ChangeNotifier ViewModels — consistent day-tap behavior, future-day gating, simplified symptom form, no open periods.
+
+**Depends on:** Phase 5
+
+**Requirements:** LOG-01, LOG-02, LOG-03, LOG-04, LOG-05, LOG-06, CAL-01, CAL-03, CAL-05, HOME-01, HOME-02, HOME-03, HOME-04
+
+**Plans:** 5 plans
+
+Plans:
+- [ ] `05.1-01-PLAN.md` — TDD: Day-marking domain pure functions (computeMarkDay, computeUnmarkDay — 6 span operations)
+- [ ] `05.1-02-PLAN.md` — Repository markDay/unmarkDay + DB migration v2→v3 (close open periods)
+- [ ] `05.1-03-PLAN.md` — CalendarViewModel + HomeViewModel + view refactor to MVVM (ListenableBuilder)
+- [ ] `05.1-04-PLAN.md` — SymptomFormSheet + DayDetailSheet rewrite (new action model, future-day gating)
+- [ ] `05.1-05-PLAN.md` — Dead code removal (delete logging_bottom_sheet.dart) + first_log_screen update + human verification
+
 ### Phase 6: Export & import
 
 **Goal**: Users own their data through a documented full export and a safe import path with readable errors and explained duplicate behavior.
 
-**Depends on**: Phase 5
+**Depends on**: Phase 5.1
 
 **Requirements**: XPRT-01, XPRT-02, XPRT-03, IMPT-01, IMPT-02, IMPT-03
 
