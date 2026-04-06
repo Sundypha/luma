@@ -152,11 +152,11 @@ Plans:
 
 **Requirements:** LOG-01, LOG-02, LOG-03, LOG-04, LOG-05, LOG-06, CAL-01, CAL-03, CAL-05, HOME-01, HOME-02, HOME-03, HOME-04
 
-**Plans:** 1/5 plans executed
+**Plans:** 2/5 plans executed
 
 Plans:
 - [x] `05.1-01-PLAN.md` — TDD: Day-marking domain pure functions (computeMarkDay, computeUnmarkDay — 6 span operations) — complete 2026-04-06 (`83703d0` test, `5d88893` feat; see `05.1-01-SUMMARY.md`)
-- [ ] `05.1-02-PLAN.md` — Repository markDay/unmarkDay + DB migration v2→v3 (close open periods)
+- [x] `05.1-02-PLAN.md` — Repository markDay/unmarkDay + DB migration v2→v3 (close open periods) — complete 2026-04-06 (`0698c49` migration, `c0a8b4f` repository; see `05.1-02-SUMMARY.md`)
 - [ ] `05.1-03-PLAN.md` — CalendarViewModel + HomeViewModel + view refactor to MVVM (ListenableBuilder)
 - [ ] `05.1-04-PLAN.md` — SymptomFormSheet + DayDetailSheet rewrite (new action model, future-day gating)
 - [ ] `05.1-05-PLAN.md` — Dead code removal (delete logging_bottom_sheet.dart) + first_log_screen update + human verification
