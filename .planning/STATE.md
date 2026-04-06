@@ -6,7 +6,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** Phase 5 (calendar surfaces) and **Phase 05.1** (day-marking UX + MVVM refactor) in parallel until 05-04 sign-off.
+**Current focus:** Phase 5 (calendar surfaces) and **Phase 05.1** (day-marking UX + MVVM refactor) in parallel until 05-04 sign-off; **Phase 6 plan 06-04** Task 2 (export/import UAT) pending.
 
 ## Current Position
 
@@ -22,7 +22,7 @@ Plan: **05-04** — Task 1 (day detail sheet + calendar routing) **complete** 20
 
 Status: **Phase 5 in progress** — same as above; **Phase 05.1** automation done for plan 05; **human UAT** outstanding for `05.1-05`.
 
-Last activity: 2026-04-06 — Completed **`06-03-PLAN.md`** (export UI: `eb1f956`, `b72d902`; XPRT-01); earlier **`06-02-PLAN.md`** (`29c6883`, `02b59ef`); `05-04` and `05.1-05` Task 2 human checkpoints still open.
+Last activity: 2026-04-06 — **`06-04-PLAN.md` Task 1** complete (`6f20f79` import UI + tests; IMPT-01/IMPT-03 **await Task 2 human UAT** — see `06-04-SUMMARY.md`). Earlier **`06-03-PLAN.md`** (export UI); `05-04` and `05.1-05` Task 2 human checkpoints still open.
 
 **Progress:** [█████████░] 92%
 
@@ -68,6 +68,7 @@ Last activity: 2026-04-06 — Completed **`06-03-PLAN.md`** (export UI: `eb1f956
 | Phase 06-export-import P01 | 35min | 2 tasks | 11 files |
 | Phase 06-export-import P02 | 45min | 2 tasks | 6 files |
 | Phase 06-export-import P03 | 45min | 2 tasks | 14 files |
+| Phase 06-export-import P04 T1 | 45min | 1 task (auto); Task 2 UAT pending | 7 files |
 
 ## Accumulated Context
 
@@ -106,11 +107,13 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 06-export-import]: 06-01 complete — `ExportService`, `LumaCrypto` (AES-256-GCM + Argon2id), export schema types, `docs/luma-export-format.md`; commits `87cb5a2`, `a365889`; XPRT-02/XPRT-03 marked complete in REQUIREMENTS
 - [Phase 06-export-import]: 06-02 complete — `ImportService` (parse/validate/decrypt, transactional `applyImport`), `ImportPreview`, `BackupService` with keep-3 pruning; commits `29c6883`, `02b59ef`; IMPT-02 marked complete in REQUIREMENTS
 - [Phase 06-export-import]: 06-03 complete — `ExportViewModel`, `ExportWizardScreen`, `DataSettingsScreen`, drawer Data entry, `PeriodRepository.database`; commits `eb1f956`, `b72d902`; XPRT-01 marked complete in REQUIREMENTS
+- [Phase 06-export-import]: 06-04 Task 1 complete — `ImportViewModel`, `ImportScreen`, Data import tile wiring, `import_view_model_test.dart`; `FilePicker.pickFiles` (v11); shared `BackupService` injected into `ImportService` at navigation; commit `6f20f79`; **Task 2 full export/import UAT pending** (`06-04-SUMMARY.md` checklist)
 - [Phase 06-export-import]: ImportService optional BackupService injection for testable applyImport without path_provider.
 - [Phase 06-export-import]: 06-03: runExport(ExportDataRun) supplements startExport for testable failure path; file_picker v11 uses FilePicker.saveFile with bytes on Linux
 
 ### Pending Todos
 
+- Run **06-04 Task 2** manual checklist (`06-04-SUMMARY.md`) for full export → import round-trip; reply `pass` or file issues. After pass: mark `06-04` complete in ROADMAP, run `gsd-tools requirements mark-complete IMPT-01 IMPT-03` if appropriate.
 - Run **05-04 Task 2** manual checklist (`05-04-SUMMARY.md`); reply `pass` or file issues.
 - Run **05.1-05 Task 2** manual checklist (`05.1-05-SUMMARY.md`); reply `pass` or file issues. After pass: check off `05.1-05` in ROADMAP, run `gsd-tools requirements mark-complete` for plan requirement IDs if appropriate.
 - After pass: mark `05-04` complete in ROADMAP, mark CAL-03 in REQUIREMENTS, optionally run `gsd-tools` state/roadmap sync.
@@ -125,10 +128,10 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-06T17:14:32.974Z
+**Last session:** 2026-04-06T17:23:08.870Z
 
-**Stopped at:** Completed 06-03-PLAN.md (export UI); next: 06-04-PLAN.md
+**Stopped at:** 06-04 Task 1 done; Task 2 UAT pending
 
 **Resume file:** `.planning/phases/06-export-import/06-CONTEXT.md`
 
-**Next (Phase 6):** `06-04-PLAN.md` (import UI wiring + human verify).
+**Next (Phase 6):** Human verification for **06-04 Task 2**; then close plan and IMPT-01 / IMPT-03 when signed off.

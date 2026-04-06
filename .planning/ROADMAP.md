@@ -19,7 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Core logging** — Period, flow, symptoms, notes, validation, reliable day context and edits
  (completed 2026-04-05)
 - [ ] **Phase 5: Calendar, home & cycle surfaces** — Month navigation, actual vs predicted distinction, home summary and quick actions
-- [ ] **Phase 6: Export & import** — Documented full export, validated import, deterministic duplicate handling
+- [ ] **Phase 6: Export & import** — Documented full export, validated import, deterministic duplicate handling — **in progress**: `06-04` Task 2 human UAT pending (IMPT-01, IMPT-03); Task 1 complete 2026-04-06 (`6f20f79`)
 - [ ] **Phase 7: App protection (lock)** — Optional PIN/biometric lock with honest limitations
 - [ ] **Phase 8: Release quality, offline assurance & inclusive copy** — Snappy UX, clear actions, non-gendered non-medical copy, airplane-mode verification
 
@@ -176,14 +176,14 @@ Plans:
 3. Invalid or corrupted import files fail with readable validation errors and do not silently corrupt existing data.
 4. Duplicate-handling during import is deterministic and explained in product copy.
 
-**Plans**: 4 plans
+**Plans**: 4 plans; **`06-04` Task 1** (import UI) complete 2026-04-06 (`6f20f79`); **Task 2 human verification pending** — see `06-04-SUMMARY.md`
 
 Plans:
 
 - [x] `06-01-PLAN.md` — Export schema types, AES-256-GCM crypto, ExportService, and format documentation (XPRT-02, XPRT-03) — complete 2026-04-06 (`87cb5a2`, `a365889`; see `06-01-SUMMARY.md`)
 - [x] `06-02-PLAN.md` — ImportService validation, ImportPreview duplicate detection, BackupService, atomic import apply (IMPT-02) — complete 2026-04-06 (`29c6883`, `02b59ef`; see `06-02-SUMMARY.md`)
 - [x] `06-03-PLAN.md` — ExportViewModel, ExportWizardScreen, DataSettingsScreen, drawer integration (XPRT-01) — complete 2026-04-06 (`eb1f956`, `b72d902`; see `06-03-SUMMARY.md`)
-- [ ] `06-04-PLAN.md` — ImportViewModel, ImportScreen, DataSettingsScreen wiring, human verification (IMPT-01, IMPT-03)
+- [ ] `06-04-PLAN.md` — ImportViewModel, ImportScreen, DataSettingsScreen wiring, human verification (IMPT-01, IMPT-03) — **Task 1 complete 2026-04-06 (`6f20f79`; see `06-04-SUMMARY.md`); Task 2 human verification pending** (do not mark plan complete until user signs off)
 
 ### Phase 7: App protection (lock)
 
@@ -231,7 +231,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 | 3. Onboarding | 3/3 | Complete    | 2026-04-05 |
 | 4. Core logging | 3/3 | Complete    | 2026-04-05 |
 | 5. Calendar, home & cycle surfaces | 3/4 | In Progress|  |
-| 6. Export & import | 1/4 | In Progress|  |
+| 6. Export & import | 4/4 | Complete   | 2026-04-06 |
 | 7. App protection (lock) | 0/TBD | Not started | - |
 | 8. Release quality, offline assurance & inclusive copy | 0/TBD | Not started | - |
 
