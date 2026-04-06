@@ -169,6 +169,36 @@ void main() {
     expect(find.byType(LoggingBottomSheet), findsNothing);
   });
 
+  testWidgets(
+      'log day inside completed period when no open period upserts without insert',
+      (tester) async {
+    final now = DateTime.now();
+    final todayUtc = DateTime.utc(now.year, now.month, now.day);
+    final closed = StoredPeriod(
+      id: 3,
+      span: PeriodSpan(
+        startUtc: todayUtc.subtract(const Duration(days: 2)),
+        endUtc: todayUtc.add(const Duration(days: 4)),
+      ),
+    );
+    when(() => mockRepo.listOrderedByStartUtc()).thenAnswer(
+      (_) async => [closed],
+    );
+    when(() => mockRepo.upsertDayEntryForPeriod(any(), any())).thenAnswer(
+      (_) async => 1,
+    );
+
+    await pumpHome(tester);
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pumpAndSettle();
+    expect(find.text('Log day'), findsOneWidget);
+    expect(find.text('Start new'), findsOneWidget);
+    await tapBottomSheetSave(tester);
+    verifyNever(() => mockRepo.insertPeriod(any()));
+    verify(() => mockRepo.upsertDayEntryForPeriod(3, any())).called(1);
+    expect(find.byType(LoggingBottomSheet), findsNothing);
+  });
+
   testWidgets('today card shows logged flow for today', (tester) async {
     final now = DateTime.now();
     final dayUtc = DateTime.utc(now.year, now.month, now.day);
