@@ -3,6 +3,17 @@ library;
 
 export 'src/db/migrations.dart'
     show PtrackUnsupportedDatabaseSchemaException;
+export 'src/export/export_schema.dart'
+    show
+        ExportOptions,
+        ExportedDayEntry,
+        ExportedPeriod,
+        LumaExportData,
+        LumaExportMeta,
+        lumaFormatVersion;
+export 'src/export/export_service.dart'
+    show ExportResult, ExportService, ProgressCallback;
+export 'src/export/luma_crypto.dart' show LumaCrypto;
 export 'src/db/ptrack_database.dart'
     show
         PtrackDatabase,
