@@ -28,6 +28,21 @@ DayEntryData? _findTodayEntry(
   return null;
 }
 
+StoredDayEntry? _findTodayStoredEntry(
+  List<StoredPeriodWithDays> periods,
+  DateTime today,
+) {
+  final t = _utcCalendarDay(today);
+  for (final p in periods) {
+    for (final e in p.dayEntries) {
+      if (_utcCalendarDay(e.data.dateUtc) == t) {
+        return e;
+      }
+    }
+  }
+  return null;
+}
+
 bool _isTodayMarkedInPeriods(
   List<StoredPeriodWithDays> data,
   DateTime today,
@@ -42,6 +57,22 @@ bool _isTodayMarkedInPeriods(
     }
   }
   return false;
+}
+
+int? _todayPeriodId(
+  List<StoredPeriodWithDays> data,
+  DateTime today,
+) {
+  final todayUtc = DateTime.utc(today.year, today.month, today.day);
+  for (final p in data) {
+    if (p.period.span.containsCalendarDayUtc(
+          todayUtc,
+          todayLocal: today,
+        )) {
+      return p.period.id;
+    }
+  }
+  return null;
 }
 
 /// Home tab state: cycle summary, today entry, prediction, mark-today command.
@@ -82,6 +113,13 @@ class HomeViewModel extends ChangeNotifier {
   PredictionResult get prediction => _prediction;
   List<StoredPeriodWithDays> get periodsWithDays => _periodsWithDays;
 
+  /// Period row id covering today's calendar day, if any.
+  int? get todayPeriodId => _todayPeriodId(_periodsWithDays, DateTime.now());
+
+  /// Today's [StoredDayEntry] row for the symptom sheet, if any.
+  StoredDayEntry? get todayStoredEntry =>
+      _findTodayStoredEntry(_periodsWithDays, DateTime.now());
+
   void _onData(List<StoredPeriodWithDays> data) {
     _loadError = null;
     _hasInitialEvent = true;
@@ -113,7 +151,7 @@ class HomeViewModel extends ChangeNotifier {
     _isTodayMarked = _isTodayMarkedInPeriods(_periodsWithDays, today);
   }
 
-  Future<void> markToday() => _repository.markDay(DateTime.now());
+  Future<DayMarkOutcome> markToday() => _repository.markDay(DateTime.now());
 
   @override
   void dispose() {

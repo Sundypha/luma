@@ -6,7 +6,7 @@ import '../calendar/calendar_screen.dart';
 import '../calendar/calendar_view_model.dart';
 import '../home/home_screen.dart';
 import '../home/home_view_model.dart';
-import '../logging/logging_bottom_sheet.dart';
+import '../logging/symptom_form_sheet.dart';
 import '../settings/about_screen.dart';
 import '../settings/mood_settings.dart';
 
@@ -67,10 +67,16 @@ class _TabShellState extends State<TabShell> {
       _homeVm.markToday();
       return;
     }
-    showLoggingBottomSheet(
+    final today = DateTime.now();
+    final dayUtc = DateTime.utc(today.year, today.month, today.day);
+    final periodId = _homeVm.todayPeriodId;
+    if (periodId == null) return;
+    showSymptomFormSheet(
       context,
       repository: widget.repository,
-      calendar: widget.calendar,
+      day: dayUtc,
+      periodId: periodId,
+      existing: _homeVm.todayStoredEntry,
     );
   }
 

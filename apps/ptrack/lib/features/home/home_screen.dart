@@ -1,6 +1,9 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 
-import '../logging/logging_bottom_sheet.dart';
+import 'package:flutter/material.dart';
+import 'package:ptrack_data/ptrack_data.dart';
+
+import '../logging/symptom_form_sheet.dart';
 import 'home_view_model.dart';
 import 'today_card.dart';
 
@@ -21,6 +24,46 @@ class HomeScreen extends StatelessWidget {
     final a = loc.formatMediumDate(start.toLocal());
     final b = loc.formatMediumDate(end.toLocal());
     return '$a – $b';
+  }
+
+  Future<void> _handleTodayQuickAction(BuildContext context) async {
+    final vm = viewModel;
+    final today = DateTime.now();
+    final dayUtc = DateTime.utc(today.year, today.month, today.day);
+
+    int? periodId;
+    if (!vm.isTodayMarked) {
+      final outcome = await vm.markToday();
+      if (!context.mounted) return;
+      if (outcome is DayMarkFailure) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not save: ${outcome.reason}')),
+        );
+        return;
+      }
+      if (outcome is DayMarkSuccess) {
+        periodId = outcome.periodId;
+      }
+    }
+    periodId ??= vm.todayPeriodId;
+    if (periodId == null) {
+      await Future<void>.delayed(Duration.zero);
+      periodId = vm.todayPeriodId;
+    }
+    if (!context.mounted) return;
+    if (periodId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not open symptom form.')),
+      );
+      return;
+    }
+    await showSymptomFormSheet(
+      context,
+      repository: vm.repository,
+      day: dayUtc,
+      periodId: periodId,
+      existing: vm.todayStoredEntry,
+    );
   }
 
   Widget _buildBody(BuildContext context) {
@@ -67,12 +110,9 @@ class HomeScreen extends StatelessWidget {
               ),
             const SizedBox(height: 16),
             TodayCard(
+              isTodayMarked: viewModel.isTodayMarked,
               todayEntry: viewModel.todayEntry,
-              onLogToday: () => showLoggingBottomSheet(
-                context,
-                repository: viewModel.repository,
-                calendar: viewModel.calendar,
-              ),
+              onTodayAction: () => unawaited(_handleTodayQuickAction(context)),
             ),
           ],
         ),

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:ptrack/features/logging/logging_bottom_sheet.dart';
+import 'package:ptrack/features/logging/symptom_form_sheet.dart';
 import 'package:ptrack/features/settings/mood_settings.dart';
 import 'package:ptrack/features/shell/tab_shell.dart';
 import 'package:ptrack_data/ptrack_data.dart';
@@ -12,8 +12,7 @@ import 'package:timezone/data/latest.dart' as tzdata;
 
 class MockPeriodRepository extends Mock implements PeriodRepository {}
 
-/// Closed span that includes today so [HomeViewModel.isTodayMarked] is true but the
-/// logging sheet still opens in start-new-period mode (no open span through today).
+/// Closed span that includes today so [HomeViewModel.isTodayMarked] is true.
 StoredPeriodWithDays closedPeriodContainingToday() {
   final now = DateTime.now();
   final todayUtc = DateTime.utc(now.year, now.month, now.day);
@@ -40,6 +39,7 @@ void main() {
       PeriodSpan(startUtc: DateTime.utc(2020, 1, 1), endUtc: null),
     );
     registerFallbackValue(DayEntryData(dateUtc: DateTime.utc(2020, 1, 1)));
+    registerFallbackValue(DateTime.utc(2020, 1, 1));
   });
 
   setUp(() {
@@ -77,10 +77,10 @@ void main() {
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pump();
     verify(() => mockRepo.markDay(any())).called(1);
-    expect(find.byType(LoggingBottomSheet), findsNothing);
+    expect(find.byType(SymptomFormSheet), findsNothing);
   });
 
-  testWidgets('FAB opens logging bottom sheet when today is marked', (tester) async {
+  testWidgets('FAB opens symptom form when today is marked', (tester) async {
     when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
       (_) => Stream<List<StoredPeriodWithDays>>.value([closedPeriodContainingToday()]),
     );
@@ -88,11 +88,12 @@ void main() {
     await tester.pump();
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
-    expect(find.byType(LoggingBottomSheet), findsOneWidget);
+    expect(find.byType(SymptomFormSheet), findsOneWidget);
+    expect(find.text('Add symptoms'), findsOneWidget);
     expect(find.text('Save'), findsOneWidget);
   });
 
-  testWidgets('mark today then FAB opens sheet and save upserts day on open period',
+  testWidgets('mark today then FAB opens symptom form and save upserts day',
       (tester) async {
     final controller = StreamController<List<StoredPeriodWithDays>>.broadcast();
     final periods = <StoredPeriod>[];
@@ -135,7 +136,7 @@ void main() {
 
     verifyNever(() => mockRepo.insertPeriod(any()));
     verify(() => mockRepo.upsertDayEntryForPeriod(1, any())).called(1);
-    expect(find.byType(LoggingBottomSheet), findsNothing);
+    expect(find.byType(SymptomFormSheet), findsNothing);
 
     await controller.close();
   });
@@ -174,33 +175,7 @@ void main() {
     expect(find.text('Settings'), findsWidgets);
   });
 
-  testWidgets('validation error shows inline message', (tester) async {
-    final existing = StoredPeriod(
-      id: 9,
-      span: PeriodSpan(
-        startUtc: DateTime.utc(2024, 1, 1),
-        endUtc: DateTime.utc(2024, 1, 10),
-      ),
-    );
-    when(() => mockRepo.listOrderedByStartUtc()).thenAnswer(
-      (_) async => [existing],
-    );
-    when(() => mockRepo.insertPeriod(any())).thenAnswer(
-      (_) async => const PeriodWriteRejected([OverlappingPeriod(0)]),
-    );
-    when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
-      (_) => Stream<List<StoredPeriodWithDays>>.value([closedPeriodContainingToday()]),
-    );
-
-    await pumpHome(tester);
-    await tester.pump();
-    await tester.tap(find.byType(FloatingActionButton));
-    await tester.pumpAndSettle();
-    await tapBottomSheetSave(tester);
-    expect(find.textContaining('overlaps'), findsOneWidget);
-  });
-
-  testWidgets('FAB opens logging sheet on Calendar tab when today marked',
+  testWidgets('FAB opens symptom form on Calendar tab when today marked',
       (tester) async {
     when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
       (_) => Stream<List<StoredPeriodWithDays>>.value([closedPeriodContainingToday()]),
@@ -211,10 +186,10 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
-    expect(find.byType(LoggingBottomSheet), findsOneWidget);
+    expect(find.byType(SymptomFormSheet), findsOneWidget);
   });
 
-  testWidgets('log day on open period upserts without insertPeriod',
+  testWidgets('FAB on marked today opens symptom form; save upserts without insertPeriod',
       (tester) async {
     final now = DateTime.now();
     final todayUtc = DateTime.utc(now.year, now.month, now.day);
@@ -238,11 +213,11 @@ void main() {
     await tester.pump();
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
-    expect(find.text('Log day'), findsOneWidget);
+    expect(find.text('Add symptoms'), findsOneWidget);
     await tapBottomSheetSave(tester);
     verifyNever(() => mockRepo.insertPeriod(any()));
     verify(() => mockRepo.upsertDayEntryForPeriod(1, any())).called(1);
-    expect(find.byType(LoggingBottomSheet), findsNothing);
+    expect(find.byType(SymptomFormSheet), findsNothing);
   });
 
   testWidgets('today card shows logged flow for today', (tester) async {

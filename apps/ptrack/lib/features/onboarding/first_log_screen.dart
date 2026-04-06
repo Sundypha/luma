@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ptrack_data/ptrack_data.dart';
-import 'package:ptrack_domain/ptrack_domain.dart';
 
-/// First-run screen to log one period start into [PeriodRepository].
+/// First-run screen: mark period days via [PeriodRepository.markDay].
 class FirstLogScreen extends StatefulWidget {
   const FirstLogScreen({
     super.key,
@@ -79,43 +78,31 @@ class _FirstLogScreenState extends State<FirstLogScreen> {
             _endDate.month,
             _endDate.day,
           )
-        : null;
+        : startUtc;
 
-    final span = PeriodSpan(startUtc: startUtc, endUtc: endUtc);
-
-    final outcome = await widget.repository.insertPeriod(span);
+    DayMarkOutcome? lastOutcome;
+    for (var d = startUtc; !d.isAfter(endUtc); d = d.add(const Duration(days: 1))) {
+      lastOutcome = await widget.repository.markDay(d);
+      if (lastOutcome is DayMarkFailure) {
+        break;
+      }
+    }
 
     if (!mounted) return;
 
-    switch (outcome) {
-      case PeriodWriteSuccess():
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Period logged — you\'re all set!')),
-        );
-        widget.onComplete();
-      case PeriodWriteRejected():
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Could not save — please try a different date.'),
-          ),
-        );
-        setState(() => _isSaving = false);
-      case PeriodWriteNotFound():
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Could not save — please try again.'),
-          ),
-        );
-        setState(() => _isSaving = false);
-      case PeriodWriteBlockedByOrphanDayEntries():
-        // insertPeriod does not return this outcome.
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Could not save — please try again.'),
-          ),
-        );
-        setState(() => _isSaving = false);
+    final failure = lastOutcome is DayMarkFailure ? lastOutcome : null;
+    if (failure != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not save: ${failure.reason}')),
+      );
+      setState(() => _isSaving = false);
+      return;
     }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Period logged — you\'re all set!')),
+    );
+    widget.onComplete();
   }
 
   @override

@@ -17,6 +17,7 @@ void main() {
   });
 
   setUpAll(() {
+    registerFallbackValue(DateTime.utc(2020, 1, 1));
     registerFallbackValue(
       PeriodSpan(
         startUtc: DateTime.utc(2020, 1, 1),
@@ -26,8 +27,8 @@ void main() {
   });
 
   testWidgets('shows period-start hint', (tester) async {
-    when(() => mockRepo.insertPeriod(any())).thenAnswer(
-      (_) async => const PeriodWriteSuccess(1),
+    when(() => mockRepo.markDay(any())).thenAnswer(
+      (_) async => const DayMarkSuccess(periodId: 1),
     );
     await tester.pumpWidget(
       MaterialApp(
@@ -44,8 +45,8 @@ void main() {
   });
 
   testWidgets('ended period toggle shows end date row', (tester) async {
-    when(() => mockRepo.insertPeriod(any())).thenAnswer(
-      (_) async => const PeriodWriteSuccess(1),
+    when(() => mockRepo.markDay(any())).thenAnswer(
+      (_) async => const DayMarkSuccess(periodId: 1),
     );
     await tester.pumpWidget(
       MaterialApp(
@@ -62,8 +63,8 @@ void main() {
   });
 
   testWidgets('default date label matches today', (tester) async {
-    when(() => mockRepo.insertPeriod(any())).thenAnswer(
-      (_) async => const PeriodWriteSuccess(1),
+    when(() => mockRepo.markDay(any())).thenAnswer(
+      (_) async => const DayMarkSuccess(periodId: 1),
     );
     await tester.pumpWidget(
       MaterialApp(
@@ -81,7 +82,7 @@ void main() {
     expect(find.text(label), findsOneWidget);
   });
 
-  testWidgets('Save & Continue calls insertPeriod and onComplete on success',
+  testWidgets('Save & Continue calls markDay for start day and onComplete',
       (tester) async {
     var completed = false;
     final n = DateTime.now();
@@ -92,8 +93,8 @@ void main() {
       todayLocal.day,
     );
 
-    when(() => mockRepo.insertPeriod(any())).thenAnswer(
-      (_) async => const PeriodWriteSuccess(1),
+    when(() => mockRepo.markDay(any())).thenAnswer(
+      (_) async => const DayMarkSuccess(periodId: 1),
     );
 
     await tester.pumpWidget(
@@ -108,15 +109,11 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
 
-    verify(
-      () => mockRepo.insertPeriod(
-        PeriodSpan(startUtc: expectedUtc),
-      ),
-    ).called(1);
+    verify(() => mockRepo.markDay(expectedUtc)).called(1);
     expect(completed, isTrue);
   });
 
-  testWidgets('Save with ended period sends start and end UTC (same day)',
+  testWidgets('Save with ended period marks each day in inclusive range',
       (tester) async {
     var completed = false;
     final n = DateTime.now();
@@ -127,8 +124,8 @@ void main() {
       todayLocal.day,
     );
 
-    when(() => mockRepo.insertPeriod(any())).thenAnswer(
-      (_) async => const PeriodWriteSuccess(1),
+    when(() => mockRepo.markDay(any())).thenAnswer(
+      (_) async => const DayMarkSuccess(periodId: 1),
     );
 
     await tester.pumpWidget(
@@ -145,19 +142,15 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
 
-    verify(
-      () => mockRepo.insertPeriod(
-        PeriodSpan(startUtc: dayUtc, endUtc: dayUtc),
-      ),
-    ).called(1);
+    verify(() => mockRepo.markDay(dayUtc)).called(1);
     expect(completed, isTrue);
   });
 
-  testWidgets('PeriodWriteRejected shows SnackBar and skips onComplete',
+  testWidgets('DayMarkFailure shows SnackBar and skips onComplete',
       (tester) async {
     var completed = false;
-    when(() => mockRepo.insertPeriod(any())).thenAnswer(
-      (_) async => PeriodWriteRejected(const []),
+    when(() => mockRepo.markDay(any())).thenAnswer(
+      (_) async => const DayMarkFailure('test failure'),
     );
 
     await tester.pumpWidget(
