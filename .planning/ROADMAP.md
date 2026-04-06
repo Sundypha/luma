@@ -22,6 +22,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 6: Export & import** — Documented full export, validated import, deterministic duplicate handling — **in progress**: `06-04` Task 2 human UAT pending (IMPT-01, IMPT-03); Task 1 complete 2026-04-06 (`6f20f79`)
 - [ ] **Phase 7: App protection (lock)** — Optional PIN/biometric lock with honest limitations — **in progress**: `07-01`–`07-02` complete 2026-04-06; **`07-03` Task 1** complete (`993a892`); **`07-04` Tasks 1–2** complete (`273e1bc`, `a423f43`); **human UAT** pending (`07-03` T2, `07-04` T3)
 - [ ] **Phase 8: Release quality, offline assurance & inclusive copy** — Snappy UX, clear actions, non-gendered non-medical copy, airplane-mode verification
+- [ ] **Phase 9: Prediction of next period** — Multi-algorithm prediction (3+ methods), confidence-based calendar display showing algorithm agreement level
 
 ## Phase Details
 
@@ -223,7 +224,12 @@ Plans:
 3. Copy across the app avoids unnecessary gendered assumptions and unsupported medical claims (beyond what earlier phases already enforced for prediction).
 4. With network disabled after install, the full Phase 1 feature set (onboarding through lock) works without login and without network-required errors on core flows.
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] `08-01-PLAN.md` — Copy audit, inclusive language, label clarity & accessibility labels (NFR-05, NFR-07)
+- [ ] `08-02-PLAN.md` — Performance feel: initial-load spinner elimination & responsiveness verification (NFR-01)
+- [ ] `08-03-PLAN.md` — Offline assurance: automated network dependency checks & airplane-mode walkthrough (NFR-08)
 
 ## Progress
 
@@ -241,6 +247,38 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 | 6. Export & import | 4/4 | Complete   | 2026-04-06 |
 | 7. App protection (lock) | 1/3 | In Progress|  |
 | 8. Release quality, offline assurance & inclusive copy | 0/TBD | Not started | - |
+| 9. Prediction of next period | 0/TBD | Not started | - |
+
+### Phase 9: Prediction of next period
+
+**Goal:** Replace the single median-based prediction engine with a multi-algorithm ensemble (3+ methods) that runs locally, produces per-day confidence scores based on algorithm agreement, and renders those scores on the calendar with visually distinct tiers — giving users an honest, at-a-glance sense of forecast certainty without implying medical authority.
+
+**Depends on:** Phase 8
+
+**Algorithms (minimum 3, all on-device, all explainable):**
+
+1. **Median Baseline (existing)** — Robust median of recent cycle lengths with outlier exclusion (current `PredictionEngine`). Resilient to single anomalous cycles; strong for stable patterns. Well-documented in the literature as the standard period-tracker baseline.
+2. **Exponentially Weighted Moving Average (EWMA)** — Recency-weighted cycle-length estimator where recent cycles carry more influence (decay factor α). Adapts faster to genuine pattern shifts (e.g., lifestyle change, postpartum return) while still smoothing noise. Widely used in time-series forecasting; recommended in menstrual-cycle research for handling pattern drift (Bellabeat 2025, PRD Layer A §6.1).
+3. **Bayesian Posterior Estimation** — Models cycle length as a probability distribution (conjugate Normal-Inverse-Gamma or similar lightweight prior) updated with each observed cycle. Naturally produces a credible interval (not just min/max) and degrades gracefully with sparse data. Highlighted by SkipTrack (2025) and Urteaga et al. (PMLR 2021) as state-of-the-art for calibrated uncertainty in self-tracked menstrual data.
+4. *(stretch)* **Linear Trend Projection** — Fits a simple linear regression to recent cycle lengths to detect gradual lengthening or shortening. Useful for perimenopausal or adolescent users whose cycles trend directionally. Only contributes when trend is statistically significant (p < threshold), otherwise falls back to flat estimate.
+
+**Confidence calendar visualization:**
+
+- Each algorithm independently predicts a set of "likely period days" for the next cycle.
+- For each calendar day, count how many algorithms agree it is a predicted period day.
+- Display tiers:
+  - **1 algorithm only** → subtle indicator (e.g., light dotted outline or faint hatch) — low confidence
+  - **2 algorithms agree** → moderate indicator (e.g., medium hatch or semi-filled) — medium confidence
+  - **3+ algorithms agree** → strong indicator (e.g., solid fill, bold band) — high confidence
+- Legend or tooltip explains: "Shading shows how many prediction methods agree on this day."
+- Maintains existing accessibility constraint: distinction must not rely on color alone (NFR-06).
+
+**Requirements:** PRED-01, PRED-02, PRED-03, PRED-04 (extended), NFR-06
+
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 9 to break down)
 
 ---
 *Roadmap created: 2026-04-04 — depth: standard; 40/40 v1 requirements mapped.*
