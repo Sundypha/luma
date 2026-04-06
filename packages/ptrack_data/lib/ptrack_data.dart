@@ -22,6 +22,9 @@ export 'src/mappers/period_mapper.dart'
         periodSpanToUpdateCompanion;
 export 'src/repositories/period_repository.dart'
     show
+        DayMarkFailure,
+        DayMarkOutcome,
+        DayMarkSuccess,
         PeriodRepository,
         PeriodWriteBlockedByOrphanDayEntries,
         PeriodWriteNotFound,

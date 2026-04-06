@@ -426,4 +426,147 @@ void main() {
       }
     });
   });
+
+  group('markDay/unmarkDay', () {
+    test('markDay on empty DB creates single-day period', () async {
+      final path = createTempSqlitePath();
+      final db = openPtrackDatabase(databasePath: path);
+      final repo = PeriodRepository(database: db, calendar: utcCtx);
+      final out = await repo.markDay(DateTime.utc(2025, 1, 15));
+      expect(out, isA<DayMarkSuccess>());
+      final id = (out as DayMarkSuccess).periodId;
+      expect(id, isNotNull);
+      final listed = await repo.listOrderedByStartUtc();
+      expect(listed.single.span.startUtc, DateTime.utc(2025, 1, 15));
+      expect(listed.single.span.endUtc, DateTime.utc(2025, 1, 15));
+      await db.close();
+    });
+
+    test('markDay adjacent to existing period extends', () async {
+      final path = createTempSqlitePath();
+      final db = openPtrackDatabase(databasePath: path);
+      final repo = PeriodRepository(database: db, calendar: utcCtx);
+      await repo.markDay(DateTime.utc(2025, 2, 1));
+      await repo.markDay(DateTime.utc(2025, 2, 2));
+      final listed = await repo.listOrderedByStartUtc();
+      expect(listed, hasLength(1));
+      expect(listed.single.span.startUtc, DateTime.utc(2025, 2, 1));
+      expect(listed.single.span.endUtc, DateTime.utc(2025, 2, 2));
+      await db.close();
+    });
+
+    test('markDay bridging two periods merges and reassigns day entries',
+        () async {
+      final path = createTempSqlitePath();
+      final db = openPtrackDatabase(databasePath: path);
+      final repo = PeriodRepository(database: db, calendar: utcCtx);
+      await repo.markDay(DateTime.utc(2025, 3, 1));
+      await repo.markDay(DateTime.utc(2025, 3, 2));
+      final id2 =
+          (await repo.markDay(DateTime.utc(2025, 3, 4)) as DayMarkSuccess)
+              .periodId!;
+      await repo.markDay(DateTime.utc(2025, 3, 5));
+      await repo.saveDayEntry(
+        id2,
+        DayEntryData(dateUtc: DateTime.utc(2025, 3, 5)),
+      );
+      final listedBefore = await repo.listOrderedByStartUtc();
+      expect(listedBefore, hasLength(2));
+      final pidLeft = listedBefore[0].id;
+      final pidRight = listedBefore[1].id;
+      final out = await repo.markDay(DateTime.utc(2025, 3, 3));
+      expect(out, isA<DayMarkSuccess>());
+      final periods = await db.select(db.periods).get();
+      expect(periods, hasLength(1));
+      final keepId = periods.single.id;
+      expect(keepId, pidLeft < pidRight ? pidLeft : pidRight);
+      final days = await db.select(db.dayEntries).get();
+      expect(days, hasLength(1));
+      expect(days.single.periodId, keepId);
+      expect(periodRowToDomain(periods.single).startUtc, DateTime.utc(2025, 3, 1));
+      expect(periodRowToDomain(periods.single).endUtc, DateTime.utc(2025, 3, 5));
+      await db.close();
+    });
+
+    test('unmarkDay on single-day period deletes period and its day entries',
+        () async {
+      final path = createTempSqlitePath();
+      final db = openPtrackDatabase(databasePath: path);
+      final repo = PeriodRepository(database: db, calendar: utcCtx);
+      final id =
+          (await repo.markDay(DateTime.utc(2025, 4, 1)) as DayMarkSuccess)
+              .periodId!;
+      await repo.saveDayEntry(
+        id,
+        DayEntryData(dateUtc: DateTime.utc(2025, 4, 1)),
+      );
+      final out = await repo.unmarkDay(DateTime.utc(2025, 4, 1));
+      expect(out, isA<DayMarkSuccess>());
+      expect(await db.select(db.periods).get(), isEmpty);
+      expect(await db.select(db.dayEntries).get(), isEmpty);
+      await db.close();
+    });
+
+    test('unmarkDay on edge of multi-day period shrinks and removes day entry',
+        () async {
+      final path = createTempSqlitePath();
+      final db = openPtrackDatabase(databasePath: path);
+      final repo = PeriodRepository(database: db, calendar: utcCtx);
+      await repo.markDay(DateTime.utc(2025, 5, 1));
+      await repo.markDay(DateTime.utc(2025, 5, 2));
+      await repo.markDay(DateTime.utc(2025, 5, 3));
+      final listed = await repo.listOrderedByStartUtc();
+      final pid = listed.single.id;
+      await repo.saveDayEntry(
+        pid,
+        DayEntryData(dateUtc: DateTime.utc(2025, 5, 3)),
+      );
+      await repo.unmarkDay(DateTime.utc(2025, 5, 3));
+      final rows = await db.select(db.periods).get();
+      expect(rows, hasLength(1));
+      expect(periodRowToDomain(rows.single).endUtc, DateTime.utc(2025, 5, 2));
+      expect(await db.select(db.dayEntries).get(), isEmpty);
+      await db.close();
+    });
+
+    test('unmarkDay on middle of period splits and distributes day entries',
+        () async {
+      final path = createTempSqlitePath();
+      final db = openPtrackDatabase(databasePath: path);
+      final repo = PeriodRepository(database: db, calendar: utcCtx);
+      for (var d = 1; d <= 7; d++) {
+        await repo.markDay(DateTime.utc(2025, 6, d));
+      }
+      final listed = await repo.listOrderedByStartUtc();
+      final pid = listed.single.id;
+      await repo.saveDayEntry(
+        pid,
+        DayEntryData(
+          dateUtc: DateTime.utc(2025, 6, 2),
+          notes: 'left',
+        ),
+      );
+      await repo.saveDayEntry(
+        pid,
+        DayEntryData(
+          dateUtc: DateTime.utc(2025, 6, 6),
+          notes: 'right',
+        ),
+      );
+      await repo.unmarkDay(DateTime.utc(2025, 6, 4));
+      final periods = await db.select(db.periods).get()
+        ..sort((a, b) => a.startUtc.compareTo(b.startUtc));
+      expect(periods, hasLength(2));
+      expect(periodRowToDomain(periods[0]).startUtc, DateTime.utc(2025, 6, 1));
+      expect(periodRowToDomain(periods[0]).endUtc, DateTime.utc(2025, 6, 3));
+      expect(periodRowToDomain(periods[1]).startUtc, DateTime.utc(2025, 6, 5));
+      expect(periodRowToDomain(periods[1]).endUtc, DateTime.utc(2025, 6, 7));
+      final days = await db.select(db.dayEntries).get()
+        ..sort((a, b) => a.dateUtc.compareTo(b.dateUtc));
+      expect(days, hasLength(2));
+      expect(days[0].periodId, periods[0].id);
+      expect(days[1].periodId, periods[1].id);
+      await db.close();
+    });
+  });
 }

@@ -83,6 +83,26 @@ final class PeriodWriteBlockedByOrphanDayEntries extends PeriodWriteOutcome {
   final List<DateTime> orphanDatesUtc;
 }
 
+/// Result of [PeriodRepository.markDay] or [PeriodRepository.unmarkDay].
+sealed class DayMarkOutcome {
+  const DayMarkOutcome();
+}
+
+/// Day mark/unmark completed without a blocking error.
+final class DayMarkSuccess extends DayMarkOutcome {
+  const DayMarkSuccess({this.periodId});
+
+  /// Primary period affected, when applicable (e.g. merge keeps the lower id).
+  final int? periodId;
+}
+
+/// Transactional day mark/unmark failed (unexpected DB state).
+final class DayMarkFailure extends DayMarkOutcome {
+  const DayMarkFailure(this.reason);
+
+  final String reason;
+}
+
 /// Validates against existing rows and persists using Drift transactions.
 class PeriodRepository {
   PeriodRepository({
@@ -525,5 +545,153 @@ class PeriodRepository {
           ..where((t) => t.id.equals(dayEntryId)))
         .go();
     return count > 0;
+  }
+
+  /// Marks [day] (UTC calendar date) as bleeding: create, extend, merge, or no-op.
+  Future<DayMarkOutcome> markDay(DateTime day) {
+    return _db.transaction(() async {
+      final dayN = _utcCalendarDay(day);
+      final records = await _spanRecordsOrderedByStart();
+      final op = computeMarkDay(records, dayN);
+      switch (op) {
+        case MarkNoOp():
+          return const DayMarkSuccess();
+        case MarkCreate(:final day):
+          final id = await _db.into(_db.periods).insert(
+                periodSpanToInsertCompanion(
+                  PeriodSpan(startUtc: day, endUtc: day),
+                ),
+              );
+          return DayMarkSuccess(periodId: id);
+        case MarkExtend(:final periodId, :final newStart, :final newEnd):
+          await (_db.update(_db.periods)..where((t) => t.id.equals(periodId)))
+              .write(
+            periodSpanToUpdateCompanion(
+              PeriodSpan(startUtc: newStart, endUtc: newEnd),
+            ),
+          );
+          return DayMarkSuccess(periodId: periodId);
+        case MarkMerge(:final keepId, :final absorbId, :final newStart, :final newEnd):
+          await (_db.update(_db.periods)..where((t) => t.id.equals(keepId)))
+              .write(
+            periodSpanToUpdateCompanion(
+              PeriodSpan(startUtc: newStart, endUtc: newEnd),
+            ),
+          );
+          await (_db.update(_db.dayEntries)
+                ..where((t) => t.periodId.equals(absorbId)))
+              .write(DayEntriesCompanion(periodId: Value(keepId)));
+          await (_db.delete(_db.periods)..where((t) => t.id.equals(absorbId)))
+              .go();
+          return DayMarkSuccess(periodId: keepId);
+      }
+    });
+  }
+
+  /// Unmarks [day] (UTC calendar date): delete, shrink, split, or no-op.
+  Future<DayMarkOutcome> unmarkDay(DateTime day) {
+    return _db.transaction(() async {
+      final dayN = _utcCalendarDay(day);
+      final records = await _spanRecordsOrderedByStart();
+      final op = computeUnmarkDay(records, dayN);
+      switch (op) {
+        case UnmarkNoOp():
+          return const DayMarkSuccess();
+        case UnmarkDelete(:final periodId):
+          await (_db.delete(_db.dayEntries)
+                ..where((t) => t.periodId.equals(periodId)))
+              .go();
+          await (_db.delete(_db.periods)..where((t) => t.id.equals(periodId)))
+              .go();
+          return const DayMarkSuccess();
+        case UnmarkShrink(:final periodId, :final newStart, :final newEnd):
+          await _deleteDayEntriesOnUtcDay(periodId, dayN);
+          await (_db.update(_db.periods)..where((t) => t.id.equals(periodId)))
+              .write(
+            periodSpanToUpdateCompanion(
+              PeriodSpan(startUtc: newStart, endUtc: newEnd),
+            ),
+          );
+          return DayMarkSuccess(periodId: periodId);
+        case UnmarkSplit(
+            :final originalId,
+            :final leftStart,
+            :final leftEnd,
+            :final rightStart,
+            :final rightEnd,
+          ):
+          final newId = await _db.into(_db.periods).insert(
+                periodSpanToInsertCompanion(
+                  PeriodSpan(startUtc: rightStart, endUtc: rightEnd),
+                ),
+              );
+          await _moveDayEntriesInUtcRange(
+            fromPeriodId: originalId,
+            toPeriodId: newId,
+            rangeStartUtc: rightStart,
+            rangeEndUtc: rightEnd,
+          );
+          await (_db.update(_db.periods)..where((t) => t.id.equals(originalId)))
+              .write(
+            periodSpanToUpdateCompanion(
+              PeriodSpan(startUtc: leftStart, endUtc: leftEnd),
+            ),
+          );
+          await _deleteDayEntriesOnUtcDay(originalId, dayN);
+          return DayMarkSuccess(periodId: originalId);
+      }
+    });
+  }
+
+  DateTime _utcCalendarDay(DateTime d) {
+    final u = d.isUtc ? d : d.toUtc();
+    return DateTime.utc(u.year, u.month, u.day);
+  }
+
+  Future<List<SpanRecord>> _spanRecordsOrderedByStart() async {
+    final rows = await (_db.select(_db.periods)
+          ..orderBy([(t) => OrderingTerm.asc(t.startUtc)]))
+        .get();
+    return [
+      for (final r in rows)
+        SpanRecord(
+          id: r.id,
+          start: _utcCalendarDay(r.startUtc),
+          end: _utcCalendarDay(r.endUtc ?? r.startUtc),
+        ),
+    ];
+  }
+
+  Future<void> _deleteDayEntriesOnUtcDay(int periodId, DateTime dayUtc) async {
+    final target = _utcCalendarDay(dayUtc);
+    final rows = await (_db.select(_db.dayEntries)
+          ..where((t) => t.periodId.equals(periodId)))
+        .get();
+    for (final r in rows) {
+      if (_utcCalendarDay(r.dateUtc) == target) {
+        await (_db.delete(_db.dayEntries)..where((t) => t.id.equals(r.id)))
+            .go();
+      }
+    }
+  }
+
+  Future<void> _moveDayEntriesInUtcRange({
+    required int fromPeriodId,
+    required int toPeriodId,
+    required DateTime rangeStartUtc,
+    required DateTime rangeEndUtc,
+  }) async {
+    final rs = _utcCalendarDay(rangeStartUtc);
+    final re = _utcCalendarDay(rangeEndUtc);
+    final rows = await (_db.select(_db.dayEntries)
+          ..where((t) => t.periodId.equals(fromPeriodId)))
+        .get();
+    for (final r in rows) {
+      final d = _utcCalendarDay(r.dateUtc);
+      if (!d.isBefore(rs) && !d.isAfter(re)) {
+        await (_db.update(_db.dayEntries)..where((t) => t.id.equals(r.id)))
+            .write(DayEntriesCompanion(periodId: Value(toPeriodId)));
+      }
+    }
   }
 }
