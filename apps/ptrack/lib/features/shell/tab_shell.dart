@@ -7,6 +7,7 @@ import '../calendar/calendar_view_model.dart';
 import '../home/home_screen.dart';
 import '../home/home_view_model.dart';
 import '../logging/symptom_form_sheet.dart';
+import '../backup/data_settings_screen.dart';
 import '../settings/about_screen.dart';
 import '../settings/mood_settings.dart';
 
@@ -84,7 +85,7 @@ class _TabShellState extends State<TabShell> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ptrack'),
+        title: const Text('Luma'),
       ),
       drawer: NavigationDrawer(
         onDestinationSelected: (index) {
@@ -92,6 +93,14 @@ class _TabShellState extends State<TabShell> {
           if (index == 0) {
             _openSettings(context);
           } else if (index == 1) {
+            Navigator.of(context).push<void>(
+              MaterialPageRoute<void>(
+                builder: (context) => DataSettingsScreen(
+                  repository: widget.repository,
+                ),
+              ),
+            );
+          } else if (index == 2) {
             Navigator.of(context).push<void>(
               MaterialPageRoute<void>(
                 builder: (context) => const AboutScreen(),
@@ -106,7 +115,7 @@ class _TabShellState extends State<TabShell> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'ptrack',
+                  'Luma',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 Text(
@@ -122,6 +131,11 @@ class _TabShellState extends State<TabShell> {
             icon: Icon(Icons.settings_outlined),
             selectedIcon: Icon(Icons.settings),
             label: Text('Settings'),
+          ),
+          const NavigationDrawerDestination(
+            icon: Icon(Icons.folder_outlined),
+            selectedIcon: Icon(Icons.folder),
+            label: Text('Data'),
           ),
           const NavigationDrawerDestination(
             icon: Icon(Icons.info_outline),

@@ -114,6 +114,9 @@ class PeriodRepository {
   final PtrackDatabase _db;
   final PeriodCalendarContext _calendar;
 
+  /// Direct database access for export and similar tooling.
+  PtrackDatabase get database => _db;
+
   /// All periods ordered by [PeriodSpan.startUtc] ascending.
   Future<List<StoredPeriod>> listOrderedByStartUtc() async {
     final query = _db.select(_db.periods)
