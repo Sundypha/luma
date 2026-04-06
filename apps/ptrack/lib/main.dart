@@ -4,7 +4,7 @@ import 'package:ptrack_domain/ptrack_domain.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
-import 'features/logging/home_screen.dart';
+import 'features/shell/tab_shell.dart';
 import 'features/onboarding/first_log_screen.dart';
 import 'features/onboarding/onboarding_screen.dart';
 import 'features/onboarding/onboarding_state.dart';
@@ -132,7 +132,7 @@ class _PtrackAppState extends State<PtrackApp> {
           onComplete: () => setState(() => _screen = AppScreen.home),
         );
       case AppScreen.home:
-        home = HomeScreen(
+        home = TabShell(
           repository: repository,
           database: database,
           calendar: calendar,
