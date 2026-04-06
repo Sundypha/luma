@@ -6,7 +6,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** Phase 5 (calendar surfaces) and **Phase 05.1** (day-marking UX + MVVM refactor) in parallel until 05-04 sign-off; **Phase 6 plan 06-04** Task 2 (export/import UAT) pending; **Phase 7 plan `07-03` Task 1** complete 2026-04-06 (`993a892`; LockGate + wiring — see `07-03-SUMMARY.md`); **`07-03` Task 2** human UAT pending (LOCK-01/LOCK-02 sign-off).
+**Current focus:** Phase 5 (calendar surfaces) and **Phase 05.1** (day-marking UX + MVVM refactor) in parallel until 05-04 sign-off; **Phase 6 plan 06-04** Task 2 (export/import UAT) pending; **Phase 7 gap plan `07-04` Tasks 1–2** complete 2026-04-06 (`273e1bc`, `a423f43` — navigator pop-before-lock + tests; see `07-04-SUMMARY.md`); **`07-04` Task 3** and **`07-03` Task 2** human UAT still pending for LOCK-01/LOCK-02 sign-off.
 
 ## Current Position
 
