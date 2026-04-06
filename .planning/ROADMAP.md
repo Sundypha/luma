@@ -20,7 +20,7 @@ Decimal phases appear between their surrounding integers in numeric order.
  (completed 2026-04-05)
 - [ ] **Phase 5: Calendar, home & cycle surfaces** — Month navigation, actual vs predicted distinction, home summary and quick actions
 - [ ] **Phase 6: Export & import** — Documented full export, validated import, deterministic duplicate handling — **in progress**: `06-04` Task 2 human UAT pending (IMPT-01, IMPT-03); Task 1 complete 2026-04-06 (`6f20f79`)
-- [ ] **Phase 7: App protection (lock)** — Optional PIN/biometric lock with honest limitations — **in progress**: `07-01`–`07-02` complete 2026-04-06; **`07-03` Task 1** complete 2026-04-06 (`993a892`; see `07-03-SUMMARY.md`) — **Task 2 human UAT pending**
+- [ ] **Phase 7: App protection (lock)** — Optional PIN/biometric lock with honest limitations — **in progress**: `07-01`–`07-02` complete 2026-04-06; **`07-03` Task 1** complete 2026-04-06 (`993a892`; see `07-03-SUMMARY.md`); **`07-04` gap closure** planned from `07-UAT.md` (navigator + UAT re-run)
 - [ ] **Phase 8: Release quality, offline assurance & inclusive copy** — Snappy UX, clear actions, non-gendered non-medical copy, airplane-mode verification
 
 ## Phase Details
@@ -199,13 +199,14 @@ Plans:
 2. With lock enabled, returning from background reliably prompts for unlock on supported devices.
 3. Product copy does not claim full cryptographic protection; failure modes are described so users are not stranded without a credible recovery narrative where applicable.
 
-**Plans**: 3 plans
+**Plans**: 4 plans
 
 Plans:
 
 - [x] `07-01-PLAN.md` — Dependencies (local_auth, flutter_secure_storage), platform setup (Android + iOS), LockService with Argon2id PIN hashing and unit tests — complete 2026-04-06 (`ce72342`, `4082ebb`; see `07-01-SUMMARY.md`)
 - [x] `07-02-PLAN.md` — Lock UI: PinEntryWidget, LockViewModel, LockScreen, PinSetupSheet (ack → PIN → biometric offer), ForgotPinSheet (honest copy + destructive reset), LockSettingsScreen — complete 2026-04-06 (`4ab53aa`, `630ace9`; see `07-02-SUMMARY.md`)
 - [ ] `07-03-PLAN.md` — LockGate (AppLifecycleListener + cold-start lock), main.dart wiring, TabShell Privacy & Security tile, destructive-reset-to-onboarding, human verification — **Task 1** complete 2026-04-06 (`993a892`); **Task 2** human checklist pending (`07-03-SUMMARY.md`)
+- [ ] `07-04-PLAN.md` — **Gap closure (UAT):** pop root navigator before lock so `LockScreen` is not hidden under `LockSettingsScreen`; optional `onHide` lifecycle hardening; widget regression test; full UAT re-run (LOCK-01, LOCK-02)
 
 ### Phase 8: Release quality, offline assurance & inclusive copy
 
