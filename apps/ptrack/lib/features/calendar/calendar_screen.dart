@@ -6,6 +6,7 @@ import 'package:table_calendar/table_calendar.dart';
 import '../logging/logging_bottom_sheet.dart';
 import 'calendar_day_data.dart';
 import 'calendar_painters.dart';
+import 'day_detail_sheet.dart';
 
 /// Calendar tab: month grid with logged period bands and predicted hatch marks.
 class CalendarScreen extends StatefulWidget {
@@ -58,11 +59,36 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   void _openDayDetail(DateTime selectedDay, List<StoredPeriodWithDays> data) {
-    showLoggingBottomSheet(
+    final dayNorm = DateTime.utc(
+      selectedDay.year,
+      selectedDay.month,
+      selectedDay.day,
+    );
+    final dayData = _dayDataMap[dayNorm] ?? const CalendarDayData();
+
+    // Any calendar day without logged fields: open logging directly (includes
+    // period-band days that have no day entry yet). Predicted-only days use detail.
+    if (!dayData.hasLoggedData && !dayData.isPredictedPeriod) {
+      showLoggingBottomSheet(
+        context,
+        repository: widget.repository,
+        calendar: widget.calendar,
+        initialDate: selectedDay,
+      );
+      return;
+    }
+
+    showDayDetailSheet(
       context,
+      selectedDay: selectedDay,
+      allData: data,
+      prediction: _cachedPrediction ??
+          const PredictionInsufficientHistory(
+            completedCyclesAvailable: 0,
+            minCompletedCyclesNeeded: 2,
+          ),
       repository: widget.repository,
       calendar: widget.calendar,
-      initialDate: selectedDay,
     );
   }
 
