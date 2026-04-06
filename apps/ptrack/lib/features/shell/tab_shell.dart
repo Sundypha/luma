@@ -8,6 +8,8 @@ import '../home/home_screen.dart';
 import '../home/home_view_model.dart';
 import '../logging/symptom_form_sheet.dart';
 import '../backup/data_settings_screen.dart';
+import '../lock/lock_service.dart';
+import '../lock/lock_settings_tile.dart';
 import '../settings/about_screen.dart';
 import '../settings/mood_settings.dart';
 
@@ -17,10 +19,16 @@ class TabShell extends StatefulWidget {
     super.key,
     required this.repository,
     required this.calendar,
+    required this.lockService,
+    required this.onReset,
+    required this.onLockNow,
   });
 
   final PeriodRepository repository;
   final PeriodCalendarContext calendar;
+  final LockService lockService;
+  final VoidCallback onReset;
+  final VoidCallback onLockNow;
 
   @override
   State<TabShell> createState() => _TabShellState();
@@ -50,8 +58,19 @@ class _TabShellState extends State<TabShell> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Settings'),
-        content: const SingleChildScrollView(
-          child: MoodSettingsTile(),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const MoodSettingsTile(),
+              const Divider(),
+              LockSettingsTile(
+                lockService: widget.lockService,
+                onReset: widget.onReset,
+                onLockNow: widget.onLockNow,
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(

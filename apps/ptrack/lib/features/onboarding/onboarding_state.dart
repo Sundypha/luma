@@ -30,4 +30,7 @@ class OnboardingState {
     await _prefs.setBool(_keyCompleted, true);
     await _prefs.remove(_keyStep);
   }
+
+  /// Sync cache after storage was cleared elsewhere (e.g. destructive reset).
+  Future<void> reloadFromPlatform() => _prefs.reloadCache();
 }

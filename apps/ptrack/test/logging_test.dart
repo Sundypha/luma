@@ -1,16 +1,24 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:luma/features/logging/symptom_form_sheet.dart';
+import 'package:luma/features/lock/lock_service.dart';
 import 'package:luma/features/settings/mood_settings.dart';
 import 'package:luma/features/shell/tab_shell.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 
 class MockPeriodRepository extends Mock implements PeriodRepository {}
+
+class MockFlutterSecureStorage extends Mock implements FlutterSecureStorage {}
+
+class MockLocalAuthentication extends Mock implements LocalAuthentication {}
 
 /// Closed span that includes today so [HomeViewModel.isTodayMarked] is true.
 StoredPeriodWithDays closedPeriodContainingToday() {
@@ -31,6 +39,8 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late MockPeriodRepository mockRepo;
+  late MockFlutterSecureStorage mockStorage;
+  late MockLocalAuthentication mockAuth;
   late PeriodCalendarContext calendar;
 
   setUpAll(() {
@@ -44,7 +54,12 @@ void main() {
 
   setUp(() {
     mockRepo = MockPeriodRepository();
+    mockStorage = MockFlutterSecureStorage();
+    mockAuth = MockLocalAuthentication();
     calendar = PeriodCalendarContext.fromTimeZoneName('UTC');
+    when(() => mockAuth.canCheckBiometrics).thenAnswer((_) async => false);
+    when(() => mockAuth.isDeviceSupported()).thenAnswer((_) async => false);
+    SharedPreferences.setMockInitialValues({});
     when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
       (_) => Stream<List<StoredPeriodWithDays>>.value(const []),
     );
@@ -52,11 +67,20 @@ void main() {
   });
 
   Future<void> pumpHome(WidgetTester tester) async {
+    final prefs = await SharedPreferences.getInstance();
+    final lockService = LockService(
+      prefs: prefs,
+      storage: mockStorage,
+      localAuth: mockAuth,
+    );
     await tester.pumpWidget(
       MaterialApp(
         home: TabShell(
           repository: mockRepo,
           calendar: calendar,
+          lockService: lockService,
+          onReset: () {},
+          onLockNow: () {},
         ),
       ),
     );

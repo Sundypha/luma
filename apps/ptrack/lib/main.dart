@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
+import 'features/lock/delete_ptrack_db_file.dart';
+import 'features/lock/lock_gate.dart';
+import 'features/lock/lock_service.dart';
 import 'features/shell/tab_shell.dart';
 import 'features/onboarding/first_log_screen.dart';
 import 'features/onboarding/onboarding_screen.dart';
@@ -14,6 +18,8 @@ Future<void> main() async {
   tzdata.initializeTimeZones();
 
   final onboardingState = await OnboardingState.create();
+  final prefs = await SharedPreferences.getInstance();
+  final lockService = LockService(prefs: prefs);
   final db = openPtrackDatabase();
   final calendar = calendarForDevice();
   final repository = PeriodRepository(database: db, calendar: calendar);
@@ -29,12 +35,13 @@ Future<void> main() async {
   }
 
   runApp(
-    PtrackApp(
+    LumaApp(
       onboardingState: onboardingState,
       repository: repository,
       database: db,
       calendar: calendar,
       initialScreen: initialScreen,
+      lockService: lockService,
     ),
   );
 }
@@ -57,14 +64,15 @@ PeriodCalendarContext calendarForDevice() {
 
 enum AppScreen { onboarding, firstLog, home }
 
-class PtrackApp extends StatefulWidget {
-  const PtrackApp({
+class LumaApp extends StatefulWidget {
+  const LumaApp({
     super.key,
     this.onboardingState,
     this.repository,
     this.database,
     this.calendar,
     this.initialScreen,
+    this.lockService,
     this.homeOverride,
   }) : assert(
           homeOverride != null ||
@@ -72,7 +80,8 @@ class PtrackApp extends StatefulWidget {
                   repository != null &&
                   database != null &&
                   calendar != null &&
-                  initialScreen != null),
+                  initialScreen != null &&
+                  lockService != null),
         );
 
   /// When set, [MaterialApp] uses this home and ignores routing fields (tests).
@@ -83,13 +92,15 @@ class PtrackApp extends StatefulWidget {
   final PtrackDatabase? database;
   final PeriodCalendarContext? calendar;
   final AppScreen? initialScreen;
+  final LockService? lockService;
 
   @override
-  State<PtrackApp> createState() => _PtrackAppState();
+  State<LumaApp> createState() => _LumaAppState();
 }
 
-class _PtrackAppState extends State<PtrackApp> {
+class _LumaAppState extends State<LumaApp> {
   late AppScreen _screen;
+  final ValueNotifier<int> _lockNowSignal = ValueNotifier<int>(0);
 
   @override
   void initState() {
@@ -97,6 +108,25 @@ class _PtrackAppState extends State<PtrackApp> {
     _screen = widget.homeOverride != null
         ? AppScreen.home
         : widget.initialScreen!;
+  }
+
+  @override
+  void dispose() {
+    _lockNowSignal.dispose();
+    super.dispose();
+  }
+
+  Future<void> _resetApp() async {
+    await widget.lockService?.deletePinData();
+    await widget.lockService?.disableLock();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    await widget.onboardingState?.reloadFromPlatform();
+    await widget.database?.close();
+    await deletePtrackDatabaseFileIfExists();
+    if (mounted) {
+      setState(() => _screen = AppScreen.onboarding);
+    }
   }
 
   @override
@@ -108,7 +138,7 @@ class _PtrackAppState extends State<PtrackApp> {
 
     if (widget.homeOverride != null) {
       return MaterialApp(
-        title: 'ptrack',
+        title: 'Luma',
         theme: theme,
         home: widget.homeOverride,
       );
@@ -131,14 +161,26 @@ class _PtrackAppState extends State<PtrackApp> {
           onComplete: () => setState(() => _screen = AppScreen.home),
         );
       case AppScreen.home:
-        home = TabShell(
-          repository: repository,
-          calendar: calendar,
+        home = LockGate(
+          lockService: widget.lockService!,
+          lockNowSignal: _lockNowSignal,
+          onReset: () {
+            _resetApp();
+          },
+          child: TabShell(
+            repository: repository,
+            calendar: calendar,
+            lockService: widget.lockService!,
+            onReset: () {
+              _resetApp();
+            },
+            onLockNow: () => _lockNowSignal.value++,
+          ),
         );
     }
 
     return MaterialApp(
-      title: 'ptrack',
+      title: 'Luma',
       theme: theme,
       home: home,
     );
