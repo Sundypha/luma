@@ -151,11 +151,93 @@ List<SpanRecord> _sortedById(Iterable<SpanRecord> xs) {
 /// [existingPeriods] spans are normalized to UTC calendar midnights.
 /// Assumes each [SpanRecord] has [start] <= [end].
 DayMarkOp computeMarkDay(List<SpanRecord> existingPeriods, DateTime day) {
-  // RED stub — replaced in feat commit.
-  return const MarkNoOp();
+  final dayN = _utcDay(day);
+  final periods = existingPeriods.map(_normalizeSpan).toList();
+
+  for (final r in periods) {
+    if (_containsDay(r, dayN)) return const MarkNoOp();
+  }
+
+  final afterEnd = _sortedById(
+    periods.where((r) => _adjacentAfterEnd(r, dayN)),
+  );
+  final beforeStart = _sortedById(
+    periods.where((r) => _adjacentBeforeStart(r, dayN)),
+  );
+
+  if (afterEnd.isNotEmpty && beforeStart.isNotEmpty) {
+    final pEnd = afterEnd.first;
+    final pStart = beforeStart.first;
+    if (pEnd.id != pStart.id) {
+      final keepId = pEnd.id < pStart.id ? pEnd.id : pStart.id;
+      final absorbId = pEnd.id < pStart.id ? pStart.id : pEnd.id;
+      return MarkMerge(
+        keepId: keepId,
+        absorbId: absorbId,
+        newStart: pEnd.start,
+        newEnd: pStart.end,
+      );
+    }
+  }
+
+  if (afterEnd.isNotEmpty) {
+    final p = afterEnd.first;
+    return MarkExtend(
+      periodId: p.id,
+      newStart: p.start,
+      newEnd: dayN,
+    );
+  }
+
+  if (beforeStart.isNotEmpty) {
+    final p = beforeStart.first;
+    return MarkExtend(
+      periodId: p.id,
+      newStart: dayN,
+      newEnd: p.end,
+    );
+  }
+
+  return MarkCreate(day: dayN);
 }
 
 /// Derives the span operation for unmarking [day] (toggle off).
 DayUnmarkOp computeUnmarkDay(List<SpanRecord> existingPeriods, DateTime day) {
-  return const UnmarkNoOp();
+  final dayN = _utcDay(day);
+  final periods = existingPeriods.map(_normalizeSpan).toList();
+
+  SpanRecord? found;
+  for (final r in periods) {
+    if (_containsDay(r, dayN)) {
+      found = r;
+      break;
+    }
+  }
+  if (found == null) return const UnmarkNoOp();
+
+  final p = found;
+  if (p.start == p.end) {
+    return UnmarkDelete(periodId: p.id);
+  }
+  if (dayN == p.start) {
+    return UnmarkShrink(
+      periodId: p.id,
+      newStart: _nextDay(p.start),
+      newEnd: p.end,
+    );
+  }
+  if (dayN == p.end) {
+    return UnmarkShrink(
+      periodId: p.id,
+      newStart: p.start,
+      newEnd: _prevDay(p.end),
+    );
+  }
+  return UnmarkSplit(
+    originalId: p.id,
+    leftStart: p.start,
+    leftEnd: _prevDay(dayN),
+    rightStart: _nextDay(dayN),
+    rightEnd: p.end,
+  );
 }
