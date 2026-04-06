@@ -18,13 +18,27 @@ class PeriodBandPainter extends CustomPainter {
   final PeriodDayState state;
   final Color color;
 
+  /// Horizontal overlap into neighbour cells so bands read as one strip despite grid gutters.
+  static const double _horizontalBleed = 5.0;
+
   @override
   void paint(Canvas canvas, Size size) {
     if (state == PeriodDayState.none) return;
 
-    final bandHeight = size.height * 0.52;
+    final bandHeight = size.height * 0.58;
     final top = (size.height - bandHeight) / 2;
-    final rect = Rect.fromLTWH(0, top, size.width, bandHeight);
+    final b = _horizontalBleed;
+    final rect = switch (state) {
+      PeriodDayState.none => Rect.zero,
+      PeriodDayState.start ||
+      PeriodDayState.middleRowStart =>
+        Rect.fromLTWH(0, top, size.width + b, bandHeight),
+      PeriodDayState.end ||
+      PeriodDayState.middleRowEnd =>
+        Rect.fromLTWH(-b, top, size.width + b, bandHeight),
+      PeriodDayState.middle => Rect.fromLTWH(-b, top, size.width + 2 * b, bandHeight),
+      PeriodDayState.single => Rect.fromLTWH(-b * 0.35, top, size.width + b * 0.7, bandHeight),
+    };
     final r = Radius.circular(bandHeight / 2);
     final rrect = _rrectForState(rect, r);
     canvas.drawRRect(rrect, Paint()..color = color);
@@ -127,8 +141,18 @@ class DotIndicatorPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height * 0.82);
-    canvas.drawCircle(center, 2.5, Paint()..color = color);
+    final center = Offset(size.width / 2, size.height * 0.86);
+    final r = 3.8;
+    final fill = Paint()..color = color;
+    canvas.drawCircle(center, r, fill);
+    canvas.drawCircle(
+      center,
+      r,
+      Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.25,
+    );
   }
 
   @override
