@@ -61,7 +61,7 @@ Phase 1 MVP — derived from `period_tracker_prds/PRD_Phase_1_MVP.md` (functiona
 
 - [ ] **LOCK-01**: User can enable optional PIN or biometric lock from settings (not forced on first use)
 - [ ] **LOCK-02**: Lock behavior is reliable across background/foreground transitions on supported devices
-- [ ] **LOCK-03**: Lock is not described as full cryptographic protection; failure modes avoid stranding users without data recovery narrative
+- [x] **LOCK-03**: Lock is not described as full cryptographic protection; failure modes avoid stranding users without data recovery narrative
 
 ### Non-functional (Phase 1)
 
@@ -131,7 +131,7 @@ Explicit Phase 1 exclusions per PRD §8:
 | IMPT-03 | Phase 6 | Pending |
 | LOCK-01 | Phase 7 | Pending |
 | LOCK-02 | Phase 7 | Pending |
-| LOCK-03 | Phase 7 | Pending |
+| LOCK-03 | Phase 7 | Complete |
 | NFR-01 | Phase 8 | Pending |
 | NFR-02 | Phase 2 | Complete |
 | NFR-03 | Phase 1 | Complete |

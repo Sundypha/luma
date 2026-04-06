@@ -6,7 +6,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** Phase 5 (calendar surfaces) and **Phase 05.1** (day-marking UX + MVVM refactor) in parallel until 05-04 sign-off; **Phase 6 plan 06-04** Task 2 (export/import UAT) pending; **Phase 7 plan `07-01`** complete 2026-04-06 (`ce72342`, `4082ebb`) — next `07-02` lock UI.
+**Current focus:** Phase 5 (calendar surfaces) and **Phase 05.1** (day-marking UX + MVVM refactor) in parallel until 05-04 sign-off; **Phase 6 plan 06-04** Task 2 (export/import UAT) pending; **Phase 7 plans `07-01`–`07-02`** complete 2026-04-06 (`ce72342`, `4082ebb`, `4ab53aa`, `630ace9`; see `07-01-SUMMARY.md`, `07-02-SUMMARY.md`) — next **`07-03`** LockGate + app wiring.
 
 ## Current Position
 
@@ -69,6 +69,7 @@ Last activity: 2026-04-06 — **`06-04-PLAN.md` Task 1** complete (`6f20f79` imp
 | Phase 06-export-import P02 | 45min | 2 tasks | 6 files |
 | Phase 06-export-import P03 | 45min | 2 tasks | 14 files |
 | Phase 06-export-import P04 T1 | 45min | 1 task (auto); Task 2 UAT pending | 7 files |
+| Phase 07-app-protection-lock P02 | 45min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -108,9 +109,12 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 06-export-import]: 06-02 complete — `ImportService` (parse/validate/decrypt, transactional `applyImport`), `ImportPreview`, `BackupService` with keep-3 pruning; commits `29c6883`, `02b59ef`; IMPT-02 marked complete in REQUIREMENTS
 - [Phase 06-export-import]: 06-03 complete — `ExportViewModel`, `ExportWizardScreen`, `DataSettingsScreen`, drawer Data entry, `PeriodRepository.database`; commits `eb1f956`, `b72d902`; XPRT-01 marked complete in REQUIREMENTS
 - [Phase 06-export-import]: 06-04 Task 1 complete — `ImportViewModel`, `ImportScreen`, Data import tile wiring, `import_view_model_test.dart`; `FilePicker.pickFiles` (v11); shared `BackupService` injected into `ImportService` at navigation; commit `6f20f79`; **Task 2 full export/import UAT pending** (`06-04-SUMMARY.md` checklist)
-- [Phase 07-app-protection-lock]: 07-01 complete — `local_auth` + `flutter_secure_storage`, Android `FlutterFragmentActivity` + `USE_BIOMETRIC` + `allowBackup=false`, iOS Face ID + keychain entitlements; `LockService` with Argon2id PIN + unit tests; commits `ce72342`, `4082ebb` (see `07-01-SUMMARY.md`). LOCK-01/LOCK-02 product requirements remain for 07-02/07-03.
+- [Phase 07-app-protection-lock]: 07-01 complete — `local_auth` + `flutter_secure_storage`, Android `FlutterFragmentActivity` + `USE_BIOMETRIC` + `allowBackup=false`, iOS Face ID + keychain entitlements; `LockService` with Argon2id PIN + unit tests; commits `ce72342`, `4082ebb` (see `07-01-SUMMARY.md`).
+- [Phase 07-app-protection-lock]: 07-02 complete — `PinEntryWidget`, `LockViewModel`, `LockScreen`, `showPinSetupSheet`, `showForgotPinSheet`, `LockSettingsScreen`, `lock_view_model_test.dart`; commits `4ab53aa`, `630ace9` (see `07-02-SUMMARY.md`). **LOCK-03** marked complete in REQUIREMENTS; **LOCK-01** / **LOCK-02** await `07-03` (settings navigation + LockGate).
 - [Phase 06-export-import]: ImportService optional BackupService injection for testable applyImport without path_provider.
 - [Phase 06-export-import]: 06-03: runExport(ExportDataRun) supplements startExport for testable failure path; file_picker v11 uses FilePicker.saveFile with bytes on Linux
+- [Phase 07-app-protection-lock]: 07-02: LockViewModel tests use real LockService with mocked storage/local_auth because LockService is final.
+- [Phase 07-app-protection-lock]: 07-02: showPinSetupSheet supports skipAck and changePinOnly for change-PIN without enableLock.
 
 ### Pending Todos
 
@@ -129,10 +133,10 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-06T22:00:00.000Z
+**Last session:** 2026-04-06T19:06:30.424Z
 
-**Stopped at:** Completed `07-01-PLAN.md` (LockService foundation)
+**Stopped at:** Completed 07-02-PLAN.md (lock UI); next 07-03 LockGate wiring
 
-**Resume file:** `.planning/phases/07-app-protection-lock/07-02-PLAN.md`
+**Resume file:** `.planning/phases/07-app-protection-lock/07-03-PLAN.md`
 
-**Next (Phase 7):** Execute **`07-02-PLAN.md`** (lock UI). **Phase 6:** Human verification for **06-04 Task 2** still open.
+**Next (Phase 7):** Execute **`07-03-PLAN.md`** (LockGate, main wiring, settings tile, destructive reset). **Phase 6:** Human verification for **06-04 Task 2** still open.
