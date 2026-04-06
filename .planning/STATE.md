@@ -128,10 +128,10 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-06T17:23:08.870Z
+**Last session:** 2026-04-06T18:31:40.211Z
 
-**Stopped at:** 06-04 Task 1 done; Task 2 UAT pending
+**Stopped at:** Phase 7 context gathered
 
-**Resume file:** `.planning/phases/06-export-import/06-CONTEXT.md`
+**Resume file:** .planning/phases/07-app-protection-lock/07-CONTEXT.md
 
 **Next (Phase 6):** Human verification for **06-04 Task 2**; then close plan and IMPT-01 / IMPT-03 when signed off.
