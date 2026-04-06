@@ -3,7 +3,9 @@ import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 
 import '../calendar/calendar_screen.dart';
+import '../calendar/calendar_view_model.dart';
 import '../home/home_screen.dart';
+import '../home/home_view_model.dart';
 import '../logging/logging_bottom_sheet.dart';
 import '../settings/about_screen.dart';
 import '../settings/mood_settings.dart';
@@ -13,12 +15,10 @@ class TabShell extends StatefulWidget {
   const TabShell({
     super.key,
     required this.repository,
-    required this.database,
     required this.calendar,
   });
 
   final PeriodRepository repository;
-  final PtrackDatabase database;
   final PeriodCalendarContext calendar;
 
   @override
@@ -27,6 +27,22 @@ class TabShell extends StatefulWidget {
 
 class _TabShellState extends State<TabShell> {
   int _tabIndex = 0;
+  late final CalendarViewModel _calendarVm;
+  late final HomeViewModel _homeVm;
+
+  @override
+  void initState() {
+    super.initState();
+    _calendarVm = CalendarViewModel(widget.repository, widget.calendar);
+    _homeVm = HomeViewModel(widget.repository, widget.calendar);
+  }
+
+  @override
+  void dispose() {
+    _calendarVm.dispose();
+    _homeVm.dispose();
+    super.dispose();
+  }
 
   void _openSettings(BuildContext context) {
     showDialog<void>(
@@ -43,6 +59,18 @@ class _TabShellState extends State<TabShell> {
           ),
         ],
       ),
+    );
+  }
+
+  void _onFabPressed(BuildContext context) {
+    if (!_homeVm.isTodayMarked) {
+      _homeVm.markToday();
+      return;
+    }
+    showLoggingBottomSheet(
+      context,
+      repository: widget.repository,
+      calendar: widget.calendar,
     );
   }
 
@@ -99,16 +127,8 @@ class _TabShellState extends State<TabShell> {
       body: IndexedStack(
         index: _tabIndex,
         children: [
-          HomeScreen(
-            repository: widget.repository,
-            database: widget.database,
-            calendar: widget.calendar,
-          ),
-          CalendarScreen(
-            repository: widget.repository,
-            database: widget.database,
-            calendar: widget.calendar,
-          ),
+          HomeScreen(viewModel: _homeVm),
+          CalendarScreen(viewModel: _calendarVm),
         ],
       ),
       bottomNavigationBar: NavigationBar(
@@ -127,14 +147,16 @@ class _TabShellState extends State<TabShell> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        tooltip: 'Log',
-        onPressed: () => showLoggingBottomSheet(
-          context,
-          repository: widget.repository,
-          calendar: widget.calendar,
-        ),
-        child: const Icon(Icons.add),
+      floatingActionButton: ListenableBuilder(
+        listenable: _homeVm,
+        builder: (context, _) {
+          final marked = _homeVm.isTodayMarked;
+          return FloatingActionButton(
+            tooltip: marked ? 'Add symptoms' : 'Mark today',
+            onPressed: () => _onFabPressed(context),
+            child: const Icon(Icons.add),
+          );
+        },
       ),
     );
   }

@@ -8,19 +8,15 @@ import 'package:timezone/data/latest.dart' as tzdata;
 
 class MockPeriodRepository extends Mock implements PeriodRepository {}
 
-class MockPtrackDatabase extends Mock implements PtrackDatabase {}
-
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   tzdata.initializeTimeZones();
 
   late MockPeriodRepository mockRepo;
-  late MockPtrackDatabase mockDb;
   late PeriodCalendarContext calendar;
 
   setUp(() {
     mockRepo = MockPeriodRepository();
-    mockDb = MockPtrackDatabase();
     calendar = PeriodCalendarContext.fromTimeZoneName('UTC');
     when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
       (_) => Stream<List<StoredPeriodWithDays>>.value(const []),
@@ -32,7 +28,6 @@ void main() {
       MaterialApp(
         home: TabShell(
           repository: mockRepo,
-          database: mockDb,
           calendar: calendar,
         ),
       ),
@@ -52,7 +47,6 @@ void main() {
       MaterialApp(
         home: TabShell(
           repository: mockRepo,
-          database: mockDb,
           calendar: calendar,
         ),
       ),

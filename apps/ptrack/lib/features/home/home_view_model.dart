@@ -56,6 +56,9 @@ class HomeViewModel extends ChangeNotifier {
   final PeriodRepository _repository;
   final PeriodCalendarContext _calendar;
 
+  PeriodRepository get repository => _repository;
+  PeriodCalendarContext get calendar => _calendar;
+
   StreamSubscription<List<StoredPeriodWithDays>>? _subscription;
 
   List<StoredPeriodWithDays> _periodsWithDays = const [];

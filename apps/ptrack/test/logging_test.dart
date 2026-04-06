@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -10,13 +12,26 @@ import 'package:timezone/data/latest.dart' as tzdata;
 
 class MockPeriodRepository extends Mock implements PeriodRepository {}
 
-class MockPtrackDatabase extends Mock implements PtrackDatabase {}
+/// Closed span that includes today so [HomeViewModel.isTodayMarked] is true but the
+/// logging sheet still opens in start-new-period mode (no open span through today).
+StoredPeriodWithDays closedPeriodContainingToday() {
+  final now = DateTime.now();
+  final todayUtc = DateTime.utc(now.year, now.month, now.day);
+  final startUtc = todayUtc.subtract(const Duration(days: 3));
+  final endUtc = todayUtc.add(const Duration(days: 2));
+  return StoredPeriodWithDays(
+    period: StoredPeriod(
+      id: 1,
+      span: PeriodSpan(startUtc: startUtc, endUtc: endUtc),
+    ),
+    dayEntries: const [],
+  );
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late MockPeriodRepository mockRepo;
-  late MockPtrackDatabase mockDb;
   late PeriodCalendarContext calendar;
 
   setUpAll(() {
@@ -29,7 +44,6 @@ void main() {
 
   setUp(() {
     mockRepo = MockPeriodRepository();
-    mockDb = MockPtrackDatabase();
     calendar = PeriodCalendarContext.fromTimeZoneName('UTC');
     when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
       (_) => Stream<List<StoredPeriodWithDays>>.value(const []),
@@ -42,7 +56,6 @@ void main() {
       MaterialApp(
         home: TabShell(
           repository: mockRepo,
-          database: mockDb,
           calendar: calendar,
         ),
       ),
@@ -58,24 +71,73 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('FAB opens logging bottom sheet', (tester) async {
+  testWidgets('FAB calls markToday when today is not in a period', (tester) async {
+    when(() => mockRepo.markDay(any())).thenAnswer((_) async => const DayMarkSuccess());
     await pumpHome(tester);
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pump();
+    verify(() => mockRepo.markDay(any())).called(1);
+    expect(find.byType(LoggingBottomSheet), findsNothing);
+  });
+
+  testWidgets('FAB opens logging bottom sheet when today is marked', (tester) async {
+    when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
+      (_) => Stream<List<StoredPeriodWithDays>>.value([closedPeriodContainingToday()]),
+    );
+    await pumpHome(tester);
+    await tester.pump();
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
     expect(find.byType(LoggingBottomSheet), findsOneWidget);
     expect(find.text('Save'), findsOneWidget);
   });
 
-  testWidgets('create period saves and closes sheet', (tester) async {
-    when(() => mockRepo.insertPeriod(any())).thenAnswer(
-      (_) async => const PeriodWriteSuccess(1),
+  testWidgets('mark today then FAB opens sheet and save upserts day on open period',
+      (tester) async {
+    final controller = StreamController<List<StoredPeriodWithDays>>.broadcast();
+    final periods = <StoredPeriod>[];
+    when(() => mockRepo.watchPeriodsWithDays()).thenAnswer((_) => controller.stream);
+    when(() => mockRepo.listOrderedByStartUtc()).thenAnswer((_) async => [...periods]);
+    when(() => mockRepo.markDay(any())).thenAnswer((_) async {
+      final now = DateTime.now();
+      final todayUtc = DateTime.utc(now.year, now.month, now.day);
+      final startUtc = todayUtc.subtract(const Duration(days: 1));
+      final open = StoredPeriod(
+        id: 1,
+        span: PeriodSpan(startUtc: startUtc, endUtc: null),
+      );
+      periods
+        ..clear()
+        ..add(open);
+      controller.add([StoredPeriodWithDays(period: open, dayEntries: const [])]);
+      return const DayMarkSuccess(periodId: 1);
+    });
+    when(() => mockRepo.upsertDayEntryForPeriod(any(), any())).thenAnswer(
+      (_) async => 1,
     );
+
     await pumpHome(tester);
+    controller.add([]);
+    await tester.pump();
+
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
+    verify(() => mockRepo.markDay(any())).called(1);
+
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pump();
+    expect(periods, isNotEmpty);
+    controller.add([
+      StoredPeriodWithDays(period: periods[0], dayEntries: const []),
+    ]);
+    await tester.pumpAndSettle();
     await tapBottomSheetSave(tester);
-    verify(() => mockRepo.insertPeriod(any())).called(1);
+
+    verifyNever(() => mockRepo.insertPeriod(any()));
+    verify(() => mockRepo.upsertDayEntryForPeriod(1, any())).called(1);
     expect(find.byType(LoggingBottomSheet), findsNothing);
+
+    await controller.close();
   });
 
   testWidgets('home shows cycle day when latest period is not active today',
@@ -126,16 +188,25 @@ void main() {
     when(() => mockRepo.insertPeriod(any())).thenAnswer(
       (_) async => const PeriodWriteRejected([OverlappingPeriod(0)]),
     );
+    when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
+      (_) => Stream<List<StoredPeriodWithDays>>.value([closedPeriodContainingToday()]),
+    );
 
     await pumpHome(tester);
+    await tester.pump();
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
     await tapBottomSheetSave(tester);
     expect(find.textContaining('overlaps'), findsOneWidget);
   });
 
-  testWidgets('FAB opens logging sheet on Calendar tab', (tester) async {
+  testWidgets('FAB opens logging sheet on Calendar tab when today marked',
+      (tester) async {
+    when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
+      (_) => Stream<List<StoredPeriodWithDays>>.value([closedPeriodContainingToday()]),
+    );
     await pumpHome(tester);
+    await tester.pump();
     await tester.tap(find.text('Calendar'));
     await tester.pumpAndSettle();
     await tester.tap(find.byType(FloatingActionButton));
@@ -164,6 +235,7 @@ void main() {
     );
 
     await pumpHome(tester);
+    await tester.pump();
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
     expect(find.text('Log day'), findsOneWidget);

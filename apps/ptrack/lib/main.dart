@@ -116,7 +116,6 @@ class _PtrackAppState extends State<PtrackApp> {
 
     final onboardingState = widget.onboardingState!;
     final repository = widget.repository!;
-    final database = widget.database!;
     final calendar = widget.calendar!;
 
     Widget home;
@@ -134,7 +133,6 @@ class _PtrackAppState extends State<PtrackApp> {
       case AppScreen.home:
         home = TabShell(
           repository: repository,
-          database: database,
           calendar: calendar,
         );
     }

@@ -7,6 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:ptrack/features/calendar/calendar_painters.dart';
 import 'package:ptrack/features/calendar/calendar_screen.dart';
+import 'package:ptrack/features/calendar/calendar_view_model.dart';
+import 'package:ptrack/features/calendar/day_detail_sheet.dart';
 import 'package:ptrack/features/logging/logging_bottom_sheet.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
@@ -15,8 +17,6 @@ import 'package:timezone/data/latest.dart' as tzdata;
 
 class MockPeriodRepository extends Mock implements PeriodRepository {}
 
-class MockPtrackDatabase extends Mock implements PtrackDatabase {}
-
 bool _hasPeriodBandPainter(Widget widget) =>
     widget is CustomPaint && widget.painter is PeriodBandPainter;
 
@@ -24,7 +24,6 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late MockPeriodRepository mockRepo;
-  late MockPtrackDatabase mockDb;
   late PeriodCalendarContext calendar;
 
   setUpAll(() {
@@ -37,7 +36,6 @@ void main() {
 
   setUp(() {
     mockRepo = MockPeriodRepository();
-    mockDb = MockPtrackDatabase();
     calendar = PeriodCalendarContext.fromTimeZoneName('UTC');
     when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
       (_) => Stream<List<StoredPeriodWithDays>>.value(const []),
@@ -45,23 +43,21 @@ void main() {
     when(() => mockRepo.listOrderedByStartUtc()).thenAnswer((_) async => []);
   });
 
-  Future<void> pumpCalendar(WidgetTester tester) async {
+  Future<CalendarViewModel> pumpCalendar(WidgetTester tester) async {
+    final vm = CalendarViewModel(mockRepo, calendar);
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: CalendarScreen(
-            repository: mockRepo,
-            database: mockDb,
-            calendar: calendar,
-          ),
+          body: CalendarScreen(viewModel: vm),
         ),
       ),
     );
     await tester.pump();
+    return vm;
   }
 
   testWidgets('calendar renders month grid with weekday headers', (tester) async {
-    await pumpCalendar(tester);
+    final vm = await pumpCalendar(tester);
     await tester.pumpAndSettle();
 
     expect(find.byType(TableCalendar<void>), findsOneWidget);
@@ -82,6 +78,7 @@ void main() {
       findsWidgets,
     );
     expect(find.text('${now.day}'), findsWidgets);
+    vm.dispose();
   });
 
   testWidgets('calendar shows period marks for logged period', (tester) async {
@@ -109,7 +106,7 @@ void main() {
       (_) => Stream<List<StoredPeriodWithDays>>.value([fixture]),
     );
 
-    await pumpCalendar(tester);
+    final vm = await pumpCalendar(tester);
     await tester.pumpAndSettle();
 
     expect(
@@ -117,13 +114,67 @@ void main() {
       findsWidgets,
     );
     expect(find.text('${midDay.day}'), findsWidgets);
+    vm.dispose();
   });
 
-  testWidgets('calendar rebuilds when data stream emits', (tester) async {
-    final controller = StreamController<List<StoredPeriodWithDays>>();
+  testWidgets(
+      'tapping period band day with no log opens day detail, not logging',
+      (tester) async {
+    final now = DateTime.now();
+    final todayUtc = DateTime.utc(now.year, now.month, now.day);
+    final startUtc = todayUtc.subtract(const Duration(days: 3));
+    final endUtc = todayUtc.subtract(const Duration(days: 1));
+    final midDay = todayUtc.subtract(const Duration(days: 2));
+    final dayNoLog = endUtc;
+
+    final fixture = StoredPeriodWithDays(
+      period: StoredPeriod(
+        id: 1,
+        span: PeriodSpan(startUtc: startUtc, endUtc: endUtc),
+      ),
+      dayEntries: [
+        StoredDayEntry(
+          id: 1,
+          periodId: 1,
+          data: DayEntryData(dateUtc: midDay),
+        ),
+      ],
+    );
+
+    when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
+      (_) => Stream<List<StoredPeriodWithDays>>.value([fixture]),
+    );
+
+    final vm = await pumpCalendar(tester);
+    await tester.pumpAndSettle();
+
+    final dayFinder = find.descendant(
+      of: find.byType(TableCalendar<void>),
+      matching: find.text('${dayNoLog.day}'),
+    );
+    await tester.ensureVisible(dayFinder.first);
+    await tester.tap(dayFinder.first);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(LoggingBottomSheet), findsNothing);
+    expect(find.byType(DayDetailSheet), findsOneWidget);
+    expect(find.text('Delete entire period'), findsOneWidget);
+    vm.dispose();
+  });
+
+  testWidgets('calendar rebuilds when view model receives new data',
+      (tester) async {
+    final controller = StreamController<List<StoredPeriodWithDays>>.broadcast();
     when(() => mockRepo.watchPeriodsWithDays()).thenAnswer((_) => controller.stream);
 
-    await pumpCalendar(tester);
+    final vm = CalendarViewModel(mockRepo, calendar);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CalendarScreen(viewModel: vm),
+        ),
+      ),
+    );
     controller.add([]);
     await tester.pump();
 
@@ -152,12 +203,13 @@ void main() {
       findsWidgets,
     );
 
+    vm.dispose();
     await controller.close();
   });
 
   testWidgets('Today button appears when navigated to different month',
       (tester) async {
-    await pumpCalendar(tester);
+    final vm = await pumpCalendar(tester);
     await tester.pumpAndSettle();
 
     expect(find.text('Today'), findsNothing);
@@ -166,10 +218,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Today'), findsOneWidget);
+    vm.dispose();
   });
 
   testWidgets('tapping a day triggers onDaySelected', (tester) async {
-    await pumpCalendar(tester);
+    final vm = await pumpCalendar(tester);
     await tester.pumpAndSettle();
 
     final dayFinder = find.descendant(
@@ -181,5 +234,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(LoggingBottomSheet), findsOneWidget);
+    vm.dispose();
   });
 }
