@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 
+import '../calendar/calendar_screen.dart';
 import '../home/home_screen.dart';
 import '../logging/logging_bottom_sheet.dart';
 import '../settings/about_screen.dart';
@@ -103,7 +104,11 @@ class _TabShellState extends State<TabShell> {
             database: widget.database,
             calendar: widget.calendar,
           ),
-          const _CalendarPlaceholder(),
+          CalendarScreen(
+            repository: widget.repository,
+            database: widget.database,
+            calendar: widget.calendar,
+          ),
         ],
       ),
       bottomNavigationBar: NavigationBar(
@@ -130,31 +135,6 @@ class _TabShellState extends State<TabShell> {
           calendar: widget.calendar,
         ),
         child: const Icon(Icons.add),
-      ),
-    );
-  }
-}
-
-class _CalendarPlaceholder extends StatelessWidget {
-  const _CalendarPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.calendar_month,
-            size: 64,
-            color: Theme.of(context).colorScheme.outline,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Calendar',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-        ],
       ),
     );
   }
