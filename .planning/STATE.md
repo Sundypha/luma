@@ -6,29 +6,31 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** Phase 5 (Calendar, home & cycle surfaces) — next after completed core logging.
+**Current focus:** Phase 5 (calendar surfaces) and **Phase 05.1** (day-marking UX + MVVM refactor) in parallel until 05-04 sign-off.
 
 ## Current Position
 
-Phase: **5** of 8 (Calendar, home & cycle surfaces)
+Phase: **5** of 8 (Calendar, home & cycle surfaces) — **05.1-01 complete** (see below).
 
-**Current Plan:** 4 (`05-04`)
+**Current Plan (Phase 5):** 4 (`05-04`)
 
-**Total Plans in Phase:** 4
+**Total Plans in Phase 5:** 4
 
 Plan: **05-04** — Task 1 (day detail sheet + calendar routing) **complete** 2026-04-06; **Task 2 human verification pending** (see `05-04-SUMMARY.md`).
 
-Status: **Phase 5 in progress** — Tab shell + home (`05-01`); calendar day model + painters (`05-02`); `table_calendar` CalendarScreen + tests (`05-03`); day detail sheet Task 1 (`05-04`); HOME-01–HOME-04; CAL-01, CAL-04, CAL-05; **CAL-03 not closed until 05-04 Task 2 pass**.
+**Phase 05.1 (inserted):** Plan **01** of **5** complete — day-marking domain pure functions (`83703d0`, `5d88893`); **next:** `05.1-02-PLAN.md` (repository + migration).
 
-Last activity: 2026-04-06 — Plan `05-04` Task 1 committed (`f6658f1`); SUMMARY + planning metadata updated; human checkpoint open.
+Status: **Phase 5 in progress** — same as above; **Phase 05.1 in progress** (1/5 plans).
 
-**Progress:** [█████████░] ~90% (05-04 awaiting UX sign-off)
+Last activity: 2026-04-06 — Completed **`05.1-01`** (domain `computeMarkDay` / `computeUnmarkDay` + tests); `05-04` Task 2 human checkpoint still open.
+
+**Progress:** [█████████░] ~90% Phase 5 (05-04 awaiting UX sign-off); Phase 05.1 **1/5** plans
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 13
+- Total plans completed: 14
 - Average duration: —
 - Total execution time: —
 
@@ -43,7 +45,7 @@ Last activity: 2026-04-06 — Plan `05-04` Task 1 committed (`f6658f1`); SUMMARY
 
 **Recent Trend:**
 
-- Last 5 plans: 05-02, 04-03, 04-02, 04-01, 03-03
+- Last 5 plans: 05.1-01, 05-02, 04-03, 04-02, 04-01
 - Trend: —
 
 *Updated after each plan completion*
@@ -59,6 +61,7 @@ Last activity: 2026-04-06 — Plan `05-04` Task 1 committed (`f6658f1`); SUMMARY
 | Phase 05-calendar-home-cycle-surfaces P02 | 30min | 2 tasks | 3 files |
 | Phase 05-calendar-home-cycle-surfaces P01 | 25 min | 2 tasks | 8 files |
 | Phase 05-calendar-home-cycle-surfaces P03 | 35min | 2 tasks | 5 files |
+| Phase 05.1 P01 | 25min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -89,11 +92,16 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 05-calendar-home-cycle-surfaces]: 05-01: drawer Settings widget test uses bounded pump instead of pumpAndSettle after openDrawer
 - [Phase 05-calendar-home-cycle-surfaces]: 05-03: month-change widget test taps header chevron (horizontal PageView drag unreliable in tests)
 - [Phase 05-calendar-home-cycle-surfaces]: 05-04 Task 1: calendar tap routing uses `!hasLoggedData && !isPredictedPeriod` so period-band days without a day entry open logging directly; day detail uses `anchorContext` after pop for `showLoggingBottomSheet`
+- [Phase 05.1]: Day-marking merge: keepId=min(adjacent ids), absorbId=max for deterministic DB apply order
 
 ### Pending Todos
 
 - Run **05-04 Task 2** manual checklist (`05-04-SUMMARY.md`); reply `pass` or file issues.
 - After pass: mark `05-04` complete in ROADMAP, mark CAL-03 in REQUIREMENTS, optionally run `gsd-tools` state/roadmap sync.
+
+### Roadmap Evolution
+
+- Phase 05.1 inserted after Phase 5: UX refactor - day-marking model and MVVM (URGENT) — replaces explicit start/end period actions with day-toggle model; refactors presentation layer to MVVM with ChangeNotifier ViewModels. Investigation document: `.planning/phases/05.1-ux-refactor-day-marking-model-and-mvvm/INVESTIGATION.md`.
 
 ### Blockers/Concerns
 
@@ -101,8 +109,8 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-06
+**Last session:** 2026-04-06T15:20:25.029Z
 
-**Stopped at:** 05-04-PLAN.md Task 1 done; Task 2 human verification pending
+**Stopped at:** Completed 05.1-01-PLAN.md; next 05.1-02
 
 **Resume file:** None
