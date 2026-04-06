@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:ptrack_data/ptrack_data.dart';
-import 'package:ptrack_domain/ptrack_domain.dart';
 
-import '../logging/logging_bottom_sheet.dart';
+import '../logging/symptom_form_sheet.dart';
+import 'calendar_day_data.dart';
+import 'calendar_view_model.dart';
 
-/// Opens the day-detail bottom sheet (read-only, swipe, prediction, edit bridge).
-///
-/// Callers must route empty non-predicted days to [showLoggingBottomSheet] directly
-/// to avoid a one-frame flash.
+/// Opens the day-detail bottom sheet for any calendar day (live [viewModel] data).
 Future<void> showDayDetailSheet(
   BuildContext context, {
   required DateTime selectedDay,
-  required List<StoredPeriodWithDays> allData,
-  required PredictionResult prediction,
-  required PeriodRepository repository,
-  required PeriodCalendarContext calendar,
+  required CalendarViewModel viewModel,
 }) {
   return showModalBottomSheet<void>(
     context: context,
@@ -23,12 +18,8 @@ Future<void> showDayDetailSheet(
     useSafeArea: true,
     builder: (_) {
       return DayDetailSheet(
-        anchorContext: context,
         selectedDay: selectedDay,
-        allData: allData,
-        prediction: prediction,
-        repository: repository,
-        calendar: calendar,
+        viewModel: viewModel,
       );
     },
   );
@@ -39,78 +30,39 @@ DateTime _utcMidnight(DateTime d) {
   return DateTime.utc(x.year, x.month, x.day);
 }
 
-bool _loggedPeriodCoversDay(
-  DateTime dayNorm,
-  List<StoredPeriodWithDays> periodsWithDays,
-  DateTime todayNorm,
-) {
-  for (final pwd in periodsWithDays) {
-    final span = pwd.period.span;
-    final startNorm = _utcMidnight(span.startUtc);
-    final endNorm =
-        span.endUtc != null ? _utcMidnight(span.endUtc!) : todayNorm;
-    if (endNorm.isBefore(startNorm)) continue;
-    if (!dayNorm.isBefore(startNorm) && !dayNorm.isAfter(endNorm)) {
-      return true;
-    }
-  }
-  return false;
+DateTime _localCalendarDate(DateTime utcMidnight) {
+  return DateTime(utcMidnight.year, utcMidnight.month, utcMidnight.day);
 }
 
-bool _isPredictedCalendarDay(
-  DateTime dayNorm,
-  List<StoredPeriodWithDays> periodsWithDays,
-  PredictionResult prediction,
-  DateTime today,
-) {
-  final todayNorm = _utcMidnight(today);
-  if (_loggedPeriodCoversDay(dayNorm, periodsWithDays, todayNorm)) {
-    return false;
-  }
-  switch (prediction) {
-    case PredictionInsufficientHistory():
-      return false;
-    case PredictionRangeOnly(:final rangeStartUtc, :final rangeEndUtc):
-      var d = _utcMidnight(rangeStartUtc);
-      final end = _utcMidnight(rangeEndUtc);
-      while (!d.isAfter(end)) {
-        if (d == dayNorm) return true;
-        d = d.add(const Duration(days: 1));
-      }
-      return false;
-    case PredictionPointWithRange(
-        :final pointStartUtc,
-        :final rangeStartUtc,
-        :final rangeEndUtc,
-      ):
-      if (rangeStartUtc != null && rangeEndUtc != null) {
-        var d = _utcMidnight(rangeStartUtc);
-        final end = _utcMidnight(rangeEndUtc);
-        while (!d.isAfter(end)) {
-          if (d == dayNorm) return true;
-          d = d.add(const Duration(days: 1));
-        }
-        return false;
-      }
-      return _utcMidnight(pointStartUtc) == dayNorm;
-  }
-}
-
-({StoredPeriodWithDays? pwd, StoredDayEntry? entry}) _lookupDay(
+/// Last match wins if overlaps — same as [buildCalendarDayDataMap].
+StoredPeriodWithDays? _periodCoveringDay(
   DateTime dayNorm,
   List<StoredPeriodWithDays> allData,
 ) {
+  final now = DateTime.now();
+  StoredPeriodWithDays? match;
   for (final pwd in allData) {
-    for (final e in pwd.dayEntries) {
-      if (_utcMidnight(e.data.dateUtc) == dayNorm) {
-        return (pwd: pwd, entry: e);
-      }
+    if (pwd.period.span.containsCalendarDayUtc(dayNorm, todayLocal: now)) {
+      match = pwd;
     }
   }
-  return (pwd: null, entry: null);
+  return match;
 }
 
-int? _periodDayNumber(StoredPeriod period, DateTime dayNorm, DateTime todayNorm) {
+StoredDayEntry? _entryForDay(DateTime dayNorm, StoredPeriodWithDays pwd) {
+  for (final e in pwd.dayEntries) {
+    if (_utcMidnight(e.data.dateUtc) == dayNorm) {
+      return e;
+    }
+  }
+  return null;
+}
+
+int? _periodDayNumber(
+  StoredPeriod period,
+  DateTime dayNorm,
+  DateTime todayNorm,
+) {
   final span = period.span;
   final startNorm = _utcMidnight(span.startUtc);
   final endNorm = span.endUtc != null ? _utcMidnight(span.endUtc!) : todayNorm;
@@ -118,108 +70,122 @@ int? _periodDayNumber(StoredPeriod period, DateTime dayNorm, DateTime todayNorm)
   return dayNorm.difference(startNorm).inDays + 1;
 }
 
-DateTime _calendarDateForLogging(DateTime dayNorm) {
-  return DateTime(dayNorm.year, dayNorm.month, dayNorm.day);
+Future<void> _openSymptomFormAfterPop({
+  required BuildContext sheetContext,
+  required CalendarViewModel viewModel,
+  required DateTime dayNorm,
+  required int periodId,
+  StoredDayEntry? existing,
+}) async {
+  final nav = Navigator.of(sheetContext);
+  final overlay = nav.overlay;
+  nav.pop();
+  if (overlay == null) return;
+  final repo = viewModel.repository;
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (!overlay.context.mounted) return;
+    showSymptomFormSheet(
+      overlay.context,
+      repository: repo,
+      day: dayNorm,
+      periodId: periodId,
+      existing: existing,
+    );
+  });
 }
 
-class DayDetailSheet extends StatefulWidget {
+/// One day at a time; actions depend on prediction, period band, symptoms, and future/past.
+class DayDetailSheet extends StatelessWidget {
   const DayDetailSheet({
     super.key,
-    required this.anchorContext,
     required this.selectedDay,
-    required this.allData,
-    required this.prediction,
-    required this.repository,
-    required this.calendar,
+    required this.viewModel,
   });
 
-  final BuildContext anchorContext;
   final DateTime selectedDay;
-  final List<StoredPeriodWithDays> allData;
-  final PredictionResult prediction;
-  final PeriodRepository repository;
-  final PeriodCalendarContext calendar;
+  final CalendarViewModel viewModel;
 
-  @override
-  State<DayDetailSheet> createState() => _DayDetailSheetState();
-}
-
-class _DayDetailSheetState extends State<DayDetailSheet> {
-  late PageController _pageController;
-  late DateTime _currentDay;
-
-  @override
-  void initState() {
-    super.initState();
-    _currentDay = _utcMidnight(widget.selectedDay);
-    _pageController = PageController(initialPage: 1);
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  void _onPageChanged(int index) {
-    if (index == 1) return;
-    final delta = index == 0 ? -1 : 1;
-    final newDay = _utcMidnight(
-      _currentDay.add(Duration(days: delta)),
+  Widget _chipRow(BuildContext context, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+            ),
+          ),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Chip(
+                label: Text(value),
+                visualDensity: VisualDensity.compact,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
-    setState(() => _currentDay = newDay);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      _pageController.jumpToPage(1);
-      _routeEmptyNonPredictedDay(newDay);
-    });
   }
 
-  void _routeEmptyNonPredictedDay(DateTime dayNorm) {
-    final lookup = _lookupDay(dayNorm, widget.allData);
-    if (lookup.entry != null) return;
-    if (_isPredictedCalendarDay(
-      dayNorm,
-      widget.allData,
-      widget.prediction,
-      DateTime.now(),
-    )) {
-      return;
+  Widget _predictionCard(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(
+              Icons.auto_awesome,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Period expected around this day',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Based on your recent cycles. Estimates only — not medical advice.',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _markDayAndPop(BuildContext context, DateTime dayNorm) async {
+    final outcome = await viewModel.repository.markDay(dayNorm);
+    if (!context.mounted) return;
+    switch (outcome) {
+      case DayMarkSuccess():
+        Navigator.of(context).pop();
+      case DayMarkFailure(:final reason):
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(reason)),
+        );
     }
-    Navigator.of(context).pop();
-    showLoggingBottomSheet(
-      widget.anchorContext,
-      repository: widget.repository,
-      calendar: widget.calendar,
-      initialDate: _calendarDateForLogging(dayNorm),
-    );
-  }
-
-  Future<void> _edit(
-    StoredPeriod period,
-    StoredDayEntry dayEntry,
-  ) async {
-    Navigator.of(context).pop();
-    await showLoggingBottomSheet(
-      widget.anchorContext,
-      repository: widget.repository,
-      calendar: widget.calendar,
-      existingPeriod: period,
-      existingDayEntry: dayEntry,
-    );
-  }
-
-  void _logForDay(DateTime dayNorm) {
-    Navigator.of(context).pop();
-    showLoggingBottomSheet(
-      widget.anchorContext,
-      repository: widget.repository,
-      calendar: widget.calendar,
-      initialDate: _calendarDateForLogging(dayNorm),
-    );
   }
 
   Future<void> _confirmDeleteEntirePeriod(
+    BuildContext context,
     MaterialLocalizations loc,
     StoredPeriod period,
   ) async {
@@ -256,9 +222,9 @@ class _DayDetailSheetState extends State<DayDetailSheet> {
         ],
       ),
     );
-    if (confirmed != true || !mounted) return;
-    final ok = await widget.repository.deletePeriod(period.id);
-    if (!mounted) return;
+    if (confirmed != true || !context.mounted) return;
+    final ok = await viewModel.repository.deletePeriod(period.id);
+    if (!context.mounted) return;
     if (!ok) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Could not delete period.')),
@@ -268,70 +234,231 @@ class _DayDetailSheetState extends State<DayDetailSheet> {
     Navigator.of(context).pop();
   }
 
-  Future<void> _confirmAndDelete(
-    BuildContext dialogContext,
-    MaterialLocalizations loc,
-    StoredDayEntry dayEntry,
+  Future<void> _removeThisDay(
+    BuildContext context,
+    DateTime dayNorm,
+    StoredDayEntry? entry,
   ) async {
-    final dateLabel = loc.formatMediumDate(
-      _calendarDateForLogging(_utcMidnight(dayEntry.data.dateUtc)),
-    );
-    final confirmed = await showDialog<bool>(
-      context: dialogContext,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Delete day entry?'),
-        content: Text(
-          'This will remove the logged details for $dateLabel.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+    if (entry != null) {
+      final loc = MaterialLocalizations.of(context);
+      final dateLabel =
+          loc.formatMediumDate(_localCalendarDate(_utcMidnight(entry.data.dateUtc)));
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Remove this day?'),
+          content: Text(
+            'Unmark $dateLabel as a period day. Logged symptoms for this day '
+            'will be removed.',
           ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('Remove'),
+            ),
+          ],
+        ),
+      );
+      if (confirmed != true || !context.mounted) return;
+    }
+    final outcome = await viewModel.repository.unmarkDay(dayNorm);
+    if (!context.mounted) return;
+    switch (outcome) {
+      case DayMarkSuccess():
+        Navigator.of(context).pop();
+      case DayMarkFailure(:final reason):
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(reason)),
+        );
+    }
+  }
+
+  Future<void> _clearSymptoms(
+    BuildContext context,
+    int dayEntryId,
+  ) async {
+    final ok = await viewModel.repository.deleteDayEntry(dayEntryId);
+    if (!context.mounted) return;
+    if (!ok) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not clear symptoms.')),
+      );
+    }
+  }
+
+  Widget _buildPredictedFuture(
+    BuildContext context,
+    MaterialLocalizations loc,
+    DateTime dayNorm,
+  ) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            loc.formatFullDate(_localCalendarDate(dayNorm)),
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 16),
+          _predictionCard(context),
+          const SizedBox(height: 16),
+          Text(
+            'You can log this once the day arrives.',
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
           ),
         ],
       ),
     );
-    if (confirmed != true || !mounted) return;
-    await widget.repository.deleteDayEntry(dayEntry.id);
-    if (!mounted) return;
-    Navigator.of(context).pop();
   }
 
-  Widget _chipRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildPredictedPastOrToday(
+    BuildContext context,
+    MaterialLocalizations loc,
+    DateTime dayNorm,
+  ) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SizedBox(
-            width: 120,
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          Text(
+            loc.formatFullDate(_localCalendarDate(dayNorm)),
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 16),
+          _predictionCard(context),
+          const SizedBox(height: 24),
+          FilledButton(
+            onPressed: () => _markDayAndPop(context, dayNorm),
+            child: const Text('I had my period'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyFuture(
+    BuildContext context,
+    MaterialLocalizations loc,
+    DateTime dayNorm,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            loc.formatFullDate(_localCalendarDate(dayNorm)),
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Future dates — check back when this day arrives.',
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyPastOrToday(
+    BuildContext context,
+    MaterialLocalizations loc,
+    DateTime dayNorm,
+  ) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            loc.formatFullDate(_localCalendarDate(dayNorm)),
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 24),
+          FilledButton(
+            onPressed: () => _markDayAndPop(context, dayNorm),
+            child: const Text('I had my period'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPeriodNoSymptoms(
+    BuildContext context,
+    MaterialLocalizations loc,
+    DateTime dayNorm,
+    StoredPeriodWithDays pwd,
+    StoredDayEntry? entry,
+  ) {
+    final todayNorm = _utcMidnight(DateTime.now());
+    final periodDay = _periodDayNumber(pwd.period, dayNorm, todayNorm);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            loc.formatFullDate(_localCalendarDate(dayNorm)),
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          if (periodDay != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              'Period day $periodDay',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
             ),
+          ],
+          const SizedBox(height: 16),
+          Text(
+            'No symptoms or notes logged for this day.',
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
           ),
-          Expanded(
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Chip(
-                label: Text(value),
-                visualDensity: VisualDensity.compact,
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
+          const SizedBox(height: 24),
+          FilledButton(
+            onPressed: () => _openSymptomFormAfterPop(
+              sheetContext: context,
+              viewModel: viewModel,
+              dayNorm: dayNorm,
+              periodId: pwd.period.id,
             ),
+            child: const Text('Add symptoms'),
+          ),
+          const SizedBox(height: 8),
+          TextButton(
+            onPressed: () => _removeThisDay(context, dayNorm, entry),
+            child: const Text('Remove this day'),
+          ),
+          const SizedBox(height: 4),
+          TextButton(
+            onPressed: () => _confirmDeleteEntirePeriod(context, loc, pwd.period),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
+            child: const Text('Delete entire period'),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildLoggedPage(
+  Widget _buildPeriodWithSymptoms(
+    BuildContext context,
     MaterialLocalizations loc,
     DateTime dayNorm,
     StoredPeriodWithDays pwd,
@@ -346,19 +473,9 @@ class _DayDetailSheetState extends State<DayDetailSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  loc.formatFullDate(_calendarDateForLogging(dayNorm)),
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ),
-              TextButton(
-                onPressed: () => _confirmAndDelete(context, loc, entry),
-                child: const Text('Delete'),
-              ),
-            ],
+          Text(
+            loc.formatFullDate(_localCalendarDate(dayNorm)),
+            style: Theme.of(context).textTheme.titleLarge,
           ),
           if (periodDay != null) ...[
             const SizedBox(height: 4),
@@ -370,14 +487,8 @@ class _DayDetailSheetState extends State<DayDetailSheet> {
             ),
           ],
           const SizedBox(height: 16),
-          _chipRow(
-            'Flow',
-            data.flowIntensity?.label ?? '—',
-          ),
-          _chipRow(
-            'Pain',
-            data.painScore?.label ?? '—',
-          ),
+          _chipRow(context, 'Flow', data.flowIntensity?.label ?? '—'),
+          _chipRow(context, 'Pain', data.painScore?.label ?? '—'),
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Row(
@@ -419,12 +530,28 @@ class _DayDetailSheetState extends State<DayDetailSheet> {
           ),
           const SizedBox(height: 24),
           FilledButton(
-            onPressed: () => _edit(pwd.period, entry),
+            onPressed: () => _openSymptomFormAfterPop(
+              sheetContext: context,
+              viewModel: viewModel,
+              dayNorm: dayNorm,
+              periodId: pwd.period.id,
+              existing: entry,
+            ),
             child: const Text('Edit'),
           ),
           const SizedBox(height: 8),
           TextButton(
-            onPressed: () => _confirmDeleteEntirePeriod(loc, pwd.period),
+            onPressed: () => _clearSymptoms(context, entry.id),
+            child: const Text('Clear symptoms'),
+          ),
+          const SizedBox(height: 8),
+          TextButton(
+            onPressed: () => _removeThisDay(context, dayNorm, entry),
+            child: const Text('Remove this day'),
+          ),
+          const SizedBox(height: 4),
+          TextButton(
+            onPressed: () => _confirmDeleteEntirePeriod(context, loc, pwd.period),
             style: TextButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.error,
             ),
@@ -435,109 +562,44 @@ class _DayDetailSheetState extends State<DayDetailSheet> {
     );
   }
 
-  Widget _buildPredictedPage(MaterialLocalizations loc, DateTime dayNorm) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            loc.formatFullDate(_calendarDateForLogging(dayNorm)),
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 16),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(
-                    Icons.auto_awesome,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Period expected around this day',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Based on your recent cycles. Estimates only — not medical advice.',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
-                                  ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const Spacer(),
-          FilledButton.tonal(
-            onPressed: () => _logForDay(dayNorm),
-            child: const Text('Log period start'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDayPage(DateTime day) {
-    final dayNorm = _utcMidnight(day);
+  Widget _buildBody(BuildContext context) {
     final loc = MaterialLocalizations.of(context);
-    final lookup = _lookupDay(dayNorm, widget.allData);
+    final dayNorm = _utcMidnight(selectedDay);
+    final todayNorm = _utcMidnight(DateTime.now());
+    final isFuture = dayNorm.isAfter(todayNorm);
+    final dayData = viewModel.dayDataMap[dayNorm] ?? const CalendarDayData();
+    final isPredicted = dayData.isPredictedPeriod;
+    final isOnPeriod = dayData.loggedPeriodState != PeriodDayState.none;
+    final hasLoggedData = dayData.hasLoggedData;
+    final pwd = _periodCoveringDay(dayNorm, viewModel.periodsWithDays);
+    final entry = pwd != null ? _entryForDay(dayNorm, pwd) : null;
 
-    if (lookup.entry != null && lookup.pwd != null) {
-      return _buildLoggedPage(loc, dayNorm, lookup.pwd!, lookup.entry!);
+    if (isPredicted && isFuture) {
+      return _buildPredictedFuture(context, loc, dayNorm);
     }
-
-    if (_isPredictedCalendarDay(
-      dayNorm,
-      widget.allData,
-      widget.prediction,
-      DateTime.now(),
-    )) {
-      return _buildPredictedPage(loc, dayNorm);
+    if (isPredicted && !isFuture) {
+      return _buildPredictedPastOrToday(context, loc, dayNorm);
     }
-
-    // Empty non-predicted: parent swipe handler opens logging; show placeholder.
-    return Center(
-      child: Text(
-        'Opening log…',
-        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-      ),
-    );
+    if (isOnPeriod && hasLoggedData && entry != null && pwd != null) {
+      return _buildPeriodWithSymptoms(context, loc, dayNorm, pwd, entry);
+    }
+    if (isOnPeriod && pwd != null) {
+      return _buildPeriodNoSymptoms(context, loc, dayNorm, pwd, entry);
+    }
+    if (isFuture) {
+      return _buildEmptyFuture(context, loc, dayNorm);
+    }
+    return _buildEmptyPastOrToday(context, loc, dayNorm);
   }
 
   @override
   Widget build(BuildContext context) {
     final maxH = MediaQuery.sizeOf(context).height * 0.88;
-    final prev = _utcMidnight(_currentDay.subtract(const Duration(days: 1)));
-    final curr = _utcMidnight(_currentDay);
-    final next = _utcMidnight(_currentDay.add(const Duration(days: 1)));
-
     return SizedBox(
       height: maxH,
-      child: PageView(
-        controller: _pageController,
-        onPageChanged: _onPageChanged,
-        children: [
-          _buildDayPage(prev),
-          _buildDayPage(curr),
-          _buildDayPage(next),
-        ],
+      child: ListenableBuilder(
+        listenable: viewModel,
+        builder: (context, _) => _buildBody(context),
       ),
     );
   }

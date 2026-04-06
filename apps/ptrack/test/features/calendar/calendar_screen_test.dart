@@ -9,7 +9,6 @@ import 'package:ptrack/features/calendar/calendar_painters.dart';
 import 'package:ptrack/features/calendar/calendar_screen.dart';
 import 'package:ptrack/features/calendar/calendar_view_model.dart';
 import 'package:ptrack/features/calendar/day_detail_sheet.dart';
-import 'package:ptrack/features/logging/logging_bottom_sheet.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -156,7 +155,6 @@ void main() {
     await tester.tap(dayFinder.first);
     await tester.pumpAndSettle();
 
-    expect(find.byType(LoggingBottomSheet), findsNothing);
     expect(find.byType(DayDetailSheet), findsOneWidget);
     expect(find.text('Delete entire period'), findsOneWidget);
     vm.dispose();
@@ -233,7 +231,7 @@ void main() {
     await tester.tap(dayFinder.first);
     await tester.pumpAndSettle();
 
-    expect(find.byType(LoggingBottomSheet), findsOneWidget);
+    expect(find.byType(DayDetailSheet), findsOneWidget);
     vm.dispose();
   });
 }

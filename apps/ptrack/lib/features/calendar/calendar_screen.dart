@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '../logging/logging_bottom_sheet.dart';
 import 'calendar_day_data.dart';
 import 'calendar_painters.dart';
 import 'calendar_view_model.dart';
@@ -12,32 +11,10 @@ void _openDayDetail(
   CalendarViewModel viewModel,
   DateTime selectedDay,
 ) {
-  final dayNorm = DateTime.utc(
-    selectedDay.year,
-    selectedDay.month,
-    selectedDay.day,
-  );
-  final dayData = viewModel.dayDataMap[dayNorm] ?? const CalendarDayData();
-
-  if (!dayData.hasLoggedData &&
-      !dayData.isPredictedPeriod &&
-      dayData.loggedPeriodState == PeriodDayState.none) {
-    showLoggingBottomSheet(
-      context,
-      repository: viewModel.repository,
-      calendar: viewModel.calendar,
-      initialDate: selectedDay,
-    );
-    return;
-  }
-
   showDayDetailSheet(
     context,
     selectedDay: selectedDay,
-    allData: viewModel.periodsWithDays,
-    prediction: viewModel.prediction,
-    repository: viewModel.repository,
-    calendar: viewModel.calendar,
+    viewModel: viewModel,
   );
 }
 
