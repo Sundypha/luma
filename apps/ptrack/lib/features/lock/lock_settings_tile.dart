@@ -27,8 +27,9 @@ class LockSettingsTile extends StatelessWidget {
               'Lock with PIN or biometrics when returning from background',
             ),
       onTap: () {
-        Navigator.of(context).pop();
-        Navigator.of(context).push<void>(
+        final nav = Navigator.of(context);
+        nav.pop();
+        nav.push<void>(
           MaterialPageRoute<void>(
             builder: (_) => LockSettingsScreen(
               lockService: lockService,
