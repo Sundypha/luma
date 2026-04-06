@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:ptrack/features/logging/home_screen.dart';
+import 'package:ptrack/features/shell/tab_shell.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
@@ -27,10 +27,10 @@ void main() {
     );
   });
 
-  testWidgets('home shows empty state and ptrack title', (tester) async {
+  testWidgets('home shows insufficient-data state and tab labels', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: HomeScreen(
+        home: TabShell(
           repository: mockRepo,
           database: mockDb,
           calendar: calendar,
@@ -39,14 +39,18 @@ void main() {
     );
     await tester.pump();
     expect(find.text('ptrack'), findsWidgets);
-    expect(find.text('No periods logged yet'), findsOneWidget);
-    expect(find.textContaining('Tap + to log'), findsOneWidget);
+    expect(
+      find.text('Log a few more periods to see cycle insights'),
+      findsOneWidget,
+    );
+    expect(find.text('Home'), findsWidgets);
+    expect(find.text('Calendar'), findsWidgets);
   });
 
-  testWidgets('About opens from home AppBar', (tester) async {
+  testWidgets('About opens from drawer', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: HomeScreen(
+        home: TabShell(
           repository: mockRepo,
           database: mockDb,
           calendar: calendar,
@@ -54,7 +58,10 @@ void main() {
       ),
     );
     await tester.pump();
-    await tester.tap(find.byTooltip('About'));
+    final scaffoldState = tester.state<ScaffoldState>(find.byType(Scaffold));
+    scaffoldState.openDrawer();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('About'));
     await tester.pumpAndSettle();
     expect(find.text('About ptrack'), findsOneWidget);
     expect(find.text('Your privacy & how estimates work'), findsOneWidget);

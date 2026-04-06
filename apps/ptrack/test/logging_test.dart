@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:ptrack/features/logging/home_screen.dart';
 import 'package:ptrack/features/logging/logging_bottom_sheet.dart';
+import 'package:ptrack/features/settings/mood_settings.dart';
+import 'package:ptrack/features/shell/tab_shell.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
@@ -39,7 +40,7 @@ void main() {
   Future<void> pumpHome(WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: HomeScreen(
+        home: TabShell(
           repository: mockRepo,
           database: mockDb,
           calendar: calendar,
@@ -77,65 +78,38 @@ void main() {
     expect(find.byType(LoggingBottomSheet), findsNothing);
   });
 
-  testWidgets('period list shows periods from stream', (tester) async {
-    final a = StoredPeriodWithDays(
-      period: StoredPeriod(
-        id: 1,
-        span: PeriodSpan(
-          startUtc: DateTime.utc(2024, 6, 1),
-          endUtc: DateTime.utc(2024, 6, 3),
-        ),
-      ),
-      dayEntries: const [],
-    );
-    final b = StoredPeriodWithDays(
-      period: StoredPeriod(
-        id: 2,
-        span: PeriodSpan(
-          startUtc: DateTime.utc(2024, 5, 1),
-          endUtc: DateTime.utc(2024, 5, 4),
-        ),
-      ),
-      dayEntries: const [],
-    );
-    when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
-      (_) => Stream<List<StoredPeriodWithDays>>.value([a, b]),
-    );
-    await pumpHome(tester);
-    await tester.pump();
-    expect(find.byType(ExpansionTile), findsNWidgets(2));
-  });
-
-  testWidgets('delete period shows confirmation dialog', (tester) async {
+  testWidgets('home shows cycle day when latest period is not active today',
+      (tester) async {
+    final now = DateTime.now();
+    final todayUtc = DateTime.utc(now.year, now.month, now.day);
+    final startUtc = todayUtc.subtract(const Duration(days: 7));
+    final endUtc = todayUtc.subtract(const Duration(days: 1));
     final item = StoredPeriodWithDays(
       period: StoredPeriod(
-        id: 42,
-        span: PeriodSpan(
-          startUtc: DateTime.utc(2024, 6, 1),
-          endUtc: DateTime.utc(2024, 6, 3),
-        ),
+        id: 1,
+        span: PeriodSpan(startUtc: startUtc, endUtc: endUtc),
       ),
       dayEntries: const [],
     );
     when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
       (_) => Stream<List<StoredPeriodWithDays>>.value([item]),
     );
-    when(() => mockRepo.deletePeriod(42)).thenAnswer((_) async => true);
-
     await pumpHome(tester);
     await tester.pump();
-    await tester.tap(find.byIcon(Icons.more_vert));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Delete period'));
-    await tester.pumpAndSettle();
-    expect(find.text('Delete period?'), findsOneWidget);
-    final dialogDelete = find.descendant(
-      of: find.byType(AlertDialog),
-      matching: find.widgetWithText(TextButton, 'Delete'),
-    );
-    await tester.tap(dialogDelete);
-    await tester.pumpAndSettle();
-    verify(() => mockRepo.deletePeriod(42)).called(1);
+    expect(find.text('Cycle day 8'), findsOneWidget);
+  });
+
+  testWidgets('drawer Settings opens mood settings dialog', (tester) async {
+    await pumpHome(tester);
+    final scaffoldState = tester.state<ScaffoldState>(find.byType(Scaffold));
+    scaffoldState.openDrawer();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.tap(find.text('Settings'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.byType(MoodSettingsTile), findsOneWidget);
+    expect(find.text('Settings'), findsWidgets);
   });
 
   testWidgets('validation error shows inline message', (tester) async {
@@ -160,36 +134,13 @@ void main() {
     expect(find.textContaining('overlaps'), findsOneWidget);
   });
 
-  testWidgets('log day in closed period from menu uses upsert', (tester) async {
-    final now = DateTime.now();
-    final startUtc = DateTime.utc(now.year, now.month, now.day)
-        .subtract(const Duration(days: 2));
-    final endUtc = DateTime.utc(now.year, now.month, now.day)
-        .add(const Duration(days: 2));
-    final closed = StoredPeriodWithDays(
-      period: StoredPeriod(
-        id: 3,
-        span: PeriodSpan(startUtc: startUtc, endUtc: endUtc),
-      ),
-      dayEntries: const [],
-    );
-    when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
-      (_) => Stream<List<StoredPeriodWithDays>>.value([closed]),
-    );
-    when(() => mockRepo.upsertDayEntryForPeriod(3, any())).thenAnswer(
-      (_) async => 1,
-    );
-
+  testWidgets('FAB opens logging sheet on Calendar tab', (tester) async {
     await pumpHome(tester);
-    await tester.pump();
-    await tester.tap(find.byIcon(Icons.more_vert));
+    await tester.tap(find.text('Calendar'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Log day in period'));
+    await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
-    await tapBottomSheetSave(tester);
-    verifyNever(() => mockRepo.insertPeriod(any()));
-    verify(() => mockRepo.upsertDayEntryForPeriod(3, any())).called(1);
-    expect(find.byType(LoggingBottomSheet), findsNothing);
+    expect(find.byType(LoggingBottomSheet), findsOneWidget);
   });
 
   testWidgets('log day on open period upserts without insertPeriod',
@@ -218,24 +169,25 @@ void main() {
     expect(find.byType(LoggingBottomSheet), findsNothing);
   });
 
-  testWidgets('edit mode pre-fills existing data', (tester) async {
-    final day = StoredDayEntry(
-      id: 7,
-      periodId: 1,
-      data: DayEntryData(
-        dateUtc: DateTime.utc(2024, 6, 3),
-        flowIntensity: FlowIntensity.heavy,
-      ),
-    );
+  testWidgets('today card shows logged flow for today', (tester) async {
+    final now = DateTime.now();
+    final dayUtc = DateTime.utc(now.year, now.month, now.day);
+    final startUtc = dayUtc.subtract(const Duration(days: 3));
     final item = StoredPeriodWithDays(
       period: StoredPeriod(
         id: 1,
-        span: PeriodSpan(
-          startUtc: DateTime.utc(2024, 6, 1),
-          endUtc: null,
-        ),
+        span: PeriodSpan(startUtc: startUtc, endUtc: null),
       ),
-      dayEntries: [day],
+      dayEntries: [
+        StoredDayEntry(
+          id: 7,
+          periodId: 1,
+          data: DayEntryData(
+            dateUtc: dayUtc,
+            flowIntensity: FlowIntensity.heavy,
+          ),
+        ),
+      ],
     );
     when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
       (_) => Stream<List<StoredPeriodWithDays>>.value([item]),
@@ -243,19 +195,7 @@ void main() {
 
     await pumpHome(tester);
     await tester.pump();
-    await tester.tap(find.byType(ExpansionTile));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey<int>(7)));
-    await tester.pumpAndSettle();
-
-    final flowFinder = find.descendant(
-      of: find.byType(LoggingBottomSheet),
-      matching: find.byKey(const Key('flow_intensity_segments')),
-    );
-    await tester.ensureVisible(flowFinder);
-    await tester.pumpAndSettle();
-
-    final flow = tester.widget<SegmentedButton<FlowIntensity>>(flowFinder);
-    expect(flow.selected, {FlowIntensity.heavy});
+    expect(find.text("Today's log"), findsOneWidget);
+    expect(find.textContaining('Heavy'), findsWidgets);
   });
 }
