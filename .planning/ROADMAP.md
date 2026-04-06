@@ -152,14 +152,14 @@ Plans:
 
 **Requirements:** LOG-01, LOG-02, LOG-03, LOG-04, LOG-05, LOG-06, CAL-01, CAL-03, CAL-05, HOME-01, HOME-02, HOME-03, HOME-04
 
-**Plans:** 4/5 plans executed
+**Plans:** 5 plans; **05.1-05** Task 1 (automation) complete 2026-04-06 (`f14ed5f`); **Task 2 human verification pending** — do not treat phase as closed until UAT passes (see `05.1-05-SUMMARY.md`).
 
 Plans:
 - [x] `05.1-01-PLAN.md` — TDD: Day-marking domain pure functions (computeMarkDay, computeUnmarkDay — 6 span operations) — complete 2026-04-06 (`83703d0` test, `5d88893` feat; see `05.1-01-SUMMARY.md`)
 - [x] `05.1-02-PLAN.md` — Repository markDay/unmarkDay + DB migration v2→v3 (close open periods) — complete 2026-04-06 (`0698c49` migration, `c0a8b4f` repository; see `05.1-02-SUMMARY.md`)
 - [x] `05.1-03-PLAN.md` — CalendarViewModel + HomeViewModel + view refactor to MVVM (ListenableBuilder) — complete 2026-04-06 (`260727a` ViewModels + tests, `950520a` shell/screens; see `05.1-03-SUMMARY.md`)
 - [x] `05.1-04-PLAN.md` — SymptomFormSheet + DayDetailSheet rewrite (new action model, future-day gating) — complete 2026-04-06 (`7f84edb` symptom form, `35abfde` day detail + routing; see `05.1-04-SUMMARY.md`)
-- [ ] `05.1-05-PLAN.md` — Dead code removal (delete logging_bottom_sheet.dart) + first_log_screen update + human verification
+- [ ] `05.1-05-PLAN.md` — Dead code removal + first_log + human verification — **Task 1 complete 2026-04-06 (`f14ed5f`); Task 2 human verification pending** (see `05.1-05-SUMMARY.md`)
 
 ### Phase 6: Export & import
 
