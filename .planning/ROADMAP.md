@@ -181,7 +181,7 @@ Plans:
 Plans:
 
 - [x] `06-01-PLAN.md` — Export schema types, AES-256-GCM crypto, ExportService, and format documentation (XPRT-02, XPRT-03) — complete 2026-04-06 (`87cb5a2`, `a365889`; see `06-01-SUMMARY.md`)
-- [ ] `06-02-PLAN.md` — ImportService validation, ImportPreview duplicate detection, BackupService, atomic import apply (IMPT-02)
+- [x] `06-02-PLAN.md` — ImportService validation, ImportPreview duplicate detection, BackupService, atomic import apply (IMPT-02) — complete 2026-04-06 (`29c6883`, `02b59ef`; see `06-02-SUMMARY.md`)
 - [ ] `06-03-PLAN.md` — ExportViewModel, ExportWizardScreen, DataSettingsScreen, drawer integration (XPRT-01)
 - [ ] `06-04-PLAN.md` — ImportViewModel, ImportScreen, DataSettingsScreen wiring, human verification (IMPT-01, IMPT-03)
 

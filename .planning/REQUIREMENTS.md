@@ -54,7 +54,7 @@ Phase 1 MVP — derived from `period_tracker_prds/PRD_Phase_1_MVP.md` (functiona
 ### Data import
 
 - [ ] **IMPT-01**: User can import from a prior valid export file
-- [ ] **IMPT-02**: Invalid or corrupted files fail with readable validation errors (no silent corruption)
+- [x] **IMPT-02**: Invalid or corrupted files fail with readable validation errors (no silent corruption)
 - [ ] **IMPT-03**: Duplicate-handling behavior is deterministic and explained in product copy
 
 ### App protection
@@ -127,7 +127,7 @@ Explicit Phase 1 exclusions per PRD §8:
 | XPRT-02 | Phase 6 | Complete |
 | XPRT-03 | Phase 6 | Complete |
 | IMPT-01 | Phase 6 | Pending |
-| IMPT-02 | Phase 6 | Pending |
+| IMPT-02 | Phase 6 | Complete |
 | IMPT-03 | Phase 6 | Pending |
 | LOCK-01 | Phase 7 | Pending |
 | LOCK-02 | Phase 7 | Pending |

@@ -22,9 +22,9 @@ Plan: **05-04** — Task 1 (day detail sheet + calendar routing) **complete** 20
 
 Status: **Phase 5 in progress** — same as above; **Phase 05.1** automation done for plan 05; **human UAT** outstanding for `05.1-05`.
 
-Last activity: 2026-04-06 — Completed **`05.1-05` Task 1**; `05-04` and `05.1-05` Task 2 human checkpoints still open.
+Last activity: 2026-04-06 — Completed **`06-02-PLAN.md`** (import data layer: `29c6883`, `02b59ef`); **`05.1-05` Task 1** done earlier; `05-04` and `05.1-05` Task 2 human checkpoints still open.
 
-**Progress:** [█████████░] ~90% Phase 5 (05-04 awaiting UX sign-off); Phase 05.1 **plan 05 automation complete**, UAT pending
+**Progress:** [█████████░] 92%
 
 ## Performance Metrics
 
@@ -66,6 +66,7 @@ Last activity: 2026-04-06 — Completed **`05.1-05` Task 1**; `05-04` and `05.1-
 | Phase 05.1 P03 | 30min | 2 tasks | 11 files |
 | Phase 05.1 P05 T1 | 25min | 1 task (auto) | 8 files |
 | Phase 06-export-import P01 | 35min | 2 tasks | 11 files |
+| Phase 06-export-import P02 | 45min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -102,6 +103,8 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 05.1]: TabShell FAB marks today via `HomeViewModel.markToday` when `!isTodayMarked`; otherwise opens `showSymptomFormSheet` with `todayPeriodId` / `todayStoredEntry` (tooltip Mark today / Add symptoms)
 - [Phase 05.1]: 05.1-04 Calendar opens `showDayDetailSheet` for every day tap; symptoms use `showSymptomFormSheet` from period day actions; CAL-03 marked complete in REQUIREMENTS
 - [Phase 06-export-import]: 06-01 complete — `ExportService`, `LumaCrypto` (AES-256-GCM + Argon2id), export schema types, `docs/luma-export-format.md`; commits `87cb5a2`, `a365889`; XPRT-02/XPRT-03 marked complete in REQUIREMENTS
+- [Phase 06-export-import]: 06-02 complete — `ImportService` (parse/validate/decrypt, transactional `applyImport`), `ImportPreview`, `BackupService` with keep-3 pruning; commits `29c6883`, `02b59ef`; IMPT-02 marked complete in REQUIREMENTS
+- [Phase 06-export-import]: ImportService optional BackupService injection for testable applyImport without path_provider.
 
 ### Pending Todos
 
@@ -119,8 +122,10 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-06 (06-01 plan execution)
+**Last session:** 2026-04-06T17:11:02.034Z
 
-**Stopped at:** Completed `06-01-PLAN.md` (export data layer); next: `06-02-PLAN.md` import path
+**Stopped at:** Completed 06-02-PLAN.md (import data layer)
 
-**Resume file:** .planning/phases/06-export-import/06-CONTEXT.md
+**Resume file:** `.planning/phases/06-export-import/06-CONTEXT.md`
+
+**Next (Phase 6):** `06-03-PLAN.md` (export UI).
