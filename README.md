@@ -1,4 +1,4 @@
-# ptrack
+# Luma
 
 Local-first period tracker (Flutter). Product specs live in [`period_tracker_prds/`](period_tracker_prds/).
 
@@ -66,7 +66,7 @@ Then always run **`fvm exec melos …`** from this repo (or fix `PATH` as above)
 ## Run the app (Android-first)
 
 ```bash
-cd apps/ptrack
+cd apps/ptrack   # Flutter app package name: luma
 fvm flutter run
 ```
 

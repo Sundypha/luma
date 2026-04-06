@@ -1,4 +1,4 @@
-name: ptrack
+name: luma
 description: "Luma — local-first period tracker (Flutter app)."
 publish_to: 'none'
 resolution: workspace

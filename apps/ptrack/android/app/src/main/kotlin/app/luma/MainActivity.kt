@@ -1,4 +1,4 @@
-package com.ptrack.app.ptrack
+package app.luma
 
 import io.flutter.embedding.android.FlutterActivity
 

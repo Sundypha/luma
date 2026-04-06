@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:ptrack/features/onboarding/first_log_screen.dart';
+import 'package:luma/features/onboarding/first_log_screen.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 

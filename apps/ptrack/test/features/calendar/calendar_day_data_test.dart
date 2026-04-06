@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 
-import 'package:ptrack/features/calendar/calendar_day_data.dart';
+import 'package:luma/features/calendar/calendar_day_data.dart';
 
 StoredPeriodWithDays _period({
   required int id,

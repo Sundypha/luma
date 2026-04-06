@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:ptrack/features/calendar/calendar_day_data.dart';
-import 'package:ptrack/features/calendar/calendar_view_model.dart';
-import 'package:ptrack/features/calendar/day_detail_sheet.dart';
+import 'package:luma/features/calendar/calendar_day_data.dart';
+import 'package:luma/features/calendar/calendar_view_model.dart';
+import 'package:luma/features/calendar/day_detail_sheet.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
