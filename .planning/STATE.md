@@ -12,17 +12,17 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 Phase: **5** of 8 (Calendar, home & cycle surfaces)
 
-**Current Plan:** 4
+**Current Plan:** 4 (`05-04`)
 
 **Total Plans in Phase:** 4
 
-Plan: **05-04** next (`05-01`–`05-03` complete 2026-04-06).
+Plan: **05-04** — Task 1 (day detail sheet + calendar routing) **complete** 2026-04-06; **Task 2 human verification pending** (see `05-04-SUMMARY.md`).
 
-Status: **Phase 5 in progress** — Tab shell + home (`05-01`); calendar day model + painters (`05-02`); `table_calendar` CalendarScreen + tests (`05-03`); HOME-01–HOME-04; CAL-01, CAL-04, CAL-05.
+Status: **Phase 5 in progress** — Tab shell + home (`05-01`); calendar day model + painters (`05-02`); `table_calendar` CalendarScreen + tests (`05-03`); day detail sheet Task 1 (`05-04`); HOME-01–HOME-04; CAL-01, CAL-04, CAL-05; **CAL-03 not closed until 05-04 Task 2 pass**.
 
-Last activity: 2026-04-06 — Plan `05-03` executed (CalendarScreen, TabShell integration, widget tests).
+Last activity: 2026-04-06 — Plan `05-04` Task 1 committed (`f6658f1`); SUMMARY + planning metadata updated; human checkpoint open.
 
-**Progress:** [█████████░] 88%
+**Progress:** [█████████░] ~90% (05-04 awaiting UX sign-off)
 
 ## Performance Metrics
 
@@ -88,10 +88,12 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 05-calendar-home-cycle-surfaces]: 05-01: cycle_position uses flutter/foundation @immutable for analyzer depend_on_referenced_packages
 - [Phase 05-calendar-home-cycle-surfaces]: 05-01: drawer Settings widget test uses bounded pump instead of pumpAndSettle after openDrawer
 - [Phase 05-calendar-home-cycle-surfaces]: 05-03: month-change widget test taps header chevron (horizontal PageView drag unreliable in tests)
+- [Phase 05-calendar-home-cycle-surfaces]: 05-04 Task 1: calendar tap routing uses `!hasLoggedData && !isPredictedPeriod` so period-band days without a day entry open logging directly; day detail uses `anchorContext` after pop for `showLoggingBottomSheet`
 
 ### Pending Todos
 
-Continue Phase 5: `05-04` per `ROADMAP.md`.
+- Run **05-04 Task 2** manual checklist (`05-04-SUMMARY.md`); reply `pass` or file issues.
+- After pass: mark `05-04` complete in ROADMAP, mark CAL-03 in REQUIREMENTS, optionally run `gsd-tools` state/roadmap sync.
 
 ### Blockers/Concerns
 
@@ -99,8 +101,8 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-06T12:21:29.426Z
+**Last session:** 2026-04-06
 
-**Stopped at:** Completed 05-03-PLAN.md
+**Stopped at:** 05-04-PLAN.md Task 1 done; Task 2 human verification pending
 
 **Resume file:** None

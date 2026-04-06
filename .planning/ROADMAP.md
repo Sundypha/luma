@@ -135,14 +135,14 @@ Plans:
 3. Tapping a day opens that day’s detail so the user can view or edit entries.
 4. The home screen shows cycle position and next expected period status (or a clear insufficient-data state), what was logged today at a glance, and a visible quick action to log or edit without deep navigation—without unsupported “cycle health” scores or overconfident precision.
 
-**Plans**: 3/4 plans executed
+**Plans**: 3 complete; `05-04` Task 1 done — Task 2 (human verify) pending
 
 Plans:
 
 - [x] `05-01-PLAN.md` — Tab shell (Home + Calendar tabs, drawer, FAB) and refactored home summary with cycle position, today card, prediction range — complete 2026-04-06
 - [x] `05-02-PLAN.md` — Calendar day-data model (PeriodDayState, CalendarDayData, buildCalendarDayDataMap) and custom painters (solid band, hatched circle, dot, today ring) — complete 2026-04-06
 - [x] `05-03-PLAN.md` — Calendar screen with table_calendar integration, reactive stream, month navigation, "Today" button, widget tests — complete 2026-04-06
-- [ ] `05-04-PLAN.md` — Day detail bottom sheet (read-only view, adjacent-day swipe, edit bridge, predicted day info) and human verification
+- [ ] `05-04-PLAN.md` — Day detail bottom sheet (read-only view, adjacent-day swipe, edit bridge, predicted day info) and human verification — **Task 1 complete 2026-04-06 (`f6658f1`); Task 2 human verification pending** (do not mark plan complete until user signs off)
 
 ### Phase 6: Export & import
 
