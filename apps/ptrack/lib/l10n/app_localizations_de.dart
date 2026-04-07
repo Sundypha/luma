@@ -74,7 +74,15 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String predStepInsufficientHistory(int avail, int need) {
-    return 'Noch reichen die abgeschlossenen Zyklen nicht aus, um den nächsten Beginn abzuschätzen. Nach Filterung stehen $avail Zyklus/Zyklen zur Verfügung; normalerweise werden mindestens $need benötigt.';
+    String _temp0 = intl.Intl.pluralLogic(
+      avail,
+      locale: localeName,
+      other:
+          'Noch reichen die abgeschlossenen Zyklen nicht aus, um den nächsten Beginn abzuschätzen. Nach Filterung stehen $avail Zyklen zur Verfügung; normalerweise werden mindestens $need benötigt.',
+      one:
+          'Noch reichen die abgeschlossenen Zyklen nicht aus, um den nächsten Beginn abzuschätzen. Nach Filterung steht 1 Zyklus zur Verfügung; normalerweise werden mindestens $need benötigt.',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -129,7 +137,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String ensembleMilestoneExpanded(int cycles, int methods) {
-    return 'Mit $cycles eingetragenen Zyklen nutzt deine Vorhersage jetzt $methods Methoden für mehr Genauigkeit.';
+    String _temp0 = intl.Intl.pluralLogic(
+      methods,
+      locale: localeName,
+      other: '$methods Methoden',
+      one: '1 Methode',
+    );
+    return 'Mit $cycles eingetragenen Zyklen nutzt deine Vorhersage jetzt $_temp0 für mehr Genauigkeit.';
   }
 
   @override
@@ -159,7 +173,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String homePredictionMethodsLine(int n) {
-    return 'Aktuell werden $n Vorhersagemethoden genutzt.';
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Aktuell werden $n Vorhersagemethoden genutzt.',
+      one: 'Aktuell wird 1 Vorhersagemethode genutzt.',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -195,7 +215,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String dayDetailForecastMonthsTitle(int months) {
-    return 'Vorschau etwa $months Monate voraus';
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: 'Vorschau etwa $months Monate voraus',
+      one: 'Vorschau etwa 1 Monat voraus',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -208,12 +234,28 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String dayDetailDisclaimerHopN(int months) {
-    return 'Sehr grobe Schätzung, etwa $months Monate voraus — nur zur allgemeinen Planung.';
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other:
+          'Sehr grobe Schätzung, etwa $months Monate voraus — nur zur allgemeinen Planung.',
+      one:
+          'Sehr grobe Schätzung, etwa 1 Monat voraus — nur zur allgemeinen Planung.',
+    );
+    return '$_temp0';
   }
 
   @override
   String dayDetailDisclaimerHopNSpread(int months) {
-    return 'Sehr grobe Schätzung, etwa $months Monate voraus — nur zur allgemeinen Planung. Deine Zykluslänge schwankt ziemlich stark, dieser Termin kann sich deutlich verschieben.';
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other:
+          'Sehr grobe Schätzung, etwa $months Monate voraus — nur zur allgemeinen Planung. Deine Zykluslänge schwankt ziemlich stark, dieser Termin kann sich deutlich verschieben.',
+      one:
+          'Sehr grobe Schätzung, etwa 1 Monat voraus — nur zur allgemeinen Planung. Deine Zykluslänge schwankt ziemlich stark, dieser Termin kann sich deutlich verschieben.',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -246,4 +288,15 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get appLanguageRestartMessage =>
       'Starte die App neu, damit die Änderung wirkt.';
+
+  @override
+  String get calendarInsufficientPredictionHint =>
+      'Noch keine Vorhersage — markier mindestens zwei getrennte Perioden, damit Luma den Abstand dazwischen messen kann.';
+
+  @override
+  String get calendarLegendHatching =>
+      'Hellere Schraffur = weiter weg, unsicherer';
+
+  @override
+  String get calendarToday => 'Heute';
 }

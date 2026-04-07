@@ -29,6 +29,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
 
   cupertino_icons: ^1.0.8
   ptrack_domain:
@@ -51,6 +54,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
   mocktail: ^1.0.4
   shared_preferences_platform_interface: ^2.4.2
   drift: ^2.28.1
@@ -60,6 +64,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
@@ -96,3 +101,14 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  web:
+    generate: true
+  image_path: assets/branding/app_icon.png
+  adaptive_icon_background: "#FFF5F8"
+  adaptive_icon_foreground: assets/branding/app_icon.png
+  remove_alpha_ios: true
+  background_color_ios: "#FFF5F8"

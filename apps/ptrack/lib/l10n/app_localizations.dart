@@ -177,7 +177,7 @@ abstract class AppLocalizations {
   /// No description provided for @predStepInsufficientHistory.
   ///
   /// In en, this message translates to:
-  /// **'There are not enough completed cycles yet to estimate a next start. {avail} cycle(s) are available after filtering; at least {need} are typically needed.'**
+  /// **'{avail, plural, one{There are not enough completed cycles yet to estimate a next start. 1 cycle is available after filtering; at least {need} are typically needed.} other{There are not enough completed cycles yet to estimate a next start. {avail} cycles are available after filtering; at least {need} are typically needed.}}'**
   String predStepInsufficientHistory(int avail, int need);
 
   /// No description provided for @predStepHighVariability.
@@ -255,7 +255,7 @@ abstract class AppLocalizations {
   /// No description provided for @ensembleMilestoneExpanded.
   ///
   /// In en, this message translates to:
-  /// **'With {cycles} cycles logged, your prediction now uses {methods} methods for better accuracy.'**
+  /// **'With {cycles} cycles logged, your prediction now uses {methods, plural, one{1 method} other{{methods} methods}} for better accuracy.'**
   String ensembleMilestoneExpanded(int cycles, int methods);
 
   /// No description provided for @homePeriodDay.
@@ -297,7 +297,7 @@ abstract class AppLocalizations {
   /// No description provided for @homePredictionMethodsLine.
   ///
   /// In en, this message translates to:
-  /// **'Currently using {n} prediction methods.'**
+  /// **'{n, plural, one{Currently using 1 prediction method.} other{Currently using {n} prediction methods.}}'**
   String homePredictionMethodsLine(int n);
 
   /// No description provided for @homeDone.
@@ -351,7 +351,7 @@ abstract class AppLocalizations {
   /// No description provided for @dayDetailForecastMonthsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Forecast ≈ {months} months out'**
+  /// **'{months, plural, one{Forecast ≈ 1 month out} other{Forecast ≈ {months} months out}}'**
   String dayDetailForecastMonthsTitle(int months);
 
   /// No description provided for @dayDetailDisclaimerHop1.
@@ -369,13 +369,13 @@ abstract class AppLocalizations {
   /// No description provided for @dayDetailDisclaimerHopN.
   ///
   /// In en, this message translates to:
-  /// **'Very rough estimate, about {months} months out — use for general planning only.'**
+  /// **'{months, plural, one{Very rough estimate, about 1 month out — use for general planning only.} other{Very rough estimate, about {months} months out — use for general planning only.}}'**
   String dayDetailDisclaimerHopN(int months);
 
   /// No description provided for @dayDetailDisclaimerHopNSpread.
   ///
   /// In en, this message translates to:
-  /// **'Very rough estimate, about {months} months out — use for general planning only. Your cycle length varies quite a bit, so this date may shift significantly.'**
+  /// **'{months, plural, one{Very rough estimate, about 1 month out — use for general planning only. Your cycle length varies quite a bit, so this date may shift significantly.} other{Very rough estimate, about {months} months out — use for general planning only. Your cycle length varies quite a bit, so this date may shift significantly.}}'**
   String dayDetailDisclaimerHopNSpread(int months);
 
   /// No description provided for @dayDetailHideDetails.
@@ -431,6 +431,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Restart the app to apply this change.'**
   String get appLanguageRestartMessage;
+
+  /// No description provided for @calendarInsufficientPredictionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'No forecast yet — mark at least two separate periods so Luma can measure the gap between them.'**
+  String get calendarInsufficientPredictionHint;
+
+  /// No description provided for @calendarLegendHatching.
+  ///
+  /// In en, this message translates to:
+  /// **'Lighter hatching = further out, less certain'**
+  String get calendarLegendHatching;
+
+  /// No description provided for @calendarToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get calendarToday;
 }
 
 class _AppLocalizationsDelegate

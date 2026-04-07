@@ -74,7 +74,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String predStepInsufficientHistory(int avail, int need) {
-    return 'There are not enough completed cycles yet to estimate a next start. $avail cycle(s) are available after filtering; at least $need are typically needed.';
+    String _temp0 = intl.Intl.pluralLogic(
+      avail,
+      locale: localeName,
+      other:
+          'There are not enough completed cycles yet to estimate a next start. $avail cycles are available after filtering; at least $need are typically needed.',
+      one:
+          'There are not enough completed cycles yet to estimate a next start. 1 cycle is available after filtering; at least $need are typically needed.',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -129,7 +137,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String ensembleMilestoneExpanded(int cycles, int methods) {
-    return 'With $cycles cycles logged, your prediction now uses $methods methods for better accuracy.';
+    String _temp0 = intl.Intl.pluralLogic(
+      methods,
+      locale: localeName,
+      other: '$methods methods',
+      one: '1 method',
+    );
+    return 'With $cycles cycles logged, your prediction now uses $_temp0 for better accuracy.';
   }
 
   @override
@@ -159,7 +173,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String homePredictionMethodsLine(int n) {
-    return 'Currently using $n prediction methods.';
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Currently using $n prediction methods.',
+      one: 'Currently using 1 prediction method.',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -191,7 +211,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String dayDetailForecastMonthsTitle(int months) {
-    return 'Forecast ≈ $months months out';
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: 'Forecast ≈ $months months out',
+      one: 'Forecast ≈ 1 month out',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -204,12 +230,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String dayDetailDisclaimerHopN(int months) {
-    return 'Very rough estimate, about $months months out — use for general planning only.';
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other:
+          'Very rough estimate, about $months months out — use for general planning only.',
+      one:
+          'Very rough estimate, about 1 month out — use for general planning only.',
+    );
+    return '$_temp0';
   }
 
   @override
   String dayDetailDisclaimerHopNSpread(int months) {
-    return 'Very rough estimate, about $months months out — use for general planning only. Your cycle length varies quite a bit, so this date may shift significantly.';
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other:
+          'Very rough estimate, about $months months out — use for general planning only. Your cycle length varies quite a bit, so this date may shift significantly.',
+      one:
+          'Very rough estimate, about 1 month out — use for general planning only. Your cycle length varies quite a bit, so this date may shift significantly.',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -241,4 +283,15 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get appLanguageRestartMessage =>
       'Restart the app to apply this change.';
+
+  @override
+  String get calendarInsufficientPredictionHint =>
+      'No forecast yet — mark at least two separate periods so Luma can measure the gap between them.';
+
+  @override
+  String get calendarLegendHatching =>
+      'Lighter hatching = further out, less certain';
+
+  @override
+  String get calendarToday => 'Today';
 }

@@ -57,7 +57,7 @@
       "spread": {"type": "int"}
     }
   },
-  "predStepInsufficientHistory": "There are not enough completed cycles yet to estimate a next start. {avail} cycle(s) are available after filtering; at least {need} are typically needed.",
+  "predStepInsufficientHistory": "{avail, plural, one{There are not enough completed cycles yet to estimate a next start. 1 cycle is available after filtering; at least {need} are typically needed.} other{There are not enough completed cycles yet to estimate a next start. {avail} cycles are available after filtering; at least {need} are typically needed.}}",
   "@predStepInsufficientHistory": {
     "placeholders": {
       "avail": {"type": "int"},
@@ -113,7 +113,7 @@
   },
   "ensembleMilestoneTrend": "With enough cycles logged, trend detection is now active.",
   "ensembleMilestoneAllCore": "Three cycles logged — all core methods are now active.",
-  "ensembleMilestoneExpanded": "With {cycles} cycles logged, your prediction now uses {methods} methods for better accuracy.",
+  "ensembleMilestoneExpanded": "With {cycles} cycles logged, your prediction now uses {methods, plural, one{1 method} other{{methods} methods}} for better accuracy.",
   "@ensembleMilestoneExpanded": {
     "placeholders": {
       "cycles": {"type": "int"},
@@ -141,7 +141,7 @@
   "homeLogMorePeriods": "Log a few more periods to see cycle insights",
   "homeHowCalculatedLink": "How is this calculated?",
   "homePredictionSheetTitle": "How your prediction works",
-  "homePredictionMethodsLine": "Currently using {n} prediction methods.",
+  "homePredictionMethodsLine": "{n, plural, one{Currently using 1 prediction method.} other{Currently using {n} prediction methods.}}",
   "@homePredictionMethodsLine": {
     "placeholders": {
       "n": {"type": "int"}
@@ -160,7 +160,7 @@
   "dayDetailBasedOnRecentCycles": "Based on your recent cycles.",
   "dayDetailProjectedHop": "Projected by repeating the predicted cycle length.",
   "dayDetailPeriodExpectedTitle": "Period expected around this day",
-  "dayDetailForecastMonthsTitle": "Forecast ≈ {months} months out",
+  "dayDetailForecastMonthsTitle": "{months, plural, one{Forecast ≈ 1 month out} other{Forecast ≈ {months} months out}}",
   "@dayDetailForecastMonthsTitle": {
     "placeholders": {
       "months": {"type": "int"}
@@ -168,13 +168,13 @@
   },
   "dayDetailDisclaimerHop1": "Rough estimate, about 2 months out — less reliable than the next period.",
   "dayDetailDisclaimerHop1HighSpread": "Rough estimate, about 2 months out — less reliable than the next period. Your cycle length varies quite a bit, so this date may shift significantly.",
-  "dayDetailDisclaimerHopN": "Very rough estimate, about {months} months out — use for general planning only.",
+  "dayDetailDisclaimerHopN": "{months, plural, one{Very rough estimate, about 1 month out — use for general planning only.} other{Very rough estimate, about {months} months out — use for general planning only.}}",
   "@dayDetailDisclaimerHopN": {
     "placeholders": {
       "months": {"type": "int"}
     }
   },
-  "dayDetailDisclaimerHopNSpread": "Very rough estimate, about {months} months out — use for general planning only. Your cycle length varies quite a bit, so this date may shift significantly.",
+  "dayDetailDisclaimerHopNSpread": "{months, plural, one{Very rough estimate, about 1 month out — use for general planning only. Your cycle length varies quite a bit, so this date may shift significantly.} other{Very rough estimate, about {months} months out — use for general planning only. Your cycle length varies quite a bit, so this date may shift significantly.}}",
   "@dayDetailDisclaimerHopNSpread": {
     "placeholders": {
       "months": {"type": "int"}
@@ -203,5 +203,8 @@
   "appLanguageRestartMessage": "Restart the app to apply this change.",
   "@appLanguageRestartMessage": {
     "description": "Shown after the user changes app language in Settings."
-  }
+  },
+  "calendarInsufficientPredictionHint": "No forecast yet — mark at least two separate periods so Luma can measure the gap between them.",
+  "calendarLegendHatching": "Lighter hatching = further out, less certain",
+  "calendarToday": "Today"
 }

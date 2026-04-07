@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 
 import 'app_localizations.dart';
@@ -6,6 +7,31 @@ import 'app_localizations.dart';
 /// strings are built here from structured domain types.
 class PredictionLocalizations {
   PredictionLocalizations._();
+
+  static String _localCalendarDateLabel(AppLocalizations l10n, DateTime utc) {
+    final u = utc.toUtc();
+    final d = DateTime(u.year, u.month, u.day);
+    return DateFormat.yMMMd(l10n.localeName).format(d);
+  }
+
+  static String _formatFixedDecimals(
+    AppLocalizations l10n,
+    double value,
+    int fractionDigits,
+  ) {
+    final fmt = NumberFormat.decimalPattern(l10n.localeName);
+    fmt.minimumFractionDigits = fractionDigits;
+    fmt.maximumFractionDigits = fractionDigits;
+    return fmt.format(value);
+  }
+
+  static String _formatIntList(
+    AppLocalizations l10n,
+    List<Object?> lengths,
+  ) {
+    final fmt = NumberFormat.decimalPattern(l10n.localeName);
+    return lengths.map((e) => fmt.format((e as num).toInt())).join(', ');
+  }
 
   static String algorithmName(AppLocalizations l10n, AlgorithmId id) => switch (id) {
         AlgorithmId.median => l10n.algoNameMedian,
@@ -62,7 +88,7 @@ class PredictionLocalizations {
 
     for (final o in ensemble.algorithmOutputs) {
       final name = algorithmName(l10n, o.algorithmId);
-      final date = formatUtcCalendarDate(o.predictedStartUtc);
+      final date = _localCalendarDateLabel(l10n, o.predictedStartUtc);
       lines.add(l10n.predictionAlgoExpectsLine(name, date));
     }
 
@@ -111,8 +137,8 @@ class PredictionLocalizations {
       PredictionInsufficientHistory() => l10n.predictionClosingInsufficientHistory,
       PredictionRangeOnly(:final rangeStartUtc, :final rangeEndUtc) =>
         l10n.predictionClosingRangeOnly(
-          formatUtcCalendarDate(rangeStartUtc),
-          formatUtcCalendarDate(rangeEndUtc),
+          _localCalendarDateLabel(l10n, rangeStartUtc),
+          _localCalendarDateLabel(l10n, rangeEndUtc),
         ),
       PredictionPointWithRange(
         :final pointStartUtc,
@@ -123,9 +149,9 @@ class PredictionLocalizations {
           final bandStart = rangeStartUtc ?? pointStartUtc;
           final bandEnd = rangeEndUtc ?? pointStartUtc;
           return l10n.predictionClosingPointWithRange(
-            formatUtcCalendarDate(pointStartUtc),
-            formatUtcCalendarDate(bandStart),
-            formatUtcCalendarDate(bandEnd),
+            _localCalendarDateLabel(l10n, pointStartUtc),
+            _localCalendarDateLabel(l10n, bandStart),
+            _localCalendarDateLabel(l10n, bandEnd),
           );
         }(),
     };
@@ -139,7 +165,7 @@ class PredictionLocalizations {
         if (count == null || lengths == null) return null;
         return l10n.predStepCyclesConsidered(
           count,
-          lengths.join(', '),
+          _formatIntList(l10n, lengths),
         );
 
       case ExplanationFactKind.cycleExcluded:
@@ -163,8 +189,8 @@ class PredictionLocalizations {
         final start = step.payload['rangeStartUtc'] as String?;
         final end = step.payload['rangeEndUtc'] as String?;
         if (start == null || end == null) return null;
-        final ds = formatUtcCalendarDate(DateTime.parse(start).toUtc());
-        final de = formatUtcCalendarDate(DateTime.parse(end).toUtc());
+        final ds = _localCalendarDateLabel(l10n, DateTime.parse(start).toUtc());
+        final de = _localCalendarDateLabel(l10n, DateTime.parse(end).toUtc());
         return l10n.predStepHighVariability(ds, de);
 
       case ExplanationFactKind.enginePending:
@@ -174,13 +200,19 @@ class PredictionLocalizations {
         final days = step.payload['smoothedDays'] as int?;
         final alpha = step.payload['alpha'] as double?;
         if (days == null || alpha == null) return null;
-        return l10n.predStepEwma(alpha.toString(), days);
+        return l10n.predStepEwma(
+          _formatFixedDecimals(l10n, alpha, 2),
+          days,
+        );
 
       case ExplanationFactKind.bayesianPosteriorMean:
         final mean = step.payload['posteriorMeanDays'] as double?;
         final n = step.payload['observationCount'] as int?;
         if (mean == null || n == null) return null;
-        return l10n.predStepBayesian(mean.toStringAsFixed(1), n);
+        return l10n.predStepBayesian(
+          _formatFixedDecimals(l10n, mean, 1),
+          n,
+        );
 
       case ExplanationFactKind.linearTrendProjection:
         final proj = step.payload['projectedDays'] as int?;
@@ -188,8 +220,8 @@ class PredictionLocalizations {
         final slope = step.payload['slope'] as double?;
         if (proj == null || r2 == null || slope == null) return null;
         return l10n.predStepLinearTrend(
-          r2.toStringAsFixed(2),
-          slope.toStringAsFixed(2),
+          _formatFixedDecimals(l10n, r2, 2),
+          _formatFixedDecimals(l10n, slope, 2),
           proj,
         );
 
@@ -200,7 +232,7 @@ class PredictionLocalizations {
         final id = _parseAlgorithmId(idName);
         final name =
             id != null ? algorithmName(l10n, id) : idName;
-        final ds = formatUtcCalendarDate(DateTime.parse(start).toUtc());
+        final ds = _localCalendarDateLabel(l10n, DateTime.parse(start).toUtc());
         return l10n.predStepAlgoContrib(name, ds);
 
       case ExplanationFactKind.ensembleConsensus:

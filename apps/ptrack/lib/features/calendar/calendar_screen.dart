@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../../l10n/app_localizations.dart';
 import 'calendar_day_data.dart';
 import 'calendar_painters.dart';
 import 'calendar_view_model.dart';
 import 'day_detail_sheet.dart';
+
+StartingDayOfWeek _startingDayOfWeekFor(BuildContext context) {
+  final materialDow = MaterialLocalizations.of(context).firstDayOfWeekIndex;
+  final dartWeekday = materialDow == 0 ? DateTime.sunday : materialDow;
+  return StartingDayOfWeek.values[dartWeekday - 1];
+}
 
 void _openDayDetail(
   BuildContext context,
@@ -27,6 +34,9 @@ class CalendarScreen extends StatelessWidget {
 
   final CalendarViewModel viewModel;
 
+  bool get _hasMultiCyclePredictions =>
+      viewModel.dayDataMap.values.any((d) => d.predictionCycleIndex > 0);
+
   Widget? _dayBuilder(
     BuildContext context,
     DateTime day,
@@ -34,18 +44,24 @@ class CalendarScreen extends StatelessWidget {
   ) {
     final key = DateTime.utc(day.year, day.month, day.day);
     final data = viewModel.dayDataMap[key] ?? const CalendarDayData();
-    return buildCalendarDayCell(day, data);
+    return buildCalendarDayCell(
+      day,
+      data,
+      cycleSpreadDays: viewModel.cycleSpreadDays,
+    );
   }
 
   Widget _buildCalendar(BuildContext context) {
     final theme = Theme.of(context);
     final onVariant = theme.colorScheme.onSurfaceVariant;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
           child: TableCalendar<void>(
+            locale: Localizations.localeOf(context).toString(),
             firstDay: DateTime.utc(2020, 1, 1),
             lastDay: DateTime.utc(2030, 12, 31),
             focusedDay: viewModel.focusedDay,
@@ -71,27 +87,40 @@ class CalendarScreen extends StatelessWidget {
             calendarBuilders: CalendarBuilders<void>(
               prioritizedBuilder: _dayBuilder,
             ),
-            startingDayOfWeek: StartingDayOfWeek.monday,
+            startingDayOfWeek: _startingDayOfWeekFor(context),
           ),
         ),
-        if ((viewModel.ensembleResult?.activeAlgorithmCount ?? 0) > 0)
+        if ((viewModel.ensembleResult?.activeAlgorithmCount ?? 0) > 0) ...[
           Padding(
-            padding: const EdgeInsets.only(top: 4, bottom: 8),
+            padding: const EdgeInsets.only(top: 4, bottom: 2),
             child: buildConfidenceLegend(context),
           ),
+          if (_hasMultiCyclePredictions)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Text(
+                l10n.calendarLegendHatching,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: onVariant,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+        ],
         if (viewModel.showTodayButton)
           Center(
             child: TextButton.icon(
               icon: const Icon(Icons.today),
-              label: const Text('Today'),
+              label: Text(l10n.calendarToday),
               onPressed: viewModel.goToToday,
             ),
           ),
-        if (viewModel.showInsufficientFutureMessage)
+        if (viewModel.showInsufficientPredictionHint)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
             child: Text(
-              'Predictions appear after more data',
+              l10n.calendarInsufficientPredictionHint,
               textAlign: TextAlign.center,
               style: theme.textTheme.bodySmall?.copyWith(color: onVariant),
             ),
@@ -112,7 +141,10 @@ class CalendarScreen extends StatelessWidget {
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(24),
-              child: Text('Could not load periods: ${viewModel.loadError}'),
+              child: Text(
+                AppLocalizations.of(context)
+                    .homeCouldNotLoadPeriods(viewModel.loadError.toString()),
+              ),
             ),
           );
         }

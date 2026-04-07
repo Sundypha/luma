@@ -57,7 +57,7 @@
       "spread": {"type": "int"}
     }
   },
-  "predStepInsufficientHistory": "Noch reichen die abgeschlossenen Zyklen nicht aus, um den nächsten Beginn abzuschätzen. Nach Filterung stehen {avail} Zyklus/Zyklen zur Verfügung; normalerweise werden mindestens {need} benötigt.",
+  "predStepInsufficientHistory": "{avail, plural, one{Noch reichen die abgeschlossenen Zyklen nicht aus, um den nächsten Beginn abzuschätzen. Nach Filterung steht 1 Zyklus zur Verfügung; normalerweise werden mindestens {need} benötigt.} other{Noch reichen die abgeschlossenen Zyklen nicht aus, um den nächsten Beginn abzuschätzen. Nach Filterung stehen {avail} Zyklen zur Verfügung; normalerweise werden mindestens {need} benötigt.}}",
   "@predStepInsufficientHistory": {
     "placeholders": {
       "avail": {"type": "int"},
@@ -113,7 +113,7 @@
   },
   "ensembleMilestoneTrend": "Mit genug eingetragenen Zyklen ist die Trenderkennung jetzt aktiv.",
   "ensembleMilestoneAllCore": "Drei Zyklen eingetragen — alle Kernmethoden sind jetzt aktiv.",
-  "ensembleMilestoneExpanded": "Mit {cycles} eingetragenen Zyklen nutzt deine Vorhersage jetzt {methods} Methoden für mehr Genauigkeit.",
+  "ensembleMilestoneExpanded": "Mit {cycles} eingetragenen Zyklen nutzt deine Vorhersage jetzt {methods, plural, one{1 Methode} other{{methods} Methoden}} für mehr Genauigkeit.",
   "@ensembleMilestoneExpanded": {
     "placeholders": {
       "cycles": {"type": "int"},
@@ -141,7 +141,7 @@
   "homeLogMorePeriods": "Trag noch ein paar Perioden ein, um Zyklus-Einblicke zu sehen",
   "homeHowCalculatedLink": "Wie wird das berechnet?",
   "homePredictionSheetTitle": "So funktioniert deine Vorhersage",
-  "homePredictionMethodsLine": "Aktuell werden {n} Vorhersagemethoden genutzt.",
+  "homePredictionMethodsLine": "{n, plural, one{Aktuell wird 1 Vorhersagemethode genutzt.} other{Aktuell werden {n} Vorhersagemethoden genutzt.}}",
   "@homePredictionMethodsLine": {
     "placeholders": {
       "n": {"type": "int"}
@@ -160,7 +160,7 @@
   "dayDetailBasedOnRecentCycles": "Basierend auf deinen letzten Zyklen.",
   "dayDetailProjectedHop": "Projiziert durch Wiederholen der vorhergesagten Zykluslänge.",
   "dayDetailPeriodExpectedTitle": "Periode in etwa an diesem Tag erwartet",
-  "dayDetailForecastMonthsTitle": "Vorschau etwa {months} Monate voraus",
+  "dayDetailForecastMonthsTitle": "{months, plural, one{Vorschau etwa 1 Monat voraus} other{Vorschau etwa {months} Monate voraus}}",
   "@dayDetailForecastMonthsTitle": {
     "placeholders": {
       "months": {"type": "int"}
@@ -168,13 +168,13 @@
   },
   "dayDetailDisclaimerHop1": "Grobe Schätzung, etwa 2 Monate voraus — weniger zuverlässig als die nächste Periode.",
   "dayDetailDisclaimerHop1HighSpread": "Grobe Schätzung, etwa 2 Monate voraus — weniger zuverlässig als die nächste Periode. Deine Zykluslänge schwankt ziemlich stark, dieser Termin kann sich deutlich verschieben.",
-  "dayDetailDisclaimerHopN": "Sehr grobe Schätzung, etwa {months} Monate voraus — nur zur allgemeinen Planung.",
+  "dayDetailDisclaimerHopN": "{months, plural, one{Sehr grobe Schätzung, etwa 1 Monat voraus — nur zur allgemeinen Planung.} other{Sehr grobe Schätzung, etwa {months} Monate voraus — nur zur allgemeinen Planung.}}",
   "@dayDetailDisclaimerHopN": {
     "placeholders": {
       "months": {"type": "int"}
     }
   },
-  "dayDetailDisclaimerHopNSpread": "Sehr grobe Schätzung, etwa {months} Monate voraus — nur zur allgemeinen Planung. Deine Zykluslänge schwankt ziemlich stark, dieser Termin kann sich deutlich verschieben.",
+  "dayDetailDisclaimerHopNSpread": "{months, plural, one{Sehr grobe Schätzung, etwa 1 Monat voraus — nur zur allgemeinen Planung. Deine Zykluslänge schwankt ziemlich stark, dieser Termin kann sich deutlich verschieben.} other{Sehr grobe Schätzung, etwa {months} Monate voraus — nur zur allgemeinen Planung. Deine Zykluslänge schwankt ziemlich stark, dieser Termin kann sich deutlich verschieben.}}",
   "@dayDetailDisclaimerHopNSpread": {
     "placeholders": {
       "months": {"type": "int"}
@@ -194,5 +194,8 @@
   "appLanguageFollowDevice": "Systemstandard (wie Gerät)",
   "appLanguageEnglish": "Englisch",
   "appLanguageGerman": "Deutsch",
-  "appLanguageRestartMessage": "Starte die App neu, damit die Änderung wirkt."
+  "appLanguageRestartMessage": "Starte die App neu, damit die Änderung wirkt.",
+  "calendarInsufficientPredictionHint": "Noch keine Vorhersage — markier mindestens zwei getrennte Perioden, damit Luma den Abstand dazwischen messen kann.",
+  "calendarLegendHatching": "Hellere Schraffur = weiter weg, unsicherer",
+  "calendarToday": "Heute"
 }
