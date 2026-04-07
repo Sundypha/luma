@@ -10,15 +10,15 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 ## Current Position
 
-**Milestone:** v2.0 — requirements and roadmap defined; execution not started.
+**Milestone:** v2.0 — requirements and roadmap defined; phase 10 in planning.
 
-**Phase:** Not started (next: **phase 10** — see `ROADMAP.md`).
+**Phase:** **10** — Internationalization foundation — **`10-CONTEXT.md` gathered** (see `.planning/phases/10-internationalization-foundation/`).
 
 **Plan:** —
 
-**Status:** Ready for `/gsd-discuss-phase 10` or `/gsd-plan-phase 10`.
+**Status:** Ready for `/gsd-plan-phase 10` (and optional phase research if enabled).
 
-Last activity: 2026-04-07 — **`/gsd-new-milestone`**: `PROJECT.md`, `MILESTONES.md`, `REQUIREMENTS.md`, `ROADMAP.md` updated for v2.0.
+Last activity: 2026-04-07 — **`/gsd-discuss-phase 10`**: context committed; see `10-CONTEXT.md`.
 
 **Progress (v2.0):** [░░░░░░░░░░] 0%
 
@@ -53,4 +53,4 @@ None at milestone definition time.
 
 **Resume file:** .planning/phases/10-internationalization-foundation/10-CONTEXT.md
 
-**Next:** `/gsd-discuss-phase 10` or `/gsd-plan-phase 10`
+**Next:** `/gsd-plan-phase 10`
