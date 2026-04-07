@@ -6,51 +6,51 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** **v1 milestone complete and archived** (2026-04-07). Active roadmap reset for **v2** (not started). Snapshots: `.planning/milestones/v1/`.
+**Current focus:** **Milestone v2.0** — i18n, **German** secondary locale, **optional fertility window** (opt-in, prompts for missing assumptions).
 
 ## Current Position
 
-**Milestone:** v1 closed — phases **1** through **9** (plus **5.1**) delivered; planning artifacts archived.
+**Milestone:** v2.0 — requirements and roadmap defined; execution not started.
 
-**Active phase:** None — await v2 roadmap definition (e.g. from `PRD_Phase_2_Usability_and_Trust.md`).
+**Phase:** Not started (next: **phase 10** — see `ROADMAP.md`).
 
-**Status:** Planning file `ROADMAP.md` points at archived v1 and a v2 placeholder; `REQUIREMENTS.md` points at frozen v1 spec under `milestones/v1/`.
+**Plan:** —
 
-Last activity: 2026-04-07 — **`/gsd-complete-milestone` v1**: archive ROADMAP/REQUIREMENTS, reset active roadmap, update PROJECT/STATE, tag `v1.0.0` (if applied on this commit).
+**Status:** Ready for `/gsd-discuss-phase 10` or `/gsd-plan-phase 10`.
 
-**Progress (v1):** [██████████] 100% (closed)
+Last activity: 2026-04-07 — **`/gsd-new-milestone`**: `PROJECT.md`, `MILESTONES.md`, `REQUIREMENTS.md`, `ROADMAP.md` updated for v2.0.
+
+**Progress (v2.0):** [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
-Historical execution metrics for v1 remain in git history and under `.planning/phases/*/`*SUMMARY.md*. No active velocity target until v2 phases exist.
-
-*Update this section when v2 planning resumes.*
+*Reset when v2.0 execution starts; track per-phase durations in phase SUMMARY files.*
 
 ## Accumulated Context
 
 ### Decisions
 
-Decisions through v1 are logged in `PROJECT.md` Key Decisions and in phase CONTEXT/SUMMARY files under `.planning/phases/`.
+See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.planning/phases/` and `milestones/v1/`.
 
 ### Pending Todos
 
-- Optional: run `/gsd-audit-milestone` before the next complete-milestone for an audit file
-- Open v2 milestone when ready (roadmap + requirements from PRD Phase 2)
+- Execute phase 10 → 11 → 12 per `ROADMAP.md`
+- Optional: domain research pass if product/legal copy for **FERT-*** needs tightening before implementation
 
 ### Roadmap Evolution
 
-- **2026-04-07:** v1 closed — `.planning/milestones/v1/` contains ROADMAP + REQUIREMENTS snapshots and `MILESTONE.md`; active `ROADMAP.md` / `REQUIREMENTS.md` reset for v2.
+- **2026-04-07:** v2.0 opened — engineering phases **10–12** (i18n foundation → German + language settings → fertility window module).
 
 ### Blockers/Concerns
 
-None for v1 closeout.
+None at milestone definition time.
 
 ## Session Continuity
 
-**Last session:** 2026-04-07 — v1 milestone archival
+**Last session:** 2026-04-07 — new milestone v2.0 initialized
 
-**Stopped at:** v2 planning not started
+**Stopped at:** Roadmap approved for execution planning
 
 **Resume file:** None
 
-**Next:** Define v2 phases in `ROADMAP.md` and requirements, or run project-specific “new milestone” workflow when ready.
+**Next:** `/gsd-discuss-phase 10` or `/gsd-plan-phase 10`
