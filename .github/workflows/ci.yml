@@ -20,6 +20,9 @@ jobs:
       - name: Pub get (workspace root)
         run: dart pub get
 
+      - name: ARB DE key parity (I18N-05)
+        run: dart run tool/arb_de_key_parity.dart
+
       - name: Install FVM
         run: |
           dart pub global activate fvm

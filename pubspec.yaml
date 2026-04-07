@@ -20,3 +20,6 @@ melos:
     ci:test:
       run: melos exec -c 1 --dir-exists=test -- fvm flutter test
       description: Run all test/ suites via FVM Flutter.
+    ci:arb:
+      run: fvm dart run tool/arb_de_key_parity.dart
+      description: Fail if app_de.arb is missing any app_en.arb message key.
