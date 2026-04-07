@@ -12,15 +12,15 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Milestone:** v2.0 — i18n, German locale, optional fertility window.
 
-**Phase:** **11** — German locale + language settings.
+**Phase:** **12** — Optional fertility window (next).
 
-**Plan:** **11-03** complete — see `11-03-SUMMARY.md`.
+**Plan:** Run `/gsd-plan-phase 12` or `/gsd-execute-phase 12` when plans exist.
 
-**Status:** Phase **11** plans **11-01**–**11-03** executed. **I18N-04** and **I18N-05** marked complete in `REQUIREMENTS.md`.
+**Status:** Phase **11** complete (3/3 plans + verification); automated checks green; optional human checks in `11-VERIFICATION.md`.
 
-Last activity: 2026-04-07 — executed **11-03-PLAN** (gsd-executor).
+Last activity: 2026-04-07 — phase **11** execution complete; backup timestamps localized (`fix(i18n)`).
 
-**Progress (v2.0):** Phase 11: **3/3** plans complete (see `ROADMAP.md`).
+**Progress (v2.0):** Phase 11 **complete**; next milestone engineering phase is **12** (see `ROADMAP.md`).
 
 ## Performance Metrics
 
@@ -53,8 +53,8 @@ None at milestone definition time.
 
 **Last session:** 2026-04-07T23:59:00.000Z
 
-**Stopped at:** Completed 11-03-PLAN.md
+**Stopped at:** Phase 11 closed; `11-VERIFICATION.md` status **human_needed** (native ARB review + device language UX).
 
-**Resume file:** `.planning/phases/12-*` or `/gsd-execute-phase 12` when ready
+**Resume file:** `.planning/phases/12-*` when created
 
-**Next:** Begin **phase 12** (fertility window) or execute phase 10 plans if still needed on branch
+**Next:** `/gsd-plan-phase 12` then `/gsd-execute-phase 12`, or finish phase 10 on branches that still need it
