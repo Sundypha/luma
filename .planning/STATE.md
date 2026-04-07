@@ -14,13 +14,13 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Phase:** **11** — German locale + language settings.
 
-**Plan:** `11-02-PLAN.md` next (`11-01-PLAN.md` complete; see `11-01-SUMMARY.md`).
+**Plan:** `11-03-PLAN.md` next (`11-01`, `11-02` complete; see `11-02-SUMMARY.md`).
 
-**Status:** Plan **11-01** executed — German ARB parity, gen-l10n, `de` smoke tests; **I18N-03** marked complete in `REQUIREMENTS.md`.
+**Status:** Plan **11-02** executed — Settings language (follow device / en / de), persistence, `MaterialApp` locale, restart UX; **I18N-02** marked complete in `REQUIREMENTS.md`.
 
-Last activity: 2026-04-07 — executed **11-01-PLAN** (gsd-executor).
+Last activity: 2026-04-07 — executed **11-02-PLAN** (gsd-executor).
 
-**Progress (v2.0):** Phase 11: 1/3 plans complete (see `ROADMAP.md`).
+**Progress (v2.0):** Phase 11: 2/3 plans complete (see `ROADMAP.md`).
 
 ## Performance Metrics
 
@@ -34,7 +34,7 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 ### Pending Todos
 
-- Execute **11-02** → **11-03**, then phase 12 per `ROADMAP.md`
+- Execute **11-03**, then phase 12 per `ROADMAP.md`
 - Phase 10 plans remain available if i18n foundation still needs execution on other branches
 - Optional: domain research pass if product/legal copy for **FERT-*** needs tightening before implementation
 
@@ -49,10 +49,10 @@ None at milestone definition time.
 
 ## Session Continuity
 
-**Last session:** 2026-04-07T21:31:51.954Z
+**Last session:** 2026-04-07T22:38:00.000Z
 
-**Stopped at:** Completed 11-01-PLAN.md
+**Stopped at:** Completed 11-02-PLAN.md
 
-**Resume file:** `.planning/phases/11-german-locale-language-settings/11-02-PLAN.md`
+**Resume file:** `.planning/phases/11-german-locale-language-settings/11-03-PLAN.md`
 
-**Next:** Execute **11-02-PLAN** (language settings) or `/gsd-execute-phase 11` continuation
+**Next:** Execute **11-03-PLAN** (locale formatting + ARB CI) or `/gsd-execute-phase 11` continuation
