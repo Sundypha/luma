@@ -121,8 +121,8 @@ final class ExportViewModel extends ChangeNotifier {
         },
       );
       _step = ExportStep.done;
-    } catch (e) {
-      _errorMessage = e.toString();
+    } catch (_) {
+      _errorMessage = 'Could not complete export. Please try again.';
       _step = ExportStep.error;
     }
     notifyListeners();

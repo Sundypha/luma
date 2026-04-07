@@ -93,7 +93,9 @@ class _FirstLogScreenState extends State<FirstLogScreen> {
     final failure = lastOutcome is DayMarkFailure ? lastOutcome : null;
     if (failure != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not save: ${failure.reason}')),
+        const SnackBar(
+          content: Text('Could not save your period. Please try again.'),
+        ),
       );
       setState(() => _isSaving = false);
       return;
@@ -146,7 +148,7 @@ class _FirstLogScreenState extends State<FirstLogScreen> {
               contentPadding: EdgeInsets.zero,
               title: const Text('This period has already ended'),
               subtitle: const Text(
-                'Optional — add a last bleeding day if it is not ongoing.',
+                'Optional — add a last period day if it is not ongoing.',
               ),
               value: _periodHasEnded,
               onChanged: _isSaving

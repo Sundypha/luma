@@ -177,9 +177,11 @@ class DayDetailSheet extends StatelessWidget {
     switch (outcome) {
       case DayMarkSuccess():
         Navigator.of(context).pop();
-      case DayMarkFailure(:final reason):
+      case DayMarkFailure():
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(reason)),
+          const SnackBar(
+            content: Text('Could not mark this day. Please try again.'),
+          ),
         );
     }
   }
@@ -270,9 +272,11 @@ class DayDetailSheet extends StatelessWidget {
     switch (outcome) {
       case DayMarkSuccess():
         Navigator.of(context).pop();
-      case DayMarkFailure(:final reason):
+      case DayMarkFailure():
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(reason)),
+          const SnackBar(
+            content: Text('Could not remove this day. Please try again.'),
+          ),
         );
     }
   }

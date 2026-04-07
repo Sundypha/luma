@@ -84,9 +84,9 @@ class SymptomFormViewModel extends ChangeNotifier {
       _isSaving = false;
       notifyListeners();
       return true;
-    } catch (e) {
+    } catch (_) {
       _isSaving = false;
-      _errorText = e.toString();
+      _errorText = 'Could not save symptoms. Please try again.';
       notifyListeners();
       return false;
     }
@@ -98,8 +98,8 @@ class SymptomFormViewModel extends ChangeNotifier {
     try {
       await _repository.deleteDayEntry(existing.id);
       return true;
-    } catch (e) {
-      _errorText = e.toString();
+    } catch (_) {
+      _errorText = 'Could not clear symptoms. Please try again.';
       notifyListeners();
       return false;
     }

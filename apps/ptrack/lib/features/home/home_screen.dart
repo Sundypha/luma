@@ -37,7 +37,9 @@ class HomeScreen extends StatelessWidget {
       if (!context.mounted) return;
       if (outcome is DayMarkFailure) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not save: ${outcome.reason}')),
+          const SnackBar(
+            content: Text('Could not save today. Please try again.'),
+          ),
         );
         return;
       }

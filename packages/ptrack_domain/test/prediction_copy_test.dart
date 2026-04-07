@@ -43,7 +43,10 @@ void main() {
           steps: s.explanation,
         );
         _assertNoForbiddenPhrases(text);
-        expect(text.toLowerCase(), contains('estimate'));
+        final lower = text.toLowerCase();
+        expect(lower, isNot(contains('we ')),
+            reason: 'no first-person plural in prediction copy');
+        expect(lower, contains('estimate'));
       }
     });
 

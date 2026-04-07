@@ -78,7 +78,7 @@ String? _formatStep(ExplanationStep step) {
       final count = step.payload['count'] as int?;
       final lengths = step.payload['lengthsInDays'] as List<Object?>?;
       if (count == null || lengths == null) return null;
-      return 'We reviewed $count recent cycle lengths from your saved history '
+      return 'Based on $count recent cycle lengths from your history '
           '(${lengths.join(', ')} days).';
 
     case ExplanationFactKind.cycleExcluded:
@@ -98,9 +98,9 @@ String? _formatStep(ExplanationStep step) {
       final avail = step.payload['completedCyclesAvailable'] as int?;
       final need = step.payload['minCompletedCyclesNeeded'] as int?;
       if (avail == null || need == null) return null;
-      return 'Right now there are not enough comparable completed cycles to '
-          'pin a next start. After filters, $avail cycle(s) are available; '
-          'we usually look for at least $need for this estimate.';
+      return 'There are not enough completed cycles yet to estimate a next start. '
+          '$avail cycle(s) are available after filtering; at least $need are '
+          'typically needed.';
 
     case ExplanationFactKind.highVariabilityRange:
       final start = step.payload['rangeStartUtc'] as String?;
@@ -108,8 +108,8 @@ String? _formatStep(ExplanationStep step) {
       if (start == null || end == null) return null;
       final ds = formatUtcCalendarDate(DateTime.parse(start).toUtc());
       final de = formatUtcCalendarDate(DateTime.parse(end).toUtc());
-      return 'Because variability is high, we show a range instead of a single '
-          'day: about $ds through $de (UTC calendar days).';
+      return 'Because variability is high, a range is shown instead of a single '
+          'day: approximately $ds through $de.';
 
     case ExplanationFactKind.enginePending:
       return null;

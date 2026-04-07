@@ -177,8 +177,8 @@ final class ImportViewModel extends ChangeNotifier {
     } on LumaImportException catch (e) {
       _errorMessage = e.message;
       _step = ImportStep.error;
-    } catch (e) {
-      _errorMessage = e.toString();
+    } catch (_) {
+      _errorMessage = 'Could not import this backup. Please try again.';
       _step = ImportStep.error;
     }
     notifyListeners();
