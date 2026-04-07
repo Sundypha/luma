@@ -1,0 +1,193 @@
+{
+  "@@locale": "en",
+  "appTitle": "Luma",
+  "@appTitle": {
+    "description": "Application title; brand name stays Luma in all locales for Phase 10."
+  },
+  "predictionDisclaimer": "This is a calendar-based estimate for personal planning only, not medical advice.",
+  "predictionNoMethodsEnabled": "No prediction methods are enabled. Choose at least one under Settings → Prediction.",
+  "predictionNOfMTotalMethods": "{n, plural, one{1 prediction method} other{{n} prediction methods}} of {total} contributed to this estimate.",
+  "@predictionNOfMTotalMethods": {
+    "placeholders": {
+      "n": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "predictionAlgoExpectsLine": "{name}: expects next period around {date}.",
+  "@predictionAlgoExpectsLine": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  },
+  "predictionAgreementClosing": "On days where multiple methods agree, the prediction is more consistent. Treat all dates as uncertain estimates for personal planning only.",
+  "predictionClosingInsufficientHistory": "Add more completed cycles over time to get a clearer estimate. Numbers here are not a substitute for care from a qualified clinician.",
+  "predictionClosingRangeOnly": "For planning purposes, a broad estimate window runs from {start} through {end}. Treat these dates as uncertain.",
+  "@predictionClosingRangeOnly": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "predictionClosingPointWithRange": "A rough estimate for your next period start is {point}. Based on similar past spacing, a wider planning band might be {bandStart} to {bandEnd}.",
+  "@predictionClosingPointWithRange": {
+    "placeholders": {
+      "point": {"type": "String"},
+      "bandStart": {"type": "String"},
+      "bandEnd": {"type": "String"}
+    }
+  },
+  "predStepCyclesConsidered": "Based on {count} recent cycle lengths from your history ({lengths} days).",
+  "@predStepCyclesConsidered": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "lengths": {"type": "String"}
+    }
+  },
+  "predStepCycleExcluded": "One logged cycle was left out of the average for this estimate (reason: {reason}).",
+  "@predStepCycleExcluded": {
+    "placeholders": {
+      "reason": {"type": "String"}
+    }
+  },
+  "predStepMedianCycleLength": "Across included cycles, a typical spacing is about {median} days (spread about {spread} days).",
+  "@predStepMedianCycleLength": {
+    "placeholders": {
+      "median": {"type": "int"},
+      "spread": {"type": "int"}
+    }
+  },
+  "predStepInsufficientHistory": "There are not enough completed cycles yet to estimate a next start. {avail} cycle(s) are available after filtering; at least {need} are typically needed.",
+  "@predStepInsufficientHistory": {
+    "placeholders": {
+      "avail": {"type": "int"},
+      "need": {"type": "int"}
+    }
+  },
+  "predStepHighVariability": "Because variability is high, a range is shown instead of a single day: approximately {start} through {end}.",
+  "@predStepHighVariability": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "predStepEwma": "Recent-weighted spacing (EWMA, α={alpha}) suggests about {days} days.",
+  "@predStepEwma": {
+    "placeholders": {
+      "alpha": {"type": "String"},
+      "days": {"type": "int"}
+    }
+  },
+  "predStepBayesian": "Pattern-learning estimate (posterior mean) is about {mean} days from {n} cycle lengths.",
+  "@predStepBayesian": {
+    "placeholders": {
+      "mean": {"type": "String"},
+      "n": {"type": "int"}
+    }
+  },
+  "predStepLinearTrend": "Trend line (R²={r2}, slope={slope} days per cycle) projects about {proj} days for the next spacing.",
+  "@predStepLinearTrend": {
+    "placeholders": {
+      "r2": {"type": "String"},
+      "slope": {"type": "String"},
+      "proj": {"type": "int"}
+    }
+  },
+  "predStepAlgoContrib": "{name} contributed an estimate around {date}.",
+  "@predStepAlgoContrib": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  },
+  "algoNameMedian": "Average spacing",
+  "algoNameEwma": "Recent-weighted",
+  "algoNameBayesian": "Pattern-learning",
+  "algoNameLinearTrend": "Trend",
+  "predictionDayAgreement": "{agreement} of {active} methods agree on this day.",
+  "@predictionDayAgreement": {
+    "placeholders": {
+      "agreement": {"type": "int"},
+      "active": {"type": "int"}
+    }
+  },
+  "ensembleMilestoneTrend": "With enough cycles logged, trend detection is now active.",
+  "ensembleMilestoneAllCore": "Three cycles logged — all core methods are now active.",
+  "ensembleMilestoneExpanded": "With {cycles} cycles logged, your prediction now uses {methods} methods for better accuracy.",
+  "@ensembleMilestoneExpanded": {
+    "placeholders": {
+      "cycles": {"type": "int"},
+      "methods": {"type": "int"}
+    }
+  },
+  "homePeriodDay": "Period day {n}",
+  "@homePeriodDay": {
+    "placeholders": {
+      "n": {"type": "int"}
+    }
+  },
+  "homeCycleDay": "Cycle day {n}",
+  "@homeCycleDay": {
+    "placeholders": {
+      "n": {"type": "int"}
+    }
+  },
+  "homeNextPeriodExpected": "Next period expected {range}",
+  "@homeNextPeriodExpected": {
+    "placeholders": {
+      "range": {"type": "String"}
+    }
+  },
+  "homeLogMorePeriods": "Log a few more periods to see cycle insights",
+  "homeHowCalculatedLink": "How is this calculated?",
+  "homePredictionSheetTitle": "How your prediction works",
+  "homePredictionMethodsLine": "Currently using {n} prediction methods.",
+  "@homePredictionMethodsLine": {
+    "placeholders": {
+      "n": {"type": "int"}
+    }
+  },
+  "homeDone": "Done",
+  "homeCouldNotLoadPeriods": "Could not load periods: {error}",
+  "@homeCouldNotLoadPeriods": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "homeCouldNotSaveToday": "Could not save today. Please try again.",
+  "homeCouldNotOpenSymptomForm": "Could not open symptom form.",
+  "tooltipDismiss": "Dismiss",
+  "dayDetailBasedOnRecentCycles": "Based on your recent cycles.",
+  "dayDetailProjectedHop": "Projected by repeating the predicted cycle length.",
+  "dayDetailPeriodExpectedTitle": "Period expected around this day",
+  "dayDetailForecastMonthsTitle": "Forecast ≈ {months} months out",
+  "@dayDetailForecastMonthsTitle": {
+    "placeholders": {
+      "months": {"type": "int"}
+    }
+  },
+  "dayDetailDisclaimerHop1": "Rough estimate, about 2 months out — less reliable than the next period.",
+  "dayDetailDisclaimerHop1HighSpread": "Rough estimate, about 2 months out — less reliable than the next period. Your cycle length varies quite a bit, so this date may shift significantly.",
+  "dayDetailDisclaimerHopN": "Very rough estimate, about {months} months out — use for general planning only.",
+  "@dayDetailDisclaimerHopN": {
+    "placeholders": {
+      "months": {"type": "int"}
+    }
+  },
+  "dayDetailDisclaimerHopNSpread": "Very rough estimate, about {months} months out — use for general planning only. Your cycle length varies quite a bit, so this date may shift significantly.",
+  "@dayDetailDisclaimerHopNSpread": {
+    "placeholders": {
+      "months": {"type": "int"}
+    }
+  },
+  "dayDetailHideDetails": "Hide details",
+  "dayDetailSeeDetails": "See details",
+  "dayDetailEstimatesOnly": "Estimates only — not medical advice.",
+  "dayDetailAlgoExpectsAround": "{name}: expects around {date}",
+  "@dayDetailAlgoExpectsAround": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  }
+}

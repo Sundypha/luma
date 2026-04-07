@@ -1,0 +1,193 @@
+{
+  "@@locale": "de",
+  "appTitle": "Luma",
+  "@appTitle": {
+    "description": "Application title; brand name stays Luma in all locales for Phase 10."
+  },
+  "predictionDisclaimer": "Dies ist nur eine kalenderbasierte Einschätzung für deine persönliche Planung und ersetzt keine medizinische Beratung.",
+  "predictionNoMethodsEnabled": "Es sind keine Vorhersagemethoden aktiviert. Wähle mindestens eine unter Einstellungen → Vorhersage.",
+  "predictionNOfMTotalMethods": "{n, plural, one{1 Vorhersagemethode} other{{n} Vorhersagemethoden}} von {total} ist in diese Schätzung eingeflossen.",
+  "@predictionNOfMTotalMethods": {
+    "placeholders": {
+      "n": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "predictionAlgoExpectsLine": "{name}: geht von der nächsten Periode ungefähr am {date} aus.",
+  "@predictionAlgoExpectsLine": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  },
+  "predictionAgreementClosing": "An Tagen, an denen mehrere Methoden übereinstimmen, ist die Vorhersage konsistenter. Betrachte alle Termine als unsichere Schätzungen nur für die persönliche Planung.",
+  "predictionClosingInsufficientHistory": "Wenn du im Laufe der Zeit mehr abgeschlossene Zyklen einträgst, wird die Schätzung klarer. Die Angaben hier sind kein Ersatz für die Betreuung durch eine qualifizierte Ärztin oder einen qualifizierten Arzt.",
+  "predictionClosingRangeOnly": "Für die Planung reicht ein grobes Fenster von etwa {start} bis {end}. Betrachte diese Termine als unsicher.",
+  "@predictionClosingRangeOnly": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "predictionClosingPointWithRange": "Eine grobe Schätzung für den Beginn deiner nächsten Periode ist {point}. Basierend auf ähnlichen Abständen in der Vergangenheit könnte ein weiteres Planungsfenster etwa von {bandStart} bis {bandEnd} liegen.",
+  "@predictionClosingPointWithRange": {
+    "placeholders": {
+      "point": {"type": "String"},
+      "bandStart": {"type": "String"},
+      "bandEnd": {"type": "String"}
+    }
+  },
+  "predStepCyclesConsidered": "Basierend auf {count} kürzlichen Zykluslängen aus deiner Historie ({lengths} Tage).",
+  "@predStepCyclesConsidered": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "lengths": {"type": "String"}
+    }
+  },
+  "predStepCycleExcluded": "Ein eingetragener Zyklus fließt in den Durchschnitt für diese Schätzung nicht ein (Grund: {reason}).",
+  "@predStepCycleExcluded": {
+    "placeholders": {
+      "reason": {"type": "String"}
+    }
+  },
+  "predStepMedianCycleLength": "Über die berücksichtigten Zyklen ist ein typischer Abstand etwa {median} Tage (Streuung etwa {spread} Tage).",
+  "@predStepMedianCycleLength": {
+    "placeholders": {
+      "median": {"type": "int"},
+      "spread": {"type": "int"}
+    }
+  },
+  "predStepInsufficientHistory": "Noch reichen die abgeschlossenen Zyklen nicht aus, um den nächsten Beginn abzuschätzen. Nach Filterung stehen {avail} Zyklus/Zyklen zur Verfügung; normalerweise werden mindestens {need} benötigt.",
+  "@predStepInsufficientHistory": {
+    "placeholders": {
+      "avail": {"type": "int"},
+      "need": {"type": "int"}
+    }
+  },
+  "predStepHighVariability": "Weil die Schwankungen groß sind, wird ein Bereich statt eines einzelnen Tages angezeigt: ungefähr {start} bis {end}.",
+  "@predStepHighVariability": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "predStepEwma": "Jüngeren Zyklen höheres Gewicht (EWMA, α={alpha}) spricht für etwa {days} Tage.",
+  "@predStepEwma": {
+    "placeholders": {
+      "alpha": {"type": "String"},
+      "days": {"type": "int"}
+    }
+  },
+  "predStepBayesian": "Die Schätzung durch Musterlernen (Posterior-Mittelwert) liegt bei etwa {mean} Tagen aus {n} Zykluslängen.",
+  "@predStepBayesian": {
+    "placeholders": {
+      "mean": {"type": "String"},
+      "n": {"type": "int"}
+    }
+  },
+  "predStepLinearTrend": "Trendlinie (R²={r2}, Steigung={slope} Tage pro Zyklus) legt für den nächsten Abstand etwa {proj} Tage nahe.",
+  "@predStepLinearTrend": {
+    "placeholders": {
+      "r2": {"type": "String"},
+      "slope": {"type": "String"},
+      "proj": {"type": "int"}
+    }
+  },
+  "predStepAlgoContrib": "{name} liefert eine Schätzung ungefähr am {date}.",
+  "@predStepAlgoContrib": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  },
+  "algoNameMedian": "Durchschnitts-Abstand",
+  "algoNameEwma": "Gewichtung nach Aktualität",
+  "algoNameBayesian": "Musterlernen",
+  "algoNameLinearTrend": "Trend",
+  "predictionDayAgreement": "{agreement} von {active} Methoden stimmen an diesem Tag überein.",
+  "@predictionDayAgreement": {
+    "placeholders": {
+      "agreement": {"type": "int"},
+      "active": {"type": "int"}
+    }
+  },
+  "ensembleMilestoneTrend": "Mit genug eingetragenen Zyklen ist die Trenderkennung jetzt aktiv.",
+  "ensembleMilestoneAllCore": "Drei Zyklen eingetragen — alle Kernmethoden sind jetzt aktiv.",
+  "ensembleMilestoneExpanded": "Mit {cycles} eingetragenen Zyklen nutzt deine Vorhersage jetzt {methods} Methoden für mehr Genauigkeit.",
+  "@ensembleMilestoneExpanded": {
+    "placeholders": {
+      "cycles": {"type": "int"},
+      "methods": {"type": "int"}
+    }
+  },
+  "homePeriodDay": "Periodentag {n}",
+  "@homePeriodDay": {
+    "placeholders": {
+      "n": {"type": "int"}
+    }
+  },
+  "homeCycleDay": "Zyklustag {n}",
+  "@homeCycleDay": {
+    "placeholders": {
+      "n": {"type": "int"}
+    }
+  },
+  "homeNextPeriodExpected": "Nächste Periode erwartet {range}",
+  "@homeNextPeriodExpected": {
+    "placeholders": {
+      "range": {"type": "String"}
+    }
+  },
+  "homeLogMorePeriods": "Trag noch ein paar Perioden ein, um Zyklus-Einblicke zu sehen",
+  "homeHowCalculatedLink": "Wie wird das berechnet?",
+  "homePredictionSheetTitle": "So funktioniert deine Vorhersage",
+  "homePredictionMethodsLine": "Aktuell werden {n} Vorhersagemethoden genutzt.",
+  "@homePredictionMethodsLine": {
+    "placeholders": {
+      "n": {"type": "int"}
+    }
+  },
+  "homeDone": "Fertig",
+  "homeCouldNotLoadPeriods": "Perioden konnten nicht geladen werden: {error}",
+  "@homeCouldNotLoadPeriods": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "homeCouldNotSaveToday": "Heute konnte nicht gespeichert werden. Bitte versuch es noch einmal.",
+  "homeCouldNotOpenSymptomForm": "Symptom-Formular konnte nicht geöffnet werden.",
+  "tooltipDismiss": "Schließen",
+  "dayDetailBasedOnRecentCycles": "Basierend auf deinen letzten Zyklen.",
+  "dayDetailProjectedHop": "Projiziert durch Wiederholen der vorhergesagten Zykluslänge.",
+  "dayDetailPeriodExpectedTitle": "Periode in etwa an diesem Tag erwartet",
+  "dayDetailForecastMonthsTitle": "Vorschau etwa {months} Monate voraus",
+  "@dayDetailForecastMonthsTitle": {
+    "placeholders": {
+      "months": {"type": "int"}
+    }
+  },
+  "dayDetailDisclaimerHop1": "Grobe Schätzung, etwa 2 Monate voraus — weniger zuverlässig als die nächste Periode.",
+  "dayDetailDisclaimerHop1HighSpread": "Grobe Schätzung, etwa 2 Monate voraus — weniger zuverlässig als die nächste Periode. Deine Zykluslänge schwankt ziemlich stark, dieser Termin kann sich deutlich verschieben.",
+  "dayDetailDisclaimerHopN": "Sehr grobe Schätzung, etwa {months} Monate voraus — nur zur allgemeinen Planung.",
+  "@dayDetailDisclaimerHopN": {
+    "placeholders": {
+      "months": {"type": "int"}
+    }
+  },
+  "dayDetailDisclaimerHopNSpread": "Sehr grobe Schätzung, etwa {months} Monate voraus — nur zur allgemeinen Planung. Deine Zykluslänge schwankt ziemlich stark, dieser Termin kann sich deutlich verschieben.",
+  "@dayDetailDisclaimerHopNSpread": {
+    "placeholders": {
+      "months": {"type": "int"}
+    }
+  },
+  "dayDetailHideDetails": "Details ausblenden",
+  "dayDetailSeeDetails": "Details anzeigen",
+  "dayDetailEstimatesOnly": "Nur Schätzungen — keine medizinische Beratung.",
+  "dayDetailAlgoExpectsAround": "{name}: erwartet ungefähr {date}",
+  "@dayDetailAlgoExpectsAround": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  }
+}
