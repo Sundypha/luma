@@ -6,21 +6,21 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** **Phase 1 (v1) roadmap phases 1–8 are complete** through release-quality / offline / copy (2026-04-07). Residual human UATs for **05-04**, **05.1-05**, **06-04**, **07-03**, and **07-04** are **signed off** (user 2026-04-07); **IMPT-01**, **IMPT-03**, **LOCK-01**, **LOCK-02** marked complete in REQUIREMENTS. **Phase 9** is in active execution — ensemble + calendar tiers complete (**09-02**); UI wiring remains (**09-03**) (see `.planning/phases/09-prediction-of-next-period/09-CONTEXT.md`).
+**Current focus:** **v1 roadmap phases 1–9 are complete** in planning and implementation through prediction ensemble UI (**09-03**, 2026-04-07). Prior human UATs for earlier phases are signed off per user confirmation; optional spot-check UAT may follow for new prediction UX.
 
 ## Current Position
 
-Phase: **9** of 9 (Prediction of next period) — **executing** (`09-01` and **`09-02`** complete; next **`09-03`**).
+Phase: **9** of 9 (Prediction of next period) — **complete** (all plans **09-01**–**09-03** executed).
 
-**Current plan:** **`09-03-PLAN.md`** — confidence painters, ViewModel ensemble wiring, day detail / settings UI (see ROADMAP).
+**Current plan:** None — last completed **`09-03-PLAN.md`** (see `09-03-SUMMARY.md`).
 
-**Prior phases (closed):** Phases **5**, **05.1**, **6**, **7**, **8** marked complete in ROADMAP with all plan checkboxes and pending UATs cleared per user confirmation.
+**Prior phases (closed):** Phases **5**, **05.1**, **6**, **7**, **8**, **9** marked complete in ROADMAP with plan checkboxes satisfied.
 
-Status: **Phase 9 in progress** — **09-01** / **09-02** complete; **09-03** (UI) pending.
+Status: **Phase 9 complete** — ensemble UI, calendar tiers, home/day detail explanation, settings tile shipped.
 
-Last activity: 2026-04-07 — Executed **`09-02-PLAN.md`**: `EnsembleCoordinator`, calendar tiers, `PredictionSettings`; see `09-02-SUMMARY.md`.
+Last activity: 2026-04-07 — Executed **`09-03-PLAN.md`**: `ConfidenceHatchedCirclePainter`, ensemble ViewModels, day detail + home UX, `PredictionSettingsTile`; see `09-03-SUMMARY.md`.
 
-**Progress:** [██████████] Phase 9: **2/3** plans complete (09-03 pending). Overall roadmap: **97%** (per `gsd-tools state update-progress`).
+**Progress:** [██████████] 100%
 
 ## Performance Metrics
 
@@ -75,6 +75,7 @@ Last activity: 2026-04-07 — Executed **`09-02-PLAN.md`**: `EnsembleCoordinator
 | Phase 09-prediction-of-next-period P01 | 28 min | 2 tasks | see `09-01-SUMMARY.md` |
 | Phase 09-prediction-of-next-period P02 | 45 min | 2 tasks | see `09-02-SUMMARY.md` |
 | Phase 09-prediction-of-next-period P02 | 45min | 2 tasks | 9 files |
+| Phase 09-prediction-of-next-period P03 | 55min | 2 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -125,10 +126,12 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 08]: Stream-backed ViewModels accept optional initialData; seed via _applyData without notifyListeners in ctor; main awaits watchPeriodsWithDays().first before runApp
 - [Phase 08-release-quality-offline-assurance-inclusive-copy]: User-facing errors use fixed plain-language strings instead of DayMarkFailure.reason or Exception.toString() for NFR-05/NFR-07 alignment.
 - [Phase 08 closeout 2026-04-07]: **08-03 Task 2** airplane-mode walkthrough human **pass**; NFR-08 complete; Phase 8 milestone complete in ROADMAP.
+- [Phase 09]: CalendarViewModel guards async PredictionSettings.load with _disposed to avoid notifyListeners after dispose in tests and fast navigation.
+- [Phase 09]: Prediction display showAllWithNote settings subtitle avoids user-facing confidence wording (PRED-04).
 
 ### Pending Todos
 
-- **Phase 9:** Execute **`09-03-PLAN.md`**; run **`/gsd-execute-phase 9`** continuation as needed.
+- None for Phase 9 execution — optional human pass on prediction / milestone copy if desired.
 
 ### Roadmap Evolution
 
@@ -137,6 +140,7 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - 2026-04-07: User confirmed all remaining v1 human UATs (05-04, 05.1-05, 06-04, 07-03, 07-04); `requirements mark-complete` for IMPT-01, IMPT-03, LOCK-01, LOCK-02; `phase complete` for 5, 05.1, 6, 7; ROADMAP/STATE reconciled — **only Phase 9 remains in planning**.
 - [Phase 9 / 09-01]: Multi-algorithm domain foundation — `PredictionAlgorithm`, `MedianBaselineAlgorithm` (wraps `PredictionEngine`), `EwmaAlgorithm`, `BayesianAlgorithm`, `LinearTrendAlgorithm`, `EnsemblePredictionResult`; UTC helpers `addUtcCalendarDays` / `utcCalendarDateOnly` on `prediction_engine.dart`; tests in `prediction_algorithm_test.dart`.
 - [Phase 9 / 09-02]: `EnsembleCoordinator` (shared median bleed duration, `dayConfidenceMap`, milestones, consensus via `PredictionCoordinator`); ensemble explanation copy + extended `ExplanationFactKind`; `CalendarDayData` tiers + `buildCalendarDayDataMap` ensemble/display-mode path + legacy adapter; `PredictionSettings` / `PredictionDisplayMode`.
+- [Phase 9 / 09-03]: UI wiring — `ConfidenceHatchedCirclePainter` + legend; `CalendarViewModel` / `HomeViewModel` ensemble + `PredictionSettings.load`; day detail methods-agree + expandable breakdown; home explanation sheet + milestone dismiss prefs; `PredictionSettingsTile` in drawer; commits `6041ed6`, `0246221`.
 
 ### Blockers/Concerns
 
@@ -144,10 +148,10 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-07T13:10:06.488Z
+**Last session:** 2026-04-07T13:17:38.596Z
 
-**Stopped at:** Completed 09-02-PLAN.md
+**Stopped at:** Completed 09-03-PLAN.md
 
-**Resume file:** `.planning/phases/09-prediction-of-next-period/09-CONTEXT.md`
+**Resume file:** None
 
-**Next:** Execute **`09-03-PLAN.md`** (painters, ViewModel + ensemble, day detail, settings tile).
+**Next:** Milestone / release housekeeping as needed (e.g. `/gsd-complete-milestone`, verify-work).

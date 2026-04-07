@@ -22,7 +22,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 6: Export & import** — Documented full export, validated import, deterministic duplicate handling (completed 2026-04-07)
 - [x] **Phase 7: App protection (lock)** — Optional PIN/biometric lock with honest limitations (completed 2026-04-07)
 - [x] **Phase 8: Release quality, offline assurance & inclusive copy** — Snappy UX, clear actions, non-gendered non-medical copy, airplane-mode verification (completed 2026-04-07)
-- [ ] **Phase 9: Prediction of next period** — Multi-algorithm prediction (3+ methods), confidence-based calendar display showing algorithm agreement level
+- [x] **Phase 9: Prediction of next period** — Multi-algorithm prediction (3+ methods), agreement-tier calendar display and explainable ensemble UI (completed 2026-04-07)
 
 ## Phase Details
 
@@ -248,7 +248,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 | 6. Export & import | 4/4 | Complete    | 2026-04-07 |
 | 7. App protection (lock) | 4/4 | Complete    | 2026-04-07 |
 | 8. Release quality, offline assurance & inclusive copy | 3/3 | Complete    | 2026-04-07 |
-| 9. Prediction of next period | 2/3 | In Progress|  |
+| 9. Prediction of next period | 3/3 | Complete    | 2026-04-07 |
 
 ### Phase 9: Prediction of next period
 
@@ -276,13 +276,13 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 
 **Requirements:** PRED-01, PRED-02, PRED-03, PRED-04 (extended), NFR-06
 
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans executed
 
 Plans:
 
 - [x] `09-01-PLAN.md` — Algorithm foundation: PredictionAlgorithm interface, MedianBaselineAlgorithm adapter, EwmaAlgorithm, BayesianAlgorithm, LinearTrendAlgorithm, unit tests
 - [x] `09-02-PLAN.md` — Ensemble coordinator, multi-algorithm explanation copy, CalendarDayData confidence tiers, PredictionSettings
-- [ ] `09-03-PLAN.md` — ConfidenceHatchedCirclePainter, ViewModel ensemble wiring, day detail agreement UX, home explanation link, milestone messages, settings tile
+- [x] `09-03-PLAN.md` — ConfidenceHatchedCirclePainter, ViewModel ensemble wiring, day detail agreement UX, home explanation link, milestone messages, settings tile
 
 ---
 *Roadmap created: 2026-04-04 — depth: standard; 40/40 v1 requirements mapped.*
