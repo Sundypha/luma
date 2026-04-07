@@ -248,7 +248,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 | 6. Export & import | 4/4 | Complete    | 2026-04-07 |
 | 7. App protection (lock) | 4/4 | Complete    | 2026-04-07 |
 | 8. Release quality, offline assurance & inclusive copy | 3/3 | Complete    | 2026-04-07 |
-| 9. Prediction of next period | 0/TBD | Planning    | - |
+| 9. Prediction of next period | 0/3 | Planning    | - |
 
 ### Phase 9: Prediction of next period
 
@@ -276,11 +276,13 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 
 **Requirements:** PRED-01, PRED-02, PRED-03, PRED-04 (extended), NFR-06
 
-**Plans:** TBD — only `09-CONTEXT.md` exists; run `/gsd-plan-phase 9` to author executable plans.
+**Plans:** 3 plans
 
 Plans:
 
-- [ ] TBD (run `/gsd-plan-phase 9` to break down)
+- [ ] `09-01-PLAN.md` — Algorithm foundation: PredictionAlgorithm interface, MedianBaselineAlgorithm adapter, EwmaAlgorithm, BayesianAlgorithm, LinearTrendAlgorithm, unit tests
+- [ ] `09-02-PLAN.md` — Ensemble coordinator, multi-algorithm explanation copy, CalendarDayData confidence tiers, PredictionSettings
+- [ ] `09-03-PLAN.md` — ConfidenceHatchedCirclePainter, ViewModel ensemble wiring, day detail agreement UX, home explanation link, milestone messages, settings tile
 
 ---
 *Roadmap created: 2026-04-04 — depth: standard; 40/40 v1 requirements mapped.*
