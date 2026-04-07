@@ -51,10 +51,10 @@ None at milestone definition time.
 
 ## Session Continuity
 
-**Last session:** 2026-04-07T23:59:00.000Z
+**Last session:** 2026-04-07T22:23:17.515Z
 
-**Stopped at:** Phase 11 closed; `11-VERIFICATION.md` status **human_needed** (native ARB review + device language UX).
+**Stopped at:** Phase 12 context gathered
 
-**Resume file:** `.planning/phases/12-*` when created
+**Resume file:** .planning/phases/12-optional-fertility-window-estimator/12-CONTEXT.md
 
 **Next:** `/gsd-plan-phase 12` then `/gsd-execute-phase 12`, or finish phase 10 on branches that still need it
