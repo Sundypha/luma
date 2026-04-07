@@ -14,17 +14,68 @@ Local-first menstrual cycle tracker (Flutter, FVM, TDD): engineering guardrails,
 
 Phase implementation detail remains under `.planning/phases/` for history.
 
-## Active roadmap: v2
+---
 
-**Status:** Not started.
+## Active roadmap: v2.0
 
-**Sources for upcoming work:** `period_tracker_prds/PRD_Phase_2_Usability_and_Trust.md` (usability/trust), then `PRD_Phase_3_Secure_Sync.md` and `PRD_Phase_4_Advanced_Prediction.md` for later product generations—not to be confused with engineering phase numbers 1–9 from v1.
+**Milestone:** v2.0 — **i18n**, **German**, **optional fertility window**  
+**Engineering phases:** **10 → 12** (continues after v1 phase 9). See [`.planning/MILESTONES.md`](MILESTONES.md).
 
-When v2 execution begins, add phases below (continue numbering or reset per team convention) and link requirements in `.planning/REQUIREMENTS.md`.
+### Overview
 
-### Placeholder
+| Phase | Name | Requirements | Goal (one line) |
+|-------|------|--------------|-----------------|
+| **10** | i18n foundation | I18N-01 | gen_l10n, English ARB, migrate strings, wire delegates |
+| **11** | German + language settings | I18N-02 — I18N-05 | de translations, settings, locale formatting, CI guard |
+| **12** | Optional fertility window | FERT-01 — FERT-05 | Opt-in, prompts, on-device estimate, UI, tests, docs |
 
-- [ ] **v2 phases (TBD):** Define after roadmap/requirements pass for Phase 2 PRD (e.g. `/gsd-new-milestone` or equivalent).
+### Phase 10: Internationalization foundation
+
+**Depends on:** v1 complete  
+
+**Requirements:** I18N-01  
+
+**Success criteria (observable):**
+
+1. `flutter gen-l10n` (or chosen equivalent) runs clean in CI / documented dev workflow; l10n outputs are generated and committed or built deterministically per repo policy.
+2. `MaterialApp` (and any required Cupertino/localizations delegates) resolves the **English** catalog from ARB for the migrated surfaces.
+3. A defined subset of screens (listed in phase plan) shows **no user-visible hard-coded English** for strings in scope—those strings come from ARB.
+4. `melos`/test/analyze still pass after migration (no regression in v1 behavior aside from string sourcing).
+
+### Phase 11: German locale + language settings
+
+**Depends on:** Phase 10  
+
+**Requirements:** I18N-02, I18N-03, I18N-04, I18N-05  
+
+**Success criteria (observable):**
+
+1. User can open **Settings**, choose **language** (en, de, follow device as specified in plan), and the choice persists across restarts.
+2. With **German** selected, in-scope flows display **German** strings with parity to English (no missing-key crashes in covered paths).
+3. Sample dates/numbers/plurals in UI reflect **German** conventions where applicable (phase plan lists concrete widgets or formats).
+4. Automated or scripted check fails CI if **de** ARB is missing keys required for the in-scope catalog (**I18N-05**).
+
+### Phase 12: Optional fertility window estimator
+
+**Depends on:** Phase 11  
+
+**Requirements:** FERT-01, FERT-02, FERT-03, FERT-04, FERT-05  
+
+**Success criteria (observable):**
+
+1. **Off by default:** fresh or upgraded user does not see fertility UI until they opt in; first opt-in shows **limitations** copy (**FERT-01**).
+2. If enabled and assumptions missing, a **prompt** collects or confirms required inputs before showing a window (**FERT-02**).
+3. Calendar and/or home shows the estimated window with **non-color-only** distinction vs other day states (**FERT-03**).
+4. Disabling removes fertility visuals and stops prompts without corrupting period/export data (**FERT-04**).
+5. **Unit tests** document expected outputs for fixed inputs; **docs or comments** state the formula/assumptions (**FERT-05**).
+
+## Progress (v2.0)
+
+| Phase | Plans | Status |
+|-------|-------|--------|
+| 10 — i18n foundation | 0/? | Not started |
+| 11 — German + language settings | 0/? | Not started |
+| 12 — Fertility window | 0/? | Not started |
 
 ---
-*Roadmap reset for v2: 2026-04-07 — v1 archived under `.planning/milestones/v1/`.*
+*Roadmap updated: 2026-04-07 — v2.0 phases 10–12; requirements traceability in `REQUIREMENTS.md`.*  
