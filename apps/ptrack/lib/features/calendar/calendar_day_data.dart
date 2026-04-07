@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 
+import '../settings/prediction_settings.dart';
+
 /// Visual segment shape for a logged period day within the calendar grid.
 enum PeriodDayState {
   /// No logged period band for this day.
@@ -31,13 +33,22 @@ enum PeriodDayState {
 class CalendarDayData {
   const CalendarDayData({
     this.loggedPeriodState = PeriodDayState.none,
-    this.isPredictedPeriod = false,
+    this.predictionConfidenceTier = 0,
+    this.predictionAgreementCount = 0,
     this.hasLoggedData = false,
     this.isToday = false,
   });
 
   final PeriodDayState loggedPeriodState;
-  final bool isPredictedPeriod;
+
+  /// 0 = none, 1 = one method, 2 = two agree, 3 = three or more agree.
+  final int predictionConfidenceTier;
+
+  /// Raw agreement count for detail copy ("X of N methods agree").
+  final int predictionAgreementCount;
+
+  bool get isPredictedPeriod => predictionConfidenceTier > 0;
+
   final bool hasLoggedData;
   final bool isToday;
 }
@@ -45,6 +56,50 @@ class CalendarDayData {
 DateTime _utcMidnight(DateTime d) {
   final x = d.isUtc ? d : d.toUtc();
   return DateTime.utc(x.year, x.month, x.day);
+}
+
+/// Adapter: single [PredictionResult] → synthetic ensemble (one method, tier 1 days).
+EnsemblePredictionResult legacyEnsembleFromPrediction(PredictionResult prediction) {
+  final dayMap = <DateTime, int>{};
+
+  void markRange(DateTime start, DateTime end) {
+    var d = _utcMidnight(start);
+    final e = _utcMidnight(end);
+    while (!d.isAfter(e)) {
+      dayMap[d] = 1;
+      d = d.add(const Duration(days: 1));
+    }
+  }
+
+  switch (prediction) {
+    case PredictionInsufficientHistory():
+      break;
+    case PredictionRangeOnly(:final rangeStartUtc, :final rangeEndUtc):
+      markRange(rangeStartUtc, rangeEndUtc);
+    case PredictionPointWithRange(
+        :final pointStartUtc,
+        :final rangeStartUtc,
+        :final rangeEndUtc,
+      ):
+      if (rangeStartUtc != null && rangeEndUtc != null) {
+        markRange(rangeStartUtc, rangeEndUtc);
+      } else {
+        dayMap[_utcMidnight(pointStartUtc)] = 1;
+      }
+  }
+
+  final active = dayMap.isEmpty ? 0 : 1;
+
+  return EnsemblePredictionResult(
+    algorithmOutputs: const [],
+    dayConfidenceMap: dayMap,
+    activeAlgorithmCount: active,
+    totalAlgorithmCount: 1,
+    milestoneMessage: null,
+    consensusPrediction: prediction,
+    mergedExplanationSteps: const [],
+    explanationText: '',
+  );
 }
 
 /// Index 0 = first column ([startingDayOfWeek]), 6 = last column of the row.
@@ -63,12 +118,24 @@ bool _isLastDayOfRow(DateTime dayUtcMidnight, int startingDayOfWeek) =>
 ///
 /// Period days are keyed by UTC calendar date (midnight). Overlapping periods: later
 /// entries in [periodsWithDays] overwrite earlier ones for the same day.
+///
+/// Provide either [ensemble] + [displayMode], or [prediction] for legacy median-only data.
 Map<DateTime, CalendarDayData> buildCalendarDayDataMap({
   required List<StoredPeriodWithDays> periodsWithDays,
-  required PredictionResult prediction,
   required DateTime today,
   int startingDayOfWeek = DateTime.monday,
+  EnsemblePredictionResult? ensemble,
+  PredictionDisplayMode displayMode = PredictionDisplayMode.consensusOnly,
+  PredictionResult? prediction,
 }) {
+  assert(
+    (ensemble != null) ^ (prediction != null),
+    'Provide exactly one of ensemble or prediction',
+  );
+
+  final eff = ensemble ?? legacyEnsembleFromPrediction(prediction!);
+  final mode = ensemble != null ? displayMode : PredictionDisplayMode.consensusOnly;
+
   final todayNorm = _utcMidnight(today);
   final periodDayStates = <DateTime, PeriodDayState>{};
 
@@ -120,45 +187,26 @@ Map<DateTime, CalendarDayData> buildCalendarDayDataMap({
 
   bool hasLoggedPeriod(DateTime day) => periodDayStates.containsKey(day);
 
-  final predictedDays = <DateTime>{};
+  final predictionMeta = <DateTime, ({int tier, int agreementCount})>{};
 
-  void addPredictedDay(DateTime d) {
-    final k = _utcMidnight(d);
-    if (!hasLoggedPeriod(k)) {
-      predictedDays.add(k);
+  for (final entry in eff.dayConfidenceMap.entries) {
+    final day = _utcMidnight(entry.key);
+    if (hasLoggedPeriod(day)) continue;
+
+    final agreementCount = entry.value;
+    final tier = agreementCount.clamp(0, 3);
+    if (mode == PredictionDisplayMode.consensusOnly) {
+      if (tier < 2 && eff.activeAlgorithmCount > 1) {
+        continue;
+      }
     }
-  }
 
-  switch (prediction) {
-    case PredictionInsufficientHistory():
-      break;
-    case PredictionRangeOnly(:final rangeStartUtc, :final rangeEndUtc):
-      var d = _utcMidnight(rangeStartUtc);
-      final end = _utcMidnight(rangeEndUtc);
-      while (!d.isAfter(end)) {
-        addPredictedDay(d);
-        d = d.add(const Duration(days: 1));
-      }
-    case PredictionPointWithRange(
-        :final pointStartUtc,
-        :final rangeStartUtc,
-        :final rangeEndUtc,
-      ):
-      if (rangeStartUtc != null && rangeEndUtc != null) {
-        var d = _utcMidnight(rangeStartUtc);
-        final end = _utcMidnight(rangeEndUtc);
-        while (!d.isAfter(end)) {
-          addPredictedDay(d);
-          d = d.add(const Duration(days: 1));
-        }
-      } else {
-        addPredictedDay(pointStartUtc);
-      }
+    predictionMeta[day] = (tier: tier, agreementCount: agreementCount);
   }
 
   final allDays = <DateTime>{
     ...periodDayStates.keys,
-    ...predictedDays,
+    ...predictionMeta.keys,
     ...loggedDataDays,
     todayNorm,
   };
@@ -167,7 +215,8 @@ Map<DateTime, CalendarDayData> buildCalendarDayDataMap({
     for (final day in allDays)
       day: CalendarDayData(
         loggedPeriodState: periodDayStates[day] ?? PeriodDayState.none,
-        isPredictedPeriod: predictedDays.contains(day),
+        predictionConfidenceTier: predictionMeta[day]?.tier ?? 0,
+        predictionAgreementCount: predictionMeta[day]?.agreementCount ?? 0,
         hasLoggedData: loggedDataDays.contains(day),
         isToday: day == todayNorm,
       ),

@@ -3,6 +3,7 @@ import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 
 import 'package:luma/features/calendar/calendar_day_data.dart';
+import 'package:luma/features/settings/prediction_settings.dart';
 
 StoredPeriodWithDays _period({
   required int id,
@@ -244,6 +245,163 @@ void main() {
         today: DateTime.utc(2025, 8, 1),
       );
       expect(map[DateTime.utc(2025, 10, 1)]?.isPredictedPeriod, isTrue);
+    });
+
+    test('ensemble: agreement counts map to tiers 1 and 3', () {
+      final d1 = DateTime.utc(2025, 11, 10);
+      final d2 = DateTime.utc(2025, 11, 20);
+      final ensemble = EnsemblePredictionResult(
+        algorithmOutputs: const [],
+        dayConfidenceMap: {d1: 3, d2: 1},
+        activeAlgorithmCount: 3,
+        totalAlgorithmCount: 4,
+        consensusPrediction: predictionNone,
+        mergedExplanationSteps: const [],
+        explanationText: '',
+      );
+      final map = buildCalendarDayDataMap(
+        periodsWithDays: [],
+        ensemble: ensemble,
+        displayMode: PredictionDisplayMode.showAll,
+        today: DateTime.utc(2025, 11, 1),
+      );
+      expect(map[d1]?.predictionConfidenceTier, 3);
+      expect(map[d1]?.predictionAgreementCount, 3);
+      expect(map[d2]?.predictionConfidenceTier, 1);
+      expect(map[d2]?.predictionAgreementCount, 1);
+    });
+
+    test('consensusOnly excludes tier-1 days when multiple algorithms active', () {
+      final low = DateTime.utc(2025, 12, 5);
+      final high = DateTime.utc(2025, 12, 15);
+      final ensemble = EnsemblePredictionResult(
+        algorithmOutputs: const [],
+        dayConfidenceMap: {low: 1, high: 2},
+        activeAlgorithmCount: 3,
+        totalAlgorithmCount: 4,
+        consensusPrediction: predictionNone,
+        mergedExplanationSteps: const [],
+        explanationText: '',
+      );
+      final map = buildCalendarDayDataMap(
+        periodsWithDays: [],
+        ensemble: ensemble,
+        displayMode: PredictionDisplayMode.consensusOnly,
+        today: DateTime.utc(2025, 12, 1),
+      );
+      expect(map.containsKey(low), isFalse);
+      expect(map[high]?.predictionConfidenceTier, 2);
+    });
+
+    test('consensusOnly cold-start: single active algorithm still shows tier 1', () {
+      final day = DateTime.utc(2026, 1, 5);
+      final ensemble = EnsemblePredictionResult(
+        algorithmOutputs: const [],
+        dayConfidenceMap: {day: 1},
+        activeAlgorithmCount: 1,
+        totalAlgorithmCount: 4,
+        consensusPrediction: predictionNone,
+        mergedExplanationSteps: const [],
+        explanationText: '',
+      );
+      final map = buildCalendarDayDataMap(
+        periodsWithDays: [],
+        ensemble: ensemble,
+        displayMode: PredictionDisplayMode.consensusOnly,
+        today: DateTime.utc(2026, 1, 1),
+      );
+      expect(map[day]?.predictionConfidenceTier, 1);
+      expect(map[day]?.isPredictedPeriod, isTrue);
+    });
+
+    test('showAll includes tier-1 days with multiple algorithms active', () {
+      final day = DateTime.utc(2026, 2, 5);
+      final ensemble = EnsemblePredictionResult(
+        algorithmOutputs: const [],
+        dayConfidenceMap: {day: 1},
+        activeAlgorithmCount: 3,
+        totalAlgorithmCount: 4,
+        consensusPrediction: predictionNone,
+        mergedExplanationSteps: const [],
+        explanationText: '',
+      );
+      final map = buildCalendarDayDataMap(
+        periodsWithDays: [],
+        ensemble: ensemble,
+        displayMode: PredictionDisplayMode.showAll,
+        today: DateTime.utc(2026, 2, 1),
+      );
+      expect(map[day]?.predictionConfidenceTier, 1);
+    });
+
+    test('logged period days are not marked predicted when ensemble overlaps', () {
+      final key = DateTime.utc(2026, 3, 10);
+      final ensemble = EnsemblePredictionResult(
+        algorithmOutputs: const [],
+        dayConfidenceMap: {key: 3},
+        activeAlgorithmCount: 3,
+        totalAlgorithmCount: 4,
+        consensusPrediction: predictionNone,
+        mergedExplanationSteps: const [],
+        explanationText: '',
+      );
+      final map = buildCalendarDayDataMap(
+        periodsWithDays: [
+          _period(
+            id: 1,
+            startUtc: key,
+            endUtc: key,
+          ),
+        ],
+        ensemble: ensemble,
+        displayMode: PredictionDisplayMode.showAll,
+        today: DateTime.utc(2026, 3, 15),
+      );
+      expect(map[key]?.loggedPeriodState, PeriodDayState.single);
+      expect(map[key]?.predictionConfidenceTier, 0);
+      expect(map[key]?.isPredictedPeriod, isFalse);
+    });
+
+    test('isPredictedPeriod is true when tier is positive', () {
+      final d = DateTime.utc(2026, 4, 1);
+      final ensemble = EnsemblePredictionResult(
+        algorithmOutputs: const [],
+        dayConfidenceMap: {d: 2},
+        activeAlgorithmCount: 2,
+        totalAlgorithmCount: 4,
+        consensusPrediction: predictionNone,
+        mergedExplanationSteps: const [],
+        explanationText: '',
+      );
+      final map = buildCalendarDayDataMap(
+        periodsWithDays: [],
+        ensemble: ensemble,
+        displayMode: PredictionDisplayMode.showAll,
+        today: DateTime.utc(2026, 4, 1),
+      );
+      expect(map[d]?.isPredictedPeriod, isTrue);
+    });
+
+    test('empty ensemble day map yields no predicted days', () {
+      final ensemble = EnsemblePredictionResult(
+        algorithmOutputs: const [],
+        dayConfidenceMap: const {},
+        activeAlgorithmCount: 0,
+        totalAlgorithmCount: 4,
+        consensusPrediction: predictionNone,
+        mergedExplanationSteps: const [],
+        explanationText: '',
+      );
+      final map = buildCalendarDayDataMap(
+        periodsWithDays: [],
+        ensemble: ensemble,
+        displayMode: PredictionDisplayMode.showAll,
+        today: DateTime.utc(2026, 5, 1),
+      );
+      expect(
+        map.values.where((e) => e.isPredictedPeriod),
+        isEmpty,
+      );
     });
   });
 }

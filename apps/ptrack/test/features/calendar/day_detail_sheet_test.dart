@@ -137,7 +137,8 @@ void main() {
         vm.setTestData(
           map: {
             DateTime.utc(2020, 5, 5): const CalendarDayData(
-              isPredictedPeriod: true,
+              predictionConfidenceTier: 1,
+              predictionAgreementCount: 1,
             ),
           },
           periods: const [],
@@ -158,7 +159,8 @@ void main() {
         vm.setTestData(
           map: {
             DateTime.utc(2035, 1, 1): const CalendarDayData(
-              isPredictedPeriod: true,
+              predictionConfidenceTier: 1,
+              predictionAgreementCount: 1,
             ),
           },
           periods: const [],
