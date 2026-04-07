@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 
+import 'backup_formatters.dart';
 import 'export_view_model.dart';
 
 /// Multi-step flow: content → optional password → progress → share.
@@ -260,7 +261,9 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
 
   Widget _buildDone(BuildContext context) {
     final meta = _vm.result?.meta;
-    final dateStr = meta != null ? meta.exportedAt.toLocal().toString() : '—';
+    final dateStr = meta != null
+        ? formatBackupExportedAt(context, meta.exportedAt)
+        : '—';
     final types = meta?.contentTypes.join(', ') ?? '—';
     final enc = meta?.encrypted == true ? 'Yes' : 'No';
 

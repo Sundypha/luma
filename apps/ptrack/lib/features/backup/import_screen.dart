@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 
+import 'backup_formatters.dart';
 import 'import_view_model.dart';
 
 /// Multi-step flow: pick file → password if needed → preview → strategy → apply.
@@ -147,7 +148,7 @@ class _ImportScreenState extends State<ImportScreen> {
           const SizedBox(height: 16),
           if (meta != null) ...[
             Text(
-              'Exported: ${meta.exportedAt.toLocal().toString().split('.').first}',
+              'Exported: ${formatBackupExportedAt(context, meta.exportedAt)}',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 8),
