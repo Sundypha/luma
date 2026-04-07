@@ -6,21 +6,21 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** **Phase 1 (v1) roadmap phases 1–8 are complete** through release-quality / offline / copy (2026-04-07). Residual human UATs for **05-04**, **05.1-05**, **06-04**, **07-03**, and **07-04** are **signed off** (user 2026-04-07); **IMPT-01**, **IMPT-03**, **LOCK-01**, **LOCK-02** marked complete in REQUIREMENTS. **Only Phase 9** is in active planning — multi-algorithm prediction and confidence calendar (see `.planning/phases/09-prediction-of-next-period/09-CONTEXT.md`).
+**Current focus:** **Phase 1 (v1) roadmap phases 1–8 are complete** through release-quality / offline / copy (2026-04-07). Residual human UATs for **05-04**, **05.1-05**, **06-04**, **07-03**, and **07-04** are **signed off** (user 2026-04-07); **IMPT-01**, **IMPT-03**, **LOCK-01**, **LOCK-02** marked complete in REQUIREMENTS. **Phase 9** is in active execution — multi-algorithm prediction and confidence calendar (see `.planning/phases/09-prediction-of-next-period/09-CONTEXT.md`).
 
 ## Current Position
 
-Phase: **9** of 9 (Prediction of next period) — **planning** (no `09-*-PLAN.md` files yet).
+Phase: **9** of 9 (Prediction of next period) — **executing** (`09-01` complete; next **`09-02`**).
 
-**Current plan:** Run **`/gsd-plan-phase 9`** to decompose into executable plans.
+**Current plan:** **`09-02-PLAN.md`** — ensemble coordinator, confidence map, settings (see ROADMAP).
 
 **Prior phases (closed):** Phases **5**, **05.1**, **6**, **7**, **8** marked complete in ROADMAP with all plan checkboxes and pending UATs cleared per user confirmation.
 
-Status: **Phase 9 planning** — v1 feature work through Phase 8 is done; next engineering milestone is Phase 9 spec in ROADMAP.
+Status: **Phase 9 in progress** — algorithm foundation (Plan 01) shipped in domain package; ensemble + UI plans remain.
 
-Last activity: 2026-04-07 — Bulk UAT sign-off recorded; `gsd-tools phase complete` for **5**, **05.1**, **6**, **7**; requirements updated; ROADMAP/STATE reconciled.
+Last activity: 2026-04-07 — Executed **`09-01-PLAN.md`**: `PredictionAlgorithm` layer, four algorithms, tests; see `09-01-SUMMARY.md`.
 
-**Progress:** [██████████] 100% (v1 phased roadmap through Phase 8; Phase 9 not yet executed)
+**Progress:** [█████████░] Phase 9: **1/3** plans complete (09-01 done; 09-02 / 09-03 pending)
 
 ## Performance Metrics
 
@@ -72,6 +72,7 @@ Last activity: 2026-04-07 — Bulk UAT sign-off recorded; `gsd-tools phase compl
 | Phase 08-release-quality-offline-assurance-inclusive-copy P02 | 12 min | 1 tasks | 4 files |
 | Phase 08-release-quality-offline-assurance-inclusive-copy P01 | 18 min | 2 tasks | 11 files |
 | Phase 08-release-quality-offline-assurance-inclusive-copy P03 | 12 min | Task 1 auto; Task 2 UAT **pass** | see `08-03-SUMMARY.md` |
+| Phase 09-prediction-of-next-period P01 | 28 min | 2 tasks | see `09-01-SUMMARY.md` |
 
 ## Accumulated Context
 
@@ -125,13 +126,14 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 
 ### Pending Todos
 
-- **Phase 9:** Run **`/gsd-plan-phase 9`**, then **`/gsd-execute-phase 9`** when plans exist.
+- **Phase 9:** Execute **`09-02-PLAN.md`**, then **`09-03-PLAN.md`**; run **`/gsd-execute-phase 9`** continuation as needed.
 
 ### Roadmap Evolution
 
 - Phase 05.1 inserted after Phase 5: UX refactor - day-marking model and MVVM (URGENT) — replaces explicit start/end period actions with day-toggle model; refactors presentation layer to MVVM with ChangeNotifier ViewModels. Investigation document: `.planning/phases/05.1-ux-refactor-day-marking-model-and-mvvm/INVESTIGATION.md`.
 - Phase 9 added: Prediction of next period — multi-algorithm prediction (3+ algorithms), confidence-based calendar visualization showing agreement level across algorithms
 - 2026-04-07: User confirmed all remaining v1 human UATs (05-04, 05.1-05, 06-04, 07-03, 07-04); `requirements mark-complete` for IMPT-01, IMPT-03, LOCK-01, LOCK-02; `phase complete` for 5, 05.1, 6, 7; ROADMAP/STATE reconciled — **only Phase 9 remains in planning**.
+- [Phase 9 / 09-01]: Multi-algorithm domain foundation — `PredictionAlgorithm`, `MedianBaselineAlgorithm` (wraps `PredictionEngine`), `EwmaAlgorithm`, `BayesianAlgorithm`, `LinearTrendAlgorithm`, `EnsemblePredictionResult`; UTC helpers `addUtcCalendarDays` / `utcCalendarDateOnly` on `prediction_engine.dart`; tests in `prediction_algorithm_test.dart`.
 
 ### Blockers/Concerns
 
@@ -141,8 +143,8 @@ None.
 
 **Last session:** 2026-04-07
 
-**Stopped at:** Phases **5–8** (incl. **05.1**, **6**, **7**) fully signed off; **Phase 9** planning only
+**Stopped at:** **09-01** plan complete — domain algorithms + tests; next **09-02** ensemble coordinator
 
 **Resume file:** `.planning/phases/09-prediction-of-next-period/09-CONTEXT.md`
 
-**Next:** **`/gsd-plan-phase 9`** — sole active planning track; v1 Phase 1–8 UAT backlog cleared per user.
+**Next:** Execute **`09-02-PLAN.md`** (ensemble coordinator, confidence tiers, PredictionSettings).
