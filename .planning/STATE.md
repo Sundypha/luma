@@ -47,10 +47,10 @@ None at milestone definition time.
 
 ## Session Continuity
 
-**Last session:** 2026-04-07 — new milestone v2.0 initialized
+**Last session:** 2026-04-07T20:19:05.063Z
 
-**Stopped at:** Roadmap approved for execution planning
+**Stopped at:** Phase 10 context gathered
 
-**Resume file:** None
+**Resume file:** .planning/phases/10-internationalization-foundation/10-CONTEXT.md
 
 **Next:** `/gsd-discuss-phase 10` or `/gsd-plan-phase 10`
