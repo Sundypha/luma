@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A FOSS, privacy-first, **local-first** menstrual cycle tracker for mobile. Phase 1 delivers a daily-use app that works fully **offline**, requires **no account**, supports **period and symptom logging**, a **calendar** with clear actual vs predicted days, a **home** summary, **rules-based explainable predictions**, **full export/import**, and optional **local lock**—aligned with `period_tracker_prds/PRD_Phase_1_MVP.md`. Later phases (documented separately) add usability/trust depth, optional secure sync, and advanced on-device prediction.
+A FOSS, privacy-first, **local-first** menstrual cycle tracker for mobile. **v1 (Phase 1 MVP)** shipped as a daily-use app that works fully **offline**, requires **no account**, supports **period and symptom logging**, a **calendar** with clear actual vs predicted days, a **home** summary, **rules-based explainable predictions** (including multi-method ensemble display), **full export/import**, and optional **local lock**—aligned with `period_tracker_prds/PRD_Phase_1_MVP.md`. Later product phases (PRD Phase 2–4) cover usability/trust depth, optional secure sync, and advanced on-device prediction; **v2 roadmap is not yet opened** in `.planning/ROADMAP.md`.
 
 ## Core Value
 
@@ -12,41 +12,39 @@ A user can trust the app with sensitive health data because it runs **without ac
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] **v1 Phase 1 MVP** (closed 2026-04-07): onboarding, logging, calendar, home, prediction (deterministic + ensemble UI), export/import, optional lock — see `.planning/milestones/v1/REQUIREMENTS.md`
 
 ### Active
 
-- [ ] Phase 1 MVP: onboarding, logging, calendar, home, prediction v1, export/import, optional lock
-- [ ] Engineering: Flutter app managed with **FVM**; features delivered with **TDD** (tests first where practical)
-- [ ] Non-functional: performance, reliability (migrations), privacy-by-default (no analytics/ads SDKs), accessibility/clarity per Phase 1 PRD
+- [ ] **v2+**: To be defined from `PRD_Phase_2_Usability_and_Trust.md` and follow-on PRDs when the next milestone is planned
 
 ### Out of Scope
 
-- **Cloud backup, multi-device sync, accounts** — Phase 3 PRD; would violate Phase 1 local-first promise if shipped early
-- **ML / “smart” opaque prediction** — Phase 4; Phase 1 requires deterministic, explainable rules only
-- **Medical claims, fertility-treatment mode, partner/clinician flows, wearables, social** — explicit Phase 1 non-goals per PRD
+- **Cloud backup, multi-device sync, accounts** — Product Phase 3 PRD; excluded from v1
+- **ML / opaque “black box” prediction** — Product Phase 4 PRD; v1 stays explainable on-device rules
+- **Medical claims, fertility-treatment mode, partner/clinician flows, wearables, social** — explicit v1 non-goals per PRD
 
 ## Context
 
-- **Source of truth for product scope:** `period_tracker_prds/` (README plus Phase 1–4 PRDs). Phase 1 MVP is the initial build target.
-- **Existing repo state:** PRDs and exploratory `.planning/analysis/` from codebase mapping; **no Flutter app scaffold yet**.
+- **Source of truth for product scope:** `period_tracker_prds/` (README plus Phase 1–4 PRDs). **v1** matched PRD Phase 1 MVP.
+- **Repository:** Flutter monorepo (`apps/ptrack`, `packages/ptrack_domain`, `packages/ptrack_data`), FVM-pinned SDK, Melos workspace.
 - **Users:** Primary — privacy-conscious people wanting straightforward cycle tracking without commercial cloud dependency. Secondary — contributors who care about open formats and inspectable behavior.
 
 ## Constraints
 
-- **Tech stack:** **Flutter** for mobile, toolchain pinned with **FVM** (consistent dev/CI Flutter SDK).
-- **Quality:** **Test-Driven Development** — new behavior specified by tests where feasible; migrations and prediction rules especially require automated tests per PRD reliability themes.
-- **Privacy / network:** Phase 1 must not depend on connectivity for core flows; dependency choices must avoid default telemetry/ads (see PRD §7.3).
+- **Tech stack:** **Flutter** for mobile, toolchain pinned with **FVM**.
+- **Quality:** **Test-Driven Development** where feasible; migrations and prediction paths covered by automated tests.
+- **Privacy / network:** Core flows must not depend on connectivity; avoid default telemetry/ads (see PRD §7.3).
 - **Legal/ethical framing:** No contraception reliability or medical-authority claims; predictions labeled as estimates.
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| **Flutter + FVM** | Cross-platform mobile with a single codebase; FVM pins SDK for reproducible builds and CI. | — Pending |
-| **TDD** | PRD stresses deterministic prediction, safe migrations, and no silent data loss—tests are the primary guardrail. | — Pending |
-| **Phase 1 scope = PRD Phase 1 only** | Narrow MVP so storage, dates, prediction, and export semantics stay correct before sync/ML. | — Pending |
-| **Requirements trace PRD acceptance tests** | Phase 1 completion criteria in PRD §10 map to verifiable engineering work. | — Pending |
+| **Flutter + FVM** | Cross-platform mobile with a single codebase; FVM pins SDK for reproducible builds and CI. | **Delivered** (v1) |
+| **TDD** | Deterministic prediction, safe migrations, and no silent data loss—tests as guardrail. | **Delivered** (v1) |
+| **v1 scope = PRD Phase 1 MVP** | Narrow MVP so storage, dates, prediction, and export semantics stay correct before sync/ML. | **Shipped** 2026-04-07 |
+| **Requirements trace PRD acceptance tests** | Phase 1 completion criteria map to verifiable engineering work. | **Complete** for v1 (see archived REQUIREMENTS) |
 
 ---
-*Last updated: 2026-04-04 after initialization (gsd-new-project; input: period_tracker_prds/; stack: Flutter FVM; TDD)*
+*Last updated: 2026-04-07 — v1 milestone archived; PROJECT evolved for post-v1 planning.*
