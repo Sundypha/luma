@@ -8,6 +8,27 @@ void _assertNoForbiddenPhrases(String text) {
   }
 }
 
+/// ISO-like YYYY-MM-DD anywhere in [s] without using a regex pattern.
+bool _containsYyyyMmDdPattern(String s) {
+  bool isDigit(int j) =>
+      j >= 0 && j < s.length && s.codeUnitAt(j) >= 0x30 && s.codeUnitAt(j) <= 0x39;
+  for (var i = 0; i <= s.length - 10; i++) {
+    if (isDigit(i) &&
+        isDigit(i + 1) &&
+        isDigit(i + 2) &&
+        isDigit(i + 3) &&
+        s[i + 4] == '-' &&
+        isDigit(i + 5) &&
+        isDigit(i + 6) &&
+        s[i + 7] == '-' &&
+        isDigit(i + 8) &&
+        isDigit(i + 9)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 void main() {
   final engine = PredictionEngine();
 
@@ -63,7 +84,7 @@ void main() {
         steps: out.explanation,
       );
       expect(
-        RegExp(r'\d{4}-\d{2}-\d{2}').hasMatch(text),
+        _containsYyyyMmDdPattern(text),
         isFalse,
         reason: 'insufficient history should not surface calendar dates',
       );

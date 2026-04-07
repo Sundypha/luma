@@ -163,8 +163,8 @@ class PredictionEngine {
     );
 
     if (spread >= thresholds.highVariabilityMinSpreadDays) {
-      final rangeStart = _addUtcCalendarDays(anchorUtc, minLen);
-      final rangeEnd = _addUtcCalendarDays(anchorUtc, maxLen);
+      final rangeStart = addUtcCalendarDays(anchorUtc, minLen);
+      final rangeEnd = addUtcCalendarDays(anchorUtc, maxLen);
       explanation.add(
         ExplanationStep(
           kind: ExplanationFactKind.highVariabilityRange,
@@ -188,9 +188,9 @@ class PredictionEngine {
       );
     }
 
-    final point = _addUtcCalendarDays(anchorUtc, median);
-    final rangeStart = _addUtcCalendarDays(anchorUtc, minLen);
-    final rangeEnd = _addUtcCalendarDays(anchorUtc, maxLen);
+    final point = addUtcCalendarDays(anchorUtc, median);
+    final rangeStart = addUtcCalendarDays(anchorUtc, minLen);
+    final rangeEnd = addUtcCalendarDays(anchorUtc, maxLen);
 
     return PredictionEngineResult(
       result: PredictionPointWithRange(
@@ -282,13 +282,15 @@ class PredictionEngine {
   }
 }
 
-DateTime _utcDateOnly(DateTime utc) {
+/// Strips the time component; returns the same calendar day at UTC midnight.
+DateTime utcCalendarDateOnly(DateTime utc) {
   final u = utc.toUtc();
   return DateTime.utc(u.year, u.month, u.day);
 }
 
-DateTime _addUtcCalendarDays(DateTime utcInstant, int days) {
-  final d = _utcDateOnly(utcInstant);
+/// Adds [days] whole calendar days in UTC to [utcInstant]'s UTC calendar date.
+DateTime addUtcCalendarDays(DateTime utcInstant, int days) {
+  final d = utcCalendarDateOnly(utcInstant);
   return d.add(Duration(days: days));
 }
 

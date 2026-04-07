@@ -113,5 +113,26 @@ String? _formatStep(ExplanationStep step) {
 
     case ExplanationFactKind.enginePending:
       return null;
+
+    case ExplanationFactKind.ewmaSmoothedLength:
+      final days = step.payload['smoothedDays'] as int?;
+      final alpha = step.payload['alpha'] as double?;
+      if (days == null || alpha == null) return null;
+      return 'Recent-weighted spacing (EWMA, α=$alpha) suggests about $days days.';
+
+    case ExplanationFactKind.bayesianPosteriorMean:
+      final mean = step.payload['posteriorMeanDays'] as double?;
+      final n = step.payload['observationCount'] as int?;
+      if (mean == null || n == null) return null;
+      return 'Pattern-learning estimate (posterior mean) is about '
+          '${mean.toStringAsFixed(1)} days from $n cycle lengths.';
+
+    case ExplanationFactKind.linearTrendProjection:
+      final proj = step.payload['projectedDays'] as int?;
+      final r2 = step.payload['rSquared'] as double?;
+      final slope = step.payload['slope'] as double?;
+      if (proj == null || r2 == null || slope == null) return null;
+      return 'Trend line (R²=${r2.toStringAsFixed(2)}, slope=${slope.toStringAsFixed(2)} '
+          'days per cycle) projects about $proj days for the next spacing.';
   }
 }

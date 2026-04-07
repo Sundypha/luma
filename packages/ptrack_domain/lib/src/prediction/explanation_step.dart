@@ -21,6 +21,15 @@ enum ExplanationFactKind {
 
   /// Placeholder until the prediction engine (Plan 03) fills real steps.
   enginePending,
+
+  /// Recency-weighted (EWMA) projected cycle length (multi-algorithm).
+  ewmaSmoothedLength,
+
+  /// Normal–Inverse-Gamma posterior mean point estimate.
+  bayesianPosteriorMean,
+
+  /// Linear regression on cycle index (trend projection).
+  linearTrendProjection,
 }
 
 /// One ordered, factual explanation step independent of Flutter widgets.
