@@ -6,7 +6,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** Phase 5 (calendar surfaces) and **Phase 05.1** (day-marking UX + MVVM refactor) in parallel until 05-04 sign-off; **Phase 6 plan 06-04** Task 2 (export/import UAT) pending; **Phase 7 gap plan `07-04` Tasks 1–2** complete 2026-04-06 (`273e1bc`, `a423f43` — navigator pop-before-lock + tests; see `07-04-SUMMARY.md`); **`07-04` Task 3** and **`07-03` Task 2** human UAT still pending for LOCK-01/LOCK-02 sign-off. **Phase 8:** **`08-02-PLAN.md`** complete 2026-04-07 (`5fe3b43` — ViewModel seeding; see `08-02-SUMMARY.md`); **`08-01`** / **`08-03`** pending; device smoke for spinner elimination still recommended.
+**Current focus:** Phase 5 (calendar surfaces) and **Phase 05.1** (day-marking UX + MVVM refactor) in parallel until 05-04 sign-off; **Phase 6 plan 06-04** Task 2 (export/import UAT) pending; **Phase 7 gap plan `07-04` Tasks 1–2** complete 2026-04-06 (`273e1bc`, `a423f43` — navigator pop-before-lock + tests; see `07-04-SUMMARY.md`); **`07-04` Task 3** and **`07-03` Task 2** human UAT still pending for LOCK-01/LOCK-02 sign-off. **Phase 8:** **`08-01-PLAN.md`** complete 2026-04-07 (`7ac8e87`, `fb8c9f5` — inclusive copy + a11y tooltips; see `08-01-SUMMARY.md`); **`08-02-PLAN.md`** complete (`5fe3b43`); **`08-03`** pending (offline assurance).
 
 ## Current Position
 
@@ -144,6 +144,6 @@ None.
 
 **Stopped at:** Completed 08-01-PLAN.md
 
-**Resume file:** .planning/phases/08-release-quality-offline-assurance-inclusive-copy/08-02-PLAN.md
+**Resume file:** .planning/phases/08-release-quality-offline-assurance-inclusive-copy/08-03-PLAN.md
 
 **Next (Phase 7):** Run **`07-03-PLAN.md` Task 2** human verification (10 items); then mark plan complete in ROADMAP / requirements as appropriate. **Phase 6:** Human verification for **06-04 Task 2** still open.

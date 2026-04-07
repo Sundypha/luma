@@ -227,7 +227,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] `08-01-PLAN.md` — Copy audit, inclusive language, label clarity & accessibility labels (NFR-05, NFR-07)
+- [x] `08-01-PLAN.md` — Copy audit, inclusive language, label clarity & accessibility labels (NFR-05, NFR-07) — complete 2026-04-07 (`7ac8e87`, `fb8c9f5`; see `08-01-SUMMARY.md`)
 - [x] `08-02-PLAN.md` — Performance feel: initial-load spinner elimination & responsiveness verification (NFR-01) — complete 2026-04-07 (`5fe3b43`; see `08-02-SUMMARY.md`)
 - [ ] `08-03-PLAN.md` — Offline assurance: automated network dependency checks & airplane-mode walkthrough (NFR-08)
 
@@ -246,7 +246,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 | 5. Calendar, home & cycle surfaces | 3/4 | In Progress|  |
 | 6. Export & import | 4/4 | Complete   | 2026-04-06 |
 | 7. App protection (lock) | 1/3 | In Progress|  |
-| 8. Release quality, offline assurance & inclusive copy | 1/3 | In Progress |  |
+| 8. Release quality, offline assurance & inclusive copy | 2/3 | In Progress |  |
 | 9. Prediction of next period | 0/TBD | Not started | - |
 
 ### Phase 9: Prediction of next period
