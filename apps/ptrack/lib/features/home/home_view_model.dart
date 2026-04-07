@@ -77,7 +77,14 @@ int? _todayPeriodId(
 
 /// Home tab state: cycle summary, today entry, prediction, mark-today command.
 class HomeViewModel extends ChangeNotifier {
-  HomeViewModel(this._repository, this._calendar) {
+  HomeViewModel(
+    this._repository,
+    this._calendar, {
+    List<StoredPeriodWithDays>? initialData,
+  }) {
+    if (initialData != null) {
+      _applyData(initialData);
+    }
     _subscription = _repository.watchPeriodsWithDays().listen(
       _onData,
       onError: _onStreamError,
@@ -120,11 +127,15 @@ class HomeViewModel extends ChangeNotifier {
   StoredDayEntry? get todayStoredEntry =>
       _findTodayStoredEntry(_periodsWithDays, DateTime.now());
 
-  void _onData(List<StoredPeriodWithDays> data) {
+  void _applyData(List<StoredPeriodWithDays> data) {
     _loadError = null;
     _hasInitialEvent = true;
     _periodsWithDays = data;
     _recompute();
+  }
+
+  void _onData(List<StoredPeriodWithDays> data) {
+    _applyData(data);
     notifyListeners();
   }
 

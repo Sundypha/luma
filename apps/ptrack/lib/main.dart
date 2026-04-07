@@ -24,6 +24,7 @@ Future<void> main() async {
   final calendar = calendarForDevice();
   final repository = PeriodRepository(database: db, calendar: calendar);
   final periods = await repository.listOrderedByStartUtc();
+  final periodsWithDays = await repository.watchPeriodsWithDays().first;
 
   final AppScreen initialScreen;
   if (!onboardingState.isCompleted) {
@@ -42,6 +43,7 @@ Future<void> main() async {
       calendar: calendar,
       initialScreen: initialScreen,
       lockService: lockService,
+      initialPeriodsWithDays: periodsWithDays,
     ),
   );
 }
@@ -74,6 +76,7 @@ class LumaApp extends StatefulWidget {
     this.initialScreen,
     this.lockService,
     this.homeOverride,
+    this.initialPeriodsWithDays,
   }) : assert(
           homeOverride != null ||
               (onboardingState != null &&
@@ -93,6 +96,7 @@ class LumaApp extends StatefulWidget {
   final PeriodCalendarContext? calendar;
   final AppScreen? initialScreen;
   final LockService? lockService;
+  final List<StoredPeriodWithDays>? initialPeriodsWithDays;
 
   @override
   State<LumaApp> createState() => _LumaAppState();
@@ -179,6 +183,7 @@ class _LumaAppState extends State<LumaApp> {
               _resetApp();
             },
             onLockNow: () => _lockNowSignal.value++,
+            initialPeriodsWithDays: widget.initialPeriodsWithDays,
           ),
         );
     }

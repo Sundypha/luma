@@ -8,7 +8,14 @@ import 'calendar_day_data.dart';
 
 /// Reactive calendar state: period stream, prediction, day map, and selection.
 class CalendarViewModel extends ChangeNotifier {
-  CalendarViewModel(this._repository, this._calendar) {
+  CalendarViewModel(
+    this._repository,
+    this._calendar, {
+    List<StoredPeriodWithDays>? initialData,
+  }) {
+    if (initialData != null) {
+      _applyData(initialData);
+    }
     _subscription = _repository.watchPeriodsWithDays().listen(
       _onData,
       onError: _onStreamError,
@@ -92,11 +99,15 @@ class CalendarViewModel extends ChangeNotifier {
 
   Future<void> unmarkDay(DateTime day) => _repository.unmarkDay(day);
 
-  void _onData(List<StoredPeriodWithDays> data) {
+  void _applyData(List<StoredPeriodWithDays> data) {
     _loadError = null;
     _hasInitialEvent = true;
     _periodsWithDays = data;
     _recompute();
+  }
+
+  void _onData(List<StoredPeriodWithDays> data) {
+    _applyData(data);
     notifyListeners();
   }
 

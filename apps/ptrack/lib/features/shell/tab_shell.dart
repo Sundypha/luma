@@ -22,10 +22,13 @@ class TabShell extends StatefulWidget {
     required this.lockService,
     required this.onReset,
     required this.onLockNow,
+    this.initialPeriodsWithDays,
   });
 
   final PeriodRepository repository;
   final PeriodCalendarContext calendar;
+  /// When non-null, home and calendar ViewModels start with data (no loading flash).
+  final List<StoredPeriodWithDays>? initialPeriodsWithDays;
   final LockService lockService;
   final VoidCallback onReset;
   final VoidCallback onLockNow;
@@ -42,8 +45,16 @@ class _TabShellState extends State<TabShell> {
   @override
   void initState() {
     super.initState();
-    _calendarVm = CalendarViewModel(widget.repository, widget.calendar);
-    _homeVm = HomeViewModel(widget.repository, widget.calendar);
+    _calendarVm = CalendarViewModel(
+      widget.repository,
+      widget.calendar,
+      initialData: widget.initialPeriodsWithDays,
+    );
+    _homeVm = HomeViewModel(
+      widget.repository,
+      widget.calendar,
+      initialData: widget.initialPeriodsWithDays,
+    );
   }
 
   @override
