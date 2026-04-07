@@ -93,6 +93,7 @@ class HomeViewModel extends ChangeNotifier {
 
   final PeriodRepository _repository;
   final PeriodCalendarContext _calendar;
+  final EnsembleCoordinator _ensembleCoordinator = EnsembleCoordinator();
 
   PeriodRepository get repository => _repository;
   PeriodCalendarContext get calendar => _calendar;
@@ -103,6 +104,8 @@ class HomeViewModel extends ChangeNotifier {
   CyclePosition? _cyclePosition;
   DayEntryData? _todayEntry;
   bool _isTodayMarked = false;
+  EnsemblePredictionResult? _ensembleResult;
+  int _previousActiveCount = 0;
   PredictionResult _prediction = const PredictionInsufficientHistory(
     completedCyclesAvailable: 0,
     minCompletedCyclesNeeded: 2,
@@ -119,6 +122,11 @@ class HomeViewModel extends ChangeNotifier {
   bool get isTodayMarked => _isTodayMarked;
   PredictionResult get prediction => _prediction;
   List<StoredPeriodWithDays> get periodsWithDays => _periodsWithDays;
+
+  String? get milestoneMessage => _ensembleResult?.milestoneMessage;
+  String get ensembleExplanationText =>
+      _ensembleResult?.explanationText ?? '';
+  int get activeAlgorithmCount => _ensembleResult?.activeAlgorithmCount ?? 0;
 
   /// Period row id covering today's calendar day, if any.
   int? get todayPeriodId => _todayPeriodId(_periodsWithDays, DateTime.now());
@@ -148,11 +156,14 @@ class HomeViewModel extends ChangeNotifier {
   void _recompute() {
     final today = DateTime.now();
     final storedPeriods = _periodsWithDays.map((p) => p.period).toList();
-    final coordinatorResult = PredictionCoordinator().predictNext(
+    final ensemble = _ensembleCoordinator.predictNext(
       storedPeriods: storedPeriods,
       calendar: _calendar,
+      previousActiveCount: _previousActiveCount,
     );
-    _prediction = coordinatorResult.result;
+    _ensembleResult = ensemble;
+    _previousActiveCount = ensemble.activeAlgorithmCount;
+    _prediction = ensemble.consensusPrediction;
     _cyclePosition = computeCyclePosition(
       periods: _periodsWithDays,
       prediction: _prediction,

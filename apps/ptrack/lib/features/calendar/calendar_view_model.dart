@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 
+import '../settings/prediction_settings.dart';
 import 'calendar_day_data.dart';
 
 /// Reactive calendar state: period stream, prediction, day map, and selection.
@@ -20,10 +21,22 @@ class CalendarViewModel extends ChangeNotifier {
       _onData,
       onError: _onStreamError,
     );
+    unawaited(
+      PredictionSettings.load().then((mode) {
+        _displayMode = mode;
+        _recompute();
+        notifyListeners();
+      }),
+    );
   }
 
   final PeriodRepository _repository;
   final PeriodCalendarContext _calendar;
+  final EnsembleCoordinator _ensembleCoordinator = EnsembleCoordinator();
+
+  PredictionDisplayMode _displayMode = PredictionDisplayMode.consensusOnly;
+  EnsemblePredictionResult? _ensembleResult;
+  int _previousActiveCount = 0;
 
   PeriodRepository get repository => _repository;
   PeriodCalendarContext get calendar => _calendar;
@@ -48,6 +61,7 @@ class CalendarViewModel extends ChangeNotifier {
 
   Map<DateTime, CalendarDayData> get dayDataMap => _dayDataMap;
   PredictionResult get prediction => _prediction;
+  EnsemblePredictionResult? get ensembleResult => _ensembleResult;
   List<StoredPeriodWithDays> get periodsWithDays => _periodsWithDays;
 
   DateTime get focusedDay => _focusedDay;
@@ -99,6 +113,14 @@ class CalendarViewModel extends ChangeNotifier {
 
   Future<void> unmarkDay(DateTime day) => _repository.unmarkDay(day);
 
+  Future<void> updateDisplayMode(PredictionDisplayMode mode) async {
+    if (_displayMode == mode) return;
+    _displayMode = mode;
+    await PredictionSettings.save(mode);
+    _recompute();
+    notifyListeners();
+  }
+
   void _applyData(List<StoredPeriodWithDays> data) {
     _loadError = null;
     _hasInitialEvent = true;
@@ -119,14 +141,18 @@ class CalendarViewModel extends ChangeNotifier {
 
   void _recompute() {
     final storedPeriods = _periodsWithDays.map((p) => p.period).toList();
-    final predResult = PredictionCoordinator().predictNext(
+    final ensemble = _ensembleCoordinator.predictNext(
       storedPeriods: storedPeriods,
       calendar: _calendar,
+      previousActiveCount: _previousActiveCount,
     );
-    _prediction = predResult.result;
+    _ensembleResult = ensemble;
+    _previousActiveCount = ensemble.activeAlgorithmCount;
+    _prediction = ensemble.consensusPrediction;
     _dayDataMap = buildCalendarDayDataMap(
       periodsWithDays: _periodsWithDays,
-      prediction: _prediction,
+      ensemble: ensemble,
+      displayMode: _displayMode,
       today: DateTime.now(),
       startingDayOfWeek: DateTime.monday,
     );

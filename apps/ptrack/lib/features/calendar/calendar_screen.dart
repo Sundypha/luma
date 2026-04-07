@@ -74,6 +74,11 @@ class CalendarScreen extends StatelessWidget {
             startingDayOfWeek: StartingDayOfWeek.monday,
           ),
         ),
+        if ((viewModel.ensembleResult?.activeAlgorithmCount ?? 0) > 0)
+          Padding(
+            padding: const EdgeInsets.only(top: 4, bottom: 8),
+            child: buildConfidenceLegend(context),
+          ),
         if (viewModel.showTodayButton)
           Center(
             child: TextButton.icon(

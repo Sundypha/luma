@@ -103,34 +103,45 @@ class PeriodBandPainter extends CustomPainter {
   }
 }
 
-/// Diagonal-stripe circle for predicted period days (distinct from solid logged band).
-class HatchedCirclePainter extends CustomPainter {
-  HatchedCirclePainter({
+/// Diagonal-stripe circle for predicted days: opacity + hatch density encode agreement
+/// tier (NFR-06 — not color alone).
+class ConfidenceHatchedCirclePainter extends CustomPainter {
+  ConfidenceHatchedCirclePainter({
+    required int tier,
     this.color = kPeriodColorLight,
-    this.stripeSpacing = 4.0,
-  });
+  }) : tier = tier.clamp(1, 3);
 
+  final int tier;
   final Color color;
-  final double stripeSpacing;
+
+  static const Map<int, ({double opacity, double spacing, double strokeWidth})>
+      _tierConfig = {
+    1: (opacity: 0.30, spacing: 7.0, strokeWidth: 1.0),
+    2: (opacity: 0.55, spacing: 4.5, strokeWidth: 1.3),
+    3: (opacity: 0.85, spacing: 3.0, strokeWidth: 1.6),
+  };
 
   @override
   void paint(Canvas canvas, Size size) {
+    final cfg = _tierConfig[tier]!;
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.shortestSide * 0.36;
     final circlePath = Path()
       ..addOval(Rect.fromCircle(center: center, radius: radius));
 
+    final strokeColor = color.withValues(alpha: cfg.opacity);
+
     canvas.save();
     canvas.clipPath(circlePath);
 
     final stripePaint = Paint()
-      ..color = color
-      ..strokeWidth = 1.5
+      ..color = strokeColor
+      ..strokeWidth = cfg.strokeWidth
       ..style = PaintingStyle.stroke;
 
     for (var offset = -size.height;
         offset < size.width + size.height;
-        offset += stripeSpacing) {
+        offset += cfg.spacing) {
       canvas.drawLine(
         Offset(offset, size.height),
         Offset(offset + size.height, 0),
@@ -144,16 +155,15 @@ class HatchedCirclePainter extends CustomPainter {
       center,
       radius,
       Paint()
-        ..color = color
+        ..color = strokeColor
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5,
+        ..strokeWidth = cfg.strokeWidth,
     );
   }
 
   @override
-  bool shouldRepaint(covariant HatchedCirclePainter oldDelegate) {
-    return oldDelegate.color != color ||
-        oldDelegate.stripeSpacing != stripeSpacing;
+  bool shouldRepaint(covariant ConfidenceHatchedCirclePainter oldDelegate) {
+    return oldDelegate.tier != tier || oldDelegate.color != color;
   }
 }
 
@@ -225,9 +235,13 @@ Widget buildCalendarDayCell(DateTime day, CalendarDayData data) {
                   painter: PeriodBandPainter(state: data.loggedPeriodState),
                 ),
               ),
-            if (data.isPredictedPeriod && !hasPeriod)
+            if (data.predictionConfidenceTier > 0 && !hasPeriod)
               Positioned.fill(
-                child: CustomPaint(painter: HatchedCirclePainter()),
+                child: CustomPaint(
+                  painter: ConfidenceHatchedCirclePainter(
+                    tier: data.predictionConfidenceTier,
+                  ),
+                ),
               ),
             if (data.isToday && !hasPeriod)
               Positioned.fill(
@@ -254,6 +268,45 @@ Widget buildCalendarDayCell(DateTime day, CalendarDayData data) {
         ),
       ),
     ],
+  );
+}
+
+/// Compact legend for prediction agreement tiers (below calendar grid).
+Widget buildConfidenceLegend(BuildContext context) {
+  final theme = Theme.of(context);
+  final style = theme.textTheme.bodySmall?.copyWith(
+    color: theme.colorScheme.onSurfaceVariant,
+  );
+  Widget swatch(int tier, String label) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: 16,
+          height: 16,
+          child: CustomPaint(
+            painter: ConfidenceHatchedCirclePainter(tier: tier),
+          ),
+        ),
+        const SizedBox(width: 6),
+        Text(label, style: style),
+      ],
+    );
+  }
+
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 8),
+    child: Wrap(
+      spacing: 16,
+      runSpacing: 6,
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        swatch(1, '1 method'),
+        swatch(2, '2 methods'),
+        swatch(3, '3+ methods'),
+      ],
+    ),
   );
 }
 
