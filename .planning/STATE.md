@@ -6,21 +6,21 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** **Phase 1 (v1) roadmap phases 1–8 are complete** through release-quality / offline / copy (2026-04-07). Residual human UATs for **05-04**, **05.1-05**, **06-04**, **07-03**, and **07-04** are **signed off** (user 2026-04-07); **IMPT-01**, **IMPT-03**, **LOCK-01**, **LOCK-02** marked complete in REQUIREMENTS. **Phase 9** is in active execution — multi-algorithm prediction and confidence calendar (see `.planning/phases/09-prediction-of-next-period/09-CONTEXT.md`).
+**Current focus:** **Phase 1 (v1) roadmap phases 1–8 are complete** through release-quality / offline / copy (2026-04-07). Residual human UATs for **05-04**, **05.1-05**, **06-04**, **07-03**, and **07-04** are **signed off** (user 2026-04-07); **IMPT-01**, **IMPT-03**, **LOCK-01**, **LOCK-02** marked complete in REQUIREMENTS. **Phase 9** is in active execution — ensemble + calendar tiers complete (**09-02**); UI wiring remains (**09-03**) (see `.planning/phases/09-prediction-of-next-period/09-CONTEXT.md`).
 
 ## Current Position
 
-Phase: **9** of 9 (Prediction of next period) — **executing** (`09-01` complete; next **`09-02`**).
+Phase: **9** of 9 (Prediction of next period) — **executing** (`09-01` and **`09-02`** complete; next **`09-03`**).
 
-**Current plan:** **`09-02-PLAN.md`** — ensemble coordinator, confidence map, settings (see ROADMAP).
+**Current plan:** **`09-03-PLAN.md`** — confidence painters, ViewModel ensemble wiring, day detail / settings UI (see ROADMAP).
 
 **Prior phases (closed):** Phases **5**, **05.1**, **6**, **7**, **8** marked complete in ROADMAP with all plan checkboxes and pending UATs cleared per user confirmation.
 
-Status: **Phase 9 in progress** — algorithm foundation (Plan 01) shipped in domain package; ensemble + UI plans remain.
+Status: **Phase 9 in progress** — **09-01** / **09-02** complete; **09-03** (UI) pending.
 
-Last activity: 2026-04-07 — Executed **`09-01-PLAN.md`**: `PredictionAlgorithm` layer, four algorithms, tests; see `09-01-SUMMARY.md`.
+Last activity: 2026-04-07 — Executed **`09-02-PLAN.md`**: `EnsembleCoordinator`, calendar tiers, `PredictionSettings`; see `09-02-SUMMARY.md`.
 
-**Progress:** [█████████░] Phase 9: **1/3** plans complete (09-01 done; 09-02 / 09-03 pending)
+**Progress:** [██████████] Phase 9: **2/3** plans complete (09-03 pending). Overall roadmap: **97%** (per `gsd-tools state update-progress`).
 
 ## Performance Metrics
 
@@ -73,6 +73,8 @@ Last activity: 2026-04-07 — Executed **`09-01-PLAN.md`**: `PredictionAlgorithm
 | Phase 08-release-quality-offline-assurance-inclusive-copy P01 | 18 min | 2 tasks | 11 files |
 | Phase 08-release-quality-offline-assurance-inclusive-copy P03 | 12 min | Task 1 auto; Task 2 UAT **pass** | see `08-03-SUMMARY.md` |
 | Phase 09-prediction-of-next-period P01 | 28 min | 2 tasks | see `09-01-SUMMARY.md` |
+| Phase 09-prediction-of-next-period P02 | 45 min | 2 tasks | see `09-02-SUMMARY.md` |
+| Phase 09-prediction-of-next-period P02 | 45min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -126,7 +128,7 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 
 ### Pending Todos
 
-- **Phase 9:** Execute **`09-02-PLAN.md`**, then **`09-03-PLAN.md`**; run **`/gsd-execute-phase 9`** continuation as needed.
+- **Phase 9:** Execute **`09-03-PLAN.md`**; run **`/gsd-execute-phase 9`** continuation as needed.
 
 ### Roadmap Evolution
 
@@ -134,6 +136,7 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - Phase 9 added: Prediction of next period — multi-algorithm prediction (3+ algorithms), confidence-based calendar visualization showing agreement level across algorithms
 - 2026-04-07: User confirmed all remaining v1 human UATs (05-04, 05.1-05, 06-04, 07-03, 07-04); `requirements mark-complete` for IMPT-01, IMPT-03, LOCK-01, LOCK-02; `phase complete` for 5, 05.1, 6, 7; ROADMAP/STATE reconciled — **only Phase 9 remains in planning**.
 - [Phase 9 / 09-01]: Multi-algorithm domain foundation — `PredictionAlgorithm`, `MedianBaselineAlgorithm` (wraps `PredictionEngine`), `EwmaAlgorithm`, `BayesianAlgorithm`, `LinearTrendAlgorithm`, `EnsemblePredictionResult`; UTC helpers `addUtcCalendarDays` / `utcCalendarDateOnly` on `prediction_engine.dart`; tests in `prediction_algorithm_test.dart`.
+- [Phase 9 / 09-02]: `EnsembleCoordinator` (shared median bleed duration, `dayConfidenceMap`, milestones, consensus via `PredictionCoordinator`); ensemble explanation copy + extended `ExplanationFactKind`; `CalendarDayData` tiers + `buildCalendarDayDataMap` ensemble/display-mode path + legacy adapter; `PredictionSettings` / `PredictionDisplayMode`.
 
 ### Blockers/Concerns
 
@@ -141,10 +144,10 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-07
+**Last session:** 2026-04-07T13:10:06.488Z
 
-**Stopped at:** **09-01** plan complete — domain algorithms + tests; next **09-02** ensemble coordinator
+**Stopped at:** Completed 09-02-PLAN.md
 
 **Resume file:** `.planning/phases/09-prediction-of-next-period/09-CONTEXT.md`
 
-**Next:** Execute **`09-02-PLAN.md`** (ensemble coordinator, confidence tiers, PredictionSettings).
+**Next:** Execute **`09-03-PLAN.md`** (painters, ViewModel + ensemble, day detail, settings tile).

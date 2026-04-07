@@ -248,7 +248,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 | 6. Export & import | 4/4 | Complete    | 2026-04-07 |
 | 7. App protection (lock) | 4/4 | Complete    | 2026-04-07 |
 | 8. Release quality, offline assurance & inclusive copy | 3/3 | Complete    | 2026-04-07 |
-| 9. Prediction of next period | 1/3 | In progress    | 2026-04-07 (09-01) |
+| 9. Prediction of next period | 2/3 | In Progress|  |
 
 ### Phase 9: Prediction of next period
 
@@ -276,12 +276,12 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 
 **Requirements:** PRED-01, PRED-02, PRED-03, PRED-04 (extended), NFR-06
 
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 
 - [x] `09-01-PLAN.md` — Algorithm foundation: PredictionAlgorithm interface, MedianBaselineAlgorithm adapter, EwmaAlgorithm, BayesianAlgorithm, LinearTrendAlgorithm, unit tests
-- [ ] `09-02-PLAN.md` — Ensemble coordinator, multi-algorithm explanation copy, CalendarDayData confidence tiers, PredictionSettings
+- [x] `09-02-PLAN.md` — Ensemble coordinator, multi-algorithm explanation copy, CalendarDayData confidence tiers, PredictionSettings
 - [ ] `09-03-PLAN.md` — ConfidenceHatchedCirclePainter, ViewModel ensemble wiring, day detail agreement UX, home explanation link, milestone messages, settings tile
 
 ---
