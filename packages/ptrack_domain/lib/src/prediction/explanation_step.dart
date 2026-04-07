@@ -30,6 +30,15 @@ enum ExplanationFactKind {
 
   /// Linear regression on cycle index (trend projection).
   linearTrendProjection,
+
+  /// One ensemble member's predicted start window (payload: algorithmId, displayName, …).
+  algorithmContribution,
+
+  /// Ensemble agreement summary (payload: activeCount, totalCount, agreementSummary).
+  ensembleConsensus,
+
+  /// User-facing milestone when more algorithms become active (payload: activeCount, message).
+  milestoneReached,
 }
 
 /// One ordered, factual explanation step independent of Flutter widgets.

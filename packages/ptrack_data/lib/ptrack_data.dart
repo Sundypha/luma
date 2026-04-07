@@ -61,6 +61,7 @@ export 'src/prediction/prediction_coordinator.dart'
         PredictionCoordinator,
         PredictionCoordinatorResult,
         predictionCycleInputsFromStored;
+export 'src/prediction/ensemble_coordinator.dart' show EnsembleCoordinator;
 
 /// Identifies the data package; used to verify monorepo wiring.
 class PtrackData {

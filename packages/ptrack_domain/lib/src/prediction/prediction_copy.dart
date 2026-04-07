@@ -1,4 +1,6 @@
 import 'explanation_step.dart';
+import 'ensemble_result.dart';
+import 'prediction_algorithm.dart';
 import 'prediction_result.dart';
 
 /// Phrases that must never appear in user-facing prediction copy (PRED-04 guardrails).
@@ -22,6 +24,61 @@ String formatUtcCalendarDate(DateTime utc) {
   final m = u.month.toString().padLeft(2, '0');
   final d = u.day.toString().padLeft(2, '0');
   return '$y-$m-$d';
+}
+
+/// One-line agreement line for a predicted calendar day (day detail sheet).
+String formatDayAgreementSummary({
+  required int agreementCount,
+  required int activeCount,
+}) =>
+    '$agreementCount of $activeCount methods agree on this day.';
+
+/// Multi-algorithm narrative: disclaimer, per-method lines, and "methods agree" closing.
+String formatEnsembleExplanation({required EnsemblePredictionResult ensemble}) {
+  final lines = <String>[
+    predictionDisclaimerSentence(),
+    '',
+    '${ensemble.algorithmOutputs.length} of ${ensemble.totalAlgorithmCount} '
+        'prediction methods contributed to this estimate.',
+  ];
+
+  for (final o in ensemble.algorithmOutputs) {
+    final label = _algorithmDisplayName(o.algorithmId);
+    lines.add(
+      '$label: expects next period around ${formatUtcCalendarDate(o.predictedStartUtc)}.',
+    );
+  }
+
+  lines.add('');
+  lines.add(
+    'On days where multiple methods agree, the prediction is more consistent. '
+    'Treat all dates as uncertain estimates for personal planning only.',
+  );
+
+  if (ensemble.milestoneMessage != null &&
+      ensemble.milestoneMessage!.isNotEmpty) {
+    lines.add('');
+    lines.add(ensemble.milestoneMessage!);
+  }
+
+  final text = lines.join('\n').trim();
+  assert(_predictionCopyHasNoForbiddenPhrases(text));
+  return text;
+}
+
+String _algorithmDisplayName(AlgorithmId id) => switch (id) {
+      AlgorithmId.median => 'Average spacing',
+      AlgorithmId.ewma => 'Recent-weighted',
+      AlgorithmId.bayesian => 'Pattern-learning',
+      AlgorithmId.linearTrend => 'Trend',
+    };
+
+bool _predictionCopyHasNoForbiddenPhrases(String text) {
+  final lower = text.toLowerCase();
+  for (final phrase in predictionCopyForbiddenPhrasesLowercase) {
+    if (lower.contains(phrase)) return false;
+  }
+  return true;
 }
 
 /// Builds a multi-line, plain-language explanation from engine output.
@@ -134,5 +191,19 @@ String? _formatStep(ExplanationStep step) {
       if (proj == null || r2 == null || slope == null) return null;
       return 'Trend line (R²=${r2.toStringAsFixed(2)}, slope=${slope.toStringAsFixed(2)} '
           'days per cycle) projects about $proj days for the next spacing.';
+
+    case ExplanationFactKind.algorithmContribution:
+      final name = step.payload['displayName'] as String?;
+      final start = step.payload['predictedStartUtc'] as String?;
+      if (name == null || start == null) return null;
+      final ds = formatUtcCalendarDate(DateTime.parse(start).toUtc());
+      return '$name contributed an estimate around $ds.';
+
+    case ExplanationFactKind.ensembleConsensus:
+      final summary = step.payload['agreementSummary'] as String?;
+      return summary;
+
+    case ExplanationFactKind.milestoneReached:
+      return step.payload['message'] as String?;
   }
 }
