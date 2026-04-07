@@ -6,7 +6,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** Phase 5 (calendar surfaces) and **Phase 05.1** (day-marking UX + MVVM refactor) in parallel until 05-04 sign-off; **Phase 6 plan 06-04** Task 2 (export/import UAT) pending; **Phase 7 gap plan `07-04` Tasks 1–2** complete 2026-04-06 (`273e1bc`, `a423f43` — navigator pop-before-lock + tests; see `07-04-SUMMARY.md`); **`07-04` Task 3** and **`07-03` Task 2** human UAT still pending for LOCK-01/LOCK-02 sign-off. **Phase 8:** **`08-01-PLAN.md`** complete 2026-04-07 (`7ac8e87`, `fb8c9f5` — inclusive copy + a11y tooltips; see `08-01-SUMMARY.md`); **`08-02-PLAN.md`** complete (`5fe3b43`); **`08-03`** pending (offline assurance).
+**Current focus:** Phase 5 (calendar surfaces) and **Phase 05.1** (day-marking UX + MVVM refactor) in parallel until 05-04 sign-off; **Phase 6 plan 06-04** Task 2 (export/import UAT) pending; **Phase 7 gap plan `07-04` Tasks 1–2** complete 2026-04-06 (`273e1bc`, `a423f43` — navigator pop-before-lock + tests; see `07-04-SUMMARY.md`); **`07-04` Task 3** and **`07-03` Task 2** human UAT still pending for LOCK-01/LOCK-02 sign-off. **Phase 8:** **`08-01-PLAN.md`** complete 2026-04-07 (`7ac8e87`, `fb8c9f5` — inclusive copy + a11y tooltips; see `08-01-SUMMARY.md`); **`08-02-PLAN.md`** complete (`5fe3b43`); **`08-03-PLAN.md` Task 1** complete (`1c5bde7` — automated network/manifest/pubspec checks; see `08-03-SUMMARY.md`); **`08-03` Task 2** airplane-mode walkthrough **pending** (human-verify).
 
 ## Current Position
 
@@ -22,7 +22,7 @@ Plan: **05-04** — Task 1 (day detail sheet + calendar routing) **complete** 20
 
 Status: **Phase 5 in progress** — same as above; **Phase 05.1** automation done for plan 05; **human UAT** outstanding for `05.1-05`.
 
-Last activity: 2026-04-07 — **`08-02-PLAN.md`** complete (`5fe3b43`); prior 2026-04-06 — **`06-04-PLAN.md` Task 1** (`6f20f79`); `05-04` and `05.1-05` Task 2 human checkpoints still open.
+Last activity: 2026-04-07 — **`08-03-PLAN.md` Task 1** complete (`1c5bde7`); **`08-02-PLAN.md`** complete (`5fe3b43`); `08-03` Task 2, `05-04`, and `05.1-05` Task 2 human checkpoints still open.
 
 **Progress:** [██████████] 97%
 
@@ -72,6 +72,7 @@ Last activity: 2026-04-07 — **`08-02-PLAN.md`** complete (`5fe3b43`); prior 20
 | Phase 07-app-protection-lock P02 | 45min | 2 tasks | 7 files |
 | Phase 08-release-quality-offline-assurance-inclusive-copy P02 | 12 min | 1 tasks | 4 files |
 | Phase 08-release-quality-offline-assurance-inclusive-copy P01 | 18 min | 2 tasks | 11 files |
+| Phase 08-release-quality-offline-assurance-inclusive-copy P03 T1 | 12 min | 1 task (auto); Task 2 UAT pending | 0 code files; planning only |
 
 ## Accumulated Context
 
@@ -123,6 +124,7 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 
 ### Pending Todos
 
+- Run **08-03 Task 2** airplane-mode walkthrough (`08-03-PLAN.md` Task 2 / `08-03-SUMMARY.md` checkpoint); reply `pass` or file issues. After pass: mark `08-03` complete in ROADMAP, run `gsd-tools requirements mark-complete NFR-08` if appropriate.
 - Run **07-03 Task 2** manual checklist (`07-03-PLAN.md` / `07-03-SUMMARY.md`) for full lock UAT on device or simulator; reply `pass` or file issues. After pass: mark `07-03` complete in ROADMAP, run `gsd-tools requirements mark-complete LOCK-01 LOCK-02` (and plan closure) if appropriate.
 - Run **06-04 Task 2** manual checklist (`06-04-SUMMARY.md`) for full export → import round-trip; reply `pass` or file issues. After pass: mark `06-04` complete in ROADMAP, run `gsd-tools requirements mark-complete IMPT-01 IMPT-03` if appropriate.
 - Run **05-04 Task 2** manual checklist (`05-04-SUMMARY.md`); reply `pass` or file issues.
@@ -140,10 +142,10 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-07T12:03:55.983Z
+**Last session:** 2026-04-07 (08-03 Task 1 execution)
 
-**Stopped at:** Completed 08-01-PLAN.md
+**Stopped at:** `08-03-PLAN.md` Task 2 (airplane-mode walkthrough) pending
 
-**Resume file:** .planning/phases/08-release-quality-offline-assurance-inclusive-copy/08-03-PLAN.md
+**Resume file:** `.planning/phases/08-release-quality-offline-assurance-inclusive-copy/08-03-PLAN.md` (Task 2 — 14-item airplane checklist).
 
-**Next (Phase 7):** Run **`07-03-PLAN.md` Task 2** human verification (10 items); then mark plan complete in ROADMAP / requirements as appropriate. **Phase 6:** Human verification for **06-04 Task 2** still open.
+**Next (Phase 8):** Run **`08-03-PLAN.md` Task 2** human verification (airplane mode, 14 items in plan); reply `pass` or file issues; then mark `08-03` complete in ROADMAP and run `gsd-tools requirements mark-complete NFR-08` if appropriate. **Phase 7:** Run **`07-03-PLAN.md` Task 2** human verification (10 items). **Phase 6:** Human verification for **06-04 Task 2** still open.

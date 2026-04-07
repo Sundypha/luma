@@ -229,7 +229,7 @@ Plans:
 Plans:
 - [x] `08-01-PLAN.md` — Copy audit, inclusive language, label clarity & accessibility labels (NFR-05, NFR-07) — complete 2026-04-07 (`7ac8e87`, `fb8c9f5`; see `08-01-SUMMARY.md`)
 - [x] `08-02-PLAN.md` — Performance feel: initial-load spinner elimination & responsiveness verification (NFR-01) — complete 2026-04-07 (`5fe3b43`; see `08-02-SUMMARY.md`)
-- [ ] `08-03-PLAN.md` — Offline assurance: automated network dependency checks & airplane-mode walkthrough (NFR-08)
+- [ ] `08-03-PLAN.md` — Offline assurance: automated network dependency checks & airplane-mode walkthrough (NFR-08) — **Task 1** complete 2026-04-07 (`1c5bde7`; see `08-03-SUMMARY.md`); **Task 2** human airplane-mode checklist **pending**
 
 ## Progress
 
