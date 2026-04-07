@@ -14,13 +14,13 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Phase:** **11** — German locale + language settings.
 
-**Plan:** `11-03-PLAN.md` next (`11-01`, `11-02` complete; see `11-02-SUMMARY.md`).
+**Plan:** **11-03** complete — see `11-03-SUMMARY.md`.
 
-**Status:** Plan **11-02** executed — Settings language (follow device / en / de), persistence, `MaterialApp` locale, restart UX; **I18N-02** marked complete in `REQUIREMENTS.md`.
+**Status:** Phase **11** plans **11-01**–**11-03** executed. **I18N-04** and **I18N-05** marked complete in `REQUIREMENTS.md`.
 
-Last activity: 2026-04-07 — executed **11-02-PLAN** (gsd-executor).
+Last activity: 2026-04-07 — executed **11-03-PLAN** (gsd-executor).
 
-**Progress (v2.0):** Phase 11: 2/3 plans complete (see `ROADMAP.md`).
+**Progress (v2.0):** Phase 11: **3/3** plans complete (see `ROADMAP.md`).
 
 ## Performance Metrics
 
@@ -32,9 +32,11 @@ Last activity: 2026-04-07 — executed **11-02-PLAN** (gsd-executor).
 
 See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.planning/phases/` and `milestones/v1/`.
 
+**2026-04-07 (11-03):** Calendar week start follows material locale only; ARB DE keys must cover all EN message keys (`tool/arb_de_key_parity.dart` + CI).
+
 ### Pending Todos
 
-- Execute **11-03**, then phase 12 per `ROADMAP.md`
+- Phase **12** (fertility window) per `ROADMAP.md`
 - Phase 10 plans remain available if i18n foundation still needs execution on other branches
 - Optional: domain research pass if product/legal copy for **FERT-*** needs tightening before implementation
 
@@ -49,10 +51,10 @@ None at milestone definition time.
 
 ## Session Continuity
 
-**Last session:** 2026-04-07T22:38:00.000Z
+**Last session:** 2026-04-07T23:59:00.000Z
 
-**Stopped at:** Completed 11-02-PLAN.md
+**Stopped at:** Completed 11-03-PLAN.md
 
-**Resume file:** `.planning/phases/11-german-locale-language-settings/11-03-PLAN.md`
+**Resume file:** `.planning/phases/12-*` or `/gsd-execute-phase 12` when ready
 
-**Next:** Execute **11-03-PLAN** (locale formatting + ARB CI) or `/gsd-execute-phase 11` continuation
+**Next:** Begin **phase 12** (fertility window) or execute phase 10 plans if still needed on branch

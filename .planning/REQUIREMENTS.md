@@ -16,8 +16,8 @@ Scope: **internationalization**, **German (de)** as secondary language, **option
 - [ ] **I18N-01**: App uses Flutter `gen_l10n` (or equivalent documented toolchain) with English template ARB; generated localizations are wired through `MaterialApp` (and relevant delegates); user-visible strings in v2.0-agreed surfaces are sourced from ARB, not hard-coded English literals
 - [x] **I18N-02**: User can choose app display language from settings (including **English** and **German**, and an option to follow the device locale where technically supported)
 - [x] **I18N-03**: **German** locale provides complete translations for the same string catalog as English for the agreed in-scope screens and flows (shell, onboarding, logging, calendar, home, settings, export/import, lock, prediction/fertility-related copy surfaced in this milestone)
-- [ ] **I18N-04**: Dates, numbers, and plural forms in user-visible UI respect the active locale conventions
-- [ ] **I18N-05**: Repository guardrail prevents silent English fallbacks for **de** in production paths (e.g. CI test, arb check, or documented automation—exact mechanism chosen in phase plan)
+- [x] **I18N-04**: Dates, numbers, and plural forms in user-visible UI respect the active locale conventions
+- [x] **I18N-05**: Repository guardrail prevents silent English fallbacks for **de** in production paths (e.g. CI test, arb check, or documented automation—exact mechanism chosen in phase plan)
 
 ### Optional fertility window (FERT)
 
@@ -51,8 +51,8 @@ Tracked ideas—not committed in this milestone:
 | I18N-01 | Phase 10 | Pending |
 | I18N-02 | Phase 11 | Complete |
 | I18N-03 | Phase 11 | Complete |
-| I18N-04 | Phase 11 | Pending |
-| I18N-05 | Phase 11 | Pending |
+| I18N-04 | Phase 11 | Complete |
+| I18N-05 | Phase 11 | Complete |
 | FERT-01 | Phase 12 | Pending |
 | FERT-02 | Phase 12 | Pending |
 | FERT-03 | Phase 12 | Pending |
@@ -66,4 +66,4 @@ Tracked ideas—not committed in this milestone:
 - Unmapped: **0** ✓  
 
 ---
-*Last updated: 2026-04-07 — I18N-02 complete (`11-02-PLAN`).*  
+*Last updated: 2026-04-07 — I18N-04 and I18N-05 complete (`11-03-PLAN`).*  
