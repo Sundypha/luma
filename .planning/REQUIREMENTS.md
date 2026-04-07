@@ -53,14 +53,14 @@ Phase 1 MVP — derived from `period_tracker_prds/PRD_Phase_1_MVP.md` (functiona
 
 ### Data import
 
-- [ ] **IMPT-01**: User can import from a prior valid export file
+- [x] **IMPT-01**: User can import from a prior valid export file
 - [x] **IMPT-02**: Invalid or corrupted files fail with readable validation errors (no silent corruption)
-- [ ] **IMPT-03**: Duplicate-handling behavior is deterministic and explained in product copy
+- [x] **IMPT-03**: Duplicate-handling behavior is deterministic and explained in product copy
 
 ### App protection
 
-- [ ] **LOCK-01**: User can enable optional PIN or biometric lock from settings (not forced on first use)
-- [ ] **LOCK-02**: Lock behavior is reliable across background/foreground transitions on supported devices
+- [x] **LOCK-01**: User can enable optional PIN or biometric lock from settings (not forced on first use)
+- [x] **LOCK-02**: Lock behavior is reliable across background/foreground transitions on supported devices
 - [x] **LOCK-03**: Lock is not described as full cryptographic protection; failure modes avoid stranding users without data recovery narrative
 
 ### Non-functional (Phase 1)
@@ -126,11 +126,11 @@ Explicit Phase 1 exclusions per PRD §8:
 | XPRT-01 | Phase 6 | Complete |
 | XPRT-02 | Phase 6 | Complete |
 | XPRT-03 | Phase 6 | Complete |
-| IMPT-01 | Phase 6 | Pending |
+| IMPT-01 | Phase 6 | Complete |
 | IMPT-02 | Phase 6 | Complete |
-| IMPT-03 | Phase 6 | Pending |
-| LOCK-01 | Phase 7 | Pending |
-| LOCK-02 | Phase 7 | Pending |
+| IMPT-03 | Phase 6 | Complete |
+| LOCK-01 | Phase 7 | Complete |
+| LOCK-02 | Phase 7 | Complete |
 | LOCK-03 | Phase 7 | Complete |
 | NFR-01 | Phase 8 | Complete |
 | NFR-02 | Phase 2 | Complete |

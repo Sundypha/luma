@@ -6,31 +6,27 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** Phase 5 (calendar surfaces) and **Phase 05.1** (day-marking UX + MVVM refactor) in parallel until 05-04 sign-off; **Phase 6 plan 06-04** Task 2 (export/import UAT) pending; **Phase 7 gap plan `07-04` Tasks 1–2** complete 2026-04-06 (`273e1bc`, `a423f43` — navigator pop-before-lock + tests; see `07-04-SUMMARY.md`); **`07-04` Task 3** and **`07-03` Task 2** human UAT still pending for LOCK-01/LOCK-02 sign-off. **Phase 8** (release quality, offline assurance, inclusive copy) **complete** 2026-04-07 — plans `08-01`–`08-03` including **08-03 Task 2** airplane-mode UAT **pass** (user); NFR-08 complete. **Next roadmap phase:** **Phase 9** — prediction of next period (see `.planning/phases/09-prediction-of-next-period/`).
+**Current focus:** **Phase 1 (v1) roadmap phases 1–8 are complete** through release-quality / offline / copy (2026-04-07). Residual human UATs for **05-04**, **05.1-05**, **06-04**, **07-03**, and **07-04** are **signed off** (user 2026-04-07); **IMPT-01**, **IMPT-03**, **LOCK-01**, **LOCK-02** marked complete in REQUIREMENTS. **Only Phase 9** is in active planning — multi-algorithm prediction and confidence calendar (see `.planning/phases/09-prediction-of-next-period/09-CONTEXT.md`).
 
 ## Current Position
 
-Phase: **5** of 8 (Calendar, home & cycle surfaces) — **05.1-05 Task 1 (automation) complete**; **05.1-05 Task 2 human verify pending** (see below).
+Phase: **9** of 9 (Prediction of next period) — **planning** (no `09-*-PLAN.md` files yet).
 
-**Current Plan (Phase 5):** 4 (`05-04`)
+**Current plan:** Run **`/gsd-plan-phase 9`** to decompose into executable plans.
 
-**Total Plans in Phase 5:** 4
+**Prior phases (closed):** Phases **5**, **05.1**, **6**, **7**, **8** marked complete in ROADMAP with all plan checkboxes and pending UATs cleared per user confirmation.
 
-Plan: **05-04** — Task 1 (day detail sheet + calendar routing) **complete** 2026-04-06; **Task 2 human verification pending** (see `05-04-SUMMARY.md`).
+Status: **Phase 9 planning** — v1 feature work through Phase 8 is done; next engineering milestone is Phase 9 spec in ROADMAP.
 
-**Phase 05.1 (inserted):** Plans **01–04** complete; **`05.1-05` Task 1** complete (`f14ed5f`) — removed `logging_bottom_sheet.dart`, first log uses `markDay`, home quick actions + FAB use `SymptomFormSheet`. **Task 2** (full UX checklist) **pending** — see `05.1-05-SUMMARY.md`.
+Last activity: 2026-04-07 — Bulk UAT sign-off recorded; `gsd-tools phase complete` for **5**, **05.1**, **6**, **7**; requirements updated; ROADMAP/STATE reconciled.
 
-Status: **Phase 5 in progress** — same as above; **Phase 05.1** automation done for plan 05; **human UAT** outstanding for `05.1-05`.
-
-Last activity: 2026-04-07 — **Phase 8 closed** — `08-03` Task 2 airplane-mode UAT **pass** (checkpoint); NFR-08 marked complete; roadmap/state advanced to **Phase 9**. Open: `05-04`, `05.1-05`, `06-04`, `07-03`, `07-04` human checkpoints as before.
-
-**Progress:** [██████████] 97%
+**Progress:** [██████████] 100% (v1 phased roadmap through Phase 8; Phase 9 not yet executed)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 17
+- Total plans completed: 26+ (all plans through Phase 8; see ROADMAP)
 - Average duration: —
 - Total execution time: —
 
@@ -68,11 +64,14 @@ Last activity: 2026-04-07 — **Phase 8 closed** — `08-03` Task 2 airplane-mod
 | Phase 06-export-import P01 | 35min | 2 tasks | 11 files |
 | Phase 06-export-import P02 | 45min | 2 tasks | 6 files |
 | Phase 06-export-import P03 | 45min | 2 tasks | 14 files |
-| Phase 06-export-import P04 T1 | 45min | 1 task (auto); Task 2 UAT pending | 7 files |
+| Phase 06-export-import P04 | 45min | Task 1 auto; Task 2 UAT **pass** 2026-04-07 | 7 files |
+| Phase 05-calendar P04 | — | Task 2 UAT **pass** 2026-04-07 | see `05-04-SUMMARY.md` |
+| Phase 05.1 P05 | 25min | Task 2 UAT **pass** 2026-04-07 | see `05.1-05-SUMMARY.md` |
 | Phase 07-app-protection-lock P02 | 45min | 2 tasks | 7 files |
+| Phase 07-app-protection-lock P03–04 | — | Task 2 / Task 3 UAT **pass** 2026-04-07 | see SUMMARYs |
 | Phase 08-release-quality-offline-assurance-inclusive-copy P02 | 12 min | 1 tasks | 4 files |
 | Phase 08-release-quality-offline-assurance-inclusive-copy P01 | 18 min | 2 tasks | 11 files |
-| Phase 08-release-quality-offline-assurance-inclusive-copy P03 T1 | 12 min | 1 task (auto); Task 2 UAT pending | 0 code files; planning only |
+| Phase 08-release-quality-offline-assurance-inclusive-copy P03 | 12 min | Task 1 auto; Task 2 UAT **pass** | see `08-03-SUMMARY.md` |
 
 ## Accumulated Context
 
@@ -111,10 +110,11 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 06-export-import]: 06-01 complete — `ExportService`, `LumaCrypto` (AES-256-GCM + Argon2id), export schema types, `docs/luma-export-format.md`; commits `87cb5a2`, `a365889`; XPRT-02/XPRT-03 marked complete in REQUIREMENTS
 - [Phase 06-export-import]: 06-02 complete — `ImportService` (parse/validate/decrypt, transactional `applyImport`), `ImportPreview`, `BackupService` with keep-3 pruning; commits `29c6883`, `02b59ef`; IMPT-02 marked complete in REQUIREMENTS
 - [Phase 06-export-import]: 06-03 complete — `ExportViewModel`, `ExportWizardScreen`, `DataSettingsScreen`, drawer Data entry, `PeriodRepository.database`; commits `eb1f956`, `b72d902`; XPRT-01 marked complete in REQUIREMENTS
-- [Phase 06-export-import]: 06-04 Task 1 complete — `ImportViewModel`, `ImportScreen`, Data import tile wiring, `import_view_model_test.dart`; `FilePicker.pickFiles` (v11); shared `BackupService` injected into `ImportService` at navigation; commit `6f20f79`; **Task 2 full export/import UAT pending** (`06-04-SUMMARY.md` checklist)
+- [Phase 06-export-import]: 06-04 complete — import UI + **Task 2** export→import UAT **pass** 2026-04-07; **IMPT-01**, **IMPT-03** complete in REQUIREMENTS (`6f20f79` + UAT).
 - [Phase 07-app-protection-lock]: 07-01 complete — `local_auth` + `flutter_secure_storage`, Android `FlutterFragmentActivity` + `USE_BIOMETRIC` + `allowBackup=false`, iOS Face ID + keychain entitlements; `LockService` with Argon2id PIN + unit tests; commits `ce72342`, `4082ebb` (see `07-01-SUMMARY.md`).
-- [Phase 07-app-protection-lock]: 07-02 complete — `PinEntryWidget`, `LockViewModel`, `LockScreen`, `showPinSetupSheet`, `showForgotPinSheet`, `LockSettingsScreen`, `lock_view_model_test.dart`; commits `4ab53aa`, `630ace9` (see `07-02-SUMMARY.md`). **LOCK-03** marked complete in REQUIREMENTS; **LOCK-01** / **LOCK-02** await `07-03` (settings navigation + LockGate).
-- [Phase 07-app-protection-lock]: 07-03 Task 1 complete — `LockGate`, `main.dart` LockService + `_resetApp`, `TabShell` + `LockSettingsTile`, `lock_gate_test.dart`, `993a892`; **LOCK-01** / **LOCK-02** await Task 2 human UAT (`07-03-SUMMARY.md`).
+- [Phase 07-app-protection-lock]: 07-02 complete — `PinEntryWidget`, `LockViewModel`, `LockScreen`, `showPinSetupSheet`, `showForgotPinSheet`, `LockSettingsScreen`, `lock_view_model_test.dart`; commits `4ab53aa`, `630ace9` (see `07-02-SUMMARY.md`). **LOCK-03** complete in REQUIREMENTS.
+- [Phase 07-app-protection-lock]: 07-03 / 07-04 complete — LockGate + gap closure; **Tasks 2–3** human UAT **pass** 2026-04-07; **LOCK-01**, **LOCK-02** complete in REQUIREMENTS (`993a892`, `273e1bc`, `a423f43`).
+- [Phase 05 / 05.1 closeout 2026-04-07]: **05-04** Task 2 and **05.1-05** Task 2 human UAT **pass** (user); phases closed in ROADMAP.
 - [Phase 06-export-import]: ImportService optional BackupService injection for testable applyImport without path_provider.
 - [Phase 06-export-import]: 06-03: runExport(ExportDataRun) supplements startExport for testable failure path; file_picker v11 uses FilePicker.saveFile with bytes on Linux
 - [Phase 07-app-protection-lock]: 07-02: LockViewModel tests use real LockService with mocked storage/local_auth because LockService is final.
@@ -125,16 +125,13 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 
 ### Pending Todos
 
-- Run **07-03 Task 2** manual checklist (`07-03-PLAN.md` / `07-03-SUMMARY.md`) for full lock UAT on device or simulator; reply `pass` or file issues. After pass: mark `07-03` complete in ROADMAP, run `gsd-tools requirements mark-complete LOCK-01 LOCK-02` (and plan closure) if appropriate.
-- Run **06-04 Task 2** manual checklist (`06-04-SUMMARY.md`) for full export → import round-trip; reply `pass` or file issues. After pass: mark `06-04` complete in ROADMAP, run `gsd-tools requirements mark-complete IMPT-01 IMPT-03` if appropriate.
-- Run **05-04 Task 2** manual checklist (`05-04-SUMMARY.md`); reply `pass` or file issues.
-- Run **05.1-05 Task 2** manual checklist (`05.1-05-SUMMARY.md`); reply `pass` or file issues. After pass: check off `05.1-05` in ROADMAP, run `gsd-tools requirements mark-complete` for plan requirement IDs if appropriate.
-- After pass: mark `05-04` complete in ROADMAP, mark CAL-03 in REQUIREMENTS, optionally run `gsd-tools` state/roadmap sync.
+- **Phase 9:** Run **`/gsd-plan-phase 9`**, then **`/gsd-execute-phase 9`** when plans exist.
 
 ### Roadmap Evolution
 
 - Phase 05.1 inserted after Phase 5: UX refactor - day-marking model and MVVM (URGENT) — replaces explicit start/end period actions with day-toggle model; refactors presentation layer to MVVM with ChangeNotifier ViewModels. Investigation document: `.planning/phases/05.1-ux-refactor-day-marking-model-and-mvvm/INVESTIGATION.md`.
 - Phase 9 added: Prediction of next period — multi-algorithm prediction (3+ algorithms), confidence-based calendar visualization showing agreement level across algorithms
+- 2026-04-07: User confirmed all remaining v1 human UATs (05-04, 05.1-05, 06-04, 07-03, 07-04); `requirements mark-complete` for IMPT-01, IMPT-03, LOCK-01, LOCK-02; `phase complete` for 5, 05.1, 6, 7; ROADMAP/STATE reconciled — **only Phase 9 remains in planning**.
 
 ### Blockers/Concerns
 
@@ -144,8 +141,8 @@ None.
 
 **Last session:** 2026-04-07
 
-**Stopped at:** Phase 8 complete; **Phase 9** is next for feature work
+**Stopped at:** Phases **5–8** (incl. **05.1**, **6**, **7**) fully signed off; **Phase 9** planning only
 
-**Resume file:** .planning/phases/09-prediction-of-next-period/09-CONTEXT.md
+**Resume file:** `.planning/phases/09-prediction-of-next-period/09-CONTEXT.md`
 
-**Next:** **`/gsd-plan-phase 9`** (or open `09-CONTEXT.md` / execute Phase 9 plans when ready). **Phase 7:** **`07-03-PLAN.md` Task 2** (10 items). **Phase 6:** **06-04 Task 2** export/import UAT still open.
+**Next:** **`/gsd-plan-phase 9`** — sole active planning track; v1 Phase 1–8 UAT backlog cleared per user.

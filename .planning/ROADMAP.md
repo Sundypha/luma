@@ -18,9 +18,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Onboarding** — Local-first and estimates messaging, fast path to first log, offline-capable (completed 2026-04-05)
 - [x] **Phase 4: Core logging** — Period, flow, symptoms, notes, validation, reliable day context and edits
  (completed 2026-04-05)
-- [ ] **Phase 5: Calendar, home & cycle surfaces** — Month navigation, actual vs predicted distinction, home summary and quick actions
-- [ ] **Phase 6: Export & import** — Documented full export, validated import, deterministic duplicate handling — **in progress**: `06-04` Task 2 human UAT pending (IMPT-01, IMPT-03); Task 1 complete 2026-04-06 (`6f20f79`)
-- [ ] **Phase 7: App protection (lock)** — Optional PIN/biometric lock with honest limitations — **in progress**: `07-01`–`07-02` complete 2026-04-06; **`07-03` Task 1** complete (`993a892`); **`07-04` Tasks 1–2** complete (`273e1bc`, `a423f43`); **human UAT** pending (`07-03` T2, `07-04` T3)
+- [x] **Phase 5: Calendar, home & cycle surfaces** — Month navigation, actual vs predicted distinction, home summary and quick actions (completed 2026-04-07)
+- [x] **Phase 6: Export & import** — Documented full export, validated import, deterministic duplicate handling (completed 2026-04-07)
+- [x] **Phase 7: App protection (lock)** — Optional PIN/biometric lock with honest limitations (completed 2026-04-07)
 - [x] **Phase 8: Release quality, offline assurance & inclusive copy** — Snappy UX, clear actions, non-gendered non-medical copy, airplane-mode verification (completed 2026-04-07)
 - [ ] **Phase 9: Prediction of next period** — Multi-algorithm prediction (3+ methods), confidence-based calendar display showing algorithm agreement level
 
@@ -136,14 +136,14 @@ Plans:
 3. Tapping a day opens that day’s detail so the user can view or edit entries.
 4. The home screen shows cycle position and next expected period status (or a clear insufficient-data state), what was logged today at a glance, and a visible quick action to log or edit without deep navigation—without unsupported “cycle health” scores or overconfident precision.
 
-**Plans**: 3 complete; `05-04` Task 1 done — Task 2 (human verify) pending
+**Plans**: 4/4 plans complete
 
 Plans:
 
 - [x] `05-01-PLAN.md` — Tab shell (Home + Calendar tabs, drawer, FAB) and refactored home summary with cycle position, today card, prediction range — complete 2026-04-06
 - [x] `05-02-PLAN.md` — Calendar day-data model (PeriodDayState, CalendarDayData, buildCalendarDayDataMap) and custom painters (solid band, hatched circle, dot, today ring) — complete 2026-04-06
 - [x] `05-03-PLAN.md` — Calendar screen with table_calendar integration, reactive stream, month navigation, "Today" button, widget tests — complete 2026-04-06
-- [ ] `05-04-PLAN.md` — Day detail bottom sheet (read-only view, adjacent-day swipe, edit bridge, predicted day info) and human verification — **Task 1 complete 2026-04-06 (`f6658f1`); Task 2 human verification pending** (do not mark plan complete until user signs off)
+- [x] `05-04-PLAN.md` — Day detail bottom sheet (read-only view, adjacent-day swipe, edit bridge, predicted day info) and human verification — complete 2026-04-07 (Task 1 `f6658f1`; Task 2 human UAT **pass**; see `05-04-SUMMARY.md`)
 
 ### Phase 05.1: UX refactor - day-marking model and MVVM (INSERTED)
 
@@ -153,14 +153,14 @@ Plans:
 
 **Requirements:** LOG-01, LOG-02, LOG-03, LOG-04, LOG-05, LOG-06, CAL-01, CAL-03, CAL-05, HOME-01, HOME-02, HOME-03, HOME-04
 
-**Plans:** 5 plans; **05.1-05** Task 1 (automation) complete 2026-04-06 (`f14ed5f`); **Task 2 human verification pending** — do not treat phase as closed until UAT passes (see `05.1-05-SUMMARY.md`).
+**Plans:** 5/5 plans complete
 
 Plans:
 - [x] `05.1-01-PLAN.md` — TDD: Day-marking domain pure functions (computeMarkDay, computeUnmarkDay — 6 span operations) — complete 2026-04-06 (`83703d0` test, `5d88893` feat; see `05.1-01-SUMMARY.md`)
 - [x] `05.1-02-PLAN.md` — Repository markDay/unmarkDay + DB migration v2→v3 (close open periods) — complete 2026-04-06 (`0698c49` migration, `c0a8b4f` repository; see `05.1-02-SUMMARY.md`)
 - [x] `05.1-03-PLAN.md` — CalendarViewModel + HomeViewModel + view refactor to MVVM (ListenableBuilder) — complete 2026-04-06 (`260727a` ViewModels + tests, `950520a` shell/screens; see `05.1-03-SUMMARY.md`)
 - [x] `05.1-04-PLAN.md` — SymptomFormSheet + DayDetailSheet rewrite (new action model, future-day gating) — complete 2026-04-06 (`7f84edb` symptom form, `35abfde` day detail + routing; see `05.1-04-SUMMARY.md`)
-- [ ] `05.1-05-PLAN.md` — Dead code removal + first_log + human verification — **Task 1 complete 2026-04-06 (`f14ed5f`); Task 2 human verification pending** (see `05.1-05-SUMMARY.md`)
+- [x] `05.1-05-PLAN.md` — Dead code removal + first_log + human verification — complete 2026-04-07 (Task 1 `f14ed5f`; Task 2 human UAT **pass**; see `05.1-05-SUMMARY.md`)
 
 ### Phase 6: Export & import
 
@@ -177,14 +177,14 @@ Plans:
 3. Invalid or corrupted import files fail with readable validation errors and do not silently corrupt existing data.
 4. Duplicate-handling during import is deterministic and explained in product copy.
 
-**Plans**: 4 plans; **`06-04` Task 1** (import UI) complete 2026-04-06 (`6f20f79`); **Task 2 human verification pending** — see `06-04-SUMMARY.md`
+**Plans**: 4/4 plans complete
 
 Plans:
 
 - [x] `06-01-PLAN.md` — Export schema types, AES-256-GCM crypto, ExportService, and format documentation (XPRT-02, XPRT-03) — complete 2026-04-06 (`87cb5a2`, `a365889`; see `06-01-SUMMARY.md`)
 - [x] `06-02-PLAN.md` — ImportService validation, ImportPreview duplicate detection, BackupService, atomic import apply (IMPT-02) — complete 2026-04-06 (`29c6883`, `02b59ef`; see `06-02-SUMMARY.md`)
 - [x] `06-03-PLAN.md` — ExportViewModel, ExportWizardScreen, DataSettingsScreen, drawer integration (XPRT-01) — complete 2026-04-06 (`eb1f956`, `b72d902`; see `06-03-SUMMARY.md`)
-- [ ] `06-04-PLAN.md` — ImportViewModel, ImportScreen, DataSettingsScreen wiring, human verification (IMPT-01, IMPT-03) — **Task 1 complete 2026-04-06 (`6f20f79`; see `06-04-SUMMARY.md`); Task 2 human verification pending** (do not mark plan complete until user signs off)
+- [x] `06-04-PLAN.md` — ImportViewModel, ImportScreen, DataSettingsScreen wiring, human verification (IMPT-01, IMPT-03) — complete 2026-04-07 (Task 1 `6f20f79`; Task 2 human UAT **pass**; see `06-04-SUMMARY.md`)
 
 ### Phase 7: App protection (lock)
 
@@ -200,14 +200,14 @@ Plans:
 2. With lock enabled, returning from background reliably prompts for unlock on supported devices.
 3. Product copy does not claim full cryptographic protection; failure modes are described so users are not stranded without a credible recovery narrative where applicable.
 
-**Plans**: 4 plans
+**Plans**: 4/4 plans complete
 
 Plans:
 
 - [x] `07-01-PLAN.md` — Dependencies (local_auth, flutter_secure_storage), platform setup (Android + iOS), LockService with Argon2id PIN hashing and unit tests — complete 2026-04-06 (`ce72342`, `4082ebb`; see `07-01-SUMMARY.md`)
 - [x] `07-02-PLAN.md` — Lock UI: PinEntryWidget, LockViewModel, LockScreen, PinSetupSheet (ack → PIN → biometric offer), ForgotPinSheet (honest copy + destructive reset), LockSettingsScreen — complete 2026-04-06 (`4ab53aa`, `630ace9`; see `07-02-SUMMARY.md`)
-- [ ] `07-03-PLAN.md` — LockGate (AppLifecycleListener + cold-start lock), main.dart wiring, TabShell Privacy & Security tile, destructive-reset-to-onboarding, human verification — **Task 1** complete 2026-04-06 (`993a892`); **Task 2** human checklist pending (`07-03-SUMMARY.md`)
-- [ ] `07-04-PLAN.md` — **Gap closure (UAT):** pop root navigator before lock so `LockScreen` is not hidden under `LockSettingsScreen`; optional `onHide` lifecycle hardening; widget regression test; full UAT re-run (LOCK-01, LOCK-02) — **Tasks 1–2** complete 2026-04-06 (`273e1bc`, `a423f43`; see `07-04-SUMMARY.md`); **Task 3** human UAT pending
+- [x] `07-03-PLAN.md` — LockGate (AppLifecycleListener + cold-start lock), main.dart wiring, TabShell Privacy & Security tile, destructive-reset-to-onboarding, human verification — complete 2026-04-07 (Task 1 `993a892`; Task 2 human UAT **pass**; see `07-03-SUMMARY.md`)
+- [x] `07-04-PLAN.md` — **Gap closure (UAT):** pop root navigator before lock so `LockScreen` is not hidden under `LockSettingsScreen`; optional `onHide` lifecycle hardening; widget regression test; full UAT re-run (LOCK-01, LOCK-02) — complete 2026-04-07 (Tasks 1–2 `273e1bc`, `a423f43`; Task 3 human UAT **pass**; see `07-04-SUMMARY.md`)
 
 ### Phase 8: Release quality, offline assurance & inclusive copy
 
@@ -243,11 +243,12 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 | 2. Domain, persistence & prediction v1 | 4/4 | Complete | 2026-04-04 |
 | 3. Onboarding | 3/3 | Complete    | 2026-04-05 |
 | 4. Core logging | 3/3 | Complete    | 2026-04-05 |
-| 5. Calendar, home & cycle surfaces | 3/4 | In Progress|  |
-| 6. Export & import | 4/4 | Complete   | 2026-04-06 |
-| 7. App protection (lock) | 1/3 | In Progress|  |
+| 5. Calendar, home & cycle surfaces | 4/4 | Complete    | 2026-04-07 |
+| 5.1 UX refactor (day-marking, MVVM) | 5/5 | Complete    | 2026-04-07 |
+| 6. Export & import | 4/4 | Complete    | 2026-04-07 |
+| 7. App protection (lock) | 4/4 | Complete    | 2026-04-07 |
 | 8. Release quality, offline assurance & inclusive copy | 3/3 | Complete    | 2026-04-07 |
-| 9. Prediction of next period | 0/TBD | Not started | - |
+| 9. Prediction of next period | 0/TBD | Planning    | - |
 
 ### Phase 9: Prediction of next period
 
@@ -275,10 +276,11 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 
 **Requirements:** PRED-01, PRED-02, PRED-03, PRED-04 (extended), NFR-06
 
-**Plans:** 3/3 plans complete
+**Plans:** TBD — only `09-CONTEXT.md` exists; run `/gsd-plan-phase 9` to author executable plans.
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 9 to break down)
+
+- [ ] TBD (run `/gsd-plan-phase 9` to break down)
 
 ---
 *Roadmap created: 2026-04-04 — depth: standard; 40/40 v1 requirements mapped.*
