@@ -10,17 +10,17 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 ## Current Position
 
-**Milestone:** v2.0 — requirements and roadmap defined; phase 10 in planning.
+**Milestone:** v2.0 — i18n, German locale, optional fertility window.
 
-**Phase:** **10** — Internationalization foundation — **`10-CONTEXT.md` gathered** (see `.planning/phases/10-internationalization-foundation/`).
+**Phase:** **11** — German locale + language settings.
 
-**Plan:** `10-01-PLAN.md`, `10-02-PLAN.md` (waves 1–2)
+**Plan:** `11-02-PLAN.md` next (`11-01-PLAN.md` complete; see `11-01-SUMMARY.md`).
 
-**Status:** Ready for `/gsd-execute-phase 10` (start with plan 01).
+**Status:** Plan **11-01** executed — German ARB parity, gen-l10n, `de` smoke tests; **I18N-03** marked complete in `REQUIREMENTS.md`.
 
-Last activity: 2026-04-07 — **`/gsd-plan-phase 10`**: two executable plans; verification passed (orchestrator).
+Last activity: 2026-04-07 — executed **11-01-PLAN** (gsd-executor).
 
-**Progress (v2.0):** [░░░░░░░░░░] 0%
+**Progress (v2.0):** Phase 11: 1/3 plans complete (see `ROADMAP.md`).
 
 ## Performance Metrics
 
@@ -34,7 +34,8 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 ### Pending Todos
 
-- Execute phase 10 → 11 → 12 per `ROADMAP.md`
+- Execute **11-02** → **11-03**, then phase 12 per `ROADMAP.md`
+- Phase 10 plans remain available if i18n foundation still needs execution on other branches
 - Optional: domain research pass if product/legal copy for **FERT-*** needs tightening before implementation
 
 ### Roadmap Evolution
@@ -48,10 +49,10 @@ None at milestone definition time.
 
 ## Session Continuity
 
-**Last session:** 2026-04-07T21:12:37.834Z
+**Last session:** 2026-04-07T21:31:51.954Z
 
-**Stopped at:** Phase 11 context gathered
+**Stopped at:** Completed 11-01-PLAN.md
 
-**Resume file:** .planning/phases/11-german-locale-language-settings/11-CONTEXT.md
+**Resume file:** `.planning/phases/11-german-locale-language-settings/11-02-PLAN.md`
 
-**Next:** `/gsd-execute-phase 10`
+**Next:** Execute **11-02-PLAN** (language settings) or `/gsd-execute-phase 11` continuation

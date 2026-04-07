@@ -57,7 +57,8 @@ Phase implementation detail remains under `.planning/phases/` for history.
 
 **Plans:**
 
-- [ ] `11-01-PLAN.md` — German `app_de.arb` key parity, `gen-l10n`, `de` smoke tests (**I18N-03**)
+1/3 plans executed
+- [x] `11-01-PLAN.md` — German `app_de.arb` key parity, gen-l10n, `de` smoke tests (**I18N-03**)
 - [ ] `11-02-PLAN.md` — Settings language choice (follow device / en / de), persistence, `MaterialApp` locale, restart UX (**I18N-02**)
 - [ ] `11-03-PLAN.md` — Locale-aware dates/numbers/plurals; ARB parity CI script + workflow (**I18N-04**, **I18N-05**)
 
@@ -80,7 +81,7 @@ Phase implementation detail remains under `.planning/phases/` for history.
 | Phase | Plans | Status |
 |-------|-------|--------|
 | 10 — i18n foundation | 2/? | Planned (`10-01`, `10-02`) |
-| 11 — German + language settings | 3/3 | Planned (`11-01`, `11-02`, `11-03`) |
+| 11 — German + language settings | 1/3 | In progress (`11-01` done) |
 | 12 — Fertility window | 0/? | Not started |
 
 ### Phase 13: PDF export of period statistics and details (user selectable if all or none). Goal is to have a PDF ready for a physician or gynecologist.
