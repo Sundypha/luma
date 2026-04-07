@@ -72,7 +72,7 @@ Phase 1 MVP — derived from `period_tracker_prds/PRD_Phase_1_MVP.md` (functiona
 - [x] **NFR-05**: Primary actions are understandable without dense tutorial text
 - [x] **NFR-06**: Predicted vs actual periods distinguishable without relying on color alone
 - [x] **NFR-07**: Copy avoids unnecessary gendered assumptions and unsupported medical claims
-- [ ] **NFR-08**: Full Phase 1 feature set works in airplane mode after install (no login, no network-required errors on core flows)
+- [x] **NFR-08**: Full Phase 1 feature set works in airplane mode after install (no login, no network-required errors on core flows)
 
 ## v2 Requirements
 
@@ -139,7 +139,7 @@ Explicit Phase 1 exclusions per PRD §8:
 | NFR-05 | Phase 8 | Complete |
 | NFR-06 | Phase 5 | Complete |
 | NFR-07 | Phase 8 | Complete |
-| NFR-08 | Phase 8 | Pending |
+| NFR-08 | Phase 8 | Complete |
 
 **Coverage:**
 

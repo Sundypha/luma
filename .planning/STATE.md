@@ -6,7 +6,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** Phase 5 (calendar surfaces) and **Phase 05.1** (day-marking UX + MVVM refactor) in parallel until 05-04 sign-off; **Phase 6 plan 06-04** Task 2 (export/import UAT) pending; **Phase 7 gap plan `07-04` Tasks 1–2** complete 2026-04-06 (`273e1bc`, `a423f43` — navigator pop-before-lock + tests; see `07-04-SUMMARY.md`); **`07-04` Task 3** and **`07-03` Task 2** human UAT still pending for LOCK-01/LOCK-02 sign-off. **Phase 8:** **`08-01-PLAN.md`** complete 2026-04-07 (`7ac8e87`, `fb8c9f5` — inclusive copy + a11y tooltips; see `08-01-SUMMARY.md`); **`08-02-PLAN.md`** complete (`5fe3b43`); **`08-03-PLAN.md` Task 1** complete (`1c5bde7` — automated network/manifest/pubspec checks; see `08-03-SUMMARY.md`); **`08-03` Task 2** airplane-mode walkthrough **pending** (human-verify).
+**Current focus:** Phase 5 (calendar surfaces) and **Phase 05.1** (day-marking UX + MVVM refactor) in parallel until 05-04 sign-off; **Phase 6 plan 06-04** Task 2 (export/import UAT) pending; **Phase 7 gap plan `07-04` Tasks 1–2** complete 2026-04-06 (`273e1bc`, `a423f43` — navigator pop-before-lock + tests; see `07-04-SUMMARY.md`); **`07-04` Task 3** and **`07-03` Task 2** human UAT still pending for LOCK-01/LOCK-02 sign-off. **Phase 8** (release quality, offline assurance, inclusive copy) **complete** 2026-04-07 — plans `08-01`–`08-03` including **08-03 Task 2** airplane-mode UAT **pass** (user); NFR-08 complete. **Next roadmap phase:** **Phase 9** — prediction of next period (see `.planning/phases/09-prediction-of-next-period/`).
 
 ## Current Position
 
@@ -22,7 +22,7 @@ Plan: **05-04** — Task 1 (day detail sheet + calendar routing) **complete** 20
 
 Status: **Phase 5 in progress** — same as above; **Phase 05.1** automation done for plan 05; **human UAT** outstanding for `05.1-05`.
 
-Last activity: 2026-04-07 — **`08-03-PLAN.md` Task 1** complete (`1c5bde7`); **`08-02-PLAN.md`** complete (`5fe3b43`); `08-03` Task 2, `05-04`, and `05.1-05` Task 2 human checkpoints still open.
+Last activity: 2026-04-07 — **Phase 8 closed** — `08-03` Task 2 airplane-mode UAT **pass** (checkpoint); NFR-08 marked complete; roadmap/state advanced to **Phase 9**. Open: `05-04`, `05.1-05`, `06-04`, `07-03`, `07-04` human checkpoints as before.
 
 **Progress:** [██████████] 97%
 
@@ -121,10 +121,10 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 07-app-protection-lock]: 07-02: showPinSetupSheet supports skipAck and changePinOnly for change-PIN without enableLock.
 - [Phase 08]: Stream-backed ViewModels accept optional initialData; seed via _applyData without notifyListeners in ctor; main awaits watchPeriodsWithDays().first before runApp
 - [Phase 08-release-quality-offline-assurance-inclusive-copy]: User-facing errors use fixed plain-language strings instead of DayMarkFailure.reason or Exception.toString() for NFR-05/NFR-07 alignment.
+- [Phase 08 closeout 2026-04-07]: **08-03 Task 2** airplane-mode walkthrough human **pass**; NFR-08 complete; Phase 8 milestone complete in ROADMAP.
 
 ### Pending Todos
 
-- Run **08-03 Task 2** airplane-mode walkthrough (`08-03-PLAN.md` Task 2 / `08-03-SUMMARY.md` checkpoint); reply `pass` or file issues. After pass: mark `08-03` complete in ROADMAP, run `gsd-tools requirements mark-complete NFR-08` if appropriate.
 - Run **07-03 Task 2** manual checklist (`07-03-PLAN.md` / `07-03-SUMMARY.md`) for full lock UAT on device or simulator; reply `pass` or file issues. After pass: mark `07-03` complete in ROADMAP, run `gsd-tools requirements mark-complete LOCK-01 LOCK-02` (and plan closure) if appropriate.
 - Run **06-04 Task 2** manual checklist (`06-04-SUMMARY.md`) for full export → import round-trip; reply `pass` or file issues. After pass: mark `06-04` complete in ROADMAP, run `gsd-tools requirements mark-complete IMPT-01 IMPT-03` if appropriate.
 - Run **05-04 Task 2** manual checklist (`05-04-SUMMARY.md`); reply `pass` or file issues.
@@ -142,10 +142,10 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-07T12:28:35.453Z
+**Last session:** 2026-04-07
 
-**Stopped at:** Phase 9 context gathered
+**Stopped at:** Phase 8 complete; **Phase 9** is next for feature work
 
 **Resume file:** .planning/phases/09-prediction-of-next-period/09-CONTEXT.md
 
-**Next (Phase 8):** Run **`08-03-PLAN.md` Task 2** human verification (airplane mode, 14 items in plan); reply `pass` or file issues; then mark `08-03` complete in ROADMAP and run `gsd-tools requirements mark-complete NFR-08` if appropriate. **Phase 7:** Run **`07-03-PLAN.md` Task 2** human verification (10 items). **Phase 6:** Human verification for **06-04 Task 2** still open.
+**Next:** **`/gsd-plan-phase 9`** (or open `09-CONTEXT.md` / execute Phase 9 plans when ready). **Phase 7:** **`07-03-PLAN.md` Task 2** (10 items). **Phase 6:** **06-04 Task 2** export/import UAT still open.

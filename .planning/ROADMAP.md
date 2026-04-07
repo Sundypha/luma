@@ -21,7 +21,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 5: Calendar, home & cycle surfaces** — Month navigation, actual vs predicted distinction, home summary and quick actions
 - [ ] **Phase 6: Export & import** — Documented full export, validated import, deterministic duplicate handling — **in progress**: `06-04` Task 2 human UAT pending (IMPT-01, IMPT-03); Task 1 complete 2026-04-06 (`6f20f79`)
 - [ ] **Phase 7: App protection (lock)** — Optional PIN/biometric lock with honest limitations — **in progress**: `07-01`–`07-02` complete 2026-04-06; **`07-03` Task 1** complete (`993a892`); **`07-04` Tasks 1–2** complete (`273e1bc`, `a423f43`); **human UAT** pending (`07-03` T2, `07-04` T3)
-- [ ] **Phase 8: Release quality, offline assurance & inclusive copy** — Snappy UX, clear actions, non-gendered non-medical copy, airplane-mode verification
+- [x] **Phase 8: Release quality, offline assurance & inclusive copy** — Snappy UX, clear actions, non-gendered non-medical copy, airplane-mode verification (completed 2026-04-07)
 - [ ] **Phase 9: Prediction of next period** — Multi-algorithm prediction (3+ methods), confidence-based calendar display showing algorithm agreement level
 
 ## Phase Details
@@ -229,7 +229,7 @@ Plans:
 Plans:
 - [x] `08-01-PLAN.md` — Copy audit, inclusive language, label clarity & accessibility labels (NFR-05, NFR-07) — complete 2026-04-07 (`7ac8e87`, `fb8c9f5`; see `08-01-SUMMARY.md`)
 - [x] `08-02-PLAN.md` — Performance feel: initial-load spinner elimination & responsiveness verification (NFR-01) — complete 2026-04-07 (`5fe3b43`; see `08-02-SUMMARY.md`)
-- [ ] `08-03-PLAN.md` — Offline assurance: automated network dependency checks & airplane-mode walkthrough (NFR-08) — **Task 1** complete 2026-04-07 (`1c5bde7`; see `08-03-SUMMARY.md`); **Task 2** human airplane-mode checklist **pending**
+- [x] `08-03-PLAN.md` — Offline assurance: automated network dependency checks & airplane-mode walkthrough (NFR-08) — complete 2026-04-07 (`1c5bde7` Task 1; Task 2 human UAT **pass**; see `08-03-SUMMARY.md`)
 
 ## Progress
 
@@ -246,7 +246,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 | 5. Calendar, home & cycle surfaces | 3/4 | In Progress|  |
 | 6. Export & import | 4/4 | Complete   | 2026-04-06 |
 | 7. App protection (lock) | 1/3 | In Progress|  |
-| 8. Release quality, offline assurance & inclusive copy | 2/3 | In Progress |  |
+| 8. Release quality, offline assurance & inclusive copy | 3/3 | Complete    | 2026-04-07 |
 | 9. Prediction of next period | 0/TBD | Not started | - |
 
 ### Phase 9: Prediction of next period
@@ -275,7 +275,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 
 **Requirements:** PRED-01, PRED-02, PRED-03, PRED-04 (extended), NFR-06
 
-**Plans:** 0 plans
+**Plans:** 3/3 plans complete
 
 Plans:
 - [ ] TBD (run /gsd-plan-phase 9 to break down)
