@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:luma/features/calendar/calendar_view_model.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
@@ -24,6 +25,7 @@ void main() {
   });
 
   setUp(() {
+    SharedPreferences.setMockInitialValues({});
     mockRepo = MockPeriodRepository();
     calendar = PeriodCalendarContext.fromTimeZoneName('UTC');
     controller = StreamController<List<StoredPeriodWithDays>>.broadcast();

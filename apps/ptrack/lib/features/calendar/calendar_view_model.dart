@@ -23,12 +23,15 @@ class CalendarViewModel extends ChangeNotifier {
     );
     unawaited(
       PredictionSettings.load().then((mode) {
+        if (_disposed) return;
         _displayMode = mode;
         _recompute();
         notifyListeners();
       }),
     );
   }
+
+  bool _disposed = false;
 
   final PeriodRepository _repository;
   final PeriodCalendarContext _calendar;
@@ -160,6 +163,7 @@ class CalendarViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
+    _disposed = true;
     _subscription?.cancel();
     super.dispose();
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ptrack_data/ptrack_data.dart';
+import 'package:ptrack_domain/ptrack_domain.dart';
 
 import '../logging/symptom_form_sheet.dart';
 import 'calendar_day_data.dart';
@@ -56,6 +57,23 @@ StoredDayEntry? _entryForDay(DateTime dayNorm, StoredPeriodWithDays pwd) {
     }
   }
   return null;
+}
+
+String _algorithmDisplayLabel(AlgorithmId id) => switch (id) {
+      AlgorithmId.median => 'Average spacing',
+      AlgorithmId.ewma => 'Recent-weighted',
+      AlgorithmId.bayesian => 'Pattern-learning',
+      AlgorithmId.linearTrend => 'Trend',
+    };
+
+bool _algorithmCoversUtcDay(AlgorithmPrediction o, DateTime dayNormUtc) {
+  for (var i = 0; i < o.predictedDurationDays; i++) {
+    final d = utcCalendarDateOnly(
+      addUtcCalendarDays(o.predictedStartUtc, i),
+    );
+    if (d == dayNormUtc) return true;
+  }
+  return false;
 }
 
 int? _periodDayNumber(
@@ -135,39 +153,16 @@ class DayDetailSheet extends StatelessWidget {
     );
   }
 
-  Widget _predictionCard(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(
-              Icons.auto_awesome,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Period expected around this day',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Based on your recent cycles. Estimates only — not medical advice.',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+  Widget _predictionCard(
+    BuildContext context, {
+    required CalendarDayData dayData,
+    required EnsemblePredictionResult? ensemble,
+    required DateTime dayNormUtc,
+  }) {
+    return _PredictedDayInfoCard(
+      dayData: dayData,
+      ensemble: ensemble,
+      dayNormUtc: dayNormUtc,
     );
   }
 
@@ -298,6 +293,7 @@ class DayDetailSheet extends StatelessWidget {
     BuildContext context,
     MaterialLocalizations loc,
     DateTime dayNorm,
+    CalendarDayData dayData,
   ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
@@ -309,7 +305,12 @@ class DayDetailSheet extends StatelessWidget {
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 16),
-          _predictionCard(context),
+          _predictionCard(
+            context,
+            dayData: dayData,
+            ensemble: viewModel.ensembleResult,
+            dayNormUtc: dayNorm,
+          ),
           const SizedBox(height: 16),
           Text(
             'You can log this once the day arrives.',
@@ -326,6 +327,7 @@ class DayDetailSheet extends StatelessWidget {
     BuildContext context,
     MaterialLocalizations loc,
     DateTime dayNorm,
+    CalendarDayData dayData,
   ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
@@ -337,7 +339,12 @@ class DayDetailSheet extends StatelessWidget {
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 16),
-          _predictionCard(context),
+          _predictionCard(
+            context,
+            dayData: dayData,
+            ensemble: viewModel.ensembleResult,
+            dayNormUtc: dayNorm,
+          ),
           const SizedBox(height: 24),
           FilledButton(
             onPressed: () => _markDayAndPop(context, dayNorm),
@@ -579,10 +586,10 @@ class DayDetailSheet extends StatelessWidget {
     final entry = pwd != null ? _entryForDay(dayNorm, pwd) : null;
 
     if (isPredicted && isFuture) {
-      return _buildPredictedFuture(context, loc, dayNorm);
+      return _buildPredictedFuture(context, loc, dayNorm, dayData);
     }
     if (isPredicted && !isFuture) {
-      return _buildPredictedPastOrToday(context, loc, dayNorm);
+      return _buildPredictedPastOrToday(context, loc, dayNorm, dayData);
     }
     if (isOnPeriod && hasLoggedData && entry != null && pwd != null) {
       return _buildPeriodWithSymptoms(context, loc, dayNorm, pwd, entry);
@@ -604,6 +611,106 @@ class DayDetailSheet extends StatelessWidget {
       child: ListenableBuilder(
         listenable: viewModel,
         builder: (context, _) => _buildBody(context),
+      ),
+    );
+  }
+}
+
+class _PredictedDayInfoCard extends StatefulWidget {
+  const _PredictedDayInfoCard({
+    required this.dayData,
+    required this.ensemble,
+    required this.dayNormUtc,
+  });
+
+  final CalendarDayData dayData;
+  final EnsemblePredictionResult? ensemble;
+  final DateTime dayNormUtc;
+
+  @override
+  State<_PredictedDayInfoCard> createState() => _PredictedDayInfoCardState();
+}
+
+class _PredictedDayInfoCardState extends State<_PredictedDayInfoCard> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = MaterialLocalizations.of(context);
+    final scheme = Theme.of(context).colorScheme;
+    final active = widget.ensemble?.activeAlgorithmCount ?? 0;
+    final agreementLine = active > 0
+        ? formatDayAgreementSummary(
+            agreementCount: widget.dayData.predictionAgreementCount,
+            activeCount: active,
+          )
+        : 'Based on your recent cycles.';
+
+    final covering = widget.ensemble == null
+        ? const <AlgorithmPrediction>[]
+        : widget.ensemble!.algorithmOutputs
+            .where((o) => _algorithmCoversUtcDay(o, widget.dayNormUtc))
+            .toList();
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.auto_awesome, color: scheme.primary),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Period expected around this day',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    agreementLine,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                        ),
+                  ),
+                  if (covering.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    TextButton(
+                      onPressed: () => setState(() => _expanded = !_expanded),
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(_expanded ? 'Hide details' : 'See details'),
+                    ),
+                    if (_expanded) ...[
+                      const SizedBox(height: 8),
+                      for (final o in covering)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
+                          child: Text(
+                            '${_algorithmDisplayLabel(o.algorithmId)}: expects around '
+                            '${loc.formatMediumDate(DateTime(o.predictedStartUtc.year, o.predictedStartUtc.month, o.predictedStartUtc.day))}',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ),
+                    ],
+                  ],
+                  const SizedBox(height: 8),
+                  Text(
+                    'Estimates only — not medical advice.',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

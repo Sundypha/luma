@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
@@ -12,6 +14,7 @@ import '../lock/lock_service.dart';
 import '../lock/lock_settings_tile.dart';
 import '../settings/about_screen.dart';
 import '../settings/mood_settings.dart';
+import '../settings/prediction_settings.dart';
 
 /// Root shell after onboarding: bottom tabs, drawer, and global FAB for logging.
 class TabShell extends StatefulWidget {
@@ -74,6 +77,12 @@ class _TabShellState extends State<TabShell> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const MoodSettingsTile(),
+              const Divider(),
+              PredictionSettingsTile(
+                onModeChanged: (mode) {
+                  unawaited(_calendarVm.updateDisplayMode(mode));
+                },
+              ),
               const Divider(),
               LockSettingsTile(
                 lockService: widget.lockService,
