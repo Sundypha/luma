@@ -65,13 +65,13 @@ Phase 1 MVP — derived from `period_tracker_prds/PRD_Phase_1_MVP.md` (functiona
 
 ### Non-functional (Phase 1)
 
-- [ ] **NFR-01**: Common screens and logging actions feel immediate on mainstream supported devices
+- [x] **NFR-01**: Common screens and logging actions feel immediate on mainstream supported devices
 - [x] **NFR-02**: No silent data loss; core paths are stable; app upgrades preserve local data with tested migrations
 - [x] **NFR-03**: No analytics collection, ad identifiers, or third-party ads/profiling SDKs; no hidden telemetry of reproductive events
 - [x] **NFR-04**: Dependency and build choices are reviewable for the above privacy constraints
-- [ ] **NFR-05**: Primary actions are understandable without dense tutorial text
+- [x] **NFR-05**: Primary actions are understandable without dense tutorial text
 - [x] **NFR-06**: Predicted vs actual periods distinguishable without relying on color alone
-- [ ] **NFR-07**: Copy avoids unnecessary gendered assumptions and unsupported medical claims
+- [x] **NFR-07**: Copy avoids unnecessary gendered assumptions and unsupported medical claims
 - [ ] **NFR-08**: Full Phase 1 feature set works in airplane mode after install (no login, no network-required errors on core flows)
 
 ## v2 Requirements
@@ -132,13 +132,13 @@ Explicit Phase 1 exclusions per PRD §8:
 | LOCK-01 | Phase 7 | Pending |
 | LOCK-02 | Phase 7 | Pending |
 | LOCK-03 | Phase 7 | Complete |
-| NFR-01 | Phase 8 | Pending |
+| NFR-01 | Phase 8 | Complete |
 | NFR-02 | Phase 2 | Complete |
 | NFR-03 | Phase 1 | Complete |
 | NFR-04 | Phase 1 | Complete |
-| NFR-05 | Phase 8 | Pending |
+| NFR-05 | Phase 8 | Complete |
 | NFR-06 | Phase 5 | Complete |
-| NFR-07 | Phase 8 | Pending |
+| NFR-07 | Phase 8 | Complete |
 | NFR-08 | Phase 8 | Pending |
 
 **Coverage:**

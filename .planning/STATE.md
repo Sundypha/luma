@@ -6,7 +6,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-04)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** Phase 5 (calendar surfaces) and **Phase 05.1** (day-marking UX + MVVM refactor) in parallel until 05-04 sign-off; **Phase 6 plan 06-04** Task 2 (export/import UAT) pending; **Phase 7 gap plan `07-04` Tasks 1–2** complete 2026-04-06 (`273e1bc`, `a423f43` — navigator pop-before-lock + tests; see `07-04-SUMMARY.md`); **`07-04` Task 3** and **`07-03` Task 2** human UAT still pending for LOCK-01/LOCK-02 sign-off.
+**Current focus:** Phase 5 (calendar surfaces) and **Phase 05.1** (day-marking UX + MVVM refactor) in parallel until 05-04 sign-off; **Phase 6 plan 06-04** Task 2 (export/import UAT) pending; **Phase 7 gap plan `07-04` Tasks 1–2** complete 2026-04-06 (`273e1bc`, `a423f43` — navigator pop-before-lock + tests; see `07-04-SUMMARY.md`); **`07-04` Task 3** and **`07-03` Task 2** human UAT still pending for LOCK-01/LOCK-02 sign-off. **Phase 8:** **`08-02-PLAN.md`** complete 2026-04-07 (`5fe3b43` — ViewModel seeding; see `08-02-SUMMARY.md`); **`08-01`** / **`08-03`** pending; device smoke for spinner elimination still recommended.
 
 ## Current Position
 
@@ -22,9 +22,9 @@ Plan: **05-04** — Task 1 (day detail sheet + calendar routing) **complete** 20
 
 Status: **Phase 5 in progress** — same as above; **Phase 05.1** automation done for plan 05; **human UAT** outstanding for `05.1-05`.
 
-Last activity: 2026-04-06 — **`06-04-PLAN.md` Task 1** complete (`6f20f79` import UI + tests; IMPT-01/IMPT-03 **await Task 2 human UAT** — see `06-04-SUMMARY.md`). Earlier **`06-03-PLAN.md`** (export UI); `05-04` and `05.1-05` Task 2 human checkpoints still open.
+Last activity: 2026-04-07 — **`08-02-PLAN.md`** complete (`5fe3b43`); prior 2026-04-06 — **`06-04-PLAN.md` Task 1** (`6f20f79`); `05-04` and `05.1-05` Task 2 human checkpoints still open.
 
-**Progress:** [█████████░] 92%
+**Progress:** [██████████] 97%
 
 ## Performance Metrics
 
@@ -70,6 +70,8 @@ Last activity: 2026-04-06 — **`06-04-PLAN.md` Task 1** complete (`6f20f79` imp
 | Phase 06-export-import P03 | 45min | 2 tasks | 14 files |
 | Phase 06-export-import P04 T1 | 45min | 1 task (auto); Task 2 UAT pending | 7 files |
 | Phase 07-app-protection-lock P02 | 45min | 2 tasks | 7 files |
+| Phase 08-release-quality-offline-assurance-inclusive-copy P02 | 12 min | 1 tasks | 4 files |
+| Phase 08-release-quality-offline-assurance-inclusive-copy P01 | 18 min | 2 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -116,6 +118,8 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 - [Phase 06-export-import]: 06-03: runExport(ExportDataRun) supplements startExport for testable failure path; file_picker v11 uses FilePicker.saveFile with bytes on Linux
 - [Phase 07-app-protection-lock]: 07-02: LockViewModel tests use real LockService with mocked storage/local_auth because LockService is final.
 - [Phase 07-app-protection-lock]: 07-02: showPinSetupSheet supports skipAck and changePinOnly for change-PIN without enableLock.
+- [Phase 08]: Stream-backed ViewModels accept optional initialData; seed via _applyData without notifyListeners in ctor; main awaits watchPeriodsWithDays().first before runApp
+- [Phase 08-release-quality-offline-assurance-inclusive-copy]: User-facing errors use fixed plain-language strings instead of DayMarkFailure.reason or Exception.toString() for NFR-05/NFR-07 alignment.
 
 ### Pending Todos
 
@@ -128,6 +132,7 @@ Decisions are logged in `PROJECT.md` Key Decisions table.
 ### Roadmap Evolution
 
 - Phase 05.1 inserted after Phase 5: UX refactor - day-marking model and MVVM (URGENT) — replaces explicit start/end period actions with day-toggle model; refactors presentation layer to MVVM with ChangeNotifier ViewModels. Investigation document: `.planning/phases/05.1-ux-refactor-day-marking-model-and-mvvm/INVESTIGATION.md`.
+- Phase 9 added: Prediction of next period — multi-algorithm prediction (3+ algorithms), confidence-based calendar visualization showing agreement level across algorithms
 
 ### Blockers/Concerns
 
@@ -135,10 +140,10 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-06T20:57:13.705Z
+**Last session:** 2026-04-07T12:03:55.983Z
 
-**Stopped at:** Phase 8 context gathered
+**Stopped at:** Completed 08-01-PLAN.md
 
-**Resume file:** .planning/phases/08-release-quality-offline-assurance-inclusive-copy/08-CONTEXT.md
+**Resume file:** .planning/phases/08-release-quality-offline-assurance-inclusive-copy/08-02-PLAN.md
 
 **Next (Phase 7):** Run **`07-03-PLAN.md` Task 2** human verification (10 items); then mark plan complete in ROADMAP / requirements as appropriate. **Phase 6:** Human verification for **06-04 Task 2** still open.
