@@ -225,4 +225,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String dayDetailAlgoExpectsAround(String name, String date) {
     return '$name: expects around $date';
   }
+
+  @override
+  String get settingsAppLanguageSectionTitle => 'App language';
+
+  @override
+  String get appLanguageFollowDevice => 'System default (follow device)';
+
+  @override
+  String get appLanguageEnglish => 'English';
+
+  @override
+  String get appLanguageGerman => 'German';
+
+  @override
+  String get appLanguageRestartMessage =>
+      'Restart the app to apply this change.';
 }

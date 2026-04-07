@@ -189,5 +189,10 @@
       "name": {"type": "String"},
       "date": {"type": "String"}
     }
-  }
+  },
+  "settingsAppLanguageSectionTitle": "App-Sprache",
+  "appLanguageFollowDevice": "Systemstandard (wie Gerät)",
+  "appLanguageEnglish": "Englisch",
+  "appLanguageGerman": "Deutsch",
+  "appLanguageRestartMessage": "Starte die App neu, damit die Änderung wirkt."
 }

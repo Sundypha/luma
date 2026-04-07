@@ -230,4 +230,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String dayDetailAlgoExpectsAround(String name, String date) {
     return '$name: erwartet ungefähr $date';
   }
+
+  @override
+  String get settingsAppLanguageSectionTitle => 'App-Sprache';
+
+  @override
+  String get appLanguageFollowDevice => 'Systemstandard (wie Gerät)';
+
+  @override
+  String get appLanguageEnglish => 'Englisch';
+
+  @override
+  String get appLanguageGerman => 'Deutsch';
+
+  @override
+  String get appLanguageRestartMessage =>
+      'Starte die App neu, damit die Änderung wirkt.';
 }

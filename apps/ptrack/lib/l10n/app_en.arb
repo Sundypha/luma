@@ -189,5 +189,19 @@
       "name": {"type": "String"},
       "date": {"type": "String"}
     }
+  },
+  "settingsAppLanguageSectionTitle": "App language",
+  "@settingsAppLanguageSectionTitle": {
+    "description": "Settings section heading for UI language choice."
+  },
+  "appLanguageFollowDevice": "System default (follow device)",
+  "@appLanguageFollowDevice": {
+    "description": "Use the device locale for app strings; unsupported locales fall back to English."
+  },
+  "appLanguageEnglish": "English",
+  "appLanguageGerman": "German",
+  "appLanguageRestartMessage": "Restart the app to apply this change.",
+  "@appLanguageRestartMessage": {
+    "description": "Shown after the user changes app language in Settings."
   }
 }

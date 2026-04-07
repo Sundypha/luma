@@ -13,8 +13,53 @@ import '../backup/data_settings_screen.dart';
 import '../lock/lock_service.dart';
 import '../lock/lock_settings_tile.dart';
 import '../settings/about_screen.dart';
+import '../settings/app_language_settings.dart';
 import '../settings/mood_settings.dart';
 import '../settings/prediction_settings.dart';
+
+class _SettingsScreen extends StatelessWidget {
+  const _SettingsScreen({
+    required this.lockService,
+    required this.onReset,
+    required this.onLockNow,
+    this.onModeChanged,
+    this.onEnabledAlgorithmsChanged,
+    this.onHorizonChanged,
+  });
+
+  final LockService lockService;
+  final VoidCallback onReset;
+  final VoidCallback onLockNow;
+  final ValueChanged<PredictionDisplayMode>? onModeChanged;
+  final ValueChanged<Set<AlgorithmId>>? onEnabledAlgorithmsChanged;
+  final ValueChanged<int>? onHorizonChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Settings')),
+      body: ListView(
+        children: [
+          const AppLanguageSettingsSection(),
+          const Divider(),
+          const MoodSettingsTile(),
+          const Divider(),
+          PredictionSettingsTile(
+            onModeChanged: onModeChanged,
+            onEnabledAlgorithmsChanged: onEnabledAlgorithmsChanged,
+            onHorizonChanged: onHorizonChanged,
+          ),
+          const Divider(),
+          LockSettingsTile(
+            lockService: lockService,
+            onReset: onReset,
+            onLockNow: onLockNow,
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 /// Root shell after onboarding: bottom tabs, drawer, and global FAB for logging.
 class TabShell extends StatefulWidget {
@@ -68,36 +113,22 @@ class _TabShellState extends State<TabShell> {
   }
 
   void _openSettings(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Settings'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const MoodSettingsTile(),
-              const Divider(),
-              PredictionSettingsTile(
-                onModeChanged: (mode) {
-                  unawaited(_calendarVm.updateDisplayMode(mode));
-                },
-              ),
-              const Divider(),
-              LockSettingsTile(
-                lockService: widget.lockService,
-                onReset: widget.onReset,
-                onLockNow: widget.onLockNow,
-              ),
-            ],
-          ),
+    Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (_) => _SettingsScreen(
+          lockService: widget.lockService,
+          onReset: widget.onReset,
+          onLockNow: widget.onLockNow,
+          onModeChanged: (mode) => unawaited(_calendarVm.updateDisplayMode(mode)),
+          onEnabledAlgorithmsChanged: (ids) {
+            unawaited(_calendarVm.updateEnabledAlgorithms(ids));
+            unawaited(_homeVm.updateEnabledAlgorithms(ids));
+          },
+          onHorizonChanged: (horizon) {
+            unawaited(_calendarVm.updateHorizonCycles(horizon));
+            unawaited(_homeVm.updateHorizonCycles(horizon));
+          },
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Close'),
-          ),
-        ],
       ),
     );
   }

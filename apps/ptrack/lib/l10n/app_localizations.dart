@@ -401,6 +401,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{name}: expects around {date}'**
   String dayDetailAlgoExpectsAround(String name, String date);
+
+  /// Settings section heading for UI language choice.
+  ///
+  /// In en, this message translates to:
+  /// **'App language'**
+  String get settingsAppLanguageSectionTitle;
+
+  /// Use the device locale for app strings; unsupported locales fall back to English.
+  ///
+  /// In en, this message translates to:
+  /// **'System default (follow device)'**
+  String get appLanguageFollowDevice;
+
+  /// No description provided for @appLanguageEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get appLanguageEnglish;
+
+  /// No description provided for @appLanguageGerman.
+  ///
+  /// In en, this message translates to:
+  /// **'German'**
+  String get appLanguageGerman;
+
+  /// Shown after the user changes app language in Settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Restart the app to apply this change.'**
+  String get appLanguageRestartMessage;
 }
 
 class _AppLocalizationsDelegate
