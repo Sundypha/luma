@@ -73,9 +73,18 @@ Phase implementation detail remains under `.planning/phases/` for history.
 
 | Phase | Plans | Status |
 |-------|-------|--------|
-| 10 — i18n foundation | 0/? | Not started |
+| 10 — i18n foundation | 2/? | Planned (`10-01`, `10-02`) |
 | 11 — German + language settings | 0/? | Not started |
 | 12 — Fertility window | 0/? | Not started |
+
+### Phase 13: PDF export of period statistics and details (user selectable if all or none). Goal is to have a PDF ready for a physician or gynecologist.
+
+**Goal:** [To be planned]
+**Depends on:** Phase 12
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 13 to break down)
 
 ---
 *Roadmap updated: 2026-04-07 — v2.0 phases 10–12; requirements traceability in `REQUIREMENTS.md`.*  
