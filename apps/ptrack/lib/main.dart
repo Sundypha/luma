@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'l10n/app_localizations.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,6 +11,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'features/lock/delete_ptrack_db_file.dart';
 import 'features/lock/lock_gate.dart';
 import 'features/lock/lock_service.dart';
+import 'features/settings/app_language_settings.dart';
 import 'features/shell/tab_shell.dart';
 import 'features/onboarding/first_log_screen.dart';
 import 'features/onboarding/onboarding_screen.dart';
@@ -19,6 +23,7 @@ Future<void> main() async {
 
   final onboardingState = await OnboardingState.create();
   final prefs = await SharedPreferences.getInstance();
+  final appLanguagePreference = await AppLanguageSettings.load(prefs: prefs);
   final lockService = LockService(prefs: prefs);
   final db = openPtrackDatabase();
   final calendar = calendarForDevice();
@@ -43,6 +48,7 @@ Future<void> main() async {
       calendar: calendar,
       initialScreen: initialScreen,
       lockService: lockService,
+      appLanguagePreference: appLanguagePreference,
       initialPeriodsWithDays: periodsWithDays,
     ),
   );
@@ -76,6 +82,7 @@ class LumaApp extends StatefulWidget {
     this.initialScreen,
     this.lockService,
     this.homeOverride,
+    this.appLanguagePreference = AppLanguagePreference.followDevice,
     this.initialPeriodsWithDays,
   }) : assert(
           homeOverride != null ||
@@ -96,6 +103,7 @@ class LumaApp extends StatefulWidget {
   final PeriodCalendarContext? calendar;
   final AppScreen? initialScreen;
   final LockService? lockService;
+  final AppLanguagePreference appLanguagePreference;
   final List<StoredPeriodWithDays>? initialPeriodsWithDays;
 
   @override
@@ -121,6 +129,31 @@ class _LumaAppState extends State<LumaApp> {
     super.dispose();
   }
 
+  /// [MaterialApp.locale] and [MaterialApp.localeListResolutionCallback] from
+  /// cold-start preference (manual language changes apply after restart).
+  ({
+    Locale? locale,
+    Locale? Function(List<Locale>?, Iterable<Locale>)? localeListResolutionCallback,
+  }) _localeFromPreference() {
+    final pref = widget.appLanguagePreference;
+    return switch (pref) {
+      AppLanguagePreference.followDevice => (
+          locale: null,
+          localeListResolutionCallback:
+              (locales, supported) =>
+                  AppLanguageSettings.resolveFromDeviceLocales(locales),
+        ),
+      AppLanguagePreference.english => (
+          locale: const Locale('en'),
+          localeListResolutionCallback: null,
+        ),
+      AppLanguagePreference.german => (
+          locale: const Locale('de'),
+          localeListResolutionCallback: null,
+        ),
+    };
+  }
+
   Future<void> _resetApp() async {
     await widget.lockService?.deletePinData();
     await widget.lockService?.disableLock();
@@ -140,11 +173,21 @@ class _LumaAppState extends State<LumaApp> {
       colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
       useMaterial3: true,
     );
+    final (:locale, :localeListResolutionCallback) = _localeFromPreference();
 
     if (widget.homeOverride != null) {
       return MaterialApp(
-        title: 'Luma',
+        onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
         theme: theme,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: locale,
+        localeListResolutionCallback: localeListResolutionCallback,
         home: widget.homeOverride,
       );
     }
@@ -190,8 +233,17 @@ class _LumaAppState extends State<LumaApp> {
 
     return MaterialApp(
       navigatorKey: _rootNavigatorKey,
-      title: 'Luma',
+      onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       theme: theme,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: locale,
+      localeListResolutionCallback: localeListResolutionCallback,
       home: home,
     );
   }
