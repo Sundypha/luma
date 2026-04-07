@@ -100,6 +100,7 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
               title: const Text('Export Backup'),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
+                tooltip: 'Back',
                 onPressed: () async {
                   if (_vm.step == ExportStep.exporting) return;
                   if (_vm.step == ExportStep.selectContent ||
@@ -205,6 +206,7 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
             border: const OutlineInputBorder(),
             suffixIcon: IconButton(
               icon: const Icon(Icons.clear),
+              tooltip: 'Clear password',
               onPressed: () => _passwordController.clear(),
             ),
           ),
