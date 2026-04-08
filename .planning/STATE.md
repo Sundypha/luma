@@ -6,21 +6,21 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** **Milestone v2.0** — i18n, **German** secondary locale, **optional fertility window** (opt-in, prompts for missing assumptions).
+**Current focus:** **Milestone v2.0** — Phase **13** PDF export (depends on closed phase 12); i18n + German + fertility window **shipped**.
 
 ## Current Position
 
-**Milestone:** v2.0 — i18n, German locale, optional fertility window.
+**Milestone:** v2.0 — i18n, German locale, optional fertility window (**complete**).
 
-**Phase:** **12** — Optional fertility window (**UAT checkpoint** on plan `12-04`).
+**Phase:** **13** — PDF export of period statistics and details (next engineering phase).
 
-**Plan:** `12-04-PLAN.md` — **Tasks 1–2 complete**; **Task 3 (`checkpoint:human-verify`) not approved** (see `12-04-SUMMARY.md`).
+**Plan:** Run `/gsd-plan-phase 13` if plans need refinement, then `/gsd-execute-phase 13` when ready.
 
-**Status:** Phase **12** plans **01–03** complete; plan **04** code landed; **FERT-03 / FERT-04** for the home/disable path remain **pending human sign-off** per Task 3. Phase **11** complete (3/3 plans + verification).
+**Status:** Phase **12** complete (4/4 plans + UAT); **FERT-*** requirements satisfied.
 
-Last activity: 2026-04-08 — **`12-04` Tasks 1–2**: home fertile-window card + suggestion card + `tab_shell` `onFertilityToggled` to calendar and home VMs (`e9bf84c`, `c155b9e`).
+Last activity: 2026-04-08 — **`12-04` Task 3** human UAT **approved** (`pass`); phase 12 closed; focus advances to **13**.
 
-**Progress (v2.0):** Phase 12 — **awaiting `12-04` Task 3** before treating plan 04 / phase 12 as closed (see `ROADMAP.md`).
+**Progress (v2.0):** Phase 12 **complete** — 2026-04-08. Next: **Phase 13** (see `ROADMAP.md`).
 
 ## Performance Metrics
 
@@ -38,17 +38,15 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 **2026-04-08 (12-02):** Fertility opt-in uses bottom-sheet disclaimer then setup form; `SharedPreferences` stores all prefs when disabled; full fertility strings in EN/DE ARB for parallel Plans 03–04.
 
-**2026-04-08 (12-03):** Calendar shows fertile days with a teal **diamond** (not color-only vs period circle / prediction hatch); legend adds fertility row when opt-in on; `CalendarViewModel.updateFertilityEnabled` persists for Plan 04 wiring.
+**2026-04-08 (12-03):** Calendar fertile days use the same **hatched-circle** visualization as period predictions, in a **teal** palette (`ConfidenceHatchedCirclePainter.fertilityEstimate`); legend matches. *(Earlier plan text described a diamond; superseded for consistency.)*
 
 **2026-04-08 (12-04):** Home card shows average-cycle explanation only when `computedAverageCycleLength` is non-null; `hasEnoughDataForFertility` uses ≥2 `predictionCycleInputsFromStored` intervals; settings fertility toggle fans out to **both** VMs via `tab_shell`.
 
 ### Pending Todos
 
-- **`12-04` Task 3** — Human verification of full fertility flow (steps in `12-04-PLAN.md` / `12-04-SUMMARY.md`); reply `approved` or file issues.
-- After UAT: mark **FERT-03** / **FERT-04** in `REQUIREMENTS.md` if satisfied; then treat phase **12** plan **04** as fully complete.
-- Phase 10 plans remain available if i18n foundation still needs execution on other branches
-- **Remove period projection opacity fade** — no per-cycle opacity decay; tier hatch/spacing already encodes confidence; details view conveys uncertainty (area: ui)
-- Optional: domain research pass if product/legal copy for **FERT-*** needs tightening before implementation
+- **Phase 13** — PDF export per `ROADMAP.md` (`13-01` … `13-03` plans).
+- Phase 10 plans remain available if i18n foundation still needs execution on other branches.
+- **Remove period projection opacity fade** — no per-cycle opacity decay; tier hatch/spacing already encodes confidence; details view conveys uncertainty (area: ui).
 
 ### Roadmap Evolution
 
@@ -58,14 +56,14 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 ### Blockers/Concerns
 
-None technical; **product sign-off** waits on **`12-04` Task 3** UAT.
+None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-08T12:00:00.000Z
+**Last session:** 2026-04-08
 
-**Stopped at:** **`12-04-PLAN.md` Task 3 — `checkpoint:human-verify` (blocking)**
+**Stopped at:** Phase **12** closed; **Phase 13** PDF export is next.
 
-**Resume file:** `.planning/phases/12-optional-fertility-window-estimator/12-04-PLAN.md` (Task 3)
+**Resume file:** `.planning/phases/13-pdf-export-of-period-statistics-and-details-user-selectable-if-all-or-none-goal-is-to-have-a-pdf-ready-for-a-physician-or-gynecologist/13-01-PLAN.md` (when present)
 
-**Next:** User runs manual checks from `12-04-SUMMARY.md` → `approved` or issues → then optional `requirements mark-complete` for FERT-03/FERT-04 and phase closure.
+**Next:** `/gsd-plan-phase 13` or `/gsd-execute-phase 13` per readiness.

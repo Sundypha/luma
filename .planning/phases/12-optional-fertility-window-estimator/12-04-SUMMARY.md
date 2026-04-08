@@ -13,8 +13,8 @@ provides:
   - Suggestion card (grayed when <2 completed intervals, dismiss persists, Enable opens settings)
   - Tab shell onFertilityToggled wiring to calendar + home VMs
 affects:
-  - Phase 12 closure (human UAT pending Task 3)
-  - REQUIREMENTS FERT-03 / FERT-04 (not marked complete until Task 3 approved)
+  - Phase 12 closure (Task 3 UAT approved 2026-04-08)
+  - REQUIREMENTS FERT-03 / FERT-04 (satisfied; traceability in REQUIREMENTS.md)
 
 tech-stack:
   added: []
@@ -36,13 +36,14 @@ key-decisions:
 patterns-established:
   - "Settings fertility toggle callbacks fan out to both CalendarViewModel and HomeViewModel for immediate recompute"
 
-requirements-completed: []
-requirements-deferred-pending-human-verify: [FERT-03, FERT-04]
+requirements-completed: [FERT-03, FERT-04]
+requirements-deferred-pending-human-verify: []
 
-execution_status: paused_at_checkpoint_task_3
+execution_status: complete
 
 duration: 35min
 completed: 2026-04-08
+uat_approved: 2026-04-08
 ---
 
 # Phase 12 Plan 04: Home fertility card and tab wiring Summary
@@ -53,8 +54,8 @@ completed: 2026-04-08
 
 - **Duration:** ~35 min
 - **Started:** 2026-04-08T11:00:00Z (approx.)
-- **Completed:** 2026-04-08T11:35:00Z (approx.) — automation only; **Task 3 not signed off**
-- **Tasks completed (automated):** 2 / 3
+- **Completed:** 2026-04-08 — automation + **Task 3 UAT approved** (user: pass)
+- **Tasks completed:** 3 / 3
 - **Files modified:** 3
 
 ## Accomplishments
@@ -70,19 +71,11 @@ completed: 2026-04-08
 
 **Plan metadata:** `docs(12-04): Record plan progress and UAT checkpoint` — this file, `STATE.md`, and `ROADMAP.md` (see `git log` on branch).
 
-## Task 3 — Checkpoint: human-verify (blocking)
+## Task 3 — Checkpoint: human-verify
 
-**Status:** **Not executed by automation.** No human approval was recorded.
+**Status:** **Approved** 2026-04-08 — owner sign-off: **pass** (proceed / next wave).
 
-**What was built (full stack for UAT):** Plans 01–04 deliver calculator, settings opt-in, calendar markers, and home card + suggestion + VM refresh on toggle.
-
-**How to verify (from `12-04-PLAN.md`):**
-
-1. Run `cd apps/ptrack && flutter run` (or IDE).
-2. **Fresh state:** suggestion card visible (grayed if \<2 completed intervals); no fertility dots on calendar; fertility off in settings.
-3. Log 3+ periods; suggestion card active; use **Enable** / settings to complete opt-in; confirm calendar dots, home card with range + footer, disable clears visuals, dismiss (X) on suggestion persists across restart; spot-check German strings.
-
-**Resume signal:** User types `approved` or describes issues (per plan).
+**What was verified:** Full-stack fertility flow per `12-04-PLAN.md` Task 3 checklist (fresh state, logging, suggestion, enable flow, calendar, home, disable, dismiss, German). Calendar fertility visualization updated post-plan to **teal hatched circles** (aligned with period prediction pattern); UAT accepted under current build.
 
 ## Files Created/Modified
 
@@ -97,7 +90,7 @@ completed: 2026-04-08
 
 ## Deviations from Plan
 
-None — plan Tasks 1–2 executed as written; Task 3 intentionally deferred pending human verification.
+Tasks 1–2 as written; Task 3 completed after human approval.
 
 ## Issues Encountered
 
@@ -109,7 +102,7 @@ None.
 
 ## Next Phase Readiness
 
-- After Task 3 approval: run `requirements mark-complete` for **FERT-03** and **FERT-04** if traceability still ties them to this plan; consider advancing `STATE.md` plan pointer and checking phase 12 for milestone closure.
+- Phase **13** (PDF export): run `/gsd-execute-phase 13` when ready (`13-01` … `13-03` plans exist).
 
 ## Self-Check: PASSED
 
@@ -118,4 +111,4 @@ None.
 
 ---
 *Phase: 12-optional-fertility-window-estimator*  
-*Automation completed: 2026-04-08 — **Task 3 human-verify outstanding***
+*Plan completed: 2026-04-08 — **Task 3 UAT approved**; phase 12 closed.*

@@ -76,13 +76,13 @@ Phase implementation detail remains under `.planning/phases/` for history.
 4. Disabling removes fertility visuals and stops prompts without corrupting period/export data (**FERT-04**).
 5. **Unit tests** document expected outputs for fixed inputs; **docs or comments** state the formula/assumptions (**FERT-05**).
 
-**Plans:** 3/4 fully closed; **`12-04` automation complete, Task 3 human-verify pending** (see `12-04-SUMMARY.md`)
+**Plans:** 4/4 plans complete
 
 Plans:
 - [x] `12-01-PLAN.md` — TDD fertility window calculation engine + tests (FERT-05) — see `12-01-SUMMARY.md`
 - [x] `12-02-PLAN.md` — Fertility settings, opt-in flow, input collection, all ARB strings (FERT-01, FERT-02, FERT-04) — see `12-02-SUMMARY.md`
-- [x] `12-03-PLAN.md` — Calendar fertility visuals: teal dots, legend, day detail label (FERT-03) — see `12-03-SUMMARY.md`
-- [ ] `12-04-PLAN.md` — Home fertility card, suggestion card, tab shell wiring (FERT-03, FERT-04) — **Tasks 1–2 done** — see `12-04-SUMMARY.md` — *awaiting Task 3 UAT*
+- [x] `12-03-PLAN.md` — Calendar fertility visuals: teal hatched circle (same pattern as predictions), legend, day detail label (FERT-03) — see `12-03-SUMMARY.md`
+- [x] `12-04-PLAN.md` — Home fertility card, suggestion card, tab shell wiring (FERT-03, FERT-04) — see `12-04-SUMMARY.md` — *Task 3 UAT approved 2026-04-08*
 
 ## Progress (v2.0)
 
@@ -90,7 +90,7 @@ Plans:
 |-------|-------|--------|
 | 10 — i18n foundation | 2/? | Planned (`10-01`, `10-02`) |
 | 11 — German + language settings | 3/3 | Complete — 2026-04-07 |
-| 12 — Fertility window | 3/4 + `12-04` code (UAT pending) | 2026-04-08 — `12-04` Tasks 1–2 shipped; Task 3 human-verify open |
+| 12 — Fertility window | 4/4 | Complete — 2026-04-08 (UAT approved) |
 
 ### Phase 13: PDF export of period statistics and details (user selectable if all or none). Goal is to have a PDF ready for a physician or gynecologist.
 
@@ -114,4 +114,4 @@ Plans:
 - [ ] TBD (run /gsd:plan-phase 14 to break down)
 
 ---
-*Roadmap updated: 2026-04-08 — `12-04` home fertility surfaces + tab wiring committed; **phase 12 not closed** until `12-04` Task 3 UAT (`12-04-SUMMARY.md`).*  
+*Roadmap updated: 2026-04-08 — Phase **12** complete (4/4 plans; `12-04` Task 3 UAT approved). **Next:** Phase **13** — PDF export (`/gsd-plan-phase 13` or `/gsd-execute-phase 13` when plans are ready).*  
