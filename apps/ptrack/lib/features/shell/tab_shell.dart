@@ -15,25 +15,32 @@ import '../lock/lock_service.dart';
 import '../lock/lock_settings_tile.dart';
 import '../settings/about_screen.dart';
 import '../settings/app_language_settings.dart';
+import '../settings/fertility_settings.dart';
 import '../settings/mood_settings.dart';
 import '../settings/prediction_settings.dart';
 
 class _SettingsScreen extends StatelessWidget {
   const _SettingsScreen({
+    required this.repository,
+    required this.calendar,
     required this.lockService,
     required this.onReset,
     required this.onLockNow,
     this.onModeChanged,
     this.onEnabledAlgorithmsChanged,
     this.onHorizonChanged,
+    this.onFertilityToggled,
   });
 
+  final PeriodRepository repository;
+  final PeriodCalendarContext calendar;
   final LockService lockService;
   final VoidCallback onReset;
   final VoidCallback onLockNow;
   final ValueChanged<PredictionDisplayMode>? onModeChanged;
   final ValueChanged<Set<AlgorithmId>>? onEnabledAlgorithmsChanged;
   final ValueChanged<int>? onHorizonChanged;
+  final ValueChanged<bool>? onFertilityToggled;
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +57,12 @@ class _SettingsScreen extends StatelessWidget {
             onModeChanged: onModeChanged,
             onEnabledAlgorithmsChanged: onEnabledAlgorithmsChanged,
             onHorizonChanged: onHorizonChanged,
+          ),
+          const Divider(),
+          FertilitySettingsTile(
+            repository: repository,
+            calendar: calendar,
+            onFertilityToggled: onFertilityToggled,
           ),
           const Divider(),
           LockSettingsTile(
@@ -119,6 +132,8 @@ class _TabShellState extends State<TabShell> {
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
         builder: (_) => _SettingsScreen(
+          repository: widget.repository,
+          calendar: widget.calendar,
           lockService: widget.lockService,
           onReset: widget.onReset,
           onLockNow: widget.onLockNow,
@@ -131,6 +146,7 @@ class _TabShellState extends State<TabShell> {
             unawaited(_calendarVm.updateHorizonCycles(horizon));
             unawaited(_homeVm.updateHorizonCycles(horizon));
           },
+          onFertilityToggled: null,
         ),
       ),
     );
