@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 
+import '../settings/fertility_settings.dart';
 import '../settings/prediction_settings.dart';
 import 'calendar_day_data.dart';
 
@@ -22,9 +23,23 @@ class CalendarViewModel extends ChangeNotifier {
       onError: _onStreamError,
     );
     unawaited(
-      PredictionSettings.load().then((mode) {
+      Future.wait([
+        PredictionSettings.load(),
+        PredictionSettings.loadEnabledAlgorithms(),
+        PredictionSettings.loadHorizonCycles(),
+        FertilitySettings.loadEnabled(),
+        FertilitySettings.loadCycleLengthOverride(),
+        FertilitySettings.loadLutealPhaseDays(),
+      ]).then((results) {
         if (_disposed) return;
-        _displayMode = mode;
+        _displayMode = results[0] as PredictionDisplayMode;
+        _enabledAlgorithmIds = Set<AlgorithmId>.from(
+          results[1] as Set<AlgorithmId>,
+        );
+        _horizonCycles = results[2] as int;
+        _fertilityEnabled = results[3] as bool;
+        _cycleLengthOverride = results[4] as int?;
+        _lutealPhaseDays = results[5] as int;
         _recompute();
         notifyListeners();
       }),
@@ -38,6 +53,12 @@ class CalendarViewModel extends ChangeNotifier {
   final EnsembleCoordinator _ensembleCoordinator = EnsembleCoordinator();
 
   PredictionDisplayMode _displayMode = PredictionDisplayMode.consensusOnly;
+  Set<AlgorithmId> _enabledAlgorithmIds =
+      Set<AlgorithmId>.from(PredictionSettings.defaultEnabledAlgorithms);
+  int _horizonCycles = PredictionSettings.defaultHorizonCycles;
+  bool _fertilityEnabled = false;
+  int? _cycleLengthOverride;
+  int _lutealPhaseDays = FertilitySettings.defaultLutealPhaseDays;
   EnsemblePredictionResult? _ensembleResult;
   int _previousActiveCount = 0;
 
@@ -87,13 +108,13 @@ class CalendarViewModel extends ChangeNotifier {
     return _focusedDay.year != now.year || _focusedDay.month != now.month;
   }
 
-  bool get showInsufficientFutureMessage {
-    if (_prediction is! PredictionInsufficientHistory) return false;
-    final now = DateTime.now();
-    final focusedMonth = DateTime(_focusedDay.year, _focusedDay.month);
-    final thisMonth = DateTime(now.year, now.month);
-    return focusedMonth.isAfter(thisMonth);
-  }
+  /// True when no ensemble method produced a forecast. The median consensus can
+  /// still be [PredictionInsufficientHistory] while e.g. the Bayesian path alone
+  /// marks days — then this is false.
+  bool get showInsufficientPredictionHint =>
+      (_ensembleResult?.activeAlgorithmCount ?? 0) == 0;
+
+  bool get fertilityEnabled => _fertilityEnabled;
 
   void selectDay(DateTime selectedDay, [DateTime? focusedForCalendar]) {
     _selectedDay = selectedDay;
@@ -124,6 +145,34 @@ class CalendarViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateEnabledAlgorithms(Set<AlgorithmId> enabled) async {
+    final next = Set<AlgorithmId>.from(enabled);
+    if (setEquals(_enabledAlgorithmIds, next)) return;
+    _enabledAlgorithmIds = next;
+    await PredictionSettings.saveEnabledAlgorithms(next);
+    _recompute();
+    notifyListeners();
+  }
+
+  Future<void> updateHorizonCycles(int horizon) async {
+    final clamped = horizon.clamp(1, 12);
+    if (_horizonCycles == clamped) return;
+    _horizonCycles = clamped;
+    await PredictionSettings.saveHorizonCycles(clamped);
+    _recompute();
+    notifyListeners();
+  }
+
+  Future<void> updateFertilityEnabled(bool enabled) async {
+    if (_fertilityEnabled == enabled) return;
+    _fertilityEnabled = enabled;
+    await FertilitySettings.saveEnabled(enabled);
+    _recompute();
+    notifyListeners();
+  }
+
+  int get cycleSpreadDays => _ensembleResult?.cycleSpreadDays ?? 0;
+
   void _applyData(List<StoredPeriodWithDays> data) {
     _loadError = null;
     _hasInitialEvent = true;
@@ -142,22 +191,56 @@ class CalendarViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Set<DateTime>? _fertileDaysForStored(List<StoredPeriod> storedPeriods) {
+    if (!_fertilityEnabled || storedPeriods.isEmpty) return null;
+
+    final inputs = predictionCycleInputsFromStored(
+      stored: storedPeriods,
+      calendar: _calendar,
+    );
+    final lengths = inputs.map((e) => e.lengthInDays).toList();
+    final cycleLen = _cycleLengthOverride ??
+        FertilityWindowCalculator.averageCycleLengthFromHistory(lengths);
+    if (cycleLen == null) return null;
+
+    final window = FertilityWindowCalculator.compute(
+      lastPeriodStartUtc: storedPeriods.last.span.startUtc,
+      cycleLengthDays: cycleLen,
+      lutealPhaseDays: _lutealPhaseDays,
+    );
+    if (window == null) return null;
+
+    final out = <DateTime>{};
+    var d = window.startUtc;
+    final end = window.endUtc;
+    while (!d.isAfter(end)) {
+      out.add(d);
+      d = d.add(const Duration(days: 1));
+    }
+    return out;
+  }
+
   void _recompute() {
-    final storedPeriods = _periodsWithDays.map((p) => p.period).toList();
+    final storedPeriods = _periodsWithDays.map((p) => p.period).toList()
+      ..sort((a, b) => a.span.startUtc.compareTo(b.span.startUtc));
     final ensemble = _ensembleCoordinator.predictNext(
       storedPeriods: storedPeriods,
       calendar: _calendar,
       previousActiveCount: _previousActiveCount,
+      enabledAlgorithmIds: _enabledAlgorithmIds,
+      horizonCycles: _horizonCycles,
     );
     _ensembleResult = ensemble;
     _previousActiveCount = ensemble.activeAlgorithmCount;
     _prediction = ensemble.consensusPrediction;
+    final fertileDays = _fertileDaysForStored(storedPeriods);
     _dayDataMap = buildCalendarDayDataMap(
       periodsWithDays: _periodsWithDays,
       ensemble: ensemble,
       displayMode: _displayMode,
       today: DateTime.now(),
       startingDayOfWeek: DateTime.monday,
+      fertileDays: fertileDays,
     );
   }
 

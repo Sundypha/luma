@@ -35,8 +35,10 @@ class CalendarDayData {
     this.loggedPeriodState = PeriodDayState.none,
     this.predictionConfidenceTier = 0,
     this.predictionAgreementCount = 0,
+    this.predictionCycleIndex = 0,
     this.hasLoggedData = false,
     this.isToday = false,
+    this.isFertileDay = false,
   });
 
   final PeriodDayState loggedPeriodState;
@@ -47,10 +49,17 @@ class CalendarDayData {
   /// Raw agreement count for detail copy ("X of N methods agree").
   final int predictionAgreementCount;
 
+  /// Which projected cycle this day belongs to: 0 = next period,
+  /// 1 = the period after that, etc. Only meaningful when [isPredictedPeriod].
+  final int predictionCycleIndex;
+
   bool get isPredictedPeriod => predictionConfidenceTier > 0;
 
   final bool hasLoggedData;
   final bool isToday;
+
+  /// Estimated fertile window day (opt-in); never true on logged bleeding days.
+  final bool isFertileDay;
 }
 
 DateTime _utcMidnight(DateTime d) {
@@ -58,15 +67,31 @@ DateTime _utcMidnight(DateTime d) {
   return DateTime.utc(x.year, x.month, x.day);
 }
 
+/// True if [dayNorm] (UTC Y-M-D midnight, same as table_calendar cells) falls
+/// within any stored period span.
+bool loggedBleedingCoversCalendarDay(
+  DateTime dayNorm,
+  List<StoredPeriodWithDays> periodsWithDays,
+  DateTime today,
+) {
+  final d = DateTime.utc(dayNorm.year, dayNorm.month, dayNorm.day);
+  for (final pwd in periodsWithDays) {
+    if (pwd.period.span.containsCalendarDayUtc(d, todayLocal: today)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /// Adapter: single [PredictionResult] → synthetic ensemble (one method, tier 1 days).
 EnsemblePredictionResult legacyEnsembleFromPrediction(PredictionResult prediction) {
-  final dayMap = <DateTime, int>{};
+  final dayMap = <DateTime, DayPredictionMeta>{};
 
   void markRange(DateTime start, DateTime end) {
     var d = _utcMidnight(start);
     final e = _utcMidnight(end);
     while (!d.isAfter(e)) {
-      dayMap[d] = 1;
+      dayMap[d] = (agreement: 1, cycleIndex: 0);
       d = d.add(const Duration(days: 1));
     }
   }
@@ -84,7 +109,7 @@ EnsemblePredictionResult legacyEnsembleFromPrediction(PredictionResult predictio
       if (rangeStartUtc != null && rangeEndUtc != null) {
         markRange(rangeStartUtc, rangeEndUtc);
       } else {
-        dayMap[_utcMidnight(pointStartUtc)] = 1;
+        dayMap[_utcMidnight(pointStartUtc)] = (agreement: 1, cycleIndex: 0);
       }
   }
 
@@ -95,7 +120,7 @@ EnsemblePredictionResult legacyEnsembleFromPrediction(PredictionResult predictio
     dayConfidenceMap: dayMap,
     activeAlgorithmCount: active,
     totalAlgorithmCount: 1,
-    milestoneMessage: null,
+    milestone: null,
     consensusPrediction: prediction,
     mergedExplanationSteps: const [],
     explanationText: '',
@@ -127,6 +152,7 @@ Map<DateTime, CalendarDayData> buildCalendarDayDataMap({
   EnsemblePredictionResult? ensemble,
   PredictionDisplayMode displayMode = PredictionDisplayMode.consensusOnly,
   PredictionResult? prediction,
+  Set<DateTime>? fertileDays,
 }) {
   assert(
     (ensemble != null) ^ (prediction != null),
@@ -185,15 +211,17 @@ Map<DateTime, CalendarDayData> buildCalendarDayDataMap({
     }
   }
 
-  bool hasLoggedPeriod(DateTime day) => periodDayStates.containsKey(day);
-
-  final predictionMeta = <DateTime, ({int tier, int agreementCount})>{};
+  final predictionMeta =
+      <DateTime, ({int tier, int agreementCount, int cycleIndex})>{};
 
   for (final entry in eff.dayConfidenceMap.entries) {
     final day = _utcMidnight(entry.key);
-    if (hasLoggedPeriod(day)) continue;
+    if (loggedBleedingCoversCalendarDay(day, periodsWithDays, today)) {
+      continue;
+    }
 
-    final agreementCount = entry.value;
+    final agreementCount = entry.value.agreement;
+    final cycleIndex = entry.value.cycleIndex;
     final tier = agreementCount.clamp(0, 3);
     if (mode == PredictionDisplayMode.consensusOnly) {
       if (tier < 2 && eff.activeAlgorithmCount > 1) {
@@ -201,7 +229,8 @@ Map<DateTime, CalendarDayData> buildCalendarDayDataMap({
       }
     }
 
-    predictionMeta[day] = (tier: tier, agreementCount: agreementCount);
+    predictionMeta[day] =
+        (tier: tier, agreementCount: agreementCount, cycleIndex: cycleIndex);
   }
 
   final allDays = <DateTime>{
@@ -209,6 +238,7 @@ Map<DateTime, CalendarDayData> buildCalendarDayDataMap({
     ...predictionMeta.keys,
     ...loggedDataDays,
     todayNorm,
+    if (fertileDays != null) ...fertileDays,
   };
 
   return {
@@ -217,8 +247,11 @@ Map<DateTime, CalendarDayData> buildCalendarDayDataMap({
         loggedPeriodState: periodDayStates[day] ?? PeriodDayState.none,
         predictionConfidenceTier: predictionMeta[day]?.tier ?? 0,
         predictionAgreementCount: predictionMeta[day]?.agreementCount ?? 0,
+        predictionCycleIndex: predictionMeta[day]?.cycleIndex ?? 0,
         hasLoggedData: loggedDataDays.contains(day),
         isToday: day == todayNorm,
+        isFertileDay: (fertileDays?.contains(day) ?? false) &&
+            !loggedBleedingCoversCalendarDay(day, periodsWithDays, today),
       ),
   };
 }
