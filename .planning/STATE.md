@@ -12,15 +12,15 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Milestone:** v2.0 — i18n, German locale, optional fertility window.
 
-**Phase:** **12** — Optional fertility window (next).
+**Phase:** **12** — Optional fertility window (in progress).
 
-**Plan:** Run `/gsd-plan-phase 12` or `/gsd-execute-phase 12` when plans exist.
+**Plan:** `12-02-PLAN.md` next (settings, opt-in, ARB).
 
-**Status:** Phase **11** complete (3/3 plans + verification); automated checks green; optional human checks in `11-VERIFICATION.md`.
+**Status:** Phase **12** plan **01** complete (`12-01-SUMMARY.md`); phase **11** complete (3/3 plans + verification).
 
-Last activity: 2026-04-07 — phase **11** execution complete; backup timestamps localized (`fix(i18n)`).
+Last activity: 2026-04-08 — phase **12** plan **01** executed: domain fertility calculator + PRED-04 phrase extension (**FERT-05** satisfied).
 
-**Progress (v2.0):** Phase 11 **complete**; next milestone engineering phase is **12** (see `ROADMAP.md`).
+**Progress (v2.0):** Phase 12 **1/4** plans; remaining `12-02`–`12-04` (see `ROADMAP.md`).
 
 ## Performance Metrics
 
@@ -34,9 +34,11 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 **2026-04-07 (11-03):** Calendar week start follows material locale only; ARB DE keys must cover all EN message keys (`tool/arb_de_key_parity.dart` + CI).
 
+**2026-04-08 (12-01):** Fertile window uses cycle-day ovulation placement `(cycleLength − luteal)` from CD1; domain `formatEnsembleExplanation` uses `EnsembleMilestone` + English helper (no `milestoneMessage`).
+
 ### Pending Todos
 
-- Phase **12** (fertility window) per `ROADMAP.md`
+- Phase **12** plans **02–04** (fertility UI, settings, home) per `ROADMAP.md`
 - Phase 10 plans remain available if i18n foundation still needs execution on other branches
 - Optional: domain research pass if product/legal copy for **FERT-*** needs tightening before implementation
 
@@ -44,6 +46,7 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 - **2026-04-07:** v2.0 opened — engineering phases **10–12** (i18n foundation → German + language settings → fertility window module).
 - Phase 13 added: PDF export of period statistics and details (user selectable if all or none). Goal is to have a PDF ready for a physician or gynecologist.
+- Phase 14 added: remove deprecated FAB. clicking on a day of the calendar opens the same widget as the FAB and is clearer in the intent than the FAB
 
 ### Blockers/Concerns
 
@@ -51,10 +54,10 @@ None at milestone definition time.
 
 ## Session Continuity
 
-**Last session:** 2026-04-08T09:20:36.341Z
+**Last session:** 2026-04-08T10:05:00.000Z
 
-**Stopped at:** Phase 12 plans created and verified
+**Stopped at:** Completed `12-01-PLAN.md` (fertility domain engine + copy guardrails)
 
-**Resume file:** .planning/phases/12-optional-fertility-window-estimator/12-01-PLAN.md
+**Resume file:** .planning/phases/12-optional-fertility-window-estimator/12-02-PLAN.md
 
-**Next:** `/gsd-plan-phase 12` then `/gsd-execute-phase 12`, or finish phase 10 on branches that still need it
+**Next:** Execute `12-02-PLAN.md` or `/gsd-execute-phase 12` continuation
