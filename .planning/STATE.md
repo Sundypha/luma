@@ -42,6 +42,7 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 - Phase **12** plans **03–04** (calendar/home fertility UI, suggestion card wiring) per `ROADMAP.md`
 - Phase 10 plans remain available if i18n foundation still needs execution on other branches
+- **Remove opacity for period projection after 3 months** — hatched-circle fade makes far-out predictions unreadable; details view already conveys uncertainty (area: ui)
 - Optional: domain research pass if product/legal copy for **FERT-*** needs tightening before implementation
 
 ### Roadmap Evolution
