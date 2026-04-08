@@ -931,7 +931,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get predSettingsHorizonCaption =>
-      'Farther forecasts are less reliable, especially with irregular cycles. They fade out to show this.';
+      'Farther forecasts are less reliable, especially with irregular cycles. Hatch density shows how much prediction methods agree.';
 
   @override
   String get predSettingsHorizonNextOnly => 'Next period only';

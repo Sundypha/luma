@@ -1598,7 +1598,7 @@ abstract class AppLocalizations {
   /// No description provided for @predSettingsHorizonCaption.
   ///
   /// In en, this message translates to:
-  /// **'Farther forecasts are less reliable, especially with irregular cycles. They fade out to show this.'**
+  /// **'Farther forecasts are less reliable, especially with irregular cycles. Hatch density shows how much prediction methods agree.'**
   String get predSettingsHorizonCaption;
 
   /// No description provided for @predSettingsHorizonNextOnly.

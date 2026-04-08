@@ -447,7 +447,7 @@
   "predSettingsModeAllNotesTitle": "Alle Vorhersagen + Hinweise",
   "predSettingsModeAllNotesSubtitle": "Wie oben, mit Hinweis an unsicheren Tagen",
   "predSettingsSectionHorizon": "Wie weit voraus planen",
-  "predSettingsHorizonCaption": "Weiter entfernte Vorhersagen sind weniger zuverlässig, besonders bei unregelmäßigen Zyklen. Sie werden ausgeblendet, um das zu zeigen.",
+  "predSettingsHorizonCaption": "Weiter entfernte Vorhersagen sind weniger zuverlässig, besonders bei unregelmäßigen Zyklen. Die Schraffurdichte zeigt, wie stark die Vorhersagemethoden übereinstimmen.",
   "predSettingsHorizonNextOnly": "Nur nächste Periode",
   "predSettingsHorizon3Title": "3 Monate voraus",
   "predSettingsHorizon3Subtitle": "Gut für Reiseplanung",

@@ -946,7 +946,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get predSettingsHorizonCaption =>
-      'Weiter entfernte Vorhersagen sind weniger zuverlässig, besonders bei unregelmäßigen Zyklen. Sie werden ausgeblendet, um das zu zeigen.';
+      'Weiter entfernte Vorhersagen sind weniger zuverlässig, besonders bei unregelmäßigen Zyklen. Die Schraffurdichte zeigt, wie stark die Vorhersagemethoden übereinstimmen.';
 
   @override
   String get predSettingsHorizonNextOnly => 'Nur nächste Periode';

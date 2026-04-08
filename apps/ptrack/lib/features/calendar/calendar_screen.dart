@@ -44,11 +44,7 @@ class CalendarScreen extends StatelessWidget {
   ) {
     final key = DateTime.utc(day.year, day.month, day.day);
     final data = viewModel.dayDataMap[key] ?? const CalendarDayData();
-    return buildCalendarDayCell(
-      day,
-      data,
-      cycleSpreadDays: viewModel.cycleSpreadDays,
-    );
+    return buildCalendarDayCell(day, data);
   }
 
   Widget _buildCalendar(BuildContext context) {

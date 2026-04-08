@@ -53,7 +53,6 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 - **Phase 14** — **14-01** Tasks 1–3 **done** (FAB removed, ARB/tests updated); **Task 4** `human-verify` per `14-01-PLAN.md`. Then check **UXFAB-01/02** in `REQUIREMENTS.md`, finalize `14-01-SUMMARY.md`, and close the plan in `ROADMAP.md`.
 - **Phase 13** — Complete **13-03** Task 3: human verification of PDF export flow (see `13-03-PLAN.md`). Then write `13-03-SUMMARY.md`, advance STATE/ROADMAP, and final docs commit.
 - Phase 10 plans remain available if i18n foundation still needs execution on other branches.
-- **Remove period projection opacity fade** — no per-cycle opacity decay; tier hatch/spacing already encodes confidence; details view conveys uncertainty (area: ui).
 - **Restructure settings into submenus** — Language / Period Prediction / Fertility Prediction / Privacy & Security; nest language choices; remove mood word-labels setting; fertility master toggle + persistent submenu settings (area: ui).
 
 ### Roadmap Evolution

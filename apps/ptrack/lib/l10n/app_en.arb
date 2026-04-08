@@ -456,7 +456,7 @@
   "predSettingsModeAllNotesTitle": "All predictions + labels",
   "predSettingsModeAllNotesSubtitle": "Same as above, with a note on less certain days",
   "predSettingsSectionHorizon": "How far ahead to forecast",
-  "predSettingsHorizonCaption": "Farther forecasts are less reliable, especially with irregular cycles. They fade out to show this.",
+  "predSettingsHorizonCaption": "Farther forecasts are less reliable, especially with irregular cycles. Hatch density shows how much prediction methods agree.",
   "predSettingsHorizonNextOnly": "Next period only",
   "predSettingsHorizon3Title": "3 months ahead",
   "predSettingsHorizon3Subtitle": "Good for travel planning",

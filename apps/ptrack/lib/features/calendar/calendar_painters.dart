@@ -9,8 +9,8 @@ const Color kPeriodColor = Color(0xFFD81B60);
 /// Lighter variant for outlines and hatching (NFR-06: pattern + contrast).
 const Color kPeriodColorLight = Color(0xFFF48FB1);
 
-/// Material teal 400 — soft teal/green for optional fertility estimate marker.
-const Color kFertilityColor = Color(0xFF26A69A);
+/// Lighter teal for fertility hatching (same role as [kPeriodColorLight] for predictions).
+const Color kFertilityColorLight = Color(0xFF4DB6AC);
 
 /// Solid-fill horizontal band for logged period days; shape follows [PeriodDayState].
 class PeriodBandPainter extends CustomPainter {
@@ -107,27 +107,21 @@ class PeriodBandPainter extends CustomPainter {
   }
 }
 
-/// Diagonal-stripe circle for predicted days: opacity + hatch density encode agreement
-/// tier (NFR-06 — not color alone).
-///
-/// [cycleIndex] = 0 is the next predicted period, 1 is the one after, etc.
-/// [cycleSpreadDays] drives how fast opacity fades per hop (more irregular = faster fade).
+/// Diagonal-stripe circle for predicted days: hatch density + stroke encode agreement
+/// tier (NFR-06 — not color alone). Opacity is tier-only (no per-hop fade).
 class ConfidenceHatchedCirclePainter extends CustomPainter {
   ConfidenceHatchedCirclePainter({
     required int tier,
     this.color = kPeriodColorLight,
-    this.cycleIndex = 0,
-    this.cycleSpreadDays = 0,
+    this.fertilityEstimate = false,
   }) : tier = tier.clamp(1, 3);
 
   final int tier;
   final Color color;
 
-  /// Which projected cycle hop this day belongs to (0 = next period).
-  final int cycleIndex;
-
-  /// Historical cycle-length spread in days; higher = less regular = faster fade.
-  final int cycleSpreadDays;
+  /// Same diagonal-hatch circle as period predictions, in the fertility palette
+  /// (NFR-06: pattern + contrast; consistent visualization across estimate types).
+  final bool fertilityEstimate;
 
   static const Map<int, ({double opacity, double spacing, double strokeWidth})>
       _tierConfig = {
@@ -136,34 +130,20 @@ class ConfidenceHatchedCirclePainter extends CustomPainter {
     3: (opacity: 0.85, spacing: 3.0, strokeWidth: 1.6),
   };
 
-  /// Decay factor per cycle hop: lower spread = more reliable = slower fade.
-  double get _decayFactor {
-    if (cycleSpreadDays < 4) return 0.72;
-    if (cycleSpreadDays < 8) return 0.52;
-    return 0.32;
-  }
-
-  double get _opacityMultiplier {
-    if (cycleIndex <= 0) return 1.0;
-    return _decayFactor.clamp(0.05, 1.0) *
-        _opacityMultiplierForIndex(cycleIndex - 1);
-  }
-
-  double _opacityMultiplierForIndex(int idx) {
-    if (idx <= 0) return _decayFactor;
-    return _decayFactor * _opacityMultiplierForIndex(idx - 1);
-  }
+  ({double opacity, double spacing, double strokeWidth}) get _effectiveTierCfg =>
+      fertilityEstimate ? _tierConfig[2]! : _tierConfig[tier]!;
 
   @override
   void paint(Canvas canvas, Size size) {
-    final cfg = _tierConfig[tier]!;
-    final effectiveOpacity = (cfg.opacity * _opacityMultiplier).clamp(0.04, 1.0);
+    final cfg = _effectiveTierCfg;
+    final effectiveOpacity = cfg.opacity.clamp(0.04, 1.0);
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.shortestSide * 0.36;
     final circlePath = Path()
       ..addOval(Rect.fromCircle(center: center, radius: radius));
 
-    final strokeColor = color.withValues(alpha: effectiveOpacity);
+    final baseColor = fertilityEstimate ? kFertilityColorLight : color;
+    final strokeColor = baseColor.withValues(alpha: effectiveOpacity);
 
     canvas.save();
     canvas.clipPath(circlePath);
@@ -199,8 +179,7 @@ class ConfidenceHatchedCirclePainter extends CustomPainter {
   bool shouldRepaint(covariant ConfidenceHatchedCirclePainter oldDelegate) {
     return oldDelegate.tier != tier ||
         oldDelegate.color != color ||
-        oldDelegate.cycleIndex != cycleIndex ||
-        oldDelegate.cycleSpreadDays != cycleSpreadDays;
+        oldDelegate.fertilityEstimate != fertilityEstimate;
   }
 }
 
@@ -230,31 +209,6 @@ class TodayRingPainter extends CustomPainter {
   }
 }
 
-/// Small diamond below the day number for estimated fertile days (NFR-06: not color-only).
-class FertilityDotPainter extends CustomPainter {
-  FertilityDotPainter({this.color = kFertilityColor});
-
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final cx = size.width / 2;
-    final cy = size.height / 2;
-    const r = 3.0;
-    final path = Path()
-      ..moveTo(cx, cy - r)
-      ..lineTo(cx + r, cy)
-      ..lineTo(cx, cy + r)
-      ..lineTo(cx - r, cy)
-      ..close();
-    canvas.drawPath(path, Paint()..color = color);
-  }
-
-  @override
-  bool shouldRepaint(covariant FertilityDotPainter oldDelegate) =>
-      oldDelegate.color != color;
-}
-
 /// Height reserved under the day number for the optional log marker (keeps grid even).
 const double kCalendarLogMarkerStripHeight = 11.0;
 
@@ -278,45 +232,22 @@ Widget _logMarkerChip() {
   );
 }
 
-Widget _fertilityDiamondDot() {
-  return CustomPaint(
-    size: const Size(6, 6),
-    painter: FertilityDotPainter(),
-  );
-}
-
 Widget _calendarBottomMarkers(CalendarDayData data) {
-  final fertile = data.isFertileDay;
-  final log = data.hasLoggedData;
-  if (!fertile && !log) return const SizedBox.shrink();
-  if (fertile && log) {
-    return Center(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _logMarkerChip(),
-          const SizedBox(width: 5),
-          _fertilityDiamondDot(),
-        ],
-      ),
-    );
-  }
-  if (fertile) {
-    return Center(child: _fertilityDiamondDot());
-  }
+  if (!data.hasLoggedData) return const SizedBox.shrink();
   return Center(child: _logMarkerChip());
 }
 
 /// Stacks period band, prediction hatch, today ring, and day number; marker sits below.
-///
-/// [cycleSpreadDays] is passed to [ConfidenceHatchedCirclePainter] for
-/// variability-aware opacity decay on multi-hop projected days.
 Widget buildCalendarDayCell(
   DateTime day,
-  CalendarDayData data, {
-  int cycleSpreadDays = 0,
-}) {
+  CalendarDayData data,
+) {
   final hasPeriod = data.loggedPeriodState != PeriodDayState.none;
+  final showPredictionHatch =
+      data.predictionConfidenceTier > 0 && !hasPeriod;
+  final showFertilityHatch = data.isFertileDay &&
+      !hasPeriod &&
+      !showPredictionHatch;
 
   return Column(
     mainAxisSize: MainAxisSize.max,
@@ -333,13 +264,20 @@ Widget buildCalendarDayCell(
                   painter: PeriodBandPainter(state: data.loggedPeriodState),
                 ),
               ),
-            if (data.predictionConfidenceTier > 0 && !hasPeriod)
+            if (showPredictionHatch)
               Positioned.fill(
                 child: CustomPaint(
                   painter: ConfidenceHatchedCirclePainter(
                     tier: data.predictionConfidenceTier,
-                    cycleIndex: data.predictionCycleIndex,
-                    cycleSpreadDays: cycleSpreadDays,
+                  ),
+                ),
+              ),
+            if (showFertilityHatch)
+              Positioned.fill(
+                child: CustomPaint(
+                  painter: ConfidenceHatchedCirclePainter(
+                    tier: 2,
+                    fertilityEstimate: true,
                   ),
                 ),
               ),
@@ -413,10 +351,10 @@ Widget buildConfidenceLegend(
           SizedBox(
             width: 16,
             height: 16,
-            child: Center(
-              child: CustomPaint(
-                size: const Size(8, 8),
-                painter: FertilityDotPainter(),
+            child: CustomPaint(
+              painter: ConfidenceHatchedCirclePainter(
+                tier: 2,
+                fertilityEstimate: true,
               ),
             ),
           ),
