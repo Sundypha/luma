@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 
+import '../settings/fertility_settings.dart';
+import '../settings/prediction_settings.dart';
 import 'cycle_position.dart';
 
 DateTime _utcCalendarDay(DateTime d) {
@@ -89,11 +91,43 @@ class HomeViewModel extends ChangeNotifier {
       _onData,
       onError: _onStreamError,
     );
+    unawaited(
+      Future.wait([
+        PredictionSettings.loadEnabledAlgorithms(),
+        PredictionSettings.loadHorizonCycles(),
+        FertilitySettings.loadEnabled(),
+        FertilitySettings.loadCycleLengthOverride(),
+        FertilitySettings.loadLutealPhaseDays(),
+        FertilitySettings.loadSuggestionCardDismissed(),
+      ]).then((results) {
+        if (_disposed) return;
+        _enabledAlgorithmIds =
+            Set<AlgorithmId>.from(results[0] as Set<AlgorithmId>);
+        _horizonCycles = results[1] as int;
+        _fertilityEnabled = results[2] as bool;
+        _cycleLengthOverride = results[3] as int?;
+        _lutealPhaseDays = results[4] as int;
+        _suggestionCardDismissed = results[5] as bool;
+        _recompute();
+        notifyListeners();
+      }),
+    );
   }
+
+  bool _disposed = false;
 
   final PeriodRepository _repository;
   final PeriodCalendarContext _calendar;
   final EnsembleCoordinator _ensembleCoordinator = EnsembleCoordinator();
+  Set<AlgorithmId> _enabledAlgorithmIds =
+      Set<AlgorithmId>.from(PredictionSettings.defaultEnabledAlgorithms);
+  int _horizonCycles = PredictionSettings.defaultHorizonCycles;
+  bool _fertilityEnabled = false;
+  int? _cycleLengthOverride;
+  int _lutealPhaseDays = FertilitySettings.defaultLutealPhaseDays;
+  bool _suggestionCardDismissed = false;
+  FertileWindow? _fertileWindow;
+  int? _computedAverageCycleLength;
 
   PeriodRepository get repository => _repository;
   PeriodCalendarContext get calendar => _calendar;
@@ -123,10 +157,29 @@ class HomeViewModel extends ChangeNotifier {
   PredictionResult get prediction => _prediction;
   List<StoredPeriodWithDays> get periodsWithDays => _periodsWithDays;
 
-  String? get milestoneMessage => _ensembleResult?.milestoneMessage;
-  String get ensembleExplanationText =>
-      _ensembleResult?.explanationText ?? '';
+  EnsemblePredictionResult? get ensembleResult => _ensembleResult;
+
+  EnsembleMilestone? get ensembleMilestone => _ensembleResult?.milestone;
   int get activeAlgorithmCount => _ensembleResult?.activeAlgorithmCount ?? 0;
+
+  bool get fertilityEnabled => _fertilityEnabled;
+
+  FertileWindow? get fertileWindow => _fertileWindow;
+
+  bool get showSuggestionCard =>
+      !_fertilityEnabled && !_suggestionCardDismissed;
+
+  bool get hasEnoughDataForFertility {
+    final stored = _periodsWithDays.map((p) => p.period).toList()
+      ..sort((a, b) => a.span.startUtc.compareTo(b.span.startUtc));
+    final inputs = predictionCycleInputsFromStored(
+      stored: stored,
+      calendar: _calendar,
+    );
+    return inputs.length >= 2;
+  }
+
+  int? get computedAverageCycleLength => _computedAverageCycleLength;
 
   /// Period row id covering today's calendar day, if any.
   int? get todayPeriodId => _todayPeriodId(_periodsWithDays, DateTime.now());
@@ -155,11 +208,14 @@ class HomeViewModel extends ChangeNotifier {
 
   void _recompute() {
     final today = DateTime.now();
-    final storedPeriods = _periodsWithDays.map((p) => p.period).toList();
+    final storedPeriods = _periodsWithDays.map((p) => p.period).toList()
+      ..sort((a, b) => a.span.startUtc.compareTo(b.span.startUtc));
     final ensemble = _ensembleCoordinator.predictNext(
       storedPeriods: storedPeriods,
       calendar: _calendar,
       previousActiveCount: _previousActiveCount,
+      enabledAlgorithmIds: _enabledAlgorithmIds,
+      horizonCycles: _horizonCycles,
     );
     _ensembleResult = ensemble;
     _previousActiveCount = ensemble.activeAlgorithmCount;
@@ -171,12 +227,69 @@ class HomeViewModel extends ChangeNotifier {
     );
     _todayEntry = _findTodayEntry(_periodsWithDays, today);
     _isTodayMarked = _isTodayMarkedInPeriods(_periodsWithDays, today);
+
+    final cycleInputs = predictionCycleInputsFromStored(
+      stored: storedPeriods,
+      calendar: _calendar,
+    );
+    final lengths = cycleInputs.map((e) => e.lengthInDays).toList();
+    _computedAverageCycleLength =
+        FertilityWindowCalculator.averageCycleLengthFromHistory(lengths);
+
+    if (!_fertilityEnabled) {
+      _fertileWindow = null;
+    } else if (storedPeriods.isEmpty) {
+      _fertileWindow = null;
+    } else {
+      final cycleLen = _cycleLengthOverride ?? _computedAverageCycleLength;
+      _fertileWindow = cycleLen == null
+          ? null
+          : FertilityWindowCalculator.compute(
+              lastPeriodStartUtc: storedPeriods.last.span.startUtc,
+              cycleLengthDays: cycleLen,
+              lutealPhaseDays: _lutealPhaseDays,
+            );
+    }
   }
 
   Future<DayMarkOutcome> markToday() => _repository.markDay(DateTime.now());
 
+  Future<void> updateEnabledAlgorithms(Set<AlgorithmId> enabled) async {
+    final next = Set<AlgorithmId>.from(enabled);
+    if (setEquals(_enabledAlgorithmIds, next)) return;
+    _enabledAlgorithmIds = next;
+    await PredictionSettings.saveEnabledAlgorithms(next);
+    _recompute();
+    notifyListeners();
+  }
+
+  Future<void> updateHorizonCycles(int horizon) async {
+    final clamped = horizon.clamp(1, 12);
+    if (_horizonCycles == clamped) return;
+    _horizonCycles = clamped;
+    await PredictionSettings.saveHorizonCycles(clamped);
+    _recompute();
+    notifyListeners();
+  }
+
+  Future<void> updateFertilityEnabled(bool enabled) async {
+    if (_fertilityEnabled == enabled) return;
+    _fertilityEnabled = enabled;
+    await FertilitySettings.saveEnabled(enabled);
+    _recompute();
+    notifyListeners();
+  }
+
+  Future<void> dismissSuggestionCard() async {
+    if (_suggestionCardDismissed) return;
+    _suggestionCardDismissed = true;
+    await FertilitySettings.saveSuggestionCardDismissed(true);
+    notifyListeners();
+  }
+
   @override
   void dispose() {
+    _disposed = true;
     _subscription?.cancel();
     super.dispose();
   }
