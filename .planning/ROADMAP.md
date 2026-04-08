@@ -76,13 +76,21 @@ Phase implementation detail remains under `.planning/phases/` for history.
 4. Disabling removes fertility visuals and stops prompts without corrupting period/export data (**FERT-04**).
 5. **Unit tests** document expected outputs for fixed inputs; **docs or comments** state the formula/assumptions (**FERT-05**).
 
+**Plans:** 4 plans
+
+Plans:
+- [ ] `12-01-PLAN.md` — TDD fertility window calculation engine + tests (FERT-05)
+- [ ] `12-02-PLAN.md` — Fertility settings, opt-in flow, input collection, all ARB strings (FERT-01, FERT-02, FERT-04)
+- [ ] `12-03-PLAN.md` — Calendar fertility visuals: teal dots, legend, day detail label (FERT-03)
+- [ ] `12-04-PLAN.md` — Home fertility card, suggestion card, tab shell wiring (FERT-03, FERT-04)
+
 ## Progress (v2.0)
 
 | Phase | Plans | Status |
 |-------|-------|--------|
 | 10 — i18n foundation | 2/? | Planned (`10-01`, `10-02`) |
 | 11 — German + language settings | 3/3 | Complete — 2026-04-07 |
-| 12 — Fertility window | 0/? | Not started |
+| 12 — Fertility window | 4/4 | Planned — 2026-04-08 |
 
 ### Phase 13: PDF export of period statistics and details (user selectable if all or none). Goal is to have a PDF ready for a physician or gynecologist.
 
