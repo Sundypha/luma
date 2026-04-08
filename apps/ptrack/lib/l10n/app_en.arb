@@ -204,6 +204,12 @@
   "@appLanguageRestartMessage": {
     "description": "Shown after the user changes app language in Settings."
   },
+  "settingsMenuLanguageTitle": "Language",
+  "settingsMenuLanguageSubtitle": "System default, English, or German",
+  "settingsMenuPeriodPredictionTitle": "Period prediction",
+  "settingsMenuFertilityTitle": "Fertility prediction",
+  "settingsMenuPrivacySubtitle": "App lock, backup, and export",
+  "settingsMenuDataBackupSubtitle": "Export, import, and automatic local backups",
   "calendarInsufficientPredictionHint": "No forecast yet — mark at least two separate periods so Luma can measure the gap between them.",
   "calendarLegendHatching": "Lighter hatching = further out, less certain",
   "calendarToday": "Today",
@@ -442,9 +448,6 @@
   "firstLogSaveContinue": "Save & Continue",
   "firstLogSaveFailed": "Could not save your period. Please try again.",
   "firstLogSuccessSnack": "Period logged — you're all set!",
-  "moodSettingsLoadingTitle": "Mood display",
-  "moodSettingsWordLabelsTitle": "Use word labels for mood",
-  "moodSettingsWordLabelsSubtitle": "Show text labels instead of emoji faces",
   "predSettingsTileTitle": "Predictions",
   "predSettingsTileSubtitle": "Forecast display, horizon, and methods",
   "predSettingsAppBarTitle": "Predictions",
@@ -492,6 +495,7 @@
     }
   },
   "fertilityInputSave": "Save",
+  "fertilitySettingsSavedSnackbar": "Fertility settings saved",
   "fertilityInputNotEnoughData": "Log at least 2 complete cycles to auto-fill",
   "fertilityCalendarLegendLabel": "Fertile (est.)",
   "fertilityCalendarDayLabel": "Estimated fertile day",

@@ -12,12 +12,11 @@ import '../home/home_view_model.dart';
 import '../backup/data_settings_screen.dart';
 import '../pdf_export/pdf_export_screen.dart';
 import '../lock/lock_service.dart';
-import '../lock/lock_settings_tile.dart';
 import '../settings/about_screen.dart';
-import '../settings/app_language_settings.dart';
 import '../settings/fertility_settings.dart';
-import '../settings/mood_settings.dart';
+import '../settings/language_settings_screen.dart';
 import '../settings/prediction_settings.dart';
+import '../settings/privacy_security_settings_screen.dart';
 
 class _SettingsScreen extends StatelessWidget {
   const _SettingsScreen({
@@ -49,26 +48,70 @@ class _SettingsScreen extends StatelessWidget {
       appBar: AppBar(title: Text(l10n.settingsTitle)),
       body: ListView(
         children: [
-          const AppLanguageSettingsSection(),
-          const Divider(),
-          const MoodSettingsTile(),
-          const Divider(),
-          PredictionSettingsTile(
-            onModeChanged: onModeChanged,
-            onEnabledAlgorithmsChanged: onEnabledAlgorithmsChanged,
-            onHorizonChanged: onHorizonChanged,
+          ListTile(
+            leading: const Icon(Icons.language_outlined),
+            title: Text(l10n.settingsMenuLanguageTitle),
+            subtitle: Text(l10n.settingsMenuLanguageSubtitle),
+            onTap: () {
+              Navigator.of(context).push<void>(
+                MaterialPageRoute<void>(
+                  builder: (_) => const LanguageSettingsScreen(),
+                ),
+              );
+            },
           ),
           const Divider(),
-          FertilitySettingsTile(
-            repository: repository,
-            calendar: calendar,
-            onFertilityToggled: onFertilityToggled,
+          ListTile(
+            leading: const Icon(Icons.auto_awesome_outlined),
+            title: Text(l10n.settingsMenuPeriodPredictionTitle),
+            subtitle: Text(l10n.predSettingsTileSubtitle),
+            onTap: () {
+              Navigator.of(context).push<void>(
+                MaterialPageRoute<void>(
+                  builder: (_) => PredictionSettingsScreen(
+                    onModeChanged: onModeChanged,
+                    onEnabledAlgorithmsChanged: onEnabledAlgorithmsChanged,
+                    onHorizonChanged: onHorizonChanged,
+                  ),
+                ),
+              );
+            },
           ),
           const Divider(),
-          LockSettingsTile(
-            lockService: lockService,
-            onReset: onReset,
-            onLockNow: onLockNow,
+          ListTile(
+            leading: const Icon(Icons.spa_outlined),
+            title: Text(l10n.settingsMenuFertilityTitle),
+            subtitle: Text(l10n.fertilitySettingsSubtitle),
+            onTap: () {
+              Navigator.of(context).push<void>(
+                MaterialPageRoute<void>(
+                  builder: (_) => FertilitySettingsScreen(
+                    repository: repository,
+                    calendar: calendar,
+                    onFertilityToggled: onFertilityToggled,
+                  ),
+                ),
+              );
+            },
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.lock_outlined),
+            title: Text(l10n.lockPrivacySecurityTile),
+            subtitle: Text(l10n.settingsMenuPrivacySubtitle),
+            onTap: () {
+              Navigator.of(context).push<void>(
+                MaterialPageRoute<void>(
+                  builder: (_) => PrivacySecuritySettingsScreen(
+                    lockService: lockService,
+                    onReset: onReset,
+                    onLockNow: onLockNow,
+                    repository: repository,
+                    calendar: calendar,
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),

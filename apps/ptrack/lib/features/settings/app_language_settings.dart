@@ -67,7 +67,13 @@ class AppLanguageSettings {
 
 /// Settings section: app language (follow device, English, German).
 class AppLanguageSettingsSection extends StatefulWidget {
-  const AppLanguageSettingsSection({super.key});
+  const AppLanguageSettingsSection({
+    super.key,
+    this.showSectionHeading = true,
+  });
+
+  /// When false, the in-list section title is omitted (e.g. under a dedicated AppBar).
+  final bool showSectionHeading;
 
   @override
   State<AppLanguageSettingsSection> createState() =>
@@ -110,13 +116,14 @@ class _AppLanguageSettingsSectionState extends State<AppLanguageSettingsSection>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-          child: Text(
-            l10n.settingsAppLanguageSectionTitle,
-            style: Theme.of(context).textTheme.titleSmall,
+        if (widget.showSectionHeading)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: Text(
+              l10n.settingsAppLanguageSectionTitle,
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
           ),
-        ),
         ListTile(
           title: Text(l10n.appLanguageFollowDevice),
           trailing: current == AppLanguagePreference.followDevice

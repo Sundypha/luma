@@ -8,7 +8,6 @@ import 'package:local_auth/local_auth.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:luma/features/logging/symptom_form_sheet.dart';
 import 'package:luma/features/lock/lock_service.dart';
-import 'package:luma/features/settings/mood_settings.dart';
 import 'package:luma/features/shell/tab_shell.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:ptrack_data/ptrack_data.dart';
@@ -236,7 +235,7 @@ void main() {
     expect(find.text('Cycle day 8'), findsOneWidget);
   });
 
-  testWidgets('drawer Settings opens Settings page with mood tile', (
+  testWidgets('drawer Settings opens root menu with Language entry', (
     tester,
   ) async {
     await pumpHome(tester);
@@ -245,7 +244,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Settings'));
     await tester.pumpAndSettle();
-    expect(find.byType(MoodSettingsTile), findsOneWidget);
+    expect(find.text('Language'), findsOneWidget);
     expect(find.text('Settings'), findsWidgets);
   });
 
@@ -261,11 +260,19 @@ void main() {
 
       expect(find.text('Privacy & Security'), findsOneWidget);
       expect(
-        find.text('Lock with PIN or biometrics when returning from background'),
+        find.text('App lock, backup, and export'),
         findsOneWidget,
       );
 
       await tester.tap(find.text('Privacy & Security'));
+      await tester.pumpAndSettle();
+
+      // Privacy submenu: open lock settings (subtitle is unique to the lock row).
+      await tester.tap(
+        find.text(
+          'Lock with PIN or biometrics when returning from background',
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('App lock'), findsWidgets);

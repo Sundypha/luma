@@ -160,40 +160,26 @@ Future<bool> showFertilityDisclaimerSheet(BuildContext context) async {
   return accepted == true;
 }
 
-Future<bool> showFertilityInputSheet(
-  BuildContext context, {
-  required PeriodRepository repository,
-  required PeriodCalendarContext calendar,
-}) async {
-  final saved = await showModalBottomSheet<bool>(
-    context: context,
-    showDragHandle: true,
-    useSafeArea: true,
-    isScrollControlled: true,
-    builder: (ctx) {
-      return _FertilityInputSheet(
-        repository: repository,
-        calendar: calendar,
-      );
-    },
-  );
-  return saved == true;
-}
-
-class _FertilityInputSheet extends StatefulWidget {
-  const _FertilityInputSheet({
+/// Cycle length and luteal phase controls (embedded in [FertilitySettingsScreen]).
+class FertilitySetupPanel extends StatefulWidget {
+  const FertilitySetupPanel({
+    super.key,
     required this.repository,
     required this.calendar,
+    this.onPersisted,
   });
 
   final PeriodRepository repository;
   final PeriodCalendarContext calendar;
 
+  /// Called after values are written to preferences.
+  final VoidCallback? onPersisted;
+
   @override
-  State<_FertilityInputSheet> createState() => _FertilityInputSheetState();
+  State<FertilitySetupPanel> createState() => _FertilitySetupPanelState();
 }
 
-class _FertilityInputSheetState extends State<_FertilityInputSheet> {
+class _FertilitySetupPanelState extends State<FertilitySetupPanel> {
   final _cycleController = TextEditingController();
   bool _loading = true;
   double _luteal = FertilitySettings.defaultLutealPhaseDays.toDouble();
@@ -271,7 +257,11 @@ class _FertilityInputSheetState extends State<_FertilityInputSheet> {
       await FertilitySettings.saveCycleLengthOverride(parsed);
     }
     await FertilitySettings.saveLutealPhaseDays(_luteal.round());
-    if (context.mounted) Navigator.of(context).pop(true);
+    if (!context.mounted) return;
+    widget.onPersisted?.call();
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+      SnackBar(content: Text(l10n.fertilitySettingsSavedSnackbar)),
+    );
   }
 
   @override
@@ -388,9 +378,9 @@ class _FertilityInputSheetState extends State<_FertilityInputSheet> {
   }
 }
 
-/// Opt-in toggle for the fertile-window estimate; runs disclaimer then setup sheet.
-class FertilitySettingsTile extends StatefulWidget {
-  const FertilitySettingsTile({
+/// Fertility opt-in: master switch, disclaimer on first enable, persistent setup form.
+class FertilitySettingsScreen extends StatefulWidget {
+  const FertilitySettingsScreen({
     super.key,
     required this.repository,
     required this.calendar,
@@ -402,10 +392,10 @@ class FertilitySettingsTile extends StatefulWidget {
   final ValueChanged<bool>? onFertilityToggled;
 
   @override
-  State<FertilitySettingsTile> createState() => _FertilitySettingsTileState();
+  State<FertilitySettingsScreen> createState() => _FertilitySettingsScreenState();
 }
 
-class _FertilitySettingsTileState extends State<FertilitySettingsTile> {
+class _FertilitySettingsScreenState extends State<FertilitySettingsScreen> {
   bool _enabled = false;
   bool _loading = true;
 
@@ -422,7 +412,7 @@ class _FertilitySettingsTileState extends State<FertilitySettingsTile> {
     });
   }
 
-  Future<void> _onChanged(bool wantOn) async {
+  Future<void> _onSwitch(bool wantOn) async {
     if (!wantOn) {
       await FertilitySettings.saveEnabled(false);
       if (mounted) {
@@ -441,42 +431,43 @@ class _FertilitySettingsTileState extends State<FertilitySettingsTile> {
       await FertilitySettings.saveDisclaimerAcknowledged(true);
     }
 
-    if (!mounted) return;
-    final inputOk = await showFertilityInputSheet(
-      context,
-      repository: widget.repository,
-      calendar: widget.calendar,
-    );
-    if (!mounted) return;
-    if (!inputOk) return;
-
     await FertilitySettings.saveEnabled(true);
-    if (mounted) {
-      setState(() => _enabled = true);
-      widget.onFertilityToggled?.call(true);
-    }
+    if (!mounted) return;
+    setState(() => _enabled = true);
+    widget.onFertilityToggled?.call(true);
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    if (_loading) {
-      return ListTile(
-        leading: const Icon(Icons.spa_outlined),
-        title: Text(l10n.fertilitySettingsTitle),
-        trailing: const SizedBox(
-          width: 24,
-          height: 24,
-          child: CircularProgressIndicator(strokeWidth: 2),
-        ),
-      );
-    }
-    return SwitchListTile(
-      secondary: const Icon(Icons.spa_outlined),
-      title: Text(l10n.fertilitySettingsTitle),
-      subtitle: Text(l10n.fertilitySettingsSubtitle),
-      value: _enabled,
-      onChanged: _onChanged,
+    return Scaffold(
+      appBar: AppBar(title: Text(l10n.settingsMenuFertilityTitle)),
+      body: ListView(
+        children: [
+          if (_loading)
+            const Padding(
+              padding: EdgeInsets.all(24),
+              child: Center(child: CircularProgressIndicator()),
+            )
+          else ...[
+            SwitchListTile(
+              secondary: const Icon(Icons.spa_outlined),
+              title: Text(l10n.fertilitySettingsTitle),
+              subtitle: Text(l10n.fertilitySettingsSubtitle),
+              value: _enabled,
+              onChanged: _onSwitch,
+            ),
+            if (_enabled) ...[
+              const Divider(),
+              FertilitySetupPanel(
+                repository: widget.repository,
+                calendar: widget.calendar,
+                onPersisted: () => widget.onFertilityToggled?.call(true),
+              ),
+            ],
+          ],
+        ],
+      ),
     );
   }
 }

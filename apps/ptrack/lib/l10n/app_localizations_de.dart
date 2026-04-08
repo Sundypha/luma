@@ -290,6 +290,26 @@ class AppLocalizationsDe extends AppLocalizations {
       'Starte die App neu, damit die Änderung wirkt.';
 
   @override
+  String get settingsMenuLanguageTitle => 'Sprache';
+
+  @override
+  String get settingsMenuLanguageSubtitle =>
+      'Systemstandard, Englisch oder Deutsch';
+
+  @override
+  String get settingsMenuPeriodPredictionTitle => 'Periodenvorhersage';
+
+  @override
+  String get settingsMenuFertilityTitle => 'Fruchtbarkeitsvorhersage';
+
+  @override
+  String get settingsMenuPrivacySubtitle => 'App-Sperre, Backup und Export';
+
+  @override
+  String get settingsMenuDataBackupSubtitle =>
+      'Export, Import und automatische lokale Backups';
+
+  @override
   String get calendarInsufficientPredictionHint =>
       'Noch keine Vorhersage — markier mindestens zwei getrennte Perioden, damit Luma den Abstand dazwischen messen kann.';
 
@@ -898,16 +918,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get firstLogSuccessSnack => 'Periode gespeichert — du bist startklar!';
 
   @override
-  String get moodSettingsLoadingTitle => 'Stimmungsanzeige';
-
-  @override
-  String get moodSettingsWordLabelsTitle => 'Wörter statt Emoji für Stimmung';
-
-  @override
-  String get moodSettingsWordLabelsSubtitle =>
-      'Textbezeichnungen statt Emoji-Gesichter anzeigen';
-
-  @override
   String get predSettingsTileTitle => 'Vorhersagen';
 
   @override
@@ -1035,6 +1045,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get fertilityInputSave => 'Speichern';
+
+  @override
+  String get fertilitySettingsSavedSnackbar =>
+      'Fruchtbarkeitseinstellungen gespeichert';
 
   @override
   String get fertilityInputNotEnoughData =>

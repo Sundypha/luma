@@ -285,6 +285,26 @@ class AppLocalizationsEn extends AppLocalizations {
       'Restart the app to apply this change.';
 
   @override
+  String get settingsMenuLanguageTitle => 'Language';
+
+  @override
+  String get settingsMenuLanguageSubtitle =>
+      'System default, English, or German';
+
+  @override
+  String get settingsMenuPeriodPredictionTitle => 'Period prediction';
+
+  @override
+  String get settingsMenuFertilityTitle => 'Fertility prediction';
+
+  @override
+  String get settingsMenuPrivacySubtitle => 'App lock, backup, and export';
+
+  @override
+  String get settingsMenuDataBackupSubtitle =>
+      'Export, import, and automatic local backups';
+
+  @override
   String get calendarInsufficientPredictionHint =>
       'No forecast yet — mark at least two separate periods so Luma can measure the gap between them.';
 
@@ -883,16 +903,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get firstLogSuccessSnack => 'Period logged — you\'re all set!';
 
   @override
-  String get moodSettingsLoadingTitle => 'Mood display';
-
-  @override
-  String get moodSettingsWordLabelsTitle => 'Use word labels for mood';
-
-  @override
-  String get moodSettingsWordLabelsSubtitle =>
-      'Show text labels instead of emoji faces';
-
-  @override
   String get predSettingsTileTitle => 'Predictions';
 
   @override
@@ -1021,6 +1031,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fertilityInputSave => 'Save';
+
+  @override
+  String get fertilitySettingsSavedSnackbar => 'Fertility settings saved';
 
   @override
   String get fertilityInputNotEnoughData =>

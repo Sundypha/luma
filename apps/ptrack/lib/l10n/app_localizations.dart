@@ -432,6 +432,42 @@ abstract class AppLocalizations {
   /// **'Restart the app to apply this change.'**
   String get appLanguageRestartMessage;
 
+  /// No description provided for @settingsMenuLanguageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get settingsMenuLanguageTitle;
+
+  /// No description provided for @settingsMenuLanguageSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'System default, English, or German'**
+  String get settingsMenuLanguageSubtitle;
+
+  /// No description provided for @settingsMenuPeriodPredictionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Period prediction'**
+  String get settingsMenuPeriodPredictionTitle;
+
+  /// No description provided for @settingsMenuFertilityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fertility prediction'**
+  String get settingsMenuFertilityTitle;
+
+  /// No description provided for @settingsMenuPrivacySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'App lock, backup, and export'**
+  String get settingsMenuPrivacySubtitle;
+
+  /// No description provided for @settingsMenuDataBackupSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export, import, and automatic local backups'**
+  String get settingsMenuDataBackupSubtitle;
+
   /// No description provided for @calendarInsufficientPredictionHint.
   ///
   /// In en, this message translates to:
@@ -1511,24 +1547,6 @@ abstract class AppLocalizations {
   /// **'Period logged — you\'re all set!'**
   String get firstLogSuccessSnack;
 
-  /// No description provided for @moodSettingsLoadingTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Mood display'**
-  String get moodSettingsLoadingTitle;
-
-  /// No description provided for @moodSettingsWordLabelsTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Use word labels for mood'**
-  String get moodSettingsWordLabelsTitle;
-
-  /// No description provided for @moodSettingsWordLabelsSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Show text labels instead of emoji faces'**
-  String get moodSettingsWordLabelsSubtitle;
-
   /// No description provided for @predSettingsTileTitle.
   ///
   /// In en, this message translates to:
@@ -1750,6 +1768,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get fertilityInputSave;
+
+  /// No description provided for @fertilitySettingsSavedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Fertility settings saved'**
+  String get fertilitySettingsSavedSnackbar;
 
   /// No description provided for @fertilityInputNotEnoughData.
   ///
