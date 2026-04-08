@@ -146,7 +146,10 @@ class _TabShellState extends State<TabShell> {
             unawaited(_calendarVm.updateHorizonCycles(horizon));
             unawaited(_homeVm.updateHorizonCycles(horizon));
           },
-          onFertilityToggled: null,
+          onFertilityToggled: (enabled) {
+            unawaited(_calendarVm.updateFertilityEnabled(enabled));
+            unawaited(_homeVm.updateFertilityEnabled(enabled));
+          },
         ),
       ),
     );
@@ -237,7 +240,10 @@ class _TabShellState extends State<TabShell> {
       body: IndexedStack(
         index: _tabIndex,
         children: [
-          HomeScreen(viewModel: _homeVm),
+          HomeScreen(
+            viewModel: _homeVm,
+            onOpenSettings: () => _openSettings(context),
+          ),
           CalendarScreen(viewModel: _calendarVm),
         ],
       ),
