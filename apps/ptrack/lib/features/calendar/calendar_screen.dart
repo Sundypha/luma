@@ -90,12 +90,19 @@ class CalendarScreen extends StatelessWidget {
             startingDayOfWeek: _startingDayOfWeekFor(context),
           ),
         ),
-        if ((viewModel.ensembleResult?.activeAlgorithmCount ?? 0) > 0) ...[
+        if ((viewModel.ensembleResult?.activeAlgorithmCount ?? 0) > 0 ||
+            viewModel.fertilityEnabled) ...[
           Padding(
             padding: const EdgeInsets.only(top: 4, bottom: 2),
-            child: buildConfidenceLegend(context),
+            child: buildConfidenceLegend(
+              context,
+              showFertilityLegend: viewModel.fertilityEnabled,
+              showPredictionTierLegend:
+                  (viewModel.ensembleResult?.activeAlgorithmCount ?? 0) > 0,
+            ),
           ),
-          if (_hasMultiCyclePredictions)
+          if (_hasMultiCyclePredictions &&
+              (viewModel.ensembleResult?.activeAlgorithmCount ?? 0) > 0)
             Padding(
               padding: const EdgeInsets.only(bottom: 6),
               child: Text(

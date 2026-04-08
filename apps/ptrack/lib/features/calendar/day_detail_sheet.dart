@@ -149,6 +149,21 @@ class DayDetailSheet extends StatelessWidget {
     );
   }
 
+  Iterable<Widget> _fertilityDetailNote(
+    BuildContext context,
+    AppLocalizations l10n,
+    CalendarDayData dayData,
+  ) sync* {
+    if (!dayData.isFertileDay) return;
+    yield const SizedBox(height: 8);
+    yield Text(
+      l10n.fertilityCalendarDayDetail,
+      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+    );
+  }
+
   Widget _predictionCard(
     BuildContext context, {
     required CalendarDayData dayData,
@@ -299,6 +314,7 @@ class DayDetailSheet extends StatelessWidget {
             loc.formatFullDate(_localCalendarDate(dayNorm)),
             style: Theme.of(context).textTheme.titleLarge,
           ),
+          ..._fertilityDetailNote(context, l10n, dayData),
           const SizedBox(height: 16),
           _predictionCard(
             context,
@@ -334,6 +350,7 @@ class DayDetailSheet extends StatelessWidget {
             loc.formatFullDate(_localCalendarDate(dayNorm)),
             style: Theme.of(context).textTheme.titleLarge,
           ),
+          ..._fertilityDetailNote(context, l10n, dayData),
           const SizedBox(height: 16),
           _predictionCard(
             context,
@@ -356,6 +373,7 @@ class DayDetailSheet extends StatelessWidget {
     MaterialLocalizations loc,
     AppLocalizations l10n,
     DateTime dayNorm,
+    CalendarDayData dayData,
   ) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
@@ -366,6 +384,7 @@ class DayDetailSheet extends StatelessWidget {
             loc.formatFullDate(_localCalendarDate(dayNorm)),
             style: Theme.of(context).textTheme.titleLarge,
           ),
+          ..._fertilityDetailNote(context, l10n, dayData),
           const SizedBox(height: 16),
           Text(
             l10n.dayDetailFuturePlaceholder,
@@ -383,6 +402,7 @@ class DayDetailSheet extends StatelessWidget {
     MaterialLocalizations loc,
     AppLocalizations l10n,
     DateTime dayNorm,
+    CalendarDayData dayData,
   ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
@@ -393,6 +413,7 @@ class DayDetailSheet extends StatelessWidget {
             loc.formatFullDate(_localCalendarDate(dayNorm)),
             style: Theme.of(context).textTheme.titleLarge,
           ),
+          ..._fertilityDetailNote(context, l10n, dayData),
           const SizedBox(height: 24),
           FilledButton(
             onPressed: () => _markDayAndPop(context, dayNorm, l10n),
@@ -408,6 +429,7 @@ class DayDetailSheet extends StatelessWidget {
     MaterialLocalizations loc,
     AppLocalizations l10n,
     DateTime dayNorm,
+    CalendarDayData dayData,
     StoredPeriodWithDays pwd,
     StoredDayEntry? entry,
   ) {
@@ -432,6 +454,7 @@ class DayDetailSheet extends StatelessWidget {
                   ),
             ),
           ],
+          ..._fertilityDetailNote(context, l10n, dayData),
           const SizedBox(height: 16),
           Text(
             l10n.dayDetailNoSymptoms,
@@ -473,6 +496,7 @@ class DayDetailSheet extends StatelessWidget {
     MaterialLocalizations loc,
     AppLocalizations l10n,
     DateTime dayNorm,
+    CalendarDayData dayData,
     StoredPeriodWithDays pwd,
     StoredDayEntry entry,
   ) {
@@ -498,6 +522,7 @@ class DayDetailSheet extends StatelessWidget {
                   ),
             ),
           ],
+          ..._fertilityDetailNote(context, l10n, dayData),
           const SizedBox(height: 16),
           _chipRow(
             context,
@@ -607,15 +632,31 @@ class DayDetailSheet extends StatelessWidget {
       return _buildPredictedPastOrToday(context, loc, l10n, dayNorm, dayData);
     }
     if (isOnPeriod && hasLoggedData && entry != null && pwd != null) {
-      return _buildPeriodWithSymptoms(context, loc, l10n, dayNorm, pwd, entry);
+      return _buildPeriodWithSymptoms(
+        context,
+        loc,
+        l10n,
+        dayNorm,
+        dayData,
+        pwd,
+        entry,
+      );
     }
     if (isOnPeriod && pwd != null) {
-      return _buildPeriodNoSymptoms(context, loc, l10n, dayNorm, pwd, entry);
+      return _buildPeriodNoSymptoms(
+        context,
+        loc,
+        l10n,
+        dayNorm,
+        dayData,
+        pwd,
+        entry,
+      );
     }
     if (isFuture) {
-      return _buildEmptyFuture(context, loc, l10n, dayNorm);
+      return _buildEmptyFuture(context, loc, l10n, dayNorm, dayData);
     }
-    return _buildEmptyPastOrToday(context, loc, l10n, dayNorm);
+    return _buildEmptyPastOrToday(context, loc, l10n, dayNorm, dayData);
   }
 
   @override
