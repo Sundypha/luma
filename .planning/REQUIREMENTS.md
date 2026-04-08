@@ -23,7 +23,7 @@ Scope: **internationalization**, **German (de)** as secondary language, **option
 
 - [x] **FERT-01**: Fertility window feature is **opt-in**; enabling it requires an explicit user action and shows **plain-language limitations** (educational estimate only; not medical advice; not contraception guidance)
 - [x] **FERT-02**: When the feature is enabled and required assumptions are not already known, the app **prompts** the user to supply or confirm values needed for the estimate (e.g. typical cycle length, luteal-phase default—exact fields in phase plan)
-- [ ] **FERT-03**: User sees an estimated fertile window on the **calendar** and/or **home** in a form that meets accessibility expectations consistent with **NFR-06** (not color-only)
+- [x] **FERT-03**: User sees an estimated fertile window on the **calendar** and/or **home** in a form that meets accessibility expectations consistent with **NFR-06** (not color-only)
 - [x] **FERT-04**: User can **disable** the feature; when disabled, fertility visuals and prompts are not shown; period and prediction data remain intact
 - [x] **FERT-05**: Fertile-window math runs **on-device**, is **deterministic** and **documented** (code comments and/or `docs/`), and is covered by **automated tests** for representative scenarios
 
@@ -55,7 +55,7 @@ Tracked ideas—not committed in this milestone:
 | I18N-05 | Phase 11 | Complete |
 | FERT-01 | Phase 12 | Complete |
 | FERT-02 | Phase 12 | Complete |
-| FERT-03 | Phase 12 | Pending |
+| FERT-03 | Phase 12 | Complete |
 | FERT-04 | Phase 12 | Complete |
 | FERT-05 | Phase 12 | Complete |
 
@@ -66,4 +66,4 @@ Tracked ideas—not committed in this milestone:
 - Unmapped: **0** ✓  
 
 ---
-*Last updated: 2026-04-08 — FERT-01, FERT-02, FERT-04 complete (`12-02-PLAN`); FERT-05 complete (`12-01-PLAN`).*  
+*Last updated: 2026-04-08 — **FERT-03** complete (`12-03-PLAN`, calendar NFR-06 markers); FERT-01, FERT-02, FERT-04 (`12-02-PLAN`); FERT-05 (`12-01-PLAN`).*  
