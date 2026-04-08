@@ -996,6 +996,101 @@ class AppLocalizationsDe extends AppLocalizations {
       'Erkennt, ob Zyklen länger oder kürzer werden (5+ Zyklen)';
 
   @override
+  String get fertilitySettingsTitle => 'Fruchtbarkeitsfenster (Schätzung)';
+
+  @override
+  String get fertilitySettingsSubtitle =>
+      'Geschätzte fruchtbare Tage im Kalender und auf der Startseite anzeigen';
+
+  @override
+  String get fertilityDisclaimerTitle => 'Bevor du startest';
+
+  @override
+  String get fertilityDisclaimerBody =>
+      'Diese Funktion zeigt ein geschätztes Fruchtbarkeitsfenster anhand deiner Zyklushistorie. Sie ist nur eine Bildungshilfe — keine medizinische oder empfängnisverhütende Beratung. Wende dich bei persönlichen Fragen an medizinisches Fachpersonal.';
+
+  @override
+  String get fertilityDisclaimerAccept => 'Ich verstehe';
+
+  @override
+  String get fertilityInputTitle => 'Fruchtbarkeitsfenster einrichten';
+
+  @override
+  String get fertilityInputCycleLengthLabel =>
+      'Durchschnittliche Zykluslänge';
+
+  @override
+  String fertilityInputCycleLengthAutoHint(int count) {
+    return 'Berechnet aus deinen $count erfassten Zyklen';
+  }
+
+  @override
+  String get fertilityInputCycleLengthManualHint =>
+      'Passe an, wenn dein typischer Zyklus anders ist';
+
+  @override
+  String get fertilityInputLutealPhaseLabel => 'Lutealphase (Tage)';
+
+  @override
+  String get fertilityInputLutealPhaseExplanation =>
+      'Bei den meisten Menschen sind es etwa 14 Tage. Passe an, wenn du deine Länge kennst.';
+
+  @override
+  String fertilityInputLutealPhaseDaysUnit(int days) {
+    return '$days Tage';
+  }
+
+  @override
+  String get fertilityInputSave => 'Speichern';
+
+  @override
+  String get fertilityInputNotEnoughData =>
+      'Erfasse mindestens 2 vollständige Zyklen für die automatische Vorausfüllung';
+
+  @override
+  String get fertilityCalendarLegendLabel => 'Fruchtbar (geschätzt)';
+
+  @override
+  String get fertilityCalendarDayLabel => 'Geschätzter fruchtbarer Tag';
+
+  @override
+  String get fertilityCalendarDayDetail =>
+      'Geschätzter fruchtbarer Tag — basierend auf deiner Zyklushistorie';
+
+  @override
+  String get fertilityHomeCardTitle => 'Fruchtbarkeitsfenster';
+
+  @override
+  String fertilityHomeCardRange(String start, String end) {
+    return '$start – $end';
+  }
+
+  @override
+  String get fertilityHomeCardFooter => 'Nur Schätzung';
+
+  @override
+  String fertilityHomeCardExplanation(int days) {
+    return 'Basierend auf deinem durchschnittlichen Zyklus von $days Tagen';
+  }
+
+  @override
+  String get fertilitySuggestionTitle => 'Fruchtbarkeitsfenster (Schätzung)';
+
+  @override
+  String get fertilitySuggestionBody =>
+      'Sieh ein geschätztes Fruchtbarkeitsfenster im Kalender — basierend auf deiner Zyklushistorie.';
+
+  @override
+  String get fertilitySuggestionEnable => 'Aktivieren';
+
+  @override
+  String get fertilitySuggestionNotEnoughData =>
+      'Erfasse mehr Perioden, um diese Funktion freizuschalten';
+
+  @override
+  String get fertilityDisabled => 'Aus';
+
+  @override
   String get flowValueLight => 'Leicht';
 
   @override

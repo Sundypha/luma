@@ -462,6 +462,53 @@
   "predSettingsHintEwma": "Gewichtet neuere Zyklen stärker",
   "predSettingsHintBayesian": "Erlernt dein Muster über Zeit, ab 1 Zyklus",
   "predSettingsHintLinearTrend": "Erkennt, ob Zyklen länger oder kürzer werden (5+ Zyklen)",
+  "fertilitySettingsTitle": "Fruchtbarkeitsfenster (Schätzung)",
+  "fertilitySettingsSubtitle": "Geschätzte fruchtbare Tage im Kalender und auf der Startseite anzeigen",
+  "fertilityDisclaimerTitle": "Bevor du startest",
+  "fertilityDisclaimerBody": "Diese Funktion zeigt ein geschätztes Fruchtbarkeitsfenster anhand deiner Zyklushistorie. Sie ist nur eine Bildungshilfe — keine medizinische oder empfängnisverhütende Beratung. Wende dich bei persönlichen Fragen an medizinisches Fachpersonal.",
+  "fertilityDisclaimerAccept": "Ich verstehe",
+  "fertilityInputTitle": "Fruchtbarkeitsfenster einrichten",
+  "fertilityInputCycleLengthLabel": "Durchschnittliche Zykluslänge",
+  "fertilityInputCycleLengthAutoHint": "Berechnet aus deinen {count} erfassten Zyklen",
+  "@fertilityInputCycleLengthAutoHint": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "fertilityInputCycleLengthManualHint": "Passe an, wenn dein typischer Zyklus anders ist",
+  "fertilityInputLutealPhaseLabel": "Lutealphase (Tage)",
+  "fertilityInputLutealPhaseExplanation": "Bei den meisten Menschen sind es etwa 14 Tage. Passe an, wenn du deine Länge kennst.",
+  "fertilityInputLutealPhaseDaysUnit": "{days} Tage",
+  "@fertilityInputLutealPhaseDaysUnit": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "fertilityInputSave": "Speichern",
+  "fertilityInputNotEnoughData": "Erfasse mindestens 2 vollständige Zyklen für die automatische Berechnung",
+  "fertilityCalendarLegendLabel": "Fruchtbar (geschätzt)",
+  "fertilityCalendarDayLabel": "Geschätzter fruchtbarer Tag",
+  "fertilityCalendarDayDetail": "Geschätzter fruchtbarer Tag — basierend auf deiner Zyklushistorie",
+  "fertilityHomeCardTitle": "Fruchtbarkeitsfenster",
+  "fertilityHomeCardRange": "{start} – {end}",
+  "@fertilityHomeCardRange": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "fertilityHomeCardFooter": "Nur Schätzung",
+  "fertilityHomeCardExplanation": "Basierend auf deinem durchschnittlichen Zyklus von {days} Tagen",
+  "@fertilityHomeCardExplanation": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "fertilitySuggestionTitle": "Fruchtbarkeitsfenster (Schätzung)",
+  "fertilitySuggestionBody": "Sieh ein geschätztes Fruchtbarkeitsfenster im Kalender — basierend auf deiner Zyklushistorie.",
+  "fertilitySuggestionEnable": "Aktivieren",
+  "fertilitySuggestionNotEnoughData": "Erfasse mehr Perioden, um diese Funktion freizuschalten",
+  "fertilityDisabled": "Aus",
   "flowValueLight": "Leicht",
   "flowValueMedium": "Mittel",
   "flowValueHeavy": "Stark",

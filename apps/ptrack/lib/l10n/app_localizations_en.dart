@@ -982,6 +982,100 @@ class AppLocalizationsEn extends AppLocalizations {
       'Detects if cycles are getting longer or shorter (5+ cycles)';
 
   @override
+  String get fertilitySettingsTitle => 'Fertile window estimate';
+
+  @override
+  String get fertilitySettingsSubtitle =>
+      'Show estimated fertile days on calendar and home';
+
+  @override
+  String get fertilityDisclaimerTitle => 'Before you begin';
+
+  @override
+  String get fertilityDisclaimerBody =>
+      'This feature shows an estimated fertile window based on your cycle history. It is an educational guide only — not medical or contraceptive advice. Talk to a healthcare provider for personal guidance.';
+
+  @override
+  String get fertilityDisclaimerAccept => 'I understand';
+
+  @override
+  String get fertilityInputTitle => 'Fertile window setup';
+
+  @override
+  String get fertilityInputCycleLengthLabel => 'Average cycle length';
+
+  @override
+  String fertilityInputCycleLengthAutoHint(int count) {
+    return 'Computed from your $count logged cycles';
+  }
+
+  @override
+  String get fertilityInputCycleLengthManualHint =>
+      'Adjust if your typical cycle differs';
+
+  @override
+  String get fertilityInputLutealPhaseLabel => 'Luteal phase length';
+
+  @override
+  String get fertilityInputLutealPhaseExplanation =>
+      'Most people have around 14 days. Adjust if you know yours.';
+
+  @override
+  String fertilityInputLutealPhaseDaysUnit(int days) {
+    return '$days days';
+  }
+
+  @override
+  String get fertilityInputSave => 'Save';
+
+  @override
+  String get fertilityInputNotEnoughData =>
+      'Log at least 2 complete cycles to auto-fill';
+
+  @override
+  String get fertilityCalendarLegendLabel => 'Fertile (est.)';
+
+  @override
+  String get fertilityCalendarDayLabel => 'Estimated fertile day';
+
+  @override
+  String get fertilityCalendarDayDetail =>
+      'Estimated fertile day — based on your cycle history';
+
+  @override
+  String get fertilityHomeCardTitle => 'Fertile window';
+
+  @override
+  String fertilityHomeCardRange(String start, String end) {
+    return '$start – $end';
+  }
+
+  @override
+  String get fertilityHomeCardFooter => 'Estimate only';
+
+  @override
+  String fertilityHomeCardExplanation(int days) {
+    return 'Based on your average cycle of $days days';
+  }
+
+  @override
+  String get fertilitySuggestionTitle => 'Fertile window estimate';
+
+  @override
+  String get fertilitySuggestionBody =>
+      'Get an estimated fertile window on your calendar based on your cycle history.';
+
+  @override
+  String get fertilitySuggestionEnable => 'Enable';
+
+  @override
+  String get fertilitySuggestionNotEnoughData =>
+      'Log more periods to unlock this feature';
+
+  @override
+  String get fertilityDisabled => 'Disabled';
+
+  @override
   String get flowValueLight => 'Light';
 
   @override

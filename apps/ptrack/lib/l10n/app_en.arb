@@ -471,6 +471,53 @@
   "predSettingsHintEwma": "Gives more weight to your most recent cycles",
   "predSettingsHintBayesian": "Learns your pattern over time, works from 1 cycle",
   "predSettingsHintLinearTrend": "Detects if cycles are getting longer or shorter (5+ cycles)",
+  "fertilitySettingsTitle": "Fertile window estimate",
+  "fertilitySettingsSubtitle": "Show estimated fertile days on calendar and home",
+  "fertilityDisclaimerTitle": "Before you begin",
+  "fertilityDisclaimerBody": "This feature shows an estimated fertile window based on your cycle history. It is an educational guide only — not medical or contraceptive advice. Talk to a healthcare provider for personal guidance.",
+  "fertilityDisclaimerAccept": "I understand",
+  "fertilityInputTitle": "Fertile window setup",
+  "fertilityInputCycleLengthLabel": "Average cycle length",
+  "fertilityInputCycleLengthAutoHint": "Computed from your {count} logged cycles",
+  "@fertilityInputCycleLengthAutoHint": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "fertilityInputCycleLengthManualHint": "Adjust if your typical cycle differs",
+  "fertilityInputLutealPhaseLabel": "Luteal phase length",
+  "fertilityInputLutealPhaseExplanation": "Most people have around 14 days. Adjust if you know yours.",
+  "fertilityInputLutealPhaseDaysUnit": "{days} days",
+  "@fertilityInputLutealPhaseDaysUnit": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "fertilityInputSave": "Save",
+  "fertilityInputNotEnoughData": "Log at least 2 complete cycles to auto-fill",
+  "fertilityCalendarLegendLabel": "Fertile (est.)",
+  "fertilityCalendarDayLabel": "Estimated fertile day",
+  "fertilityCalendarDayDetail": "Estimated fertile day — based on your cycle history",
+  "fertilityHomeCardTitle": "Fertile window",
+  "fertilityHomeCardRange": "{start} – {end}",
+  "@fertilityHomeCardRange": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "fertilityHomeCardFooter": "Estimate only",
+  "fertilityHomeCardExplanation": "Based on your average cycle of {days} days",
+  "@fertilityHomeCardExplanation": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "fertilitySuggestionTitle": "Fertile window estimate",
+  "fertilitySuggestionBody": "Get an estimated fertile window on your calendar based on your cycle history.",
+  "fertilitySuggestionEnable": "Enable",
+  "fertilitySuggestionNotEnoughData": "Log more periods to unlock this feature",
+  "fertilityDisabled": "Disabled",
   "flowValueLight": "Light",
   "flowValueMedium": "Medium",
   "flowValueHeavy": "Heavy",

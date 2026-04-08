@@ -1685,6 +1685,162 @@ abstract class AppLocalizations {
   /// **'Detects if cycles are getting longer or shorter (5+ cycles)'**
   String get predSettingsHintLinearTrend;
 
+  /// No description provided for @fertilitySettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fertile window estimate'**
+  String get fertilitySettingsTitle;
+
+  /// No description provided for @fertilitySettingsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show estimated fertile days on calendar and home'**
+  String get fertilitySettingsSubtitle;
+
+  /// No description provided for @fertilityDisclaimerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Before you begin'**
+  String get fertilityDisclaimerTitle;
+
+  /// No description provided for @fertilityDisclaimerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This feature shows an estimated fertile window based on your cycle history. It is an educational guide only — not medical or contraceptive advice. Talk to a healthcare provider for personal guidance.'**
+  String get fertilityDisclaimerBody;
+
+  /// No description provided for @fertilityDisclaimerAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'I understand'**
+  String get fertilityDisclaimerAccept;
+
+  /// No description provided for @fertilityInputTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fertile window setup'**
+  String get fertilityInputTitle;
+
+  /// No description provided for @fertilityInputCycleLengthLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Average cycle length'**
+  String get fertilityInputCycleLengthLabel;
+
+  /// No description provided for @fertilityInputCycleLengthAutoHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Computed from your {count} logged cycles'**
+  String fertilityInputCycleLengthAutoHint(int count);
+
+  /// No description provided for @fertilityInputCycleLengthManualHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust if your typical cycle differs'**
+  String get fertilityInputCycleLengthManualHint;
+
+  /// No description provided for @fertilityInputLutealPhaseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Luteal phase length'**
+  String get fertilityInputLutealPhaseLabel;
+
+  /// No description provided for @fertilityInputLutealPhaseExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Most people have around 14 days. Adjust if you know yours.'**
+  String get fertilityInputLutealPhaseExplanation;
+
+  /// No description provided for @fertilityInputLutealPhaseDaysUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days'**
+  String fertilityInputLutealPhaseDaysUnit(int days);
+
+  /// No description provided for @fertilityInputSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get fertilityInputSave;
+
+  /// No description provided for @fertilityInputNotEnoughData.
+  ///
+  /// In en, this message translates to:
+  /// **'Log at least 2 complete cycles to auto-fill'**
+  String get fertilityInputNotEnoughData;
+
+  /// No description provided for @fertilityCalendarLegendLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fertile (est.)'**
+  String get fertilityCalendarLegendLabel;
+
+  /// No description provided for @fertilityCalendarDayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated fertile day'**
+  String get fertilityCalendarDayLabel;
+
+  /// No description provided for @fertilityCalendarDayDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated fertile day — based on your cycle history'**
+  String get fertilityCalendarDayDetail;
+
+  /// No description provided for @fertilityHomeCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fertile window'**
+  String get fertilityHomeCardTitle;
+
+  /// No description provided for @fertilityHomeCardRange.
+  ///
+  /// In en, this message translates to:
+  /// **'{start} – {end}'**
+  String fertilityHomeCardRange(String start, String end);
+
+  /// No description provided for @fertilityHomeCardFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimate only'**
+  String get fertilityHomeCardFooter;
+
+  /// No description provided for @fertilityHomeCardExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on your average cycle of {days} days'**
+  String fertilityHomeCardExplanation(int days);
+
+  /// No description provided for @fertilitySuggestionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fertile window estimate'**
+  String get fertilitySuggestionTitle;
+
+  /// No description provided for @fertilitySuggestionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Get an estimated fertile window on your calendar based on your cycle history.'**
+  String get fertilitySuggestionBody;
+
+  /// No description provided for @fertilitySuggestionEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable'**
+  String get fertilitySuggestionEnable;
+
+  /// No description provided for @fertilitySuggestionNotEnoughData.
+  ///
+  /// In en, this message translates to:
+  /// **'Log more periods to unlock this feature'**
+  String get fertilitySuggestionNotEnoughData;
+
+  /// No description provided for @fertilityDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get fertilityDisabled;
+
   /// No description provided for @flowValueLight.
   ///
   /// In en, this message translates to:
