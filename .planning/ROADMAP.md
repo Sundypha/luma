@@ -91,7 +91,7 @@ Plans:
 | 10 — i18n foundation | 2/? | Planned (`10-01`, `10-02`) |
 | 11 — German + language settings | 3/3 | Complete — 2026-04-07 |
 | 12 — Fertility window | 4/4 | Complete — 2026-04-08 (UAT approved) |
-| 13 — PDF export | 1/3 | In progress — `13-01` complete 2026-04-08 |
+| 13 — PDF export | 2/3 | In progress — `13-02` complete 2026-04-08 |
 
 ### Phase 13: PDF export of period statistics and details (user selectable if all or none). Goal is to have a PDF ready for a physician or gynecologist.
 
@@ -102,7 +102,7 @@ Plans:
 
 Plans:
 - [x] `13-01-PLAN.md` — TDD section config model, report data model, data collector with stats computation (PDF-01, PDF-02, PDF-04, PDF-05) — see `13-01-SUMMARY.md`
-- [ ] `13-02-PLAN.md` — PDF document builder with all content sections + EN/DE ARB strings (PDF-03, PDF-04, PDF-05, PDF-08)
+- [x] `13-02-PLAN.md` — PDF document builder with all content sections + EN/DE ARB strings (PDF-03, PDF-04, PDF-05, PDF-08) — see `13-02-SUMMARY.md`
 - [ ] `13-03-PLAN.md` — Export UI (presets, toggles, date range), preview, share, entry points + UI ARB strings (PDF-01, PDF-02, PDF-06, PDF-07, PDF-08)
 
 ### Phase 14: remove deprecated FAB. clicking on a day of the calendar opens the same widget as the FAB and is clearer in the intent than the FAB
@@ -115,4 +115,4 @@ Plans:
 - [ ] TBD (run /gsd:plan-phase 14 to break down)
 
 ---
-*Roadmap updated: 2026-04-08 — Phase **13** plan **`13-01`** complete (data pipeline + tests). **Next:** **`13-02`** PDF document builder.*  
+*Roadmap updated: 2026-04-08 — Phase **13** plan **`13-02`** complete (PDF renderer + `pdf*` l10n). **Next:** **`13-03`** export UI / preview / share.*  

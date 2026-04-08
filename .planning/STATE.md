@@ -6,7 +6,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** **Milestone v2.0** — Phase **13** PDF export — plan **13-01** complete; next **13-02** document builder.
+**Current focus:** **Milestone v2.0** — Phase **13** PDF export — plan **13-02** complete; next **13-03** export UI.
 
 ## Current Position
 
@@ -14,13 +14,13 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Phase:** **13** — PDF export of period statistics and details.
 
-**Plan:** **13-02** — PDF document builder (next). **13-01** done — see `13-01-SUMMARY.md`.
+**Plan:** **13-03** — Export UI / preview / share (next). **13-02** done — see `13-02-SUMMARY.md`.
 
-**Status:** Phase **12** complete; phase **13** in progress (**1/3** plans done).
+**Status:** Phase **12** complete; phase **13** in progress (**2/3** plans done).
 
-Last activity: 2026-04-08 — Completed **`13-01`**: PDF section config, `PdfReportData`, `PdfDataCollector` + tests (`6b7efbc`, `81a61a4`).
+Last activity: 2026-04-08 — Completed **`13-02`**: `PdfDocumentBuilder`, `PdfContentStrings`, EN/DE `pdf*` ARB + l10n wiring.
 
-**Progress (v2.0):** Phase 13 **in progress** (1/3 plans). See `ROADMAP.md`.
+**Progress (v2.0):** Phase 13 **in progress** (2/3 plans). See `ROADMAP.md`.
 
 ## Performance Metrics
 
@@ -44,9 +44,11 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 **2026-04-08 (13-01):** PDF export data layer: presets + `SharedPreferences` for sections and range; `PdfDataCollector` filters by period **start** in UTC date range and uses `completedCycleBetweenStarts` + local inclusive bleeding spans.
 
+**2026-04-08 (13-02):** PDF document builder: `pdf` package `MultiPage` layout, conditional sections from `PdfSectionConfig`, disclaimer + footer with page numbers, cycle bar chart (`BarDataSet`), tables via `TableHelper`; all strings via `PdfContentStrings` / `pdf*` ARB keys + `toPdfContentStrings()`.
+
 ### Pending Todos
 
-- **Phase 13** — Continue with `13-02`, `13-03` per `ROADMAP.md`.
+- **Phase 13** — Continue with `13-03` per `ROADMAP.md`.
 - Phase 10 plans remain available if i18n foundation still needs execution on other branches.
 - **Remove period projection opacity fade** — no per-cycle opacity decay; tier hatch/spacing already encodes confidence; details view conveys uncertainty (area: ui).
 
@@ -64,8 +66,8 @@ None.
 
 **Last session:** 2026-04-08
 
-**Stopped at:** Phase **13** plan **13-01** complete; execute **13-02** when ready.
+**Stopped at:** Phase **13** plan **13-02** complete; execute **13-03** when ready.
 
-**Resume file:** `.planning/phases/13-pdf-export-of-period-statistics-and-details-user-selectable-if-all-or-none-goal-is-to-have-a-pdf-ready-for-a-physician-or-gynecologist/13-02-PLAN.md`
+**Resume file:** `.planning/phases/13-pdf-export-of-period-statistics-and-details-user-selectable-if-all-or-none-goal-is-to-have-a-pdf-ready-for-a-physician-or-gynecologist/13-03-PLAN.md`
 
-**Next:** `/gsd-execute-phase 13` (plan 02) or manual execution of `13-02-PLAN.md`.
+**Next:** `/gsd-execute-phase 13` (plan 03) or manual execution of `13-03-PLAN.md`.
