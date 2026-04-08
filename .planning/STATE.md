@@ -51,10 +51,10 @@ None at milestone definition time.
 
 ## Session Continuity
 
-**Last session:** 2026-04-07T22:23:17.515Z
+**Last session:** 2026-04-08T09:20:36.341Z
 
-**Stopped at:** Phase 12 context gathered
+**Stopped at:** Phase 12 plans created and verified
 
-**Resume file:** .planning/phases/12-optional-fertility-window-estimator/12-CONTEXT.md
+**Resume file:** .planning/phases/12-optional-fertility-window-estimator/12-01-PLAN.md
 
 **Next:** `/gsd-plan-phase 12` then `/gsd-execute-phase 12`, or finish phase 10 on branches that still need it
