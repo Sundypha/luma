@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:luma/l10n/app_localizations.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:ptrack_domain/ptrack_domain.dart';
@@ -545,4 +546,54 @@ List<pw.Widget> _buildNotes(
     out.add(pw.SizedBox(height: 8));
   }
   return out;
+}
+
+/// Maps [AppLocalizations] into [PdfContentStrings] for [PdfDocumentBuilder].
+extension AppLocalizationsPdfExport on AppLocalizations {
+  PdfContentStrings toPdfContentStrings() {
+    return PdfContentStrings(
+      disclaimer: pdfDisclaimer,
+      reportTitle: pdfReportTitle,
+      overviewHeading: pdfOverviewHeading,
+      cycleHistoryHeading: pdfCycleHistoryHeading,
+      cycleChartHeading: pdfCycleChartHeading,
+      daySummaryHeading: pdfDaySummaryHeading,
+      notesHeading: pdfNotesHeading,
+      generatedOn: pdfGeneratedOn,
+      dateRange: pdfDateRange,
+      nDays: pdfNDays,
+      totalCycles: pdfTotalCycles,
+      avgCycleLength: pdfAvgCycleLength,
+      avgPeriodDuration: pdfAvgPeriodDuration,
+      shortestCycle: pdfShortestCycle,
+      longestCycle: pdfLongestCycle,
+      flowDistribution: pdfFlowDistribution,
+      painDistribution: pdfPainDistribution,
+      moodDistribution: pdfMoodDistribution,
+      flowLabel: pdfFlowColumn,
+      painLabel: pdfPainColumn,
+      moodLabel: pdfMoodColumn,
+      dateLabel: pdfDateColumn,
+      cycleStartLabel: pdfCycleStartColumn,
+      cycleLengthLabel: pdfCycleLengthColumn,
+      noDataForRange: pdfNoDataForRange,
+      noDayData: pdfNoDayData,
+      noNotes: pdfNoNotes,
+      metadataOnlyNote: pdfMetadataOnlyNote,
+      footerGenerated: pdfFooterGenerated,
+      flowLight: pdfFlowLight,
+      flowMedium: pdfFlowMedium,
+      flowHeavy: pdfFlowHeavy,
+      painNone: pdfPainNone,
+      painMild: pdfPainMild,
+      painModerate: pdfPainModerate,
+      painSevere: pdfPainSevere,
+      painVerySevere: pdfPainVerySevere,
+      moodVeryBad: pdfMoodVeryBad,
+      moodBad: pdfMoodBad,
+      moodNeutral: pdfMoodNeutral,
+      moodGood: pdfMoodGood,
+      moodVeryGood: pdfMoodVeryGood,
+    );
+  }
 }

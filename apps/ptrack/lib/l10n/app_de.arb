@@ -477,7 +477,7 @@
   },
   "fertilityInputCycleLengthManualHint": "Passe an, wenn dein typischer Zyklus anders ist",
   "fertilityInputLutealPhaseLabel": "Lutealphase (Tage)",
-  "fertilityInputLutealPhaseExplanation": "Bei den meisten Menschen sind es etwa 14 Tage. Passe an, wenn du deine Länge kennst.",
+  "fertilityInputLutealPhaseExplanation": "Bei den meisten sind es etwa 14 Tage. Passe an, wenn du deine Länge kennst.",
   "fertilityInputLutealPhaseDaysUnit": "{days} Tage",
   "@fertilityInputLutealPhaseDaysUnit": {
     "placeholders": {
@@ -521,5 +521,63 @@
   "moodValueBad": "Schlecht",
   "moodValueNeutral": "Neutral",
   "moodValueGood": "Gut",
-  "moodValueVeryGood": "Sehr gut"
+  "moodValueVeryGood": "Sehr gut",
+  "pdfReportTitle": "Luma — Periodenbericht",
+  "pdfDisclaimer": "Dieser Bericht ist ein informativer Export aus selbst erfassten Daten. Er ist kein Diagnoseinstrument. Die Genauigkeit hängt von der Vollständigkeit und Konsistenz der Einträge ab. Wenden Sie sich für medizinische Entscheidungen an eine qualifizierte Fachperson.",
+  "pdfGeneratedOn": "Erstellt am {date}",
+  "@pdfGeneratedOn": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "pdfDateRange": "Daten von {start} bis {end}",
+  "@pdfDateRange": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "pdfOverviewHeading": "Überblick",
+  "pdfCycleHistoryHeading": "Zyklusverlauf",
+  "pdfCycleChartHeading": "Zykluslänge im Zeitverlauf",
+  "pdfDaySummaryHeading": "Tägliche Übersicht",
+  "pdfNotesHeading": "Notizen",
+  "pdfTotalCycles": "Abgeschlossene Zyklen",
+  "pdfAvgCycleLength": "Durchschnittliche Zykluslänge",
+  "pdfAvgPeriodDuration": "Durchschnittliche Periodendauer",
+  "pdfShortestCycle": "Kürzester Zyklus",
+  "pdfLongestCycle": "Längster Zyklus",
+  "pdfNDays": "{count, plural, one{1 Tag} other{{count} Tage}}",
+  "@pdfNDays": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "pdfFlowDistribution": "Flussintensität",
+  "pdfPainDistribution": "Schmerzlevel",
+  "pdfMoodDistribution": "Stimmung",
+  "pdfDateColumn": "Datum",
+  "pdfFlowColumn": "Fluss",
+  "pdfPainColumn": "Schmerz",
+  "pdfMoodColumn": "Stimmung",
+  "pdfCycleStartColumn": "Zyklusbeginn",
+  "pdfCycleLengthColumn": "Länge (Tage)",
+  "pdfNoDataForRange": "Für den gewählten Zeitraum liegen keine Daten vor.",
+  "pdfNoDayData": "Keine Tagesdaten für den gewählten Zeitraum.",
+  "pdfNoNotes": "Keine Notizen für den gewählten Zeitraum.",
+  "pdfMetadataOnlyNote": "Dieser Bericht enthält nur Metadaten. Aktiviere Datenbereiche für Zyklusdetails.",
+  "pdfFooterGenerated": "Erstellt mit Luma",
+  "pdfFlowLight": "Leicht",
+  "pdfFlowMedium": "Mittel",
+  "pdfFlowHeavy": "Stark",
+  "pdfPainNone": "Keine",
+  "pdfPainMild": "Leicht",
+  "pdfPainModerate": "Mittel",
+  "pdfPainSevere": "Stark",
+  "pdfPainVerySevere": "Sehr stark",
+  "pdfMoodVeryBad": "Sehr schlecht",
+  "pdfMoodBad": "Schlecht",
+  "pdfMoodNeutral": "Neutral",
+  "pdfMoodGood": "Gut",
+  "pdfMoodVeryGood": "Sehr gut"
 }

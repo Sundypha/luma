@@ -1016,8 +1016,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get fertilityInputTitle => 'Fruchtbarkeitsfenster einrichten';
 
   @override
-  String get fertilityInputCycleLengthLabel =>
-      'Durchschnittliche Zykluslänge';
+  String get fertilityInputCycleLengthLabel => 'Durchschnittliche Zykluslänge';
 
   @override
   String fertilityInputCycleLengthAutoHint(int count) {
@@ -1033,7 +1032,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get fertilityInputLutealPhaseExplanation =>
-      'Bei den meisten Menschen sind es etwa 14 Tage. Passe an, wenn du deine Länge kennst.';
+      'Bei den meisten sind es etwa 14 Tage. Passe an, wenn du deine Länge kennst.';
 
   @override
   String fertilityInputLutealPhaseDaysUnit(int days) {
@@ -1045,7 +1044,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get fertilityInputNotEnoughData =>
-      'Erfasse mindestens 2 vollständige Zyklen für die automatische Vorausfüllung';
+      'Erfasse mindestens 2 vollständige Zyklen für die automatische Berechnung';
 
   @override
   String get fertilityCalendarLegendLabel => 'Fruchtbar (geschätzt)';
@@ -1128,4 +1127,145 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get moodValueVeryGood => 'Sehr gut';
+
+  @override
+  String get pdfReportTitle => 'Luma — Periodenbericht';
+
+  @override
+  String get pdfDisclaimer =>
+      'Dieser Bericht ist ein informativer Export aus selbst erfassten Daten. Er ist kein Diagnoseinstrument. Die Genauigkeit hängt von der Vollständigkeit und Konsistenz der Einträge ab. Wenden Sie sich für medizinische Entscheidungen an eine qualifizierte Fachperson.';
+
+  @override
+  String pdfGeneratedOn(String date) {
+    return 'Erstellt am $date';
+  }
+
+  @override
+  String pdfDateRange(String start, String end) {
+    return 'Daten von $start bis $end';
+  }
+
+  @override
+  String get pdfOverviewHeading => 'Überblick';
+
+  @override
+  String get pdfCycleHistoryHeading => 'Zyklusverlauf';
+
+  @override
+  String get pdfCycleChartHeading => 'Zykluslänge im Zeitverlauf';
+
+  @override
+  String get pdfDaySummaryHeading => 'Tägliche Übersicht';
+
+  @override
+  String get pdfNotesHeading => 'Notizen';
+
+  @override
+  String get pdfTotalCycles => 'Abgeschlossene Zyklen';
+
+  @override
+  String get pdfAvgCycleLength => 'Durchschnittliche Zykluslänge';
+
+  @override
+  String get pdfAvgPeriodDuration => 'Durchschnittliche Periodendauer';
+
+  @override
+  String get pdfShortestCycle => 'Kürzester Zyklus';
+
+  @override
+  String get pdfLongestCycle => 'Längster Zyklus';
+
+  @override
+  String pdfNDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      one: '1 Tag',
+      other: '$count Tage',
+    );
+    return _temp0;
+  }
+
+  @override
+  String get pdfFlowDistribution => 'Flussintensität';
+
+  @override
+  String get pdfPainDistribution => 'Schmerzlevel';
+
+  @override
+  String get pdfMoodDistribution => 'Stimmung';
+
+  @override
+  String get pdfDateColumn => 'Datum';
+
+  @override
+  String get pdfFlowColumn => 'Fluss';
+
+  @override
+  String get pdfPainColumn => 'Schmerz';
+
+  @override
+  String get pdfMoodColumn => 'Stimmung';
+
+  @override
+  String get pdfCycleStartColumn => 'Zyklusbeginn';
+
+  @override
+  String get pdfCycleLengthColumn => 'Länge (Tage)';
+
+  @override
+  String get pdfNoDataForRange =>
+      'Für den gewählten Zeitraum liegen keine Daten vor.';
+
+  @override
+  String get pdfNoDayData => 'Keine Tagesdaten für den gewählten Zeitraum.';
+
+  @override
+  String get pdfNoNotes => 'Keine Notizen für den gewählten Zeitraum.';
+
+  @override
+  String get pdfMetadataOnlyNote =>
+      'Dieser Bericht enthält nur Metadaten. Aktiviere Datenbereiche für Zyklusdetails.';
+
+  @override
+  String get pdfFooterGenerated => 'Erstellt mit Luma';
+
+  @override
+  String get pdfFlowLight => 'Leicht';
+
+  @override
+  String get pdfFlowMedium => 'Mittel';
+
+  @override
+  String get pdfFlowHeavy => 'Stark';
+
+  @override
+  String get pdfPainNone => 'Keine';
+
+  @override
+  String get pdfPainMild => 'Leicht';
+
+  @override
+  String get pdfPainModerate => 'Mittel';
+
+  @override
+  String get pdfPainSevere => 'Stark';
+
+  @override
+  String get pdfPainVerySevere => 'Sehr stark';
+
+  @override
+  String get pdfMoodVeryBad => 'Sehr schlecht';
+
+  @override
+  String get pdfMoodBad => 'Schlecht';
+
+  @override
+  String get pdfMoodNeutral => 'Neutral';
+
+  @override
+  String get pdfMoodGood => 'Gut';
+
+  @override
+  String get pdfMoodVeryGood => 'Sehr gut';
 }

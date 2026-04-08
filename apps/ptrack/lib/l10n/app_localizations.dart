@@ -1748,7 +1748,7 @@ abstract class AppLocalizations {
   /// No description provided for @fertilityInputLutealPhaseExplanation.
   ///
   /// In en, this message translates to:
-  /// **'Most people have around 14 days. Adjust if you know yours.'**
+  /// **'Most have around 14 days. Adjust if you know yours.'**
   String get fertilityInputLutealPhaseExplanation;
 
   /// No description provided for @fertilityInputLutealPhaseDaysUnit.
@@ -1918,6 +1918,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Very good'**
   String get moodValueVeryGood;
+
+  /// PDF export: report title line.
+  String get pdfReportTitle;
+
+  /// PDF export: legal / medical disclaimer body.
+  String get pdfDisclaimer;
+
+  /// PDF export: generation timestamp line.
+  String pdfGeneratedOn(String date);
+
+  /// PDF export: selected data range line.
+  String pdfDateRange(String start, String end);
+
+  /// PDF export: overview section heading.
+  String get pdfOverviewHeading;
+
+  /// PDF export: cycle history table heading.
+  String get pdfCycleHistoryHeading;
+
+  /// PDF export: cycle length chart heading.
+  String get pdfCycleChartHeading;
+
+  /// PDF export: day summary table heading.
+  String get pdfDaySummaryHeading;
+
+  /// PDF export: notes section heading.
+  String get pdfNotesHeading;
+
+  /// PDF export: label for completed cycle count.
+  String get pdfTotalCycles;
+
+  /// PDF export: label for average cycle length.
+  String get pdfAvgCycleLength;
+
+  /// PDF export: label for average bleeding duration.
+  String get pdfAvgPeriodDuration;
+
+  /// PDF export: label for shortest cycle.
+  String get pdfShortestCycle;
+
+  /// PDF export: label for longest cycle.
+  String get pdfLongestCycle;
+
+  /// PDF export: day count with plural rules.
+  String pdfNDays(int count);
+
+  /// PDF export: flow distribution subsection label.
+  String get pdfFlowDistribution;
+
+  /// PDF export: pain distribution subsection label.
+  String get pdfPainDistribution;
+
+  /// PDF export: mood distribution subsection label.
+  String get pdfMoodDistribution;
+
+  /// PDF export: date column header.
+  String get pdfDateColumn;
+
+  /// PDF export: flow column header.
+  String get pdfFlowColumn;
+
+  /// PDF export: pain column header.
+  String get pdfPainColumn;
+
+  /// PDF export: mood column header.
+  String get pdfMoodColumn;
+
+  /// PDF export: cycle start column header.
+  String get pdfCycleStartColumn;
+
+  /// PDF export: cycle length column header.
+  String get pdfCycleLengthColumn;
+
+  /// PDF export: empty range / section message.
+  String get pdfNoDataForRange;
+
+  /// PDF export: no rows in day summary.
+  String get pdfNoDayData;
+
+  /// PDF export: no note entries.
+  String get pdfNoNotes;
+
+  /// PDF export: all sections disabled hint.
+  String get pdfMetadataOnlyNote;
+
+  /// PDF export: footer brand line (before date and page numbers).
+  String get pdfFooterGenerated;
+
+  /// PDF export: flow enum label.
+  String get pdfFlowLight;
+
+  /// PDF export: flow enum label.
+  String get pdfFlowMedium;
+
+  /// PDF export: flow enum label.
+  String get pdfFlowHeavy;
+
+  /// PDF export: pain enum label.
+  String get pdfPainNone;
+
+  /// PDF export: pain enum label.
+  String get pdfPainMild;
+
+  /// PDF export: pain enum label.
+  String get pdfPainModerate;
+
+  /// PDF export: pain enum label.
+  String get pdfPainSevere;
+
+  /// PDF export: pain enum label.
+  String get pdfPainVerySevere;
+
+  /// PDF export: mood enum label.
+  String get pdfMoodVeryBad;
+
+  /// PDF export: mood enum label.
+  String get pdfMoodBad;
+
+  /// PDF export: mood enum label.
+  String get pdfMoodNeutral;
+
+  /// PDF export: mood enum label.
+  String get pdfMoodGood;
+
+  /// PDF export: mood enum label.
+  String get pdfMoodVeryGood;
 }
 
 class _AppLocalizationsDelegate
