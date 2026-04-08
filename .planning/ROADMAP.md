@@ -107,12 +107,13 @@ Plans:
 
 ### Phase 14: remove deprecated FAB. clicking on a day of the calendar opens the same widget as the FAB and is clearer in the intent than the FAB
 
-**Goal:** [To be planned]
+**Goal:** Remove the global FAB from the main shell so logging uses **Home Today card** and **calendar day detail** only — same underlying flows (`markDay`, symptom sheet) with clearer, date-scoped affordances.
 **Depends on:** Phase 13
-**Plans:** 0 plans
+**Requirements:** UXFAB-01, UXFAB-02
+**Plans:** 1 plan
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 14 to break down)
+- [ ] `14-01-PLAN.md` — Remove `TabShell` FAB, drop `fabTooltip*` ARBs, migrate `logging_test.dart` off FAB (UXFAB-01, UXFAB-02)
 
 ---
 *Roadmap updated: 2026-04-08 — **`13-03`** export UI / preview / share **coded** (commits on branch); **Task 3** human verification still required to close the plan.*  

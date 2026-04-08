@@ -27,6 +27,11 @@ Scope: **internationalization**, **German (de)** as secondary language, **option
 - [x] **FERT-04**: User can **disable** the feature; when disabled, fertility visuals and prompts are not shown; period and prediction data remain intact
 - [x] **FERT-05**: Fertile-window math runs **on-device**, is **deterministic** and **documented** (code comments and/or `docs/`), and is covered by **automated tests** for representative scenarios
 
+### Shell logging UX (Phase 14)
+
+- [ ] **UXFAB-01**: Main shell has **no** global `FloatingActionButton` for logging; users mark days and open the symptom sheet via **Home Today card** and **calendar day detail** (explicit, date-scoped entry points)
+- [ ] **UXFAB-02**: **Automated widget tests** cover mark-today and symptom flows **without** relying on `FloatingActionButton`; EN/DE string catalogs stay in parity after removing FAB-only copy
+
 ## Deferred (after v2.0)
 
 Tracked ideas—not committed in this milestone:
@@ -58,12 +63,14 @@ Tracked ideas—not committed in this milestone:
 | FERT-03 | Phase 12 | Complete |
 | FERT-04 | Phase 12 | Complete |
 | FERT-05 | Phase 12 | Complete |
+| UXFAB-01 | Phase 14 | Pending |
+| UXFAB-02 | Phase 14 | Pending |
 
 **Coverage:**
 
-- v2.0 requirements: **10** total  
-- Mapped to phases: **10**  
+- v2.0 requirements: **12** total  
+- Mapped to phases: **12**  
 - Unmapped: **0** ✓  
 
 ---
-*Last updated: 2026-04-08 — **FERT-03** complete (`12-03-PLAN`, calendar NFR-06 markers); FERT-01, FERT-02, FERT-04 (`12-02-PLAN`); FERT-05 (`12-01-PLAN`).*  
+*Last updated: 2026-04-08 — Phase **14** requirements **UXFAB-01**, **UXFAB-02** added; FERT-03 complete (`12-03-PLAN`); FERT-01, FERT-02, FERT-04 (`12-02-PLAN`); FERT-05 (`12-01-PLAN`).*  
