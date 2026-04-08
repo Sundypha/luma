@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 
+import '../../l10n/app_localizations.dart';
 import 'export_wizard_screen.dart';
 import 'import_screen.dart';
 
@@ -12,14 +13,15 @@ class DataSettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Data')),
+      appBar: AppBar(title: Text(l10n.dataSettingsTitle)),
       body: ListView(
         children: [
           ListTile(
             leading: const Icon(Icons.upload_outlined),
-            title: const Text('Export Backup'),
-            subtitle: const Text('Save your data as a .luma file'),
+            title: Text(l10n.dataExportTitle),
+            subtitle: Text(l10n.dataExportSubtitle),
             onTap: () {
               Navigator.of(context).push<void>(
                 MaterialPageRoute<void>(
@@ -32,8 +34,8 @@ class DataSettingsScreen extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.download_outlined),
-            title: const Text('Import Backup'),
-            subtitle: const Text('Restore data from a .luma file'),
+            title: Text(l10n.dataImportTitle),
+            subtitle: Text(l10n.dataImportSubtitle),
             onTap: () {
               final db = repository.database;
               final backup = BackupService(db);
@@ -50,8 +52,8 @@ class DataSettingsScreen extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.history_outlined),
-            title: const Text('Auto-backups'),
-            subtitle: const Text('Snapshots created before each import'),
+            title: Text(l10n.dataAutoBackupsTitle),
+            subtitle: Text(l10n.dataAutoBackupsSubtitle),
             onTap: () {},
           ),
         ],

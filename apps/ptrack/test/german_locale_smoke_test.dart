@@ -108,8 +108,8 @@ void main() {
     final scaffoldState = tester.state<ScaffoldState>(find.byType(Scaffold));
     scaffoldState.openDrawer();
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Settings'));
+    await tester.tap(find.text('Einstellungen'));
     await tester.pumpAndSettle();
-    expect(find.text('Settings'), findsWidgets);
+    expect(find.text('Einstellungen'), findsWidgets);
   });
 }

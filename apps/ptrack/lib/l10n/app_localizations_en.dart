@@ -294,4 +294,729 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get calendarToday => 'Today';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navCalendar => 'Calendar';
+
+  @override
+  String get drawerSettingsLabel => 'Settings';
+
+  @override
+  String get drawerDataLabel => 'Data';
+
+  @override
+  String get drawerAboutLabel => 'About';
+
+  @override
+  String get fabTooltipMarkToday => 'Mark today';
+
+  @override
+  String get fabTooltipAddSymptoms => 'Add symptoms';
+
+  @override
+  String get todaySectionTitle => 'Today';
+
+  @override
+  String get todayUnmarkedBody => 'You have not marked today as a period day.';
+
+  @override
+  String get todayMarkPeriodCta => 'I had my period today';
+
+  @override
+  String get todayAddSymptomsCta => 'Add symptoms for today';
+
+  @override
+  String get todayLogTitle => 'Today\'s log';
+
+  @override
+  String todayFlowLine(String label) {
+    return 'Flow: $label';
+  }
+
+  @override
+  String todayPainLine(String label) {
+    return 'Pain: $label';
+  }
+
+  @override
+  String todayMoodLine(String emoji, String label) {
+    return 'Mood: $emoji $label';
+  }
+
+  @override
+  String get todayEditLogCta => 'Edit today\'s log';
+
+  @override
+  String get lockUseBiometrics => 'Use biometrics';
+
+  @override
+  String get lockForgotPin => 'Forgot PIN?';
+
+  @override
+  String get lockIncorrectPin => 'Incorrect PIN';
+
+  @override
+  String get lockBiometricUnlockReason => 'Authenticate to unlock Luma';
+
+  @override
+  String get lockBiometricSettingsReason =>
+      'Authenticate to change lock settings';
+
+  @override
+  String get lockSettingsAppBar => 'App lock';
+
+  @override
+  String get lockSettingsSwitchTitle => 'App lock';
+
+  @override
+  String get lockSettingsSwitchSubtitle =>
+      'Lock with PIN or biometrics when returning from background.';
+
+  @override
+  String get lockSettingsChangePin => 'Change PIN';
+
+  @override
+  String get lockSettingsUseBiometrics => 'Use biometrics';
+
+  @override
+  String get lockSettingsLockNow => 'Lock now';
+
+  @override
+  String get lockSettingsLockNowTooltip => 'Lock now';
+
+  @override
+  String get lockPrivacySecurityTile => 'Privacy & Security';
+
+  @override
+  String get lockPrivacySecurityOnSubtitle => 'App lock is on';
+
+  @override
+  String get lockPrivacySecurityOffSubtitle =>
+      'Lock with PIN or biometrics when returning from background';
+
+  @override
+  String get lockReauthTitle => 'Confirm it is you';
+
+  @override
+  String get lockReauthBody => 'Enter your PIN to continue.';
+
+  @override
+  String get forgotPinTitle => 'Forgot your PIN?';
+
+  @override
+  String get forgotPinBody =>
+      'There is no way to recover a forgotten PIN without erasing your data.\n\nBefore resetting, export your data from Data settings so you can restore it afterwards.\n\nResetting will erase all period and symptom history from this device.';
+
+  @override
+  String get forgotPinEraseCta => 'Erase all data and reset';
+
+  @override
+  String get pinSetupTitle => 'Set up app lock';
+
+  @override
+  String get pinSetupAckBody =>
+      'App lock encrypts access with a PIN. If you forget your PIN, the only recovery option is a data reset — your period data will be erased. Export your data regularly to avoid data loss.';
+
+  @override
+  String get pinSetupAckContinue => 'I understand, continue';
+
+  @override
+  String get pinSetupCreateTitle => 'Create a PIN';
+
+  @override
+  String get pinSetupCreateHint =>
+      'Choose a PIN of at least 4 digits. Press ✓ when done.';
+
+  @override
+  String get pinSetupConfirmTitle => 'Confirm your PIN';
+
+  @override
+  String get pinSetupMismatch => 'PINs do not match';
+
+  @override
+  String get pinSetupBioTitle => 'Enable biometrics for faster unlock?';
+
+  @override
+  String get pinSetupEnableBio => 'Enable biometrics';
+
+  @override
+  String get pinSetupSkip => 'Skip';
+
+  @override
+  String get onbPrivacyTitle => 'Your data stays here';
+
+  @override
+  String get onbPrivacyBody =>
+      'Everything you log stays on this device. There\'s no account to create, no cloud sync, and no sign-up — just your phone and your entries.';
+
+  @override
+  String get onbEstimatesTitle => 'Estimates, not medical advice';
+
+  @override
+  String get onbEstimatesBody =>
+      'Forecasts are based on the history you add here. They\'re personal estimates to help you notice patterns — not a diagnosis, treatment, or substitute for care from a qualified health professional.';
+
+  @override
+  String get onbReadyTitle => 'Ready to start';
+
+  @override
+  String get onbReadyBody =>
+      'Log when your period starts to get going. The more you add over time, the more helpful your estimates can be — and you can always skip for now.';
+
+  @override
+  String get onbContinue => 'Continue';
+
+  @override
+  String get onbGetStarted => 'Get Started';
+
+  @override
+  String get onbSkip => 'Skip';
+
+  @override
+  String onbStepSemantics(int current, int total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String get aboutAppBarTitle => 'About Luma';
+
+  @override
+  String get aboutSectionHeading => 'Your privacy & how estimates work';
+
+  @override
+  String get dataSettingsTitle => 'Data';
+
+  @override
+  String get dataExportTitle => 'Export Backup';
+
+  @override
+  String get dataExportSubtitle => 'Save your data as a .luma file';
+
+  @override
+  String get dataImportTitle => 'Import Backup';
+
+  @override
+  String get dataImportSubtitle => 'Restore data from a .luma file';
+
+  @override
+  String get dataAutoBackupsTitle => 'Auto-backups';
+
+  @override
+  String get dataAutoBackupsSubtitle => 'Snapshots created before each import';
+
+  @override
+  String get exportLeaveTitle => 'Leave export?';
+
+  @override
+  String get exportLeaveBody =>
+      'Your current progress in this wizard will be lost.';
+
+  @override
+  String get exportStay => 'Stay';
+
+  @override
+  String get exportLeave => 'Leave';
+
+  @override
+  String get exportPasswordsMismatch => 'Passwords do not match';
+
+  @override
+  String get exportAppBar => 'Export Backup';
+
+  @override
+  String get exportBackTooltip => 'Back';
+
+  @override
+  String get exportWhatToInclude => 'What to include';
+
+  @override
+  String get exportChipEverything => 'Everything';
+
+  @override
+  String get exportChipPeriodsOnly => 'Periods only';
+
+  @override
+  String get exportTogglePeriods => 'Periods';
+
+  @override
+  String get exportToggleSymptoms => 'Symptoms & flow';
+
+  @override
+  String get exportToggleSymptomsSubtitle => 'Flow, pain, mood';
+
+  @override
+  String get exportToggleNotes => 'Notes';
+
+  @override
+  String get exportNext => 'Next';
+
+  @override
+  String get exportPasswordIntro =>
+      'Optionally protect this backup with a password.';
+
+  @override
+  String get exportPasswordLabel => 'Password';
+
+  @override
+  String get exportConfirmPasswordLabel => 'Confirm password';
+
+  @override
+  String get exportClearPasswordTooltip => 'Clear password';
+
+  @override
+  String get exportSkip => 'Skip';
+
+  @override
+  String get exportCreating => 'Creating backup…';
+
+  @override
+  String get exportReadyTitle => 'Export ready';
+
+  @override
+  String get exportMetaExported => 'Exported';
+
+  @override
+  String get exportMetaContent => 'Content';
+
+  @override
+  String get exportMetaEncrypted => 'Encrypted';
+
+  @override
+  String get exportShare => 'Share';
+
+  @override
+  String get exportDone => 'Done';
+
+  @override
+  String get exportFailedTitle => 'Export failed';
+
+  @override
+  String get exportFailedBody => 'Could not complete export. Please try again.';
+
+  @override
+  String get exportUnknownError => 'Unknown error';
+
+  @override
+  String get exportTryAgain => 'Try Again';
+
+  @override
+  String get exportClose => 'Close';
+
+  @override
+  String get commonYes => 'Yes';
+
+  @override
+  String get commonNo => 'No';
+
+  @override
+  String get commonNotAvailable => '—';
+
+  @override
+  String get importInProgressSnack => 'Import in progress. Please wait.';
+
+  @override
+  String get importAppBar => 'Import Backup';
+
+  @override
+  String get importSelectingFile => 'Selecting file…';
+
+  @override
+  String get importPasswordProtectedTitle =>
+      'This backup is password-protected';
+
+  @override
+  String importExportedLine(String when) {
+    return 'Exported: $when';
+  }
+
+  @override
+  String importIncludesLine(String types) {
+    return 'Includes: $types';
+  }
+
+  @override
+  String get importDecrypt => 'Decrypt';
+
+  @override
+  String get importCancel => 'Cancel';
+
+  @override
+  String get importBackupSummary => 'Backup summary';
+
+  @override
+  String importPreviewCounts(int periods, int entries) {
+    return 'Found $periods period(s) and $entries day entries.';
+  }
+
+  @override
+  String importDupWarning(int count) {
+    return '$count entries match dates you already logged on this device.';
+  }
+
+  @override
+  String get importNoDupMessage =>
+      'No duplicates found — all entries are new for your existing dates.';
+
+  @override
+  String get importStrategyTitle => 'How should duplicates be handled?';
+
+  @override
+  String importStrategyExplainer(int count) {
+    return 'Duplicate means the same calendar day already has a log entry on this device. $count entries are affected.';
+  }
+
+  @override
+  String get importSegmentKeep => 'Keep existing';
+
+  @override
+  String get importSegmentUseImported => 'Use imported';
+
+  @override
+  String get importTooltipKeep =>
+      'Entries already on your device stay unchanged. Only new dates are imported.';
+
+  @override
+  String get importTooltipReplace =>
+      'Entries from the backup replace your current data for matching dates.';
+
+  @override
+  String get importStrategyHintKeep =>
+      'Entries already on your device stay unchanged. Only new dates are imported.';
+
+  @override
+  String get importStrategyHintReplace =>
+      'Entries from the backup replace your current data for matching dates.';
+
+  @override
+  String get importImportCta => 'Import';
+
+  @override
+  String get importCreatingSafetyBackup => 'Creating safety backup…';
+
+  @override
+  String get importImportingEntries => 'Importing entries…';
+
+  @override
+  String importResultSummary(
+    int periods,
+    int entries,
+    int skipped,
+    int replaced,
+  ) {
+    return '$periods period(s) imported, $entries new entries, $skipped skipped, $replaced replaced.';
+  }
+
+  @override
+  String get importErrorGeneric => 'Something went wrong.';
+
+  @override
+  String get importErrorReadSelected => 'Could not read the selected file.';
+
+  @override
+  String get importErrorWrongExtension => 'Please select a .luma backup file';
+
+  @override
+  String get importErrorReadBackup => 'Could not read this backup file.';
+
+  @override
+  String get importErrorWrongPassword =>
+      'Incorrect password. Please try again.';
+
+  @override
+  String get importErrorDecrypt => 'Could not decrypt this backup.';
+
+  @override
+  String get importErrorApply =>
+      'Could not import this backup. Please try again.';
+
+  @override
+  String importErrorParser(String message) {
+    return '$message';
+  }
+
+  @override
+  String get importTryAgain => 'Try again';
+
+  @override
+  String get importClose => 'Close';
+
+  @override
+  String get commonBackspace => 'Backspace';
+
+  @override
+  String get commonSubmit => 'Submit';
+
+  @override
+  String get dataContentTypesFallback => 'Periods and entries';
+
+  @override
+  String get commonSave => 'Save';
+
+  @override
+  String get commonCancel => 'Cancel';
+
+  @override
+  String get commonDelete => 'Delete';
+
+  @override
+  String get commonRemove => 'Remove';
+
+  @override
+  String get symptomFormTitleAdd => 'Add symptoms';
+
+  @override
+  String get symptomFormTitleEdit => 'Edit symptoms';
+
+  @override
+  String get symptomSectionFlow => 'Flow';
+
+  @override
+  String get symptomSectionPain => 'Pain';
+
+  @override
+  String get symptomSectionMood => 'Mood';
+
+  @override
+  String get symptomNotesLabel => 'Notes';
+
+  @override
+  String get symptomNotSet => 'Not set';
+
+  @override
+  String get symptomClearSymptoms => 'Clear symptoms';
+
+  @override
+  String get dayDetailMarkFailed =>
+      'Could not mark this day. Please try again.';
+
+  @override
+  String get dayDetailDeletePeriodTitle => 'Delete entire period?';
+
+  @override
+  String dayDetailDeletePeriodOngoingBody(String start) {
+    return 'Remove the ongoing period starting $start and all of its day logs.';
+  }
+
+  @override
+  String dayDetailDeletePeriodClosedBody(String start, String end) {
+    return 'Remove the period $start–$end and all of its day logs. This cannot be undone.';
+  }
+
+  @override
+  String get dayDetailPeriodOngoing => 'ongoing';
+
+  @override
+  String get dayDetailDeletePeriodFailed => 'Could not delete period.';
+
+  @override
+  String get dayDetailRemoveDayTitle => 'Remove this day?';
+
+  @override
+  String dayDetailRemoveDayBody(String date) {
+    return 'Unmark $date as a period day. Logged symptoms for this day will be removed.';
+  }
+
+  @override
+  String get dayDetailRemoveDayFailed =>
+      'Could not remove this day. Please try again.';
+
+  @override
+  String get dayDetailClearSymptomsFailed => 'Could not clear symptoms.';
+
+  @override
+  String get dayDetailLogWhenArrives =>
+      'You can log this once the day arrives.';
+
+  @override
+  String get dayDetailHadPeriod => 'I had my period';
+
+  @override
+  String get dayDetailFuturePlaceholder =>
+      'Future dates — check back when this day arrives.';
+
+  @override
+  String get dayDetailNoSymptoms => 'No symptoms or notes logged for this day.';
+
+  @override
+  String get dayDetailAddSymptoms => 'Add symptoms';
+
+  @override
+  String get dayDetailRemoveThisDay => 'Remove this day';
+
+  @override
+  String get dayDetailDeleteEntirePeriod => 'Delete entire period';
+
+  @override
+  String get dayDetailEdit => 'Edit';
+
+  @override
+  String get dayDetailClearSymptoms => 'Clear symptoms';
+
+  @override
+  String get firstLogAppBarTitle => 'Log your first period';
+
+  @override
+  String get firstLogStartQuestion =>
+      'When did your current or most recent period start?';
+
+  @override
+  String get firstLogChangeDate => 'Change date';
+
+  @override
+  String get firstLogPeriodEndedTitle => 'This period has already ended';
+
+  @override
+  String get firstLogPeriodEndedSubtitle =>
+      'Optional — add a last period day if it is not ongoing.';
+
+  @override
+  String get firstLogChangeEndDate => 'Change end date';
+
+  @override
+  String get firstLogSaveContinue => 'Save & Continue';
+
+  @override
+  String get firstLogSaveFailed =>
+      'Could not save your period. Please try again.';
+
+  @override
+  String get firstLogSuccessSnack => 'Period logged — you\'re all set!';
+
+  @override
+  String get moodSettingsLoadingTitle => 'Mood display';
+
+  @override
+  String get moodSettingsWordLabelsTitle => 'Use word labels for mood';
+
+  @override
+  String get moodSettingsWordLabelsSubtitle =>
+      'Show text labels instead of emoji faces';
+
+  @override
+  String get predSettingsTileTitle => 'Predictions';
+
+  @override
+  String get predSettingsTileSubtitle =>
+      'Forecast display, horizon, and methods';
+
+  @override
+  String get predSettingsAppBarTitle => 'Predictions';
+
+  @override
+  String get predSettingsSectionHowManyDays => 'How many days to show';
+
+  @override
+  String get predSettingsModeConsensusTitle => 'Only strong predictions';
+
+  @override
+  String get predSettingsModeConsensusSubtitle =>
+      'Days where multiple methods agree';
+
+  @override
+  String get predSettingsModeAllTitle => 'All predictions';
+
+  @override
+  String get predSettingsModeAllSubtitle =>
+      'Every predicted day, even less certain ones';
+
+  @override
+  String get predSettingsModeAllNotesTitle => 'All predictions + labels';
+
+  @override
+  String get predSettingsModeAllNotesSubtitle =>
+      'Same as above, with a note on less certain days';
+
+  @override
+  String get predSettingsSectionHorizon => 'How far ahead to forecast';
+
+  @override
+  String get predSettingsHorizonCaption =>
+      'Farther forecasts are less reliable, especially with irregular cycles. They fade out to show this.';
+
+  @override
+  String get predSettingsHorizonNextOnly => 'Next period only';
+
+  @override
+  String get predSettingsHorizon3Title => '3 months ahead';
+
+  @override
+  String get predSettingsHorizon3Subtitle => 'Good for travel planning';
+
+  @override
+  String get predSettingsHorizon6Title => '6 months ahead';
+
+  @override
+  String get predSettingsHorizon6Subtitle =>
+      'Rough planning only — uncertainty grows significantly';
+
+  @override
+  String get predSettingsSectionMethods => 'Prediction methods';
+
+  @override
+  String get predSettingsMethodsCaption =>
+      'More methods = stronger predictions when they agree. Turn off any you don\'t want.';
+
+  @override
+  String get predSettingsLinearTrendTitle => 'Trend detection';
+
+  @override
+  String get predSettingsHintMedian =>
+      'Uses the middle value of your last few cycles';
+
+  @override
+  String get predSettingsHintEwma =>
+      'Gives more weight to your most recent cycles';
+
+  @override
+  String get predSettingsHintBayesian =>
+      'Learns your pattern over time, works from 1 cycle';
+
+  @override
+  String get predSettingsHintLinearTrend =>
+      'Detects if cycles are getting longer or shorter (5+ cycles)';
+
+  @override
+  String get flowValueLight => 'Light';
+
+  @override
+  String get flowValueMedium => 'Medium';
+
+  @override
+  String get flowValueHeavy => 'Heavy';
+
+  @override
+  String get painValueNone => 'None';
+
+  @override
+  String get painValueMild => 'Mild';
+
+  @override
+  String get painValueModerate => 'Moderate';
+
+  @override
+  String get painValueSevere => 'Severe';
+
+  @override
+  String get painValueVerySevere => 'Very severe';
+
+  @override
+  String get moodValueVeryBad => 'Very bad';
+
+  @override
+  String get moodValueBad => 'Bad';
+
+  @override
+  String get moodValueNeutral => 'Neutral';
+
+  @override
+  String get moodValueGood => 'Good';
+
+  @override
+  String get moodValueVeryGood => 'Very good';
 }

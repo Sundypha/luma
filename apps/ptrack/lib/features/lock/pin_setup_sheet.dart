@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:luma/features/lock/lock_service.dart';
 import 'package:luma/features/lock/pin_entry_widget.dart';
+import 'package:luma/l10n/app_localizations.dart';
 
 /// Multi-step bottom sheet: acknowledgment, PIN create/confirm, optional biometrics.
 ///
@@ -46,7 +47,7 @@ class _PinSetupSheetBodyState extends State<_PinSetupSheetBody> {
   late int _step;
   String? _firstPin;
   int _confirmKey = 0;
-  String? _confirmError;
+  bool _confirmMismatch = false;
   bool _finishing = false;
 
   @override
@@ -67,7 +68,7 @@ class _PinSetupSheetBodyState extends State<_PinSetupSheetBody> {
     setState(() {
       _firstPin = pin;
       _step = 2;
-      _confirmError = null;
+      _confirmMismatch = false;
     });
   }
 
@@ -75,13 +76,13 @@ class _PinSetupSheetBodyState extends State<_PinSetupSheetBody> {
     if (_firstPin != pin) {
       setState(() {
         _confirmKey++;
-        _confirmError = 'PINs do not match';
+        _confirmMismatch = true;
       });
       return;
     }
 
     setState(() {
-      _confirmError = null;
+      _confirmMismatch = false;
       _finishing = true;
     });
 
@@ -123,6 +124,7 @@ class _PinSetupSheetBodyState extends State<_PinSetupSheetBody> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
+    final l10n = AppLocalizations.of(context);
 
     return Padding(
       padding: EdgeInsets.fromLTRB(24, 12, 24, 24 + bottomInset),
@@ -130,74 +132,75 @@ class _PinSetupSheetBodyState extends State<_PinSetupSheetBody> {
         duration: const Duration(milliseconds: 200),
         alignment: Alignment.topCenter,
         child: switch (_step) {
-          0 => _buildAckStep(theme),
-          1 => _buildCreatePinStep(theme),
-          2 => _buildConfirmPinStep(theme),
-          _ => _buildBiometricStep(theme),
+          0 => _buildAckStep(theme, l10n),
+          1 => _buildCreatePinStep(theme, l10n),
+          2 => _buildConfirmPinStep(theme, l10n),
+          _ => _buildBiometricStep(theme, l10n),
         },
       ),
     );
   }
 
-  Widget _buildAckStep(ThemeData theme) {
+  Widget _buildAckStep(ThemeData theme, AppLocalizations l10n) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Set up app lock', style: theme.textTheme.titleLarge),
+        Text(l10n.pinSetupTitle, style: theme.textTheme.titleLarge),
         const SizedBox(height: 12),
         Text(
-          'App lock encrypts access with a PIN. If you forget your PIN, the only '
-          'recovery option is a data reset — your period data will be erased. '
-          'Export your data regularly to avoid data loss.',
+          l10n.pinSetupAckBody,
           style: theme.textTheme.bodyMedium,
         ),
         const SizedBox(height: 24),
         FilledButton(
           onPressed: () => setState(() => _step = 1),
-          child: const Text('I understand, continue'),
+          child: Text(l10n.pinSetupAckContinue),
         ),
         const SizedBox(height: 8),
         TextButton(
           onPressed: _cancel,
-          child: const Text('Cancel'),
+          child: Text(l10n.importCancel),
         ),
       ],
     );
   }
 
-  Widget _buildCreatePinStep(ThemeData theme) {
+  Widget _buildCreatePinStep(ThemeData theme, AppLocalizations l10n) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Create a PIN', style: theme.textTheme.titleLarge),
+        Text(l10n.pinSetupCreateTitle, style: theme.textTheme.titleLarge),
         const SizedBox(height: 8),
         Text(
-          'Enter a 4-digit PIN.',
+          l10n.pinSetupCreateHint,
           style: theme.textTheme.bodyMedium,
         ),
         const SizedBox(height: 16),
         PinEntryWidget(
-          pinLength: 4,
-          submitOnComplete: true,
+          pinLength: 16,
+          minLength: 4,
+          submitOnComplete: false,
+          showExpectedLength: false,
           onSubmit: _onFirstEntry,
         ),
         const SizedBox(height: 8),
         TextButton(
           onPressed: _cancel,
-          child: const Text('Cancel'),
+          child: Text(l10n.importCancel),
         ),
       ],
     );
   }
 
-  Widget _buildConfirmPinStep(ThemeData theme) {
+  Widget _buildConfirmPinStep(ThemeData theme, AppLocalizations l10n) {
+    final confirmLength = _firstPin?.length ?? 4;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Confirm your PIN', style: theme.textTheme.titleLarge),
+        Text(l10n.pinSetupConfirmTitle, style: theme.textTheme.titleLarge),
         const SizedBox(height: 16),
         if (_finishing)
           const Padding(
@@ -207,34 +210,35 @@ class _PinSetupSheetBodyState extends State<_PinSetupSheetBody> {
         else
           PinEntryWidget(
             key: ValueKey<int>(_confirmKey),
-            pinLength: 4,
+            pinLength: confirmLength,
             submitOnComplete: true,
             onSubmit: _onConfirmEntry,
-            errorText: _confirmError,
+            errorText:
+                _confirmMismatch ? l10n.pinSetupMismatch : null,
           ),
         const SizedBox(height: 8),
         TextButton(
           onPressed: _cancel,
-          child: const Text('Cancel'),
+          child: Text(l10n.importCancel),
         ),
       ],
     );
   }
 
-  Widget _buildBiometricStep(ThemeData theme) {
+  Widget _buildBiometricStep(ThemeData theme, AppLocalizations l10n) {
     final colorScheme = theme.colorScheme;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Enable biometrics for faster unlock?',
+          l10n.pinSetupBioTitle,
           style: theme.textTheme.titleLarge,
         ),
         const SizedBox(height: 24),
         FilledButton(
           onPressed: _enableBiometrics,
-          child: const Text('Enable biometrics'),
+          child: Text(l10n.pinSetupEnableBio),
         ),
         const SizedBox(height: 8),
         FilledButton.tonal(
@@ -242,7 +246,7 @@ class _PinSetupSheetBodyState extends State<_PinSetupSheetBody> {
           style: FilledButton.styleFrom(
             foregroundColor: colorScheme.onSurface,
           ),
-          child: const Text('Skip'),
+          child: Text(l10n.pinSetupSkip),
         ),
       ],
     );

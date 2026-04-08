@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:luma/l10n/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:luma/features/onboarding/first_log_screen.dart';
@@ -32,6 +33,8 @@ void main() {
     );
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: FirstLogScreen(
           repository: mockRepo,
           onComplete: () {},
@@ -50,6 +53,8 @@ void main() {
     );
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: FirstLogScreen(
           repository: mockRepo,
           onComplete: () {},
@@ -68,6 +73,8 @@ void main() {
     );
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: FirstLogScreen(
           repository: mockRepo,
           onComplete: () {},
@@ -99,6 +106,8 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: FirstLogScreen(
           repository: mockRepo,
           onComplete: () => completed = true,
@@ -130,6 +139,8 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: FirstLogScreen(
           repository: mockRepo,
           onComplete: () => completed = true,
@@ -155,6 +166,8 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: FirstLogScreen(
           repository: mockRepo,
           onComplete: () => completed = true,

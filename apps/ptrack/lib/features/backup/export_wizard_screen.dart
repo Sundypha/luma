@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 
+import '../../l10n/app_localizations.dart';
 import 'backup_formatters.dart';
 import 'export_view_model.dart';
 
@@ -41,19 +42,20 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
       if (mounted) Navigator.of(context).pop();
       return;
     }
+    final l10n = AppLocalizations.of(context);
     final go = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Leave export?'),
-        content: const Text('Your current progress in this wizard will be lost.'),
+        title: Text(l10n.exportLeaveTitle),
+        content: Text(l10n.exportLeaveBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Stay'),
+            child: Text(l10n.exportStay),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Leave'),
+            child: Text(l10n.exportLeave),
           ),
         ],
       ),
@@ -64,11 +66,12 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
   }
 
   void _onPasswordNext() {
+    final l10n = AppLocalizations.of(context);
     final a = _passwordController.text;
     final b = _confirmPasswordController.text;
     if (a != b) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Passwords do not match')),
+        SnackBar(content: Text(l10n.exportPasswordsMismatch)),
       );
       return;
     }
@@ -85,6 +88,7 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return ListenableBuilder(
       listenable: _vm,
       builder: (context, _) {
@@ -98,10 +102,10 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
           },
           child: Scaffold(
             appBar: AppBar(
-              title: const Text('Export Backup'),
+              title: Text(l10n.exportAppBar),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
-                tooltip: 'Back',
+                tooltip: l10n.exportBackTooltip,
                 onPressed: () async {
                   if (_vm.step == ExportStep.exporting) return;
                   if (_vm.step == ExportStep.selectContent ||
@@ -137,23 +141,25 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
   }
 
   Widget _buildSelectContent(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        Text('What to include', style: Theme.of(context).textTheme.titleMedium),
+        Text(l10n.exportWhatToInclude,
+            style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 12),
         Wrap(
           spacing: 8,
           children: [
             ChoiceChip(
-              label: const Text('Everything'),
+              label: Text(l10n.exportChipEverything),
               selected: _vm.includePeriods &&
                   _vm.includeSymptoms &&
                   _vm.includeNotes,
               onSelected: (_) => _vm.applyPreset(ExportPreset.everything),
             ),
             ChoiceChip(
-              label: const Text('Periods only'),
+              label: Text(l10n.exportChipPeriodsOnly),
               selected: _vm.periodsOnlySelected,
               onSelected: (_) => _vm.applyPreset(ExportPreset.periodsOnly),
             ),
@@ -161,22 +167,22 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
         ),
         const SizedBox(height: 24),
         SwitchListTile(
-          title: const Text('Periods'),
+          title: Text(l10n.exportTogglePeriods),
           value: _vm.includePeriods,
           onChanged: _vm.periodsOnlySelected
               ? null
               : (_) => _vm.togglePeriods(),
         ),
         SwitchListTile(
-          title: const Text('Symptoms & flow'),
-          subtitle: const Text('Flow, pain, mood'),
+          title: Text(l10n.exportToggleSymptoms),
+          subtitle: Text(l10n.exportToggleSymptomsSubtitle),
           value: _vm.includeSymptoms,
           onChanged: _vm.symptomsOnlySelected
               ? null
               : (_) => _vm.toggleSymptoms(),
         ),
         SwitchListTile(
-          title: const Text('Notes'),
+          title: Text(l10n.exportToggleNotes),
           value: _vm.includeNotes,
           onChanged:
               _vm.notesOnlySelected ? null : (_) => _vm.toggleNotes(),
@@ -184,18 +190,19 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
         const SizedBox(height: 32),
         FilledButton(
           onPressed: _vm.hasContentSelection ? _vm.nextStep : null,
-          child: const Text('Next'),
+          child: Text(l10n.exportNext),
         ),
       ],
     );
   }
 
   Widget _buildSetPassword(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
         Text(
-          'Optionally protect this backup with a password.',
+          l10n.exportPasswordIntro,
           style: Theme.of(context).textTheme.bodyLarge,
         ),
         const SizedBox(height: 24),
@@ -203,11 +210,11 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
           controller: _passwordController,
           obscureText: true,
           decoration: InputDecoration(
-            labelText: 'Password',
+            labelText: l10n.exportPasswordLabel,
             border: const OutlineInputBorder(),
             suffixIcon: IconButton(
               icon: const Icon(Icons.clear),
-              tooltip: 'Clear password',
+              tooltip: l10n.exportClearPasswordTooltip,
               onPressed: () => _passwordController.clear(),
             ),
           ),
@@ -216,9 +223,9 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
         TextField(
           controller: _confirmPasswordController,
           obscureText: true,
-          decoration: const InputDecoration(
-            labelText: 'Confirm password',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            labelText: l10n.exportConfirmPasswordLabel,
+            border: const OutlineInputBorder(),
           ),
         ),
         const SizedBox(height: 24),
@@ -226,12 +233,12 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
           children: [
             TextButton(
               onPressed: _onPasswordSkip,
-              child: const Text('Skip'),
+              child: Text(l10n.exportSkip),
             ),
             const Spacer(),
             FilledButton(
               onPressed: _onPasswordNext,
-              child: const Text('Next'),
+              child: Text(l10n.exportNext),
             ),
           ],
         ),
@@ -240,6 +247,7 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
   }
 
   Widget _buildExporting(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final pct = (_vm.progress * 100).round().clamp(0, 100);
     return Padding(
       padding: const EdgeInsets.all(24),
@@ -251,7 +259,7 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
           Text('$pct%'),
           const SizedBox(height: 8),
           Text(
-            'Creating backup…',
+            l10n.exportCreating,
             style: Theme.of(context).textTheme.titleMedium,
           ),
         ],
@@ -260,12 +268,14 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
   }
 
   Widget _buildDone(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final meta = _vm.result?.meta;
     final dateStr = meta != null
         ? formatBackupExportedAt(context, meta.exportedAt)
-        : '—';
-    final types = meta?.contentTypes.join(', ') ?? '—';
-    final enc = meta?.encrypted == true ? 'Yes' : 'No';
+        : l10n.commonNotAvailable;
+    final types =
+        meta?.contentTypes.join(', ') ?? l10n.commonNotAvailable;
+    final enc = meta?.encrypted == true ? l10n.commonYes : l10n.commonNo;
 
     return ListView(
       padding: const EdgeInsets.all(24),
@@ -277,38 +287,39 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
         ),
         const SizedBox(height: 16),
         Text(
-          'Export ready',
+          l10n.exportReadyTitle,
           style: Theme.of(context).textTheme.headlineSmall,
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 24),
         ListTile(
-          title: const Text('Exported'),
+          title: Text(l10n.exportMetaExported),
           subtitle: Text(dateStr),
         ),
         ListTile(
-          title: const Text('Content'),
+          title: Text(l10n.exportMetaContent),
           subtitle: Text(types),
         ),
         ListTile(
-          title: const Text('Encrypted'),
+          title: Text(l10n.exportMetaEncrypted),
           subtitle: Text(enc),
         ),
         const SizedBox(height: 24),
         FilledButton(
           onPressed: () => _vm.deliverExport(context),
-          child: const Text('Share'),
+          child: Text(l10n.exportShare),
         ),
         const SizedBox(height: 8),
         OutlinedButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Done'),
+          child: Text(l10n.exportDone),
         ),
       ],
     );
   }
 
   Widget _buildError(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
@@ -319,13 +330,13 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
         ),
         const SizedBox(height: 16),
         Text(
-          'Export failed',
+          l10n.exportFailedTitle,
           style: Theme.of(context).textTheme.headlineSmall,
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 16),
         Text(
-          _vm.errorMessage ?? 'Unknown error',
+          l10n.exportFailedBody,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: 32),
@@ -335,12 +346,12 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
             _confirmPasswordController.clear();
             _vm.reset();
           },
-          child: const Text('Try Again'),
+          child: Text(l10n.exportTryAgain),
         ),
         const SizedBox(height: 8),
         OutlinedButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Close'),
+          child: Text(l10n.exportClose),
         ),
       ],
     );

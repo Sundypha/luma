@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../calendar/calendar_screen.dart';
 import '../calendar/calendar_view_model.dart';
 import '../home/home_screen.dart';
@@ -36,8 +37,9 @@ class _SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(l10n.settingsTitle)),
       body: ListView(
         children: [
           const AppLanguageSettingsSection(),
@@ -75,6 +77,7 @@ class TabShell extends StatefulWidget {
 
   final PeriodRepository repository;
   final PeriodCalendarContext calendar;
+
   /// When non-null, home and calendar ViewModels start with data (no loading flash).
   final List<StoredPeriodWithDays>? initialPeriodsWithDays;
   final LockService lockService;
@@ -153,9 +156,10 @@ class _TabShellState extends State<TabShell> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Luma'),
+        title: Text(l10n.appTitle),
       ),
       drawer: NavigationDrawer(
         onDestinationSelected: (index) {
@@ -185,7 +189,7 @@ class _TabShellState extends State<TabShell> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Luma',
+                  l10n.appTitle,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 Text(
@@ -197,20 +201,20 @@ class _TabShellState extends State<TabShell> {
               ],
             ),
           ),
-          const NavigationDrawerDestination(
-            icon: Icon(Icons.settings_outlined),
-            selectedIcon: Icon(Icons.settings),
-            label: Text('Settings'),
+          NavigationDrawerDestination(
+            icon: const Icon(Icons.settings_outlined),
+            selectedIcon: const Icon(Icons.settings),
+            label: Text(l10n.drawerSettingsLabel),
           ),
-          const NavigationDrawerDestination(
-            icon: Icon(Icons.folder_outlined),
-            selectedIcon: Icon(Icons.folder),
-            label: Text('Data'),
+          NavigationDrawerDestination(
+            icon: const Icon(Icons.folder_outlined),
+            selectedIcon: const Icon(Icons.folder),
+            label: Text(l10n.drawerDataLabel),
           ),
-          const NavigationDrawerDestination(
-            icon: Icon(Icons.info_outline),
-            selectedIcon: Icon(Icons.info),
-            label: Text('About'),
+          NavigationDrawerDestination(
+            icon: const Icon(Icons.info_outline),
+            selectedIcon: const Icon(Icons.info),
+            label: Text(l10n.drawerAboutLabel),
           ),
         ],
       ),
@@ -224,16 +228,16 @@ class _TabShellState extends State<TabShell> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _tabIndex,
         onDestinationSelected: (i) => setState(() => _tabIndex = i),
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Home',
+            icon: const Icon(Icons.home_outlined),
+            selectedIcon: const Icon(Icons.home),
+            label: l10n.navHome,
           ),
           NavigationDestination(
-            icon: Icon(Icons.calendar_month_outlined),
-            selectedIcon: Icon(Icons.calendar_month),
-            label: 'Calendar',
+            icon: const Icon(Icons.calendar_month_outlined),
+            selectedIcon: const Icon(Icons.calendar_month),
+            label: l10n.navCalendar,
           ),
         ],
       ),
@@ -242,7 +246,7 @@ class _TabShellState extends State<TabShell> {
         builder: (context, _) {
           final marked = _homeVm.isTodayMarked;
           return FloatingActionButton(
-            tooltip: marked ? 'Add symptoms' : 'Mark today',
+            tooltip: marked ? l10n.fabTooltipAddSymptoms : l10n.fabTooltipMarkToday,
             onPressed: () => _onFabPressed(context),
             child: const Icon(Icons.add),
           );

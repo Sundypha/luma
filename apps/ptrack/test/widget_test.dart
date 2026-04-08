@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:luma/l10n/app_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:local_auth/local_auth.dart';
@@ -51,6 +52,8 @@ void main() {
     final lockService = await lockServiceForTest();
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: TabShell(
           repository: mockRepo,
           calendar: calendar,
@@ -74,6 +77,8 @@ void main() {
     final lockService = await lockServiceForTest();
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: TabShell(
           repository: mockRepo,
           calendar: calendar,

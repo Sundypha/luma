@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:luma/features/lock/lock_service.dart';
+import 'package:luma/l10n/app_localizations.dart';
 import 'package:luma/features/lock/pin_entry_widget.dart';
 import 'package:luma/features/lock/pin_setup_sheet.dart';
 
@@ -126,9 +127,10 @@ class _LockSettingsScreenState extends State<LockSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('App lock'),
+        title: Text(l10n.lockSettingsAppBar),
       ),
       body: _loadingPrefs
           ? const Center(child: CircularProgressIndicator())
@@ -136,30 +138,28 @@ class _LockSettingsScreenState extends State<LockSettingsScreen> {
               padding: const EdgeInsets.symmetric(vertical: 8),
               children: [
                 SwitchListTile(
-                  title: const Text('App lock'),
-                  subtitle: const Text(
-                    'Lock with PIN or biometrics when returning from background.',
-                  ),
+                  title: Text(l10n.lockSettingsSwitchTitle),
+                  subtitle: Text(l10n.lockSettingsSwitchSubtitle),
                   value: _isEnabled,
                   onChanged: _onLockSwitchChanged,
                 ),
                 if (_isEnabled) ...[
                   ListTile(
-                    title: const Text('Change PIN'),
+                    title: Text(l10n.lockSettingsChangePin),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: _changePin,
                   ),
                   if (_canUseBiometrics)
                     SwitchListTile(
-                      title: const Text('Use biometrics'),
+                      title: Text(l10n.lockSettingsUseBiometrics),
                       value: _bioEnabled,
                       onChanged: _setBiometrics,
                     ),
                   ListTile(
-                    title: const Text('Lock now'),
+                    title: Text(l10n.lockSettingsLockNow),
                     trailing: IconButton(
                       icon: const Icon(Icons.lock_outlined),
-                      tooltip: 'Lock now',
+                      tooltip: l10n.lockSettingsLockNowTooltip,
                       onPressed: widget.onLockNow,
                     ),
                     onTap: widget.onLockNow,
@@ -214,8 +214,9 @@ class _LockReAuthDialogState extends State<_LockReAuthDialog> {
       _busy = true;
       _hasError = false;
     });
+    final l10n = AppLocalizations.of(context);
     final ok = await widget.lockService.authenticateWithBiometrics(
-      'Authenticate to change lock settings',
+      l10n.lockBiometricSettingsReason,
     );
     if (!mounted) {
       return;
@@ -229,16 +230,17 @@ class _LockReAuthDialogState extends State<_LockReAuthDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return AlertDialog(
-      title: const Text('Confirm it is you'),
+      title: Text(l10n.lockReauthTitle),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Enter your PIN to continue.',
+              l10n.lockReauthBody,
               style: theme.textTheme.bodyMedium,
             ),
             const SizedBox(height: 16),
@@ -250,16 +252,17 @@ class _LockReAuthDialogState extends State<_LockReAuthDialog> {
             else ...[
               PinEntryWidget(
                 key: ValueKey<int>(_attemptKey),
-                pinLength: 4,
-                submitOnComplete: true,
+                pinLength: 20,
+                submitOnComplete: false,
+                showExpectedLength: false,
                 onSubmit: _verifyPin,
-                errorText: _hasError ? 'Incorrect PIN' : null,
+                errorText: _hasError ? l10n.lockIncorrectPin : null,
               ),
               if (widget.canUseBiometrics) ...[
                 const SizedBox(height: 12),
                 FilledButton.tonal(
                   onPressed: _tryBiometric,
-                  child: const Text('Use biometrics'),
+                  child: Text(l10n.lockUseBiometrics),
                 ),
               ],
             ],
@@ -269,7 +272,7 @@ class _LockReAuthDialogState extends State<_LockReAuthDialog> {
       actions: [
         TextButton(
           onPressed: _busy ? null : () => Navigator.of(context).pop(false),
-          child: const Text('Cancel'),
+          child: Text(l10n.importCancel),
         ),
       ],
     );

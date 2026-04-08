@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:luma/l10n/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mocktail/mocktail.dart';
@@ -73,6 +74,8 @@ void main() {
     final vm = DayDetailTestViewModel(mockRepo, calendar);
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: SizedBox(
             height: 800,

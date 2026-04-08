@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:luma/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// How mood is shown on logging surfaces.
@@ -62,10 +63,11 @@ class _MoodSettingsTileState extends State<MoodSettingsTile> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (_loading) {
-      return const ListTile(
-        title: Text('Mood display'),
-        trailing: SizedBox(
+      return ListTile(
+        title: Text(l10n.moodSettingsLoadingTitle),
+        trailing: const SizedBox(
           width: 24,
           height: 24,
           child: CircularProgressIndicator(strokeWidth: 2),
@@ -73,8 +75,8 @@ class _MoodSettingsTileState extends State<MoodSettingsTile> {
       );
     }
     return SwitchListTile(
-      title: const Text('Use word labels for mood'),
-      subtitle: const Text('Show text labels instead of emoji faces'),
+      title: Text(l10n.moodSettingsWordLabelsTitle),
+      subtitle: Text(l10n.moodSettingsWordLabelsSubtitle),
       value: _mode == MoodDisplayMode.wordChip,
       onChanged: _onChanged,
     );

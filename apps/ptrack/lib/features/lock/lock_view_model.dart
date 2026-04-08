@@ -10,7 +10,8 @@ class LockViewModel extends ChangeNotifier {
 
   bool isLoading = false;
   bool hasError = false;
-  String? errorMessage;
+  /// True after a failed PIN attempt; UI maps to localized "Incorrect PIN".
+  bool wrongPin = false;
   int attemptCount = 0;
 
   Future<void> verifyPin(
@@ -23,12 +24,12 @@ class LockViewModel extends ChangeNotifier {
     isLoading = false;
     if (ok) {
       hasError = false;
-      errorMessage = null;
+      wrongPin = false;
       notifyListeners();
       onUnlocked();
     } else {
       hasError = true;
-      errorMessage = 'Incorrect PIN';
+      wrongPin = true;
       attemptCount += 1;
       notifyListeners();
     }
@@ -36,28 +37,28 @@ class LockViewModel extends ChangeNotifier {
 
   Future<void> authenticateBiometric({
     required VoidCallback onUnlocked,
+    required String localizedReason,
   }) async {
     isLoading = true;
     notifyListeners();
     final ok = await lockService.authenticateWithBiometrics(
-      'Authenticate to unlock Luma',
+      localizedReason,
     );
     isLoading = false;
     if (ok) {
       hasError = false;
-      errorMessage = null;
+      wrongPin = false;
       notifyListeners();
       onUnlocked();
     } else {
       hasError = true;
-      errorMessage = null;
       notifyListeners();
     }
   }
 
   void clearError() {
     hasError = false;
-    errorMessage = null;
+    wrongPin = false;
     isLoading = false;
     notifyListeners();
   }

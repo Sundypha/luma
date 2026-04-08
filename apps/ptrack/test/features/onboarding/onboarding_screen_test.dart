@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:luma/l10n/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:luma/features/onboarding/onboarding_screen.dart';
 import 'package:luma/features/onboarding/onboarding_state.dart';
@@ -19,6 +20,8 @@ void main() {
   testWidgets('first page shows privacy / local-first title', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: OnboardingScreen(
           onboardingState: onboardingState,
           onComplete: () {},
@@ -32,6 +35,8 @@ void main() {
       (tester) async {
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: OnboardingScreen(
           onboardingState: onboardingState,
           onComplete: () {},
@@ -46,6 +51,8 @@ void main() {
   testWidgets('required page has Continue, no Skip', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: OnboardingScreen(
           onboardingState: onboardingState,
           onComplete: () {},
@@ -60,6 +67,8 @@ void main() {
       (tester) async {
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: OnboardingScreen(
           onboardingState: onboardingState,
           onComplete: () {},
@@ -77,6 +86,8 @@ void main() {
   testWidgets('swipe on required page advances like Continue', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: OnboardingScreen(
           onboardingState: onboardingState,
           onComplete: () {},
@@ -92,6 +103,8 @@ void main() {
     var completed = false;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: OnboardingScreen(
           onboardingState: onboardingState,
           onComplete: () => completed = true,
@@ -110,6 +123,8 @@ void main() {
   testWidgets('SmoothPageIndicator present with step count 3', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: OnboardingScreen(
           onboardingState: onboardingState,
           onComplete: () {},

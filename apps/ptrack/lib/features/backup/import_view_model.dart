@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:ptrack_data/ptrack_data.dart';
@@ -13,6 +15,17 @@ enum ImportStep {
   importing,
   done,
   error,
+}
+
+/// User-visible import failure category; map to strings in the UI with [AppLocalizations].
+enum ImportErrorKind {
+  readSelectedFile,
+  wrongExtension,
+  readBackup,
+  wrongPassword,
+  decrypt,
+  applyFailed,
+  parseFailed,
 }
 
 /// State for the import backup flow (file → optional password → preview → apply).
@@ -34,7 +47,8 @@ final class ImportViewModel extends ChangeNotifier {
   ImportPreviewResult? _preview;
   DuplicateStrategy _strategy = DuplicateStrategy.skip;
   double _progress = 0;
-  String? _errorMessage;
+  ImportErrorKind? _importErrorKind;
+  String? _importErrorDetail;
   ImportResult? _result;
   bool _isEncrypted = false;
   Uint8List? _pendingFileBytes;
@@ -46,15 +60,26 @@ final class ImportViewModel extends ChangeNotifier {
   ImportPreviewResult? get preview => _preview;
   DuplicateStrategy get strategy => _strategy;
   double get progress => _progress;
-  String? get errorMessage => _errorMessage;
+  ImportErrorKind? get importErrorKind => _importErrorKind;
+  String? get importErrorDetail => _importErrorDetail;
   ImportResult? get result => _result;
   bool get isEncrypted => _isEncrypted;
   bool get hasData => _data != null;
   bool get seenProgressDuringImport => _seenProgressDuringImport;
 
+  void _clearError() {
+    _importErrorKind = null;
+    _importErrorDetail = null;
+  }
+
+  void _setError(ImportErrorKind kind, [String? detail]) {
+    _importErrorKind = kind;
+    _importErrorDetail = detail;
+  }
+
   Future<void> pickFile() async {
     _step = ImportStep.pickingFile;
-    _errorMessage = null;
+    _clearError();
     notifyListeners();
     final result = await FilePicker.pickFiles(
       type: FileType.custom,
@@ -71,7 +96,7 @@ final class ImportViewModel extends ChangeNotifier {
     var bytes = file.bytes;
     bytes ??= await readPickedFileBytes(memoryBytes: file.bytes, path: file.path);
     if (bytes == null) {
-      _errorMessage = 'Could not read the selected file.';
+      _setError(ImportErrorKind.readSelectedFile);
       _step = ImportStep.error;
       notifyListeners();
       return;
@@ -86,7 +111,7 @@ final class ImportViewModel extends ChangeNotifier {
   }) async {
     final lower = fileName.toLowerCase();
     if (!lower.endsWith('.luma')) {
-      _errorMessage = 'Please select a .luma backup file';
+      _setError(ImportErrorKind.wrongExtension);
       _step = ImportStep.error;
       notifyListeners();
       return;
@@ -110,11 +135,11 @@ final class ImportViewModel extends ChangeNotifier {
       _step = ImportStep.previewing;
       notifyListeners();
     } on LumaImportException catch (e) {
-      _errorMessage = e.message;
+      _setError(ImportErrorKind.parseFailed, e.message);
       _step = ImportStep.error;
       notifyListeners();
     } catch (_) {
-      _errorMessage = 'Could not read this backup file.';
+      _setError(ImportErrorKind.readBackup);
       _step = ImportStep.error;
       notifyListeners();
     }
@@ -123,7 +148,7 @@ final class ImportViewModel extends ChangeNotifier {
   Future<void> submitPassword(String password) async {
     final bytes = _pendingFileBytes;
     if (bytes == null) return;
-    _errorMessage = null;
+    _clearError();
     notifyListeners();
     try {
       final data = await _importService.parseFileData(bytes, password: password);
@@ -132,13 +157,13 @@ final class ImportViewModel extends ChangeNotifier {
       _step = ImportStep.previewing;
       notifyListeners();
     } on LumaDecryptionException catch (_) {
-      _errorMessage = 'Incorrect password. Please try again.';
+      _setError(ImportErrorKind.wrongPassword);
       notifyListeners();
     } on LumaImportException catch (e) {
-      _errorMessage = e.message;
+      _setError(ImportErrorKind.parseFailed, e.message);
       notifyListeners();
     } catch (_) {
-      _errorMessage = 'Could not decrypt this backup.';
+      _setError(ImportErrorKind.decrypt);
       notifyListeners();
     }
   }
@@ -159,7 +184,7 @@ final class ImportViewModel extends ChangeNotifier {
     _step = ImportStep.importing;
     _progress = 0;
     _seenProgressDuringImport = false;
-    _errorMessage = null;
+    _clearError();
     _result = null;
     notifyListeners();
     try {
@@ -175,10 +200,10 @@ final class ImportViewModel extends ChangeNotifier {
       _progress = 1;
       _step = ImportStep.done;
     } on LumaImportException catch (e) {
-      _errorMessage = e.message;
+      _setError(ImportErrorKind.parseFailed, e.message);
       _step = ImportStep.error;
     } catch (_) {
-      _errorMessage = 'Could not import this backup. Please try again.';
+      _setError(ImportErrorKind.applyFailed);
       _step = ImportStep.error;
     }
     notifyListeners();
@@ -191,7 +216,7 @@ final class ImportViewModel extends ChangeNotifier {
     _preview = null;
     _strategy = DuplicateStrategy.skip;
     _progress = 0;
-    _errorMessage = null;
+    _clearError();
     _result = null;
     _isEncrypted = false;
     _pendingFileBytes = null;

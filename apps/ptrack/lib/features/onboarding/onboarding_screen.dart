@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../../l10n/app_localizations.dart';
 import 'onboarding_content.dart';
 import 'onboarding_page.dart';
 import 'onboarding_state.dart';
@@ -28,7 +29,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void initState() {
     super.initState();
-    final maxIndex = onboardingPages.length - 1;
+    final maxIndex = kOnboardingPageCount - 1;
     final initial = widget.onboardingState.currentStep.clamp(0, maxIndex);
     _currentPage = initial;
     _controller = PageController(initialPage: initial);
@@ -40,9 +41,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     super.dispose();
   }
 
-  bool get _isLastPage => _currentPage >= onboardingPages.length - 1;
-
-  String get _primaryLabel => _isLastPage ? 'Get Started' : 'Continue';
+  bool get _isLastPage => _currentPage >= kOnboardingPageCount - 1;
 
   Future<void> _goToNext() async {
     if (_isAdvancing) return;
@@ -69,7 +68,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final requiredNow = onboardingPages[_currentPage].isRequired;
+    final l10n = AppLocalizations.of(context);
+    final pages = buildOnboardingPages(l10n);
+    final requiredNow = pages[_currentPage].isRequired;
+    final primaryLabel = _isLastPage ? l10n.onbGetStarted : l10n.onbContinue;
 
     return Scaffold(
       body: SafeArea(
@@ -78,13 +80,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             Expanded(
               child: PageView.builder(
                 controller: _controller,
-                itemCount: onboardingPages.length,
+                itemCount: pages.length,
                 onPageChanged: (index) {
                   setState(() => _currentPage = index);
                   widget.onboardingState.saveStep(index);
                 },
                 itemBuilder: (context, index) {
-                  return OnboardingPage(data: onboardingPages[index]);
+                  return OnboardingPage(data: pages[index]);
                 },
               ),
             ),
@@ -93,11 +95,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               child: Column(
                 children: [
                   Semantics(
-                    label:
-                        'Step ${_currentPage + 1} of ${onboardingPages.length}',
+                    label: l10n.onbStepSemantics(
+                      _currentPage + 1,
+                      pages.length,
+                    ),
                     child: SmoothPageIndicator(
                       controller: _controller,
-                      count: onboardingPages.length,
+                      count: pages.length,
                       effect: ExpandingDotsEffect(
                         dotHeight: 8,
                         dotWidth: 8,
@@ -114,7 +118,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       width: double.infinity,
                       child: FilledButton(
                         onPressed: _isAdvancing ? null : _goToNext,
-                        child: Text(_primaryLabel),
+                        child: Text(primaryLabel),
                       ),
                     )
                   else if (_isLastPage)
@@ -122,7 +126,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       width: double.infinity,
                       child: FilledButton(
                         onPressed: _isAdvancing ? null : _goToNext,
-                        child: Text(_primaryLabel),
+                        child: Text(primaryLabel),
                       ),
                     )
                   else
@@ -130,12 +134,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       children: [
                         TextButton(
                           onPressed: _isAdvancing ? null : _goToNext,
-                          child: const Text('Skip'),
+                          child: Text(l10n.onbSkip),
                         ),
                         const Spacer(),
                         FilledButton(
                           onPressed: _isAdvancing ? null : _goToNext,
-                          child: Text(_primaryLabel),
+                          child: Text(primaryLabel),
                         ),
                       ],
                     ),

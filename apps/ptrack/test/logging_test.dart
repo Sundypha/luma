@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:luma/l10n/app_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:local_auth/local_auth.dart';
@@ -75,6 +76,8 @@ void main() {
     );
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: TabShell(
           repository: mockRepo,
           calendar: calendar,
@@ -186,20 +189,18 @@ void main() {
     expect(find.text('Cycle day 8'), findsOneWidget);
   });
 
-  testWidgets('drawer Settings opens mood settings dialog', (tester) async {
+  testWidgets('drawer Settings opens Settings page with mood tile', (tester) async {
     await pumpHome(tester);
     final scaffoldState = tester.state<ScaffoldState>(find.byType(Scaffold));
     scaffoldState.openDrawer();
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Settings'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 200));
+    await tester.pumpAndSettle();
     expect(find.byType(MoodSettingsTile), findsOneWidget);
     expect(find.text('Settings'), findsWidgets);
   });
 
-  testWidgets('Settings dialog shows Privacy & Security tile that opens lock screen', (tester) async {
+  testWidgets('Settings page shows Privacy & Security tile that opens lock screen', (tester) async {
     await pumpHome(tester);
     final scaffoldState = tester.state<ScaffoldState>(find.byType(Scaffold));
     scaffoldState.openDrawer();

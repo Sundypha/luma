@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 
+import '../../l10n/app_localizations.dart';
+import '../../l10n/logging_localizations.dart';
+
 /// Summary of today's period day + symptoms, with one primary action.
 class TodayCard extends StatelessWidget {
   const TodayCard({
@@ -22,6 +25,7 @@ class TodayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
     final entry = todayEntry;
 
     return Card(
@@ -33,12 +37,12 @@ class TodayCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Today',
+                    l10n.todaySectionTitle,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'You have not marked today as a period day.',
+                    l10n.todayUnmarkedBody,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: scheme.onSurfaceVariant,
                         ),
@@ -46,7 +50,7 @@ class TodayCard extends StatelessWidget {
                   const SizedBox(height: 12),
                   FilledButton.tonal(
                     onPressed: onTodayAction,
-                    child: const Text('I had my period today'),
+                    child: Text(l10n.todayMarkPeriodCta),
                   ),
                 ],
               )
@@ -55,13 +59,13 @@ class TodayCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        'Today',
+                        l10n.todaySectionTitle,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const SizedBox(height: 12),
                       FilledButton.tonal(
                         onPressed: onTodayAction,
-                        child: const Text('Add symptoms for today'),
+                        child: Text(l10n.todayAddSymptomsCta),
                       ),
                     ],
                   )
@@ -69,17 +73,37 @@ class TodayCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Today's log",
+                        l10n.todayLogTitle,
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
                       ),
                       const SizedBox(height: 8),
                       if (entry.flowIntensity != null)
-                        Text('Flow: ${entry.flowIntensity!.label}'),
+                        Text(
+                          l10n.todayFlowLine(
+                            LoggingLocalizations.flowLabel(
+                              l10n,
+                              entry.flowIntensity!,
+                            ),
+                          ),
+                        ),
                       if (entry.painScore != null)
-                        Text('Pain: ${entry.painScore!.label}'),
-                      if (entry.mood != null) Text('Mood: ${entry.mood!.emoji}'),
+                        Text(
+                          l10n.todayPainLine(
+                            LoggingLocalizations.painLabel(
+                              l10n,
+                              entry.painScore!,
+                            ),
+                          ),
+                        ),
+                      if (entry.mood != null)
+                        Text(
+                          l10n.todayMoodLine(
+                            entry.mood!.emoji,
+                            LoggingLocalizations.moodLabel(l10n, entry.mood!),
+                          ),
+                        ),
                       if (entry.notes != null && entry.notes!.isNotEmpty)
                         Padding(
                           padding: const EdgeInsets.only(top: 4),
@@ -94,7 +118,7 @@ class TodayCard extends StatelessWidget {
                       const SizedBox(height: 12),
                       FilledButton.tonal(
                         onPressed: onTodayAction,
-                        child: const Text("Edit today's log"),
+                        child: Text(l10n.todayEditLogCta),
                       ),
                     ],
                   ),

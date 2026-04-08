@@ -116,7 +116,7 @@ void main() {
       await vm.handlePickedFile(bytes: export.bytes, fileName: 'enc.luma');
       await vm.submitPassword('wrong');
       expect(vm.step, ImportStep.passwordPrompt);
-      expect(vm.errorMessage, contains('Incorrect password'));
+      expect(vm.importErrorKind, ImportErrorKind.wrongPassword);
     });
 
     test('submitPassword correct → previewing', () async {
@@ -226,7 +226,7 @@ void main() {
       );
       await vm.applyImport();
       expect(vm.step, ImportStep.error);
-      expect(vm.errorMessage, isNotNull);
+      expect(vm.importErrorKind, isNotNull);
     });
 
     test('selectStrategy updates strategy', () {
@@ -287,7 +287,7 @@ void main() {
       );
       await vm.handlePickedFile(bytes: _utf8('{}'), fileName: 'note.txt');
       expect(vm.step, ImportStep.error);
-      expect(vm.errorMessage, contains('.luma'));
+      expect(vm.importErrorKind, ImportErrorKind.wrongExtension);
     });
 
     test('proceedToImport moves to chooseStrategy when duplicates exist',

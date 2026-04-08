@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:luma/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
@@ -48,6 +49,8 @@ void main() {
     final vm = CalendarViewModel(mockRepo, calendar);
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: CalendarScreen(viewModel: vm),
         ),
@@ -56,6 +59,17 @@ void main() {
     await tester.pump();
     return vm;
   }
+
+  testWidgets(
+      'calendar shows insufficient-history hint when forecast is not available',
+      (tester) async {
+    final vm = await pumpCalendar(tester);
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('No forecast yet'), findsOneWidget);
+    expect(find.textContaining('at least two separate periods'), findsOneWidget);
+    vm.dispose();
+  });
 
   testWidgets('calendar renders month grid with weekday headers', (tester) async {
     final vm = await pumpCalendar(tester);
@@ -170,6 +184,8 @@ void main() {
     final vm = CalendarViewModel(mockRepo, calendar);
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: CalendarScreen(viewModel: vm),
         ),

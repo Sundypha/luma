@@ -54,10 +54,6 @@ void main() {
         },
       );
       expect(vm.step, ExportStep.error);
-      expect(
-        vm.errorMessage,
-        'Could not complete export. Please try again.',
-      );
     });
 
     test('password is passed through to export (encrypted meta)', () async {

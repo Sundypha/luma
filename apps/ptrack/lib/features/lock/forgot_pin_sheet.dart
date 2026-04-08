@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:luma/l10n/app_localizations.dart';
+
 /// Honest destructive reset flow: no hidden recovery channel (LOCK-03).
 Future<void> showForgotPinSheet(
   BuildContext context, {
@@ -13,6 +15,7 @@ Future<void> showForgotPinSheet(
       final theme = Theme.of(sheetContext);
       final colorScheme = theme.colorScheme;
       final bottomInset = MediaQuery.viewInsetsOf(sheetContext).bottom;
+      final l10n = AppLocalizations.of(sheetContext);
 
       return Padding(
         padding: EdgeInsets.fromLTRB(24, 12, 24, 24 + bottomInset),
@@ -21,14 +24,12 @@ Future<void> showForgotPinSheet(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Forgot your PIN?',
+              l10n.forgotPinTitle,
               style: theme.textTheme.titleLarge,
             ),
             const SizedBox(height: 12),
             Text(
-              'There is no way to recover a forgotten PIN without erasing your data.\n\n'
-              'Before resetting, export your data from Data settings so you can restore it afterwards.\n\n'
-              'Resetting will erase all period and symptom history from this device.',
+              l10n.forgotPinBody,
               style: theme.textTheme.bodyMedium,
             ),
             const SizedBox(height: 24),
@@ -37,7 +38,7 @@ Future<void> showForgotPinSheet(
                 Expanded(
                   child: TextButton(
                     onPressed: () => Navigator.of(sheetContext).pop(),
-                    child: const Text('Cancel'),
+                    child: Text(l10n.importCancel),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -51,7 +52,7 @@ Future<void> showForgotPinSheet(
                       Navigator.of(sheetContext).pop();
                       onReset();
                     },
-                    child: const Text('Erase all data and reset'),
+                    child: Text(l10n.forgotPinEraseCta),
                   ),
                 ),
               ],

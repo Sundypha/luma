@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 
@@ -20,7 +21,6 @@ final class ExportViewModel extends ChangeNotifier {
   bool _includeNotes = true;
   String? _password;
   double _progress = 0;
-  String? _errorMessage;
   ExportResult? _result;
 
   ExportStep get step => _step;
@@ -29,7 +29,6 @@ final class ExportViewModel extends ChangeNotifier {
   bool get includeNotes => _includeNotes;
   String? get password => _password;
   double get progress => _progress;
-  String? get errorMessage => _errorMessage;
   ExportResult? get result => _result;
 
   bool get hasContentSelection =>
@@ -103,7 +102,6 @@ final class ExportViewModel extends ChangeNotifier {
   Future<void> runExport(ExportDataRun exportData) async {
     _step = ExportStep.exporting;
     _progress = 0;
-    _errorMessage = null;
     _result = null;
     notifyListeners();
     try {
@@ -122,7 +120,6 @@ final class ExportViewModel extends ChangeNotifier {
       );
       _step = ExportStep.done;
     } catch (_) {
-      _errorMessage = 'Could not complete export. Please try again.';
       _step = ExportStep.error;
     }
     notifyListeners();
@@ -141,7 +138,6 @@ final class ExportViewModel extends ChangeNotifier {
     _includeNotes = true;
     _password = null;
     _progress = 0;
-    _errorMessage = null;
     _result = null;
     notifyListeners();
   }

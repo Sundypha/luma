@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:luma/l10n/app_localizations.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 
 /// First-run screen: mark period days via [PeriodRepository.markDay].
@@ -92,17 +93,17 @@ class _FirstLogScreenState extends State<FirstLogScreen> {
 
     final failure = lastOutcome is DayMarkFailure ? lastOutcome : null;
     if (failure != null) {
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Could not save your period. Please try again.'),
-        ),
+        SnackBar(content: Text(l10n.firstLogSaveFailed)),
       );
       setState(() => _isSaving = false);
       return;
     }
 
+    final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Period logged — you\'re all set!')),
+      SnackBar(content: Text(l10n.firstLogSuccessSnack)),
     );
     widget.onComplete();
   }
@@ -111,18 +112,19 @@ class _FirstLogScreenState extends State<FirstLogScreen> {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final loc = MaterialLocalizations.of(context);
+    final l10n = AppLocalizations.of(context);
     final startLabel = loc.formatFullDate(_startDate);
     final endLabel = loc.formatFullDate(_endDate);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Log your first period')),
+      appBar: AppBar(title: Text(l10n.firstLogAppBarTitle)),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'When did your current or most recent period start?',
+              l10n.firstLogStartQuestion,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
@@ -137,7 +139,7 @@ class _FirstLogScreenState extends State<FirstLogScreen> {
                     Expanded(child: Text(startLabel)),
                     TextButton(
                       onPressed: _isSaving ? null : _pickStartDate,
-                      child: const Text('Change date'),
+                      child: Text(l10n.firstLogChangeDate),
                     ),
                   ],
                 ),
@@ -146,10 +148,8 @@ class _FirstLogScreenState extends State<FirstLogScreen> {
             const SizedBox(height: 8),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('This period has already ended'),
-              subtitle: const Text(
-                'Optional — add a last period day if it is not ongoing.',
-              ),
+              title: Text(l10n.firstLogPeriodEndedTitle),
+              subtitle: Text(l10n.firstLogPeriodEndedSubtitle),
               value: _periodHasEnded,
               onChanged: _isSaving
                   ? null
@@ -173,7 +173,7 @@ class _FirstLogScreenState extends State<FirstLogScreen> {
                       Expanded(child: Text(endLabel)),
                       TextButton(
                         onPressed: _isSaving ? null : _pickEndDate,
-                        child: const Text('Change end date'),
+                        child: Text(l10n.firstLogChangeEndDate),
                       ),
                     ],
                   ),
@@ -183,7 +183,7 @@ class _FirstLogScreenState extends State<FirstLogScreen> {
             const Spacer(),
             FilledButton(
               onPressed: _isSaving ? null : _save,
-              child: const Text('Save & Continue'),
+              child: Text(l10n.firstLogSaveContinue),
             ),
           ],
         ),

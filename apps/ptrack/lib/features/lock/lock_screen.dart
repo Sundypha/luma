@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:luma/features/lock/lock_service.dart';
 import 'package:luma/features/lock/lock_view_model.dart';
 import 'package:luma/features/lock/pin_entry_widget.dart';
+import 'package:luma/l10n/app_localizations.dart';
 
 /// Full-screen lock UI with optional biometrics and forgot-PIN entry point.
 class LockScreen extends StatefulWidget {
@@ -43,13 +44,21 @@ class _LockScreenState extends State<LockScreen> {
         can &&
         widget.lockService.isBiometricsEnabled) {
       _didAutoBio = true;
-      await _viewModel.authenticateBiometric(onUnlocked: widget.onUnlocked);
+      final l10n = AppLocalizations.of(context);
+      await _viewModel.authenticateBiometric(
+        onUnlocked: widget.onUnlocked,
+        localizedReason: l10n.lockBiometricUnlockReason,
+      );
     }
   }
 
   Future<void> _triggerBio() async {
     _viewModel.clearError();
-    await _viewModel.authenticateBiometric(onUnlocked: widget.onUnlocked);
+    final l10n = AppLocalizations.of(context);
+    await _viewModel.authenticateBiometric(
+      onUnlocked: widget.onUnlocked,
+      localizedReason: l10n.lockBiometricUnlockReason,
+    );
   }
 
   @override
@@ -61,6 +70,7 @@ class _LockScreenState extends State<LockScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -75,20 +85,21 @@ class _LockScreenState extends State<LockScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Luma',
+                      l10n.appTitle,
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                     const SizedBox(height: 32),
                     PinEntryWidget(
                       key: ValueKey<int>(_viewModel.attemptCount),
-                      pinLength: 4,
-                      submitOnComplete: true,
+                      pinLength: 20,
+                      submitOnComplete: false,
+                      showExpectedLength: false,
                       onSubmit: (pin) => _viewModel.verifyPin(
                         pin,
                         onUnlocked: widget.onUnlocked,
                       ),
-                      errorText: _viewModel.hasError
-                          ? _viewModel.errorMessage
+                      errorText: _viewModel.wrongPin
+                          ? l10n.lockIncorrectPin
                           : null,
                     ),
                     if (_viewModel.isLoading) ...[
@@ -104,14 +115,14 @@ class _LockScreenState extends State<LockScreen> {
                       FilledButton.tonal(
                         onPressed:
                             _viewModel.isLoading ? null : _triggerBio,
-                        child: const Text('Use biometrics'),
+                        child: Text(l10n.lockUseBiometrics),
                       ),
                     ],
                     if (widget.onForgotPin != null) ...[
                       const SizedBox(height: 24),
                       TextButton(
                         onPressed: widget.onForgotPin,
-                        child: const Text('Forgot PIN?'),
+                        child: Text(l10n.lockForgotPin),
                       ),
                     ],
                   ],

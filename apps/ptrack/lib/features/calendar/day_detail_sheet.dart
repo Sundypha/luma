@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 
+import '../../l10n/app_localizations.dart';
+import '../../l10n/logging_localizations.dart';
+import '../../l10n/prediction_localizations.dart';
 import '../logging/symptom_form_sheet.dart';
 import 'calendar_day_data.dart';
 import 'calendar_view_model.dart';
@@ -58,13 +61,6 @@ StoredDayEntry? _entryForDay(DateTime dayNorm, StoredPeriodWithDays pwd) {
   }
   return null;
 }
-
-String _algorithmDisplayLabel(AlgorithmId id) => switch (id) {
-      AlgorithmId.median => 'Average spacing',
-      AlgorithmId.ewma => 'Recent-weighted',
-      AlgorithmId.bayesian => 'Pattern-learning',
-      AlgorithmId.linearTrend => 'Trend',
-    };
 
 bool _algorithmCoversUtcDay(AlgorithmPrediction o, DateTime dayNormUtc) {
   for (var i = 0; i < o.predictedDurationDays; i++) {
@@ -163,10 +159,15 @@ class DayDetailSheet extends StatelessWidget {
       dayData: dayData,
       ensemble: ensemble,
       dayNormUtc: dayNormUtc,
+      cycleSpreadDays: ensemble?.cycleSpreadDays ?? 0,
     );
   }
 
-  Future<void> _markDayAndPop(BuildContext context, DateTime dayNorm) async {
+  Future<void> _markDayAndPop(
+    BuildContext context,
+    DateTime dayNorm,
+    AppLocalizations l10n,
+  ) async {
     final outcome = await viewModel.repository.markDay(dayNorm);
     if (!context.mounted) return;
     switch (outcome) {
@@ -174,9 +175,7 @@ class DayDetailSheet extends StatelessWidget {
         Navigator.of(context).pop();
       case DayMarkFailure():
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Could not mark this day. Please try again.'),
-          ),
+          SnackBar(content: Text(l10n.dayDetailMarkFailed)),
         );
     }
   }
@@ -184,29 +183,27 @@ class DayDetailSheet extends StatelessWidget {
   Future<void> _confirmDeleteEntirePeriod(
     BuildContext context,
     MaterialLocalizations loc,
+    AppLocalizations l10n,
     StoredPeriod period,
   ) async {
     String localDay(DateTime utc) =>
         loc.formatMediumDate(DateTime(utc.year, utc.month, utc.day));
     final startLabel = localDay(period.span.startUtc);
     final endLabel = period.span.isOpen
-        ? 'ongoing'
+        ? l10n.dayDetailPeriodOngoing
         : localDay(period.span.endUtc!);
+    final body = period.span.isOpen
+        ? l10n.dayDetailDeletePeriodOngoingBody(startLabel)
+        : l10n.dayDetailDeletePeriodClosedBody(startLabel, endLabel);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete entire period?'),
-        content: Text(
-          period.span.isOpen
-              ? 'Remove the ongoing period starting $startLabel and all of '
-                  'its day logs.'
-              : 'Remove the period $startLabel–$endLabel and all of its day '
-                  'logs. This cannot be undone.',
-        ),
+        title: Text(l10n.dayDetailDeletePeriodTitle),
+        content: Text(body),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.commonCancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
@@ -214,7 +211,7 @@ class DayDetailSheet extends StatelessWidget {
               foregroundColor: Theme.of(ctx).colorScheme.onError,
             ),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete'),
+            child: Text(l10n.commonDelete),
           ),
         ],
       ),
@@ -224,7 +221,7 @@ class DayDetailSheet extends StatelessWidget {
     if (!context.mounted) return;
     if (!ok) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not delete period.')),
+        SnackBar(content: Text(l10n.dayDetailDeletePeriodFailed)),
       );
       return;
     }
@@ -235,6 +232,7 @@ class DayDetailSheet extends StatelessWidget {
     BuildContext context,
     DateTime dayNorm,
     StoredDayEntry? entry,
+    AppLocalizations l10n,
   ) async {
     if (entry != null) {
       final loc = MaterialLocalizations.of(context);
@@ -243,19 +241,16 @@ class DayDetailSheet extends StatelessWidget {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('Remove this day?'),
-          content: Text(
-            'Unmark $dateLabel as a period day. Logged symptoms for this day '
-            'will be removed.',
-          ),
+          title: Text(l10n.dayDetailRemoveDayTitle),
+          content: Text(l10n.dayDetailRemoveDayBody(dateLabel)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Cancel'),
+              child: Text(l10n.commonCancel),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Remove'),
+              child: Text(l10n.commonRemove),
             ),
           ],
         ),
@@ -269,9 +264,7 @@ class DayDetailSheet extends StatelessWidget {
         Navigator.of(context).pop();
       case DayMarkFailure():
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Could not remove this day. Please try again.'),
-          ),
+          SnackBar(content: Text(l10n.dayDetailRemoveDayFailed)),
         );
     }
   }
@@ -279,12 +272,13 @@ class DayDetailSheet extends StatelessWidget {
   Future<void> _clearSymptoms(
     BuildContext context,
     int dayEntryId,
+    AppLocalizations l10n,
   ) async {
     final ok = await viewModel.repository.deleteDayEntry(dayEntryId);
     if (!context.mounted) return;
     if (!ok) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not clear symptoms.')),
+        SnackBar(content: Text(l10n.dayDetailClearSymptomsFailed)),
       );
     }
   }
@@ -292,6 +286,7 @@ class DayDetailSheet extends StatelessWidget {
   Widget _buildPredictedFuture(
     BuildContext context,
     MaterialLocalizations loc,
+    AppLocalizations l10n,
     DateTime dayNorm,
     CalendarDayData dayData,
   ) {
@@ -313,7 +308,7 @@ class DayDetailSheet extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'You can log this once the day arrives.',
+            l10n.dayDetailLogWhenArrives,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -326,6 +321,7 @@ class DayDetailSheet extends StatelessWidget {
   Widget _buildPredictedPastOrToday(
     BuildContext context,
     MaterialLocalizations loc,
+    AppLocalizations l10n,
     DateTime dayNorm,
     CalendarDayData dayData,
   ) {
@@ -347,8 +343,8 @@ class DayDetailSheet extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           FilledButton(
-            onPressed: () => _markDayAndPop(context, dayNorm),
-            child: const Text('I had my period'),
+            onPressed: () => _markDayAndPop(context, dayNorm, l10n),
+            child: Text(l10n.dayDetailHadPeriod),
           ),
         ],
       ),
@@ -358,6 +354,7 @@ class DayDetailSheet extends StatelessWidget {
   Widget _buildEmptyFuture(
     BuildContext context,
     MaterialLocalizations loc,
+    AppLocalizations l10n,
     DateTime dayNorm,
   ) {
     return Padding(
@@ -371,7 +368,7 @@ class DayDetailSheet extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Future dates — check back when this day arrives.',
+            l10n.dayDetailFuturePlaceholder,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -384,6 +381,7 @@ class DayDetailSheet extends StatelessWidget {
   Widget _buildEmptyPastOrToday(
     BuildContext context,
     MaterialLocalizations loc,
+    AppLocalizations l10n,
     DateTime dayNorm,
   ) {
     return SingleChildScrollView(
@@ -397,8 +395,8 @@ class DayDetailSheet extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           FilledButton(
-            onPressed: () => _markDayAndPop(context, dayNorm),
-            child: const Text('I had my period'),
+            onPressed: () => _markDayAndPop(context, dayNorm, l10n),
+            child: Text(l10n.dayDetailHadPeriod),
           ),
         ],
       ),
@@ -408,6 +406,7 @@ class DayDetailSheet extends StatelessWidget {
   Widget _buildPeriodNoSymptoms(
     BuildContext context,
     MaterialLocalizations loc,
+    AppLocalizations l10n,
     DateTime dayNorm,
     StoredPeriodWithDays pwd,
     StoredDayEntry? entry,
@@ -427,7 +426,7 @@ class DayDetailSheet extends StatelessWidget {
           if (periodDay != null) ...[
             const SizedBox(height: 4),
             Text(
-              'Period day $periodDay',
+              l10n.homePeriodDay(periodDay),
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -435,7 +434,7 @@ class DayDetailSheet extends StatelessWidget {
           ],
           const SizedBox(height: 16),
           Text(
-            'No symptoms or notes logged for this day.',
+            l10n.dayDetailNoSymptoms,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -448,20 +447,21 @@ class DayDetailSheet extends StatelessWidget {
               dayNorm: dayNorm,
               periodId: pwd.period.id,
             ),
-            child: const Text('Add symptoms'),
+            child: Text(l10n.dayDetailAddSymptoms),
           ),
           const SizedBox(height: 8),
           TextButton(
-            onPressed: () => _removeThisDay(context, dayNorm, entry),
-            child: const Text('Remove this day'),
+            onPressed: () => _removeThisDay(context, dayNorm, entry, l10n),
+            child: Text(l10n.dayDetailRemoveThisDay),
           ),
           const SizedBox(height: 4),
           TextButton(
-            onPressed: () => _confirmDeleteEntirePeriod(context, loc, pwd.period),
+            onPressed: () =>
+                _confirmDeleteEntirePeriod(context, loc, l10n, pwd.period),
             style: TextButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Delete entire period'),
+            child: Text(l10n.dayDetailDeleteEntirePeriod),
           ),
         ],
       ),
@@ -471,6 +471,7 @@ class DayDetailSheet extends StatelessWidget {
   Widget _buildPeriodWithSymptoms(
     BuildContext context,
     MaterialLocalizations loc,
+    AppLocalizations l10n,
     DateTime dayNorm,
     StoredPeriodWithDays pwd,
     StoredDayEntry entry,
@@ -491,15 +492,27 @@ class DayDetailSheet extends StatelessWidget {
           if (periodDay != null) ...[
             const SizedBox(height: 4),
             Text(
-              'Period day $periodDay',
+              l10n.homePeriodDay(periodDay),
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
             ),
           ],
           const SizedBox(height: 16),
-          _chipRow(context, 'Flow', data.flowIntensity?.label ?? '—'),
-          _chipRow(context, 'Pain', data.painScore?.label ?? '—'),
+          _chipRow(
+            context,
+            l10n.symptomSectionFlow,
+            data.flowIntensity != null
+                ? LoggingLocalizations.flowLabel(l10n, data.flowIntensity!)
+                : l10n.commonNotAvailable,
+          ),
+          _chipRow(
+            context,
+            l10n.symptomSectionPain,
+            data.painScore != null
+                ? LoggingLocalizations.painLabel(l10n, data.painScore!)
+                : l10n.commonNotAvailable,
+          ),
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Row(
@@ -508,7 +521,7 @@ class DayDetailSheet extends StatelessWidget {
                 SizedBox(
                   width: 120,
                   child: Text(
-                    'Mood',
+                    l10n.symptomSectionMood,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color:
                               Theme.of(context).colorScheme.onSurfaceVariant,
@@ -518,8 +531,8 @@ class DayDetailSheet extends StatelessWidget {
                 Expanded(
                   child: Text(
                     data.mood != null
-                        ? '${data.mood!.emoji} ${data.mood!.label}'
-                        : '—',
+                        ? '${data.mood!.emoji} ${LoggingLocalizations.moodLabel(l10n, data.mood!)}'
+                        : l10n.commonNotAvailable,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
@@ -527,7 +540,7 @@ class DayDetailSheet extends StatelessWidget {
             ),
           ),
           Text(
-            'Notes',
+            l10n.symptomNotesLabel,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -536,7 +549,7 @@ class DayDetailSheet extends StatelessWidget {
           Text(
             (data.notes != null && data.notes!.isNotEmpty)
                 ? data.notes!
-                : '—',
+                : l10n.commonNotAvailable,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: 24),
@@ -548,25 +561,26 @@ class DayDetailSheet extends StatelessWidget {
               periodId: pwd.period.id,
               existing: entry,
             ),
-            child: const Text('Edit'),
+            child: Text(l10n.dayDetailEdit),
           ),
           const SizedBox(height: 8),
           TextButton(
-            onPressed: () => _clearSymptoms(context, entry.id),
-            child: const Text('Clear symptoms'),
+            onPressed: () => _clearSymptoms(context, entry.id, l10n),
+            child: Text(l10n.dayDetailClearSymptoms),
           ),
           const SizedBox(height: 8),
           TextButton(
-            onPressed: () => _removeThisDay(context, dayNorm, entry),
-            child: const Text('Remove this day'),
+            onPressed: () => _removeThisDay(context, dayNorm, entry, l10n),
+            child: Text(l10n.dayDetailRemoveThisDay),
           ),
           const SizedBox(height: 4),
           TextButton(
-            onPressed: () => _confirmDeleteEntirePeriod(context, loc, pwd.period),
+            onPressed: () =>
+                _confirmDeleteEntirePeriod(context, loc, l10n, pwd.period),
             style: TextButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Delete entire period'),
+            child: Text(l10n.dayDetailDeleteEntirePeriod),
           ),
         ],
       ),
@@ -575,6 +589,7 @@ class DayDetailSheet extends StatelessWidget {
 
   Widget _buildBody(BuildContext context) {
     final loc = MaterialLocalizations.of(context);
+    final l10n = AppLocalizations.of(context);
     final dayNorm = _utcMidnight(selectedDay);
     final todayNorm = _utcMidnight(DateTime.now());
     final isFuture = dayNorm.isAfter(todayNorm);
@@ -586,21 +601,21 @@ class DayDetailSheet extends StatelessWidget {
     final entry = pwd != null ? _entryForDay(dayNorm, pwd) : null;
 
     if (isPredicted && isFuture) {
-      return _buildPredictedFuture(context, loc, dayNorm, dayData);
+      return _buildPredictedFuture(context, loc, l10n, dayNorm, dayData);
     }
     if (isPredicted && !isFuture) {
-      return _buildPredictedPastOrToday(context, loc, dayNorm, dayData);
+      return _buildPredictedPastOrToday(context, loc, l10n, dayNorm, dayData);
     }
     if (isOnPeriod && hasLoggedData && entry != null && pwd != null) {
-      return _buildPeriodWithSymptoms(context, loc, dayNorm, pwd, entry);
+      return _buildPeriodWithSymptoms(context, loc, l10n, dayNorm, pwd, entry);
     }
     if (isOnPeriod && pwd != null) {
-      return _buildPeriodNoSymptoms(context, loc, dayNorm, pwd, entry);
+      return _buildPeriodNoSymptoms(context, loc, l10n, dayNorm, pwd, entry);
     }
     if (isFuture) {
-      return _buildEmptyFuture(context, loc, dayNorm);
+      return _buildEmptyFuture(context, loc, l10n, dayNorm);
     }
-    return _buildEmptyPastOrToday(context, loc, dayNorm);
+    return _buildEmptyPastOrToday(context, loc, l10n, dayNorm);
   }
 
   @override
@@ -621,11 +636,13 @@ class _PredictedDayInfoCard extends StatefulWidget {
     required this.dayData,
     required this.ensemble,
     required this.dayNormUtc,
+    this.cycleSpreadDays = 0,
   });
 
   final CalendarDayData dayData;
   final EnsemblePredictionResult? ensemble;
   final DateTime dayNormUtc;
+  final int cycleSpreadDays;
 
   @override
   State<_PredictedDayInfoCard> createState() => _PredictedDayInfoCardState();
@@ -634,23 +651,59 @@ class _PredictedDayInfoCard extends StatefulWidget {
 class _PredictedDayInfoCardState extends State<_PredictedDayInfoCard> {
   bool _expanded = false;
 
+  String _titleText(AppLocalizations l10n) {
+    final idx = widget.dayData.predictionCycleIndex;
+    if (idx == 0) return l10n.dayDetailPeriodExpectedTitle;
+    final months = idx + 1;
+    return l10n.dayDetailForecastMonthsTitle(months);
+  }
+
+  String _cycleDisclaimerText(AppLocalizations l10n) {
+    final idx = widget.dayData.predictionCycleIndex;
+    final highSpread = widget.cycleSpreadDays >= 8;
+    final medSpread = widget.cycleSpreadDays >= 4;
+
+    if (idx == 0) return '';
+    if (idx == 1) {
+      if (highSpread) {
+        return l10n.dayDetailDisclaimerHop1HighSpread;
+      }
+      return l10n.dayDetailDisclaimerHop1;
+    }
+    final months = idx + 1;
+    if (highSpread || medSpread) {
+      return l10n.dayDetailDisclaimerHopNSpread(months);
+    }
+    return l10n.dayDetailDisclaimerHopN(months);
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = MaterialLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     final active = widget.ensemble?.activeAlgorithmCount ?? 0;
-    final agreementLine = active > 0
-        ? formatDayAgreementSummary(
-            agreementCount: widget.dayData.predictionAgreementCount,
-            activeCount: active,
-          )
-        : 'Based on your recent cycles.';
+    final cycleIdx = widget.dayData.predictionCycleIndex;
 
-    final covering = widget.ensemble == null
+    // For cycle 0 show agreement; for projected hops show a generic line.
+    final l10n = AppLocalizations.of(context);
+    final agreementLine = cycleIdx == 0
+        ? (active > 0
+            ? PredictionLocalizations.formatDayAgreementSummary(
+                l10n,
+                agreementCount: widget.dayData.predictionAgreementCount,
+                activeCount: active,
+              )
+            : l10n.dayDetailBasedOnRecentCycles)
+        : l10n.dayDetailProjectedHop;
+
+    // Only cycle 0 days have direct algorithm output coverage.
+    final covering = (widget.ensemble == null || cycleIdx > 0)
         ? const <AlgorithmPrediction>[]
         : widget.ensemble!.algorithmOutputs
             .where((o) => _algorithmCoversUtcDay(o, widget.dayNormUtc))
             .toList();
+
+    final disclaimer = _cycleDisclaimerText(l10n);
 
     return Card(
       child: Padding(
@@ -665,7 +718,7 @@ class _PredictedDayInfoCardState extends State<_PredictedDayInfoCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Period expected around this day',
+                    _titleText(l10n),
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 8),
@@ -675,6 +728,15 @@ class _PredictedDayInfoCardState extends State<_PredictedDayInfoCard> {
                           color: scheme.onSurfaceVariant,
                         ),
                   ),
+                  if (disclaimer.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      disclaimer,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: scheme.error,
+                          ),
+                    ),
+                  ],
                   if (covering.isNotEmpty) ...[
                     const SizedBox(height: 8),
                     TextButton(
@@ -684,7 +746,11 @@ class _PredictedDayInfoCardState extends State<_PredictedDayInfoCard> {
                         minimumSize: Size.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      child: Text(_expanded ? 'Hide details' : 'See details'),
+                      child: Text(
+                        _expanded
+                            ? l10n.dayDetailHideDetails
+                            : l10n.dayDetailSeeDetails,
+                      ),
                     ),
                     if (_expanded) ...[
                       const SizedBox(height: 8),
@@ -692,8 +758,19 @@ class _PredictedDayInfoCardState extends State<_PredictedDayInfoCard> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 6),
                           child: Text(
-                            '${_algorithmDisplayLabel(o.algorithmId)}: expects around '
-                            '${loc.formatMediumDate(DateTime(o.predictedStartUtc.year, o.predictedStartUtc.month, o.predictedStartUtc.day))}',
+                            l10n.dayDetailAlgoExpectsAround(
+                              PredictionLocalizations.algorithmName(
+                                l10n,
+                                o.algorithmId,
+                              ),
+                              loc.formatMediumDate(
+                                DateTime(
+                                  o.predictedStartUtc.year,
+                                  o.predictedStartUtc.month,
+                                  o.predictedStartUtc.day,
+                                ),
+                              ),
+                            ),
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ),
@@ -701,7 +778,7 @@ class _PredictedDayInfoCardState extends State<_PredictedDayInfoCard> {
                   ],
                   const SizedBox(height: 8),
                   Text(
-                    'Estimates only — not medical advice.',
+                    l10n.dayDetailEstimatesOnly,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: scheme.onSurfaceVariant,
                         ),

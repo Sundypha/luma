@@ -56,6 +56,7 @@ void main() {
     expect(unlocked, 1);
     expect(vm.isLoading, isFalse);
     expect(vm.hasError, isFalse);
+    expect(vm.wrongPin, isFalse);
     vm.dispose();
   });
 
@@ -74,7 +75,7 @@ void main() {
 
     expect(unlocked, 0);
     expect(vm.hasError, isTrue);
-    expect(vm.errorMessage, 'Incorrect PIN');
+    expect(vm.wrongPin, isTrue);
     expect(vm.isLoading, isFalse);
     vm.dispose();
   });
@@ -93,7 +94,10 @@ void main() {
     );
     final vm = LockViewModel(lockService: service);
     var unlocked = 0;
-    await vm.authenticateBiometric(onUnlocked: () => unlocked++);
+    await vm.authenticateBiometric(
+      onUnlocked: () => unlocked++,
+      localizedReason: 'test reason',
+    );
 
     expect(unlocked, 1);
     expect(vm.isLoading, isFalse);
@@ -116,11 +120,14 @@ void main() {
     );
     final vm = LockViewModel(lockService: service);
     var unlocked = 0;
-    await vm.authenticateBiometric(onUnlocked: () => unlocked++);
+    await vm.authenticateBiometric(
+      onUnlocked: () => unlocked++,
+      localizedReason: 'test reason',
+    );
 
     expect(unlocked, 0);
     expect(vm.hasError, isTrue);
-    expect(vm.errorMessage, isNull);
+    expect(vm.wrongPin, isFalse);
     expect(vm.isLoading, isFalse);
     vm.dispose();
   });
@@ -139,7 +146,7 @@ void main() {
 
     vm.clearError();
     expect(vm.hasError, isFalse);
-    expect(vm.errorMessage, isNull);
+    expect(vm.wrongPin, isFalse);
     expect(vm.isLoading, isFalse);
     vm.dispose();
   });
