@@ -14,13 +14,13 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Phase:** **12** — Optional fertility window (in progress).
 
-**Plan:** `12-02-PLAN.md` next (settings, opt-in, ARB).
+**Plan:** `12-03-PLAN.md` next (calendar fertility visuals).
 
-**Status:** Phase **12** plan **01** complete (`12-01-SUMMARY.md`); phase **11** complete (3/3 plans + verification).
+**Status:** Phase **12** plans **01–02** complete (`12-01-SUMMARY.md`, `12-02-SUMMARY.md`); phase **11** complete (3/3 plans + verification).
 
-Last activity: 2026-04-08 — phase **12** plan **01** executed: domain fertility calculator + PRED-04 phrase extension (**FERT-05** satisfied).
+Last activity: 2026-04-08 — phase **12** plan **02** executed: fertility settings persistence, opt-in sheets, full fertility ARB (**FERT-01**, **FERT-02**, **FERT-04** satisfied).
 
-**Progress (v2.0):** Phase 12 **1/4** plans; remaining `12-02`–`12-04` (see `ROADMAP.md`).
+**Progress (v2.0):** Phase 12 **2/4** plans; remaining `12-03`–`12-04` (see `ROADMAP.md`).
 
 ## Performance Metrics
 
@@ -36,9 +36,11 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 **2026-04-08 (12-01):** Fertile window uses cycle-day ovulation placement `(cycleLength − luteal)` from CD1; domain `formatEnsembleExplanation` uses `EnsembleMilestone` + English helper (no `milestoneMessage`).
 
+**2026-04-08 (12-02):** Fertility opt-in uses bottom-sheet disclaimer then setup form; `SharedPreferences` stores all prefs when disabled; full fertility strings in EN/DE ARB for parallel Plans 03–04.
+
 ### Pending Todos
 
-- Phase **12** plans **02–04** (fertility UI, settings, home) per `ROADMAP.md`
+- Phase **12** plans **03–04** (calendar/home fertility UI, suggestion card wiring) per `ROADMAP.md`
 - Phase 10 plans remain available if i18n foundation still needs execution on other branches
 - Optional: domain research pass if product/legal copy for **FERT-*** needs tightening before implementation
 
@@ -54,10 +56,10 @@ None at milestone definition time.
 
 ## Session Continuity
 
-**Last session:** 2026-04-08T10:05:00.000Z
+**Last session:** 2026-04-08T11:45:00.000Z
 
-**Stopped at:** Completed `12-01-PLAN.md` (fertility domain engine + copy guardrails)
+**Stopped at:** Completed `12-02-PLAN.md` (fertility settings, opt-in, ARB)
 
-**Resume file:** .planning/phases/12-optional-fertility-window-estimator/12-02-PLAN.md
+**Resume file:** .planning/phases/12-optional-fertility-window-estimator/12-03-PLAN.md
 
-**Next:** Execute `12-02-PLAN.md` or `/gsd-execute-phase 12` continuation
+**Next:** Execute `12-03-PLAN.md` or `/gsd-execute-phase 12` continuation
