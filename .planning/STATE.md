@@ -6,21 +6,21 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** **Milestone v2.0** — Phase **13** PDF export (depends on closed phase 12); i18n + German + fertility window **shipped**.
+**Current focus:** **Milestone v2.0** — Phase **13** PDF export — plan **13-01** complete; next **13-02** document builder.
 
 ## Current Position
 
 **Milestone:** v2.0 — i18n, German locale, optional fertility window (**complete**).
 
-**Phase:** **13** — PDF export of period statistics and details (next engineering phase).
+**Phase:** **13** — PDF export of period statistics and details.
 
-**Plan:** Run `/gsd-plan-phase 13` if plans need refinement, then `/gsd-execute-phase 13` when ready.
+**Plan:** **13-02** — PDF document builder (next). **13-01** done — see `13-01-SUMMARY.md`.
 
-**Status:** Phase **12** complete (4/4 plans + UAT); **FERT-*** requirements satisfied.
+**Status:** Phase **12** complete; phase **13** in progress (**1/3** plans done).
 
-Last activity: 2026-04-08 — **`12-04` Task 3** human UAT **approved** (`pass`); phase 12 closed; focus advances to **13**.
+Last activity: 2026-04-08 — Completed **`13-01`**: PDF section config, `PdfReportData`, `PdfDataCollector` + tests (`6b7efbc`, `81a61a4`).
 
-**Progress (v2.0):** Phase 12 **complete** — 2026-04-08. Next: **Phase 13** (see `ROADMAP.md`).
+**Progress (v2.0):** Phase 13 **in progress** (1/3 plans). See `ROADMAP.md`.
 
 ## Performance Metrics
 
@@ -42,9 +42,11 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 **2026-04-08 (12-04):** Home card shows average-cycle explanation only when `computedAverageCycleLength` is non-null; `hasEnoughDataForFertility` uses ≥2 `predictionCycleInputsFromStored` intervals; settings fertility toggle fans out to **both** VMs via `tab_shell`.
 
+**2026-04-08 (13-01):** PDF export data layer: presets + `SharedPreferences` for sections and range; `PdfDataCollector` filters by period **start** in UTC date range and uses `completedCycleBetweenStarts` + local inclusive bleeding spans.
+
 ### Pending Todos
 
-- **Phase 13** — PDF export per `ROADMAP.md` (`13-01` … `13-03` plans).
+- **Phase 13** — Continue with `13-02`, `13-03` per `ROADMAP.md`.
 - Phase 10 plans remain available if i18n foundation still needs execution on other branches.
 - **Remove period projection opacity fade** — no per-cycle opacity decay; tier hatch/spacing already encodes confidence; details view conveys uncertainty (area: ui).
 
@@ -62,8 +64,8 @@ None.
 
 **Last session:** 2026-04-08
 
-**Stopped at:** Phase **12** closed; **Phase 13** PDF export is next.
+**Stopped at:** Phase **13** plan **13-01** complete; execute **13-02** when ready.
 
-**Resume file:** `.planning/phases/13-pdf-export-of-period-statistics-and-details-user-selectable-if-all-or-none-goal-is-to-have-a-pdf-ready-for-a-physician-or-gynecologist/13-01-PLAN.md` (when present)
+**Resume file:** `.planning/phases/13-pdf-export-of-period-statistics-and-details-user-selectable-if-all-or-none-goal-is-to-have-a-pdf-ready-for-a-physician-or-gynecologist/13-02-PLAN.md`
 
-**Next:** `/gsd-plan-phase 13` or `/gsd-execute-phase 13` per readiness.
+**Next:** `/gsd-execute-phase 13` (plan 02) or manual execution of `13-02-PLAN.md`.
