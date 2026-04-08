@@ -2044,6 +2044,72 @@ abstract class AppLocalizations {
 
   /// PDF export: mood enum label.
   String get pdfMoodVeryGood;
+
+  /// PDF export UI: settings tile title.
+  String get pdfExportTitle;
+
+  /// PDF export UI: settings tile subtitle.
+  String get pdfExportSubtitle;
+
+  /// PDF export UI: screen app bar title.
+  String get pdfExportScreenTitle;
+
+  /// PDF export UI: summary preset chip.
+  String get pdfPresetSummary;
+
+  /// PDF export UI: standard preset chip.
+  String get pdfPresetStandard;
+
+  /// PDF export UI: full preset chip.
+  String get pdfPresetFull;
+
+  /// PDF export UI: expansion tile for sections.
+  String get pdfSectionsHeading;
+
+  /// PDF export UI: section toggle label.
+  String get pdfSectionOverview;
+
+  /// PDF export UI: section toggle label.
+  String get pdfSectionCycleHistory;
+
+  /// PDF export UI: section toggle label.
+  String get pdfSectionChart;
+
+  /// PDF export UI: section toggle label.
+  String get pdfSectionDaySummary;
+
+  /// PDF export UI: section toggle label.
+  String get pdfSectionNotes;
+
+  /// PDF export UI: range start label.
+  String get pdfDateFrom;
+
+  /// PDF export UI: range end label.
+  String get pdfDateTo;
+
+  /// PDF export UI: generate button.
+  String get pdfGeneratePreview;
+
+  /// PDF export UI: generating state label.
+  String get pdfGenerating;
+
+  /// PDF export UI: preview screen title.
+  String get pdfPreviewTitle;
+
+  /// PDF export UI: share action tooltip / label.
+  String get pdfShareAction;
+
+  /// PDF export UI: generation failure message.
+  String get pdfExportError;
+
+  /// PDF export UI: saved confirmation snackbar.
+  String get pdfSaved;
+
+  /// PDF export UI: Linux preview fallback body.
+  String get pdfLinuxPreviewBody;
+
+  /// PDF export UI: save PDF button (Linux).
+  String get pdfSavePdf;
 }
 
 class _AppLocalizationsDelegate

@@ -7,6 +7,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../l10n/app_localizations.dart';
+
 /// Scrollable in-app PDF preview with share (or save on Linux).
 class PdfPreviewScreen extends StatelessWidget {
   const PdfPreviewScreen({
@@ -19,6 +21,7 @@ class PdfPreviewScreen extends StatelessWidget {
   final String filename;
 
   Future<void> _shareOrSave(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
     if (Platform.isLinux) {
       final path = await FilePicker.saveFile(
         fileName: filename,
@@ -27,7 +30,7 @@ class PdfPreviewScreen extends StatelessWidget {
       if (!context.mounted) return;
       if (path != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Report saved')),
+          SnackBar(content: Text(l10n.pdfSaved)),
         );
       }
       return;
@@ -43,7 +46,7 @@ class PdfPreviewScreen extends StatelessWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Share failed: $e')),
+          SnackBar(content: Text(l10n.pdfExportError)),
         );
       }
     } finally {
@@ -57,13 +60,15 @@ class PdfPreviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Preview'),
+        title: Text(l10n.pdfPreviewTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.share_outlined),
-            tooltip: 'Share',
+            tooltip: l10n.pdfShareAction,
             onPressed: () => _shareOrSave(context),
           ),
         ],
@@ -75,16 +80,15 @@ class PdfPreviewScreen extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
-                      'Preview is not available on this platform. '
-                      'Use Share to save the PDF.',
+                    Text(
+                      l10n.pdfLinuxPreviewBody,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     FilledButton.icon(
                       onPressed: () => _shareOrSave(context),
                       icon: const Icon(Icons.save_alt_outlined),
-                      label: const Text('Save PDF'),
+                      label: Text(l10n.pdfSavePdf),
                     ),
                   ],
                 ),

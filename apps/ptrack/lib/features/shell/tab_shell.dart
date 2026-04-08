@@ -11,6 +11,7 @@ import '../home/home_screen.dart';
 import '../home/home_view_model.dart';
 import '../logging/symptom_form_sheet.dart';
 import '../backup/data_settings_screen.dart';
+import '../pdf_export/pdf_export_screen.dart';
 import '../lock/lock_service.dart';
 import '../lock/lock_settings_tile.dart';
 import '../settings/about_screen.dart';
@@ -179,6 +180,23 @@ class _TabShellState extends State<TabShell> {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.appTitle),
+        actions: [
+          if (_tabIndex == 0)
+            IconButton(
+              icon: const Icon(Icons.picture_as_pdf_outlined),
+              tooltip: l10n.pdfExportTitle,
+              onPressed: () {
+                Navigator.of(context).push<void>(
+                  MaterialPageRoute<void>(
+                    builder: (_) => PdfExportScreen(
+                      repository: widget.repository,
+                      calendar: widget.calendar,
+                    ),
+                  ),
+                );
+              },
+            ),
+        ],
       ),
       drawer: NavigationDrawer(
         onDestinationSelected: (index) {
@@ -190,6 +208,7 @@ class _TabShellState extends State<TabShell> {
               MaterialPageRoute<void>(
                 builder: (context) => DataSettingsScreen(
                   repository: widget.repository,
+                  calendar: widget.calendar,
                 ),
               ),
             );

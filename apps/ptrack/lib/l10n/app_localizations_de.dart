@@ -1268,4 +1268,73 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get pdfMoodVeryGood => 'Sehr gut';
+
+  @override
+  String get pdfExportTitle => 'PDF-Bericht';
+
+  @override
+  String get pdfExportSubtitle =>
+      'Bericht für Ihre Ärztin oder Ihren Arzt erstellen';
+
+  @override
+  String get pdfExportScreenTitle => 'PDF-Bericht exportieren';
+
+  @override
+  String get pdfPresetSummary => 'Zusammenfassung';
+
+  @override
+  String get pdfPresetStandard => 'Standard';
+
+  @override
+  String get pdfPresetFull => 'Vollständig';
+
+  @override
+  String get pdfSectionsHeading => 'Abschnitte';
+
+  @override
+  String get pdfSectionOverview => 'Überblick';
+
+  @override
+  String get pdfSectionCycleHistory => 'Zyklusverlauf';
+
+  @override
+  String get pdfSectionChart => 'Zykluslängen-Diagramm';
+
+  @override
+  String get pdfSectionDaySummary => 'Tägliche Übersicht';
+
+  @override
+  String get pdfSectionNotes => 'Notizen';
+
+  @override
+  String get pdfDateFrom => 'Von';
+
+  @override
+  String get pdfDateTo => 'Bis';
+
+  @override
+  String get pdfGeneratePreview => 'Vorschau erstellen';
+
+  @override
+  String get pdfGenerating => 'Bericht wird erstellt…';
+
+  @override
+  String get pdfPreviewTitle => 'Vorschau';
+
+  @override
+  String get pdfShareAction => 'Teilen';
+
+  @override
+  String get pdfExportError =>
+      'Bericht konnte nicht erstellt werden. Bitte versuchen Sie es erneut.';
+
+  @override
+  String get pdfSaved => 'Bericht gespeichert';
+
+  @override
+  String get pdfLinuxPreviewBody =>
+      'Vorschau ist auf dieser Plattform nicht verfügbar. Speichern Sie die PDF-Datei, um sie woanders zu öffnen.';
+
+  @override
+  String get pdfSavePdf => 'PDF speichern';
 }

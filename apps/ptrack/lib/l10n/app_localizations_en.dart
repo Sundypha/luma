@@ -1254,4 +1254,72 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pdfMoodVeryGood => 'Very good';
+
+  @override
+  String get pdfExportTitle => 'PDF Report';
+
+  @override
+  String get pdfExportSubtitle => 'Generate a report for your physician';
+
+  @override
+  String get pdfExportScreenTitle => 'Export PDF Report';
+
+  @override
+  String get pdfPresetSummary => 'Summary';
+
+  @override
+  String get pdfPresetStandard => 'Standard';
+
+  @override
+  String get pdfPresetFull => 'Full';
+
+  @override
+  String get pdfSectionsHeading => 'Sections';
+
+  @override
+  String get pdfSectionOverview => 'Overview statistics';
+
+  @override
+  String get pdfSectionCycleHistory => 'Cycle history';
+
+  @override
+  String get pdfSectionChart => 'Cycle length chart';
+
+  @override
+  String get pdfSectionDaySummary => 'Daily log summary';
+
+  @override
+  String get pdfSectionNotes => 'Notes';
+
+  @override
+  String get pdfDateFrom => 'From';
+
+  @override
+  String get pdfDateTo => 'To';
+
+  @override
+  String get pdfGeneratePreview => 'Generate Preview';
+
+  @override
+  String get pdfGenerating => 'Generating report…';
+
+  @override
+  String get pdfPreviewTitle => 'Preview';
+
+  @override
+  String get pdfShareAction => 'Share';
+
+  @override
+  String get pdfExportError =>
+      'Failed to generate report. Please try again.';
+
+  @override
+  String get pdfSaved => 'Report saved';
+
+  @override
+  String get pdfLinuxPreviewBody =>
+      'Preview is not available on this platform. Save the PDF to open it elsewhere.';
+
+  @override
+  String get pdfSavePdf => 'Save PDF';
 }

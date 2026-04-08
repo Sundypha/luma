@@ -59,12 +59,12 @@ class _PdfExportScreenState extends State<PdfExportScreen> {
         PdfSection.notesLog => Icons.notes_outlined,
       };
 
-  String _sectionTitle(PdfSection s) => switch (s) {
-        PdfSection.overviewStats => 'Overview statistics',
-        PdfSection.cycleHistory => 'Cycle history',
-        PdfSection.cycleChart => 'Cycle length chart',
-        PdfSection.daySummaryTable => 'Daily log summary',
-        PdfSection.notesLog => 'Notes',
+  String _sectionTitle(AppLocalizations l10n, PdfSection s) => switch (s) {
+        PdfSection.overviewStats => l10n.pdfSectionOverview,
+        PdfSection.cycleHistory => l10n.pdfSectionCycleHistory,
+        PdfSection.cycleChart => l10n.pdfSectionChart,
+        PdfSection.daySummaryTable => l10n.pdfSectionDaySummary,
+        PdfSection.notesLog => l10n.pdfSectionNotes,
       };
 
   Future<void> _pickDate({required bool isStart}) async {
@@ -99,9 +99,7 @@ class _PdfExportScreenState extends State<PdfExportScreen> {
     if (!mounted) return;
     if (_viewModel.error != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Failed to generate report. Please try again.'),
-        ),
+        SnackBar(content: Text(l10n.pdfExportError)),
       );
       return;
     }
@@ -120,6 +118,7 @@ class _PdfExportScreenState extends State<PdfExportScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final localeName = Localizations.localeOf(context).toLanguageTag();
 
     return ListenableBuilder(
@@ -129,7 +128,7 @@ class _PdfExportScreenState extends State<PdfExportScreen> {
         final selectedPreset = vm.matchingPreset;
 
         return Scaffold(
-          appBar: AppBar(title: const Text('Export PDF Report')),
+          appBar: AppBar(title: Text(l10n.pdfExportScreenTitle)),
           body: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             children: [
@@ -138,17 +137,17 @@ class _PdfExportScreenState extends State<PdfExportScreen> {
                 runSpacing: 8,
                 children: [
                   ChoiceChip(
-                    label: const Text('Summary'),
+                    label: Text(l10n.pdfPresetSummary),
                     selected: selectedPreset == PdfExportPreset.summary,
                     onSelected: (_) => vm.updatePreset(PdfExportPreset.summary),
                   ),
                   ChoiceChip(
-                    label: const Text('Standard'),
+                    label: Text(l10n.pdfPresetStandard),
                     selected: selectedPreset == PdfExportPreset.standard,
                     onSelected: (_) => vm.updatePreset(PdfExportPreset.standard),
                   ),
                   ChoiceChip(
-                    label: const Text('Full'),
+                    label: Text(l10n.pdfPresetFull),
                     selected: selectedPreset == PdfExportPreset.full,
                     onSelected: (_) => vm.updatePreset(PdfExportPreset.full),
                   ),
@@ -156,12 +155,12 @@ class _PdfExportScreenState extends State<PdfExportScreen> {
               ),
               const SizedBox(height: 16),
               ExpansionTile(
-                title: const Text('Sections'),
+                title: Text(l10n.pdfSectionsHeading),
                 children: [
                   for (final section in PdfSection.values)
                     SwitchListTile(
                       secondary: Icon(_iconForSection(section)),
-                      title: Text(_sectionTitle(section)),
+                      title: Text(_sectionTitle(l10n, section)),
                       value: vm.config.isEnabled(section),
                       onChanged: (_) => vm.toggleSection(section),
                     ),
@@ -170,7 +169,7 @@ class _PdfExportScreenState extends State<PdfExportScreen> {
               const Divider(),
               ListTile(
                 leading: const Icon(Icons.date_range_outlined),
-                title: const Text('From'),
+                title: Text(l10n.pdfDateFrom),
                 subtitle: Text(
                   _formatRangeDate(vm.config.rangeStart, localeName),
                 ),
@@ -178,7 +177,7 @@ class _PdfExportScreenState extends State<PdfExportScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.event_outlined),
-                title: const Text('To'),
+                title: Text(l10n.pdfDateTo),
                 subtitle: Text(
                   _formatRangeDate(vm.config.rangeEnd, localeName),
                 ),
@@ -195,7 +194,7 @@ class _PdfExportScreenState extends State<PdfExportScreen> {
                       )
                     : const Icon(Icons.picture_as_pdf),
                 label: Text(
-                  vm.isGenerating ? 'Generating report…' : 'Generate Preview',
+                  vm.isGenerating ? l10n.pdfGenerating : l10n.pdfGeneratePreview,
                 ),
               ),
             ],
