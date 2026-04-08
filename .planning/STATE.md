@@ -6,7 +6,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** **Milestone v2.0** — Phase **13** PDF export — plan **13-02** complete; next **13-03** export UI.
+**Current focus:** **Milestone v2.0** — Phase **13** PDF export — plan **13-03** in progress (Tasks 1–2 done; Task 3 human-verify pending).
 
 ## Current Position
 
@@ -14,11 +14,11 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Phase:** **13** — PDF export of period statistics and details.
 
-**Plan:** **13-03** — Export UI / preview / share (next). **13-02** done — see `13-02-SUMMARY.md`.
+**Plan:** **13-03** — Export UI / preview / share — **checkpoint:** Task 3 (`human-verify`) awaiting manual verification. **13-02** done — see `13-02-SUMMARY.md`.
 
-**Status:** Phase **12** complete; phase **13** in progress (**2/3** plans done).
+**Status:** Phase **12** complete; phase **13** in progress (**2/3** plans done; plan 03 not closed until UAT).
 
-Last activity: 2026-04-08 — Completed **`13-02`**: `PdfDocumentBuilder`, `PdfContentStrings`, EN/DE `pdf*` ARB + l10n wiring.
+Last activity: 2026-04-08 — Implemented **13-03** Tasks 1–2 (export VM/screens, settings + home entry, EN/DE UI strings). Commits `5a4f483`, `3f9cd52`.
 
 **Progress (v2.0):** Phase 13 **in progress** (2/3 plans). See `ROADMAP.md`.
 
@@ -48,7 +48,7 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 ### Pending Todos
 
-- **Phase 13** — Continue with `13-03` per `ROADMAP.md`.
+- **Phase 13** — Complete **13-03** Task 3: human verification of PDF export flow (see `13-03-PLAN.md`). Then write `13-03-SUMMARY.md`, advance STATE/ROADMAP, and final docs commit.
 - Phase 10 plans remain available if i18n foundation still needs execution on other branches.
 - **Remove period projection opacity fade** — no per-cycle opacity decay; tier hatch/spacing already encodes confidence; details view conveys uncertainty (area: ui).
 
@@ -66,8 +66,8 @@ None.
 
 **Last session:** 2026-04-08
 
-**Stopped at:** Phase **13** plan **13-02** complete; execute **13-03** when ready.
+**Stopped at:** Phase **13** plan **13-03** Task 3 — human-verify checkpoint (after Tasks 1–2 committed).
 
 **Resume file:** `.planning/phases/13-pdf-export-of-period-statistics-and-details-user-selectable-if-all-or-none-goal-is-to-have-a-pdf-ready-for-a-physician-or-gynecologist/13-03-PLAN.md`
 
-**Next:** `/gsd-execute-phase 13` (plan 03) or manual execution of `13-03-PLAN.md`.
+**Next:** Run through Task 3 verification steps in the app; reply **approved** or list issues. After approval: add `13-03-SUMMARY.md`, run `flutter gen-l10n` + `dart run tool/arb_de_key_parity.dart` on a Flutter 3.11+ machine if desired, update ROADMAP plan counts, docs commit.
