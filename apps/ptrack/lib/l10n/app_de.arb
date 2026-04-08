@@ -204,8 +204,6 @@
   "drawerSettingsLabel": "Einstellungen",
   "drawerDataLabel": "Daten",
   "drawerAboutLabel": "Über die App",
-  "fabTooltipMarkToday": "Heute markieren",
-  "fabTooltipAddSymptoms": "Symptome eintragen",
   "todaySectionTitle": "Heute",
   "todayUnmarkedBody": "Du hast heute noch keinen Periodentag markiert.",
   "todayMarkPeriodCta": "Ich hatte heute meine Periode",

@@ -213,8 +213,6 @@
   "drawerSettingsLabel": "Settings",
   "drawerDataLabel": "Data",
   "drawerAboutLabel": "About",
-  "fabTooltipMarkToday": "Mark today",
-  "fabTooltipAddSymptoms": "Add symptoms",
   "todaySectionTitle": "Today",
   "todayUnmarkedBody": "You have not marked today as a period day.",
   "todayMarkPeriodCta": "I had my period today",

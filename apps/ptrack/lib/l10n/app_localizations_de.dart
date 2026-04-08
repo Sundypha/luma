@@ -319,12 +319,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get drawerAboutLabel => 'Über die App';
 
   @override
-  String get fabTooltipMarkToday => 'Heute markieren';
-
-  @override
-  String get fabTooltipAddSymptoms => 'Symptome eintragen';
-
-  @override
   String get todaySectionTitle => 'Heute';
 
   @override
@@ -1180,10 +1174,10 @@ class AppLocalizationsDe extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      one: '1 Tag',
       other: '$count Tage',
+      one: '1 Tag',
     );
-    return _temp0;
+    return '$_temp0';
   }
 
   @override

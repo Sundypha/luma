@@ -113,7 +113,7 @@ Plans:
 **Plans:** 1 plan
 
 Plans:
-- [ ] `14-01-PLAN.md` — Remove `TabShell` FAB, drop `fabTooltip*` ARBs, migrate `logging_test.dart` off FAB (UXFAB-01, UXFAB-02)
+- [ ] `14-01-PLAN.md` — Remove `TabShell` FAB, drop `fabTooltip*` ARBs, migrate `logging_test.dart` off FAB (UXFAB-01, UXFAB-02) — **implemented;** Task 4 (`human-verify`) pending before SUMMARY final / requirements checkboxes
 
 ---
 *Roadmap updated: 2026-04-08 — **`13-03`** export UI / preview / share **coded** (commits on branch); **Task 3** human verification still required to close the plan.*  

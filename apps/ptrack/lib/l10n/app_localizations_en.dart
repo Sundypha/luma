@@ -314,12 +314,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get drawerAboutLabel => 'About';
 
   @override
-  String get fabTooltipMarkToday => 'Mark today';
-
-  @override
-  String get fabTooltipAddSymptoms => 'Add symptoms';
-
-  @override
   String get todaySectionTitle => 'Today';
 
   @override
@@ -1166,10 +1160,10 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      one: '1 day',
       other: '$count days',
+      one: '1 day',
     );
-    return _temp0;
+    return '$_temp0';
   }
 
   @override
@@ -1310,8 +1304,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pdfShareAction => 'Share';
 
   @override
-  String get pdfExportError =>
-      'Failed to generate report. Please try again.';
+  String get pdfExportError => 'Failed to generate report. Please try again.';
 
   @override
   String get pdfSaved => 'Report saved';

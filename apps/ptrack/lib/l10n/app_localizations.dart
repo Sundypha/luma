@@ -486,18 +486,6 @@ abstract class AppLocalizations {
   /// **'About'**
   String get drawerAboutLabel;
 
-  /// No description provided for @fabTooltipMarkToday.
-  ///
-  /// In en, this message translates to:
-  /// **'Mark today'**
-  String get fabTooltipMarkToday;
-
-  /// No description provided for @fabTooltipAddSymptoms.
-  ///
-  /// In en, this message translates to:
-  /// **'Add symptoms'**
-  String get fabTooltipAddSymptoms;
-
   /// No description provided for @todaySectionTitle.
   ///
   /// In en, this message translates to:
@@ -1919,196 +1907,388 @@ abstract class AppLocalizations {
   /// **'Very good'**
   String get moodValueVeryGood;
 
-  /// PDF export: report title line.
+  /// No description provided for @pdfReportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Luma — Period Report'**
   String get pdfReportTitle;
 
-  /// PDF export: legal / medical disclaimer body.
+  /// No description provided for @pdfDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'This report is an informational export generated from self-reported data. It is not a diagnostic tool. Accuracy depends on the completeness and consistency of user entries. Consult a qualified healthcare professional for medical decisions.'**
   String get pdfDisclaimer;
 
-  /// PDF export: generation timestamp line.
+  /// No description provided for @pdfGeneratedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Generated on {date}'**
   String pdfGeneratedOn(String date);
 
-  /// PDF export: selected data range line.
+  /// No description provided for @pdfDateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Data from {start} to {end}'**
   String pdfDateRange(String start, String end);
 
-  /// PDF export: overview section heading.
+  /// No description provided for @pdfOverviewHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
   String get pdfOverviewHeading;
 
-  /// PDF export: cycle history table heading.
+  /// No description provided for @pdfCycleHistoryHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Cycle History'**
   String get pdfCycleHistoryHeading;
 
-  /// PDF export: cycle length chart heading.
+  /// No description provided for @pdfCycleChartHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Cycle Length Over Time'**
   String get pdfCycleChartHeading;
 
-  /// PDF export: day summary table heading.
+  /// No description provided for @pdfDaySummaryHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Log Summary'**
   String get pdfDaySummaryHeading;
 
-  /// PDF export: notes section heading.
+  /// No description provided for @pdfNotesHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
   String get pdfNotesHeading;
 
-  /// PDF export: label for completed cycle count.
+  /// No description provided for @pdfTotalCycles.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed cycles'**
   String get pdfTotalCycles;
 
-  /// PDF export: label for average cycle length.
+  /// No description provided for @pdfAvgCycleLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Average cycle length'**
   String get pdfAvgCycleLength;
 
-  /// PDF export: label for average bleeding duration.
+  /// No description provided for @pdfAvgPeriodDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Average period duration'**
   String get pdfAvgPeriodDuration;
 
-  /// PDF export: label for shortest cycle.
+  /// No description provided for @pdfShortestCycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shortest cycle'**
   String get pdfShortestCycle;
 
-  /// PDF export: label for longest cycle.
+  /// No description provided for @pdfLongestCycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest cycle'**
   String get pdfLongestCycle;
 
-  /// PDF export: day count with plural rules.
+  /// No description provided for @pdfNDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 day} other{{count} days}}'**
   String pdfNDays(int count);
 
-  /// PDF export: flow distribution subsection label.
+  /// No description provided for @pdfFlowDistribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Flow intensity'**
   String get pdfFlowDistribution;
 
-  /// PDF export: pain distribution subsection label.
+  /// No description provided for @pdfPainDistribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Pain levels'**
   String get pdfPainDistribution;
 
-  /// PDF export: mood distribution subsection label.
+  /// No description provided for @pdfMoodDistribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood'**
   String get pdfMoodDistribution;
 
-  /// PDF export: date column header.
+  /// No description provided for @pdfDateColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
   String get pdfDateColumn;
 
-  /// PDF export: flow column header.
+  /// No description provided for @pdfFlowColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Flow'**
   String get pdfFlowColumn;
 
-  /// PDF export: pain column header.
+  /// No description provided for @pdfPainColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Pain'**
   String get pdfPainColumn;
 
-  /// PDF export: mood column header.
+  /// No description provided for @pdfMoodColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood'**
   String get pdfMoodColumn;
 
-  /// PDF export: cycle start column header.
+  /// No description provided for @pdfCycleStartColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Cycle start'**
   String get pdfCycleStartColumn;
 
-  /// PDF export: cycle length column header.
+  /// No description provided for @pdfCycleLengthColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Length (days)'**
   String get pdfCycleLengthColumn;
 
-  /// PDF export: empty range / section message.
+  /// No description provided for @pdfNoDataForRange.
+  ///
+  /// In en, this message translates to:
+  /// **'No data available for the selected date range.'**
   String get pdfNoDataForRange;
 
-  /// PDF export: no rows in day summary.
+  /// No description provided for @pdfNoDayData.
+  ///
+  /// In en, this message translates to:
+  /// **'No day-level data for the selected range.'**
   String get pdfNoDayData;
 
-  /// PDF export: no note entries.
+  /// No description provided for @pdfNoNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'No notes for the selected range.'**
   String get pdfNoNotes;
 
-  /// PDF export: all sections disabled hint.
+  /// No description provided for @pdfMetadataOnlyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This report contains metadata only. Enable data sections for cycle details.'**
   String get pdfMetadataOnlyNote;
 
-  /// PDF export: footer brand line (before date and page numbers).
+  /// No description provided for @pdfFooterGenerated.
+  ///
+  /// In en, this message translates to:
+  /// **'Generated by Luma'**
   String get pdfFooterGenerated;
 
-  /// PDF export: flow enum label.
+  /// No description provided for @pdfFlowLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
   String get pdfFlowLight;
 
-  /// PDF export: flow enum label.
+  /// No description provided for @pdfFlowMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
   String get pdfFlowMedium;
 
-  /// PDF export: flow enum label.
+  /// No description provided for @pdfFlowHeavy.
+  ///
+  /// In en, this message translates to:
+  /// **'Heavy'**
   String get pdfFlowHeavy;
 
-  /// PDF export: pain enum label.
+  /// No description provided for @pdfPainNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
   String get pdfPainNone;
 
-  /// PDF export: pain enum label.
+  /// No description provided for @pdfPainMild.
+  ///
+  /// In en, this message translates to:
+  /// **'Mild'**
   String get pdfPainMild;
 
-  /// PDF export: pain enum label.
+  /// No description provided for @pdfPainModerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate'**
   String get pdfPainModerate;
 
-  /// PDF export: pain enum label.
+  /// No description provided for @pdfPainSevere.
+  ///
+  /// In en, this message translates to:
+  /// **'Severe'**
   String get pdfPainSevere;
 
-  /// PDF export: pain enum label.
+  /// No description provided for @pdfPainVerySevere.
+  ///
+  /// In en, this message translates to:
+  /// **'Very severe'**
   String get pdfPainVerySevere;
 
-  /// PDF export: mood enum label.
+  /// No description provided for @pdfMoodVeryBad.
+  ///
+  /// In en, this message translates to:
+  /// **'Very bad'**
   String get pdfMoodVeryBad;
 
-  /// PDF export: mood enum label.
+  /// No description provided for @pdfMoodBad.
+  ///
+  /// In en, this message translates to:
+  /// **'Bad'**
   String get pdfMoodBad;
 
-  /// PDF export: mood enum label.
+  /// No description provided for @pdfMoodNeutral.
+  ///
+  /// In en, this message translates to:
+  /// **'Neutral'**
   String get pdfMoodNeutral;
 
-  /// PDF export: mood enum label.
+  /// No description provided for @pdfMoodGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
   String get pdfMoodGood;
 
-  /// PDF export: mood enum label.
+  /// No description provided for @pdfMoodVeryGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Very good'**
   String get pdfMoodVeryGood;
 
-  /// PDF export UI: settings tile title.
+  /// No description provided for @pdfExportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF Report'**
   String get pdfExportTitle;
 
-  /// PDF export UI: settings tile subtitle.
+  /// No description provided for @pdfExportSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate a report for your physician'**
   String get pdfExportSubtitle;
 
-  /// PDF export UI: screen app bar title.
+  /// No description provided for @pdfExportScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export PDF Report'**
   String get pdfExportScreenTitle;
 
-  /// PDF export UI: summary preset chip.
+  /// No description provided for @pdfPresetSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary'**
   String get pdfPresetSummary;
 
-  /// PDF export UI: standard preset chip.
+  /// No description provided for @pdfPresetStandard.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard'**
   String get pdfPresetStandard;
 
-  /// PDF export UI: full preset chip.
+  /// No description provided for @pdfPresetFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Full'**
   String get pdfPresetFull;
 
-  /// PDF export UI: expansion tile for sections.
+  /// No description provided for @pdfSectionsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Sections'**
   String get pdfSectionsHeading;
 
-  /// PDF export UI: section toggle label.
+  /// No description provided for @pdfSectionOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview statistics'**
   String get pdfSectionOverview;
 
-  /// PDF export UI: section toggle label.
+  /// No description provided for @pdfSectionCycleHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Cycle history'**
   String get pdfSectionCycleHistory;
 
-  /// PDF export UI: section toggle label.
+  /// No description provided for @pdfSectionChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Cycle length chart'**
   String get pdfSectionChart;
 
-  /// PDF export UI: section toggle label.
+  /// No description provided for @pdfSectionDaySummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily log summary'**
   String get pdfSectionDaySummary;
 
-  /// PDF export UI: section toggle label.
+  /// No description provided for @pdfSectionNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
   String get pdfSectionNotes;
 
-  /// PDF export UI: range start label.
+  /// No description provided for @pdfDateFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
   String get pdfDateFrom;
 
-  /// PDF export UI: range end label.
+  /// No description provided for @pdfDateTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
   String get pdfDateTo;
 
-  /// PDF export UI: generate button.
+  /// No description provided for @pdfGeneratePreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Preview'**
   String get pdfGeneratePreview;
 
-  /// PDF export UI: generating state label.
+  /// No description provided for @pdfGenerating.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating report…'**
   String get pdfGenerating;
 
-  /// PDF export UI: preview screen title.
+  /// No description provided for @pdfPreviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
   String get pdfPreviewTitle;
 
-  /// PDF export UI: share action tooltip / label.
+  /// No description provided for @pdfShareAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
   String get pdfShareAction;
 
-  /// PDF export UI: generation failure message.
+  /// No description provided for @pdfExportError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to generate report. Please try again.'**
   String get pdfExportError;
 
-  /// PDF export UI: saved confirmation snackbar.
+  /// No description provided for @pdfSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Report saved'**
   String get pdfSaved;
 
-  /// PDF export UI: Linux preview fallback body.
+  /// No description provided for @pdfLinuxPreviewBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview is not available on this platform. Save the PDF to open it elsewhere.'**
   String get pdfLinuxPreviewBody;
 
-  /// PDF export UI: save PDF button (Linux).
+  /// No description provided for @pdfSavePdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Save PDF'**
   String get pdfSavePdf;
 }
 

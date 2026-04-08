@@ -5,6 +5,7 @@ import 'package:luma/l10n/app_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:table_calendar/table_calendar.dart';
 import 'package:luma/features/logging/symptom_form_sheet.dart';
 import 'package:luma/features/lock/lock_service.dart';
 import 'package:luma/features/settings/mood_settings.dart';
@@ -20,6 +21,18 @@ class MockPeriodRepository extends Mock implements PeriodRepository {}
 class MockFlutterSecureStorage extends Mock implements FlutterSecureStorage {}
 
 class MockLocalAuthentication extends Mock implements LocalAuthentication {}
+
+/// Today is rendered with a bold day number in the calendar grid.
+Finder findTodayCalendarDayCell() {
+  final day = '${DateTime.now().day}';
+  return find.descendant(
+    of: find.byType(TableCalendar<void>),
+    matching: find.byWidgetPredicate(
+      (w) =>
+          w is Text && w.data == day && w.style?.fontWeight == FontWeight.bold,
+    ),
+  );
+}
 
 /// Closed span that includes today so [HomeViewModel.isTodayMarked] is true.
 StoredPeriodWithDays closedPeriodContainingToday() {
@@ -61,9 +74,9 @@ void main() {
     when(() => mockAuth.canCheckBiometrics).thenAnswer((_) async => false);
     when(() => mockAuth.isDeviceSupported()).thenAnswer((_) async => false);
     SharedPreferences.setMockInitialValues({});
-    when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
-      (_) => Stream<List<StoredPeriodWithDays>>.value(const []),
-    );
+    when(
+      () => mockRepo.watchPeriodsWithDays(),
+    ).thenAnswer((_) => Stream<List<StoredPeriodWithDays>>.value(const []));
     when(() => mockRepo.listOrderedByStartUtc()).thenAnswer((_) async => []);
   });
 
@@ -98,78 +111,112 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('FAB calls markToday when today is not in a period', (tester) async {
-    when(() => mockRepo.markDay(any())).thenAnswer((_) async => const DayMarkSuccess());
+  testWidgets('calendar day sheet marks today when not in a period', (
+    tester,
+  ) async {
+    when(
+      () => mockRepo.markDay(any()),
+    ).thenAnswer((_) async => const DayMarkSuccess());
     await pumpHome(tester);
-    await tester.tap(find.byType(FloatingActionButton));
+    await tester.tap(find.text('Calendar'));
+    await tester.pumpAndSettle();
+    final todayCell = findTodayCalendarDayCell();
+    await tester.ensureVisible(todayCell);
+    await tester.tap(todayCell);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('I had my period'));
     await tester.pump();
     verify(() => mockRepo.markDay(any())).called(1);
     expect(find.byType(SymptomFormSheet), findsNothing);
   });
 
-  testWidgets('FAB opens symptom form when today is marked', (tester) async {
+  testWidgets('Today card opens symptom form when today is marked', (
+    tester,
+  ) async {
     when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
-      (_) => Stream<List<StoredPeriodWithDays>>.value([closedPeriodContainingToday()]),
+      (_) => Stream<List<StoredPeriodWithDays>>.value([
+        closedPeriodContainingToday(),
+      ]),
     );
     await pumpHome(tester);
     await tester.pump();
-    await tester.tap(find.byType(FloatingActionButton));
+    await tester.tap(find.text('Add symptoms for today'));
     await tester.pumpAndSettle();
     expect(find.byType(SymptomFormSheet), findsOneWidget);
     expect(find.text('Add symptoms'), findsOneWidget);
     expect(find.text('Save'), findsOneWidget);
   });
 
-  testWidgets('mark today then FAB opens symptom form and save upserts day',
-      (tester) async {
-    final controller = StreamController<List<StoredPeriodWithDays>>.broadcast();
-    final periods = <StoredPeriod>[];
-    when(() => mockRepo.watchPeriodsWithDays()).thenAnswer((_) => controller.stream);
-    when(() => mockRepo.listOrderedByStartUtc()).thenAnswer((_) async => [...periods]);
-    when(() => mockRepo.markDay(any())).thenAnswer((_) async {
-      final now = DateTime.now();
-      final todayUtc = DateTime.utc(now.year, now.month, now.day);
-      final startUtc = todayUtc.subtract(const Duration(days: 1));
-      final open = StoredPeriod(
-        id: 1,
-        span: PeriodSpan(startUtc: startUtc, endUtc: null),
-      );
-      periods
-        ..clear()
-        ..add(open);
-      controller.add([StoredPeriodWithDays(period: open, dayEntries: const [])]);
-      return const DayMarkSuccess(periodId: 1);
-    });
-    when(() => mockRepo.upsertDayEntryForPeriod(any(), any())).thenAnswer(
-      (_) async => 1,
-    );
+  testWidgets(
+    'mark today via calendar sheet then add symptoms from Home and save upserts day',
+    (tester) async {
+      final controller =
+          StreamController<List<StoredPeriodWithDays>>.broadcast();
+      final periods = <StoredPeriod>[];
+      when(
+        () => mockRepo.watchPeriodsWithDays(),
+      ).thenAnswer((_) => controller.stream);
+      when(
+        () => mockRepo.listOrderedByStartUtc(),
+      ).thenAnswer((_) async => [...periods]);
+      when(() => mockRepo.markDay(any())).thenAnswer((_) async {
+        final now = DateTime.now();
+        final todayUtc = DateTime.utc(now.year, now.month, now.day);
+        final startUtc = todayUtc.subtract(const Duration(days: 1));
+        final open = StoredPeriod(
+          id: 1,
+          span: PeriodSpan(startUtc: startUtc, endUtc: null),
+        );
+        periods
+          ..clear()
+          ..add(open);
+        controller.add([
+          StoredPeriodWithDays(period: open, dayEntries: const []),
+        ]);
+        return const DayMarkSuccess(periodId: 1);
+      });
+      when(
+        () => mockRepo.upsertDayEntryForPeriod(any(), any()),
+      ).thenAnswer((_) async => 1);
 
-    await pumpHome(tester);
-    controller.add([]);
-    await tester.pump();
+      await pumpHome(tester);
+      controller.add([]);
+      await tester.pump();
 
-    await tester.tap(find.byType(FloatingActionButton));
-    await tester.pumpAndSettle();
-    verify(() => mockRepo.markDay(any())).called(1);
+      await tester.tap(find.text('Calendar'));
+      await tester.pumpAndSettle();
+      final todayCell = findTodayCalendarDayCell();
+      await tester.ensureVisible(todayCell);
+      await tester.tap(todayCell);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('I had my period'));
+      await tester.pumpAndSettle();
+      verify(() => mockRepo.markDay(any())).called(1);
 
-    await tester.tap(find.byType(FloatingActionButton));
-    await tester.pump();
-    expect(periods, isNotEmpty);
-    controller.add([
-      StoredPeriodWithDays(period: periods[0], dayEntries: const []),
-    ]);
-    await tester.pumpAndSettle();
-    await tapBottomSheetSave(tester);
+      await tester.tap(find.text('Home'));
+      await tester.pumpAndSettle();
+      final addSymptoms = find.text('Add symptoms for today');
+      await tester.ensureVisible(addSymptoms);
+      await tester.tap(addSymptoms);
+      await tester.pump();
+      expect(periods, isNotEmpty);
+      controller.add([
+        StoredPeriodWithDays(period: periods[0], dayEntries: const []),
+      ]);
+      await tester.pumpAndSettle();
+      await tapBottomSheetSave(tester);
 
-    verifyNever(() => mockRepo.insertPeriod(any()));
-    verify(() => mockRepo.upsertDayEntryForPeriod(1, any())).called(1);
-    expect(find.byType(SymptomFormSheet), findsNothing);
+      verifyNever(() => mockRepo.insertPeriod(any()));
+      verify(() => mockRepo.upsertDayEntryForPeriod(1, any())).called(1);
+      expect(find.byType(SymptomFormSheet), findsNothing);
 
-    await controller.close();
-  });
+      await controller.close();
+    },
+  );
 
-  testWidgets('home shows cycle day when latest period is not active today',
-      (tester) async {
+  testWidgets('home shows cycle day when latest period is not active today', (
+    tester,
+  ) async {
     final now = DateTime.now();
     final todayUtc = DateTime.utc(now.year, now.month, now.day);
     final startUtc = todayUtc.subtract(const Duration(days: 7));
@@ -181,15 +228,17 @@ void main() {
       ),
       dayEntries: const [],
     );
-    when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
-      (_) => Stream<List<StoredPeriodWithDays>>.value([item]),
-    );
+    when(
+      () => mockRepo.watchPeriodsWithDays(),
+    ).thenAnswer((_) => Stream<List<StoredPeriodWithDays>>.value([item]));
     await pumpHome(tester);
     await tester.pump();
     expect(find.text('Cycle day 8'), findsOneWidget);
   });
 
-  testWidgets('drawer Settings opens Settings page with mood tile', (tester) async {
+  testWidgets('drawer Settings opens Settings page with mood tile', (
+    tester,
+  ) async {
     await pumpHome(tester);
     final scaffoldState = tester.state<ScaffoldState>(find.byType(Scaffold));
     scaffoldState.openDrawer();
@@ -200,74 +249,88 @@ void main() {
     expect(find.text('Settings'), findsWidgets);
   });
 
-  testWidgets('Settings page shows Privacy & Security tile that opens lock screen', (tester) async {
-    await pumpHome(tester);
-    final scaffoldState = tester.state<ScaffoldState>(find.byType(Scaffold));
-    scaffoldState.openDrawer();
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Settings'));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'Settings page shows Privacy & Security tile that opens lock screen',
+    (tester) async {
+      await pumpHome(tester);
+      final scaffoldState = tester.state<ScaffoldState>(find.byType(Scaffold));
+      scaffoldState.openDrawer();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Settings'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('Privacy & Security'), findsOneWidget);
-    expect(
-      find.text('Lock with PIN or biometrics when returning from background'),
-      findsOneWidget,
-    );
+      expect(find.text('Privacy & Security'), findsOneWidget);
+      expect(
+        find.text('Lock with PIN or biometrics when returning from background'),
+        findsOneWidget,
+      );
 
-    await tester.tap(find.text('Privacy & Security'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Privacy & Security'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('App lock'), findsWidgets);
-    expect(
-      find.text('Lock with PIN or biometrics when returning from background.'),
-      findsOneWidget,
-    );
-  });
+      expect(find.text('App lock'), findsWidgets);
+      expect(
+        find.text(
+          'Lock with PIN or biometrics when returning from background.',
+        ),
+        findsOneWidget,
+      );
+    },
+  );
 
-  testWidgets('FAB opens symptom form on Calendar tab when today marked',
-      (tester) async {
+  testWidgets('Calendar today cell opens symptom form when today marked', (
+    tester,
+  ) async {
     when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
-      (_) => Stream<List<StoredPeriodWithDays>>.value([closedPeriodContainingToday()]),
+      (_) => Stream<List<StoredPeriodWithDays>>.value([
+        closedPeriodContainingToday(),
+      ]),
     );
     await pumpHome(tester);
     await tester.pump();
     await tester.tap(find.text('Calendar'));
     await tester.pumpAndSettle();
-    await tester.tap(find.byType(FloatingActionButton));
+    final todayCell = findTodayCalendarDayCell();
+    await tester.ensureVisible(todayCell);
+    await tester.tap(todayCell);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Add symptoms').first);
     await tester.pumpAndSettle();
     expect(find.byType(SymptomFormSheet), findsOneWidget);
   });
 
-  testWidgets('FAB on marked today opens symptom form; save upserts without insertPeriod',
-      (tester) async {
-    final now = DateTime.now();
-    final todayUtc = DateTime.utc(now.year, now.month, now.day);
-    final startUtc = todayUtc.subtract(const Duration(days: 2));
-    final open = StoredPeriod(
-      id: 1,
-      span: PeriodSpan(startUtc: startUtc, endUtc: null),
-    );
-    final openPwd = StoredPeriodWithDays(period: open, dayEntries: const []);
-    when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
-      (_) => Stream<List<StoredPeriodWithDays>>.value([openPwd]),
-    );
-    when(() => mockRepo.listOrderedByStartUtc()).thenAnswer(
-      (_) async => [open],
-    );
-    when(() => mockRepo.upsertDayEntryForPeriod(any(), any())).thenAnswer(
-      (_) async => 1,
-    );
+  testWidgets(
+    'Today card on marked today opens symptom form; save upserts without insertPeriod',
+    (tester) async {
+      final now = DateTime.now();
+      final todayUtc = DateTime.utc(now.year, now.month, now.day);
+      final startUtc = todayUtc.subtract(const Duration(days: 2));
+      final open = StoredPeriod(
+        id: 1,
+        span: PeriodSpan(startUtc: startUtc, endUtc: null),
+      );
+      final openPwd = StoredPeriodWithDays(period: open, dayEntries: const []);
+      when(
+        () => mockRepo.watchPeriodsWithDays(),
+      ).thenAnswer((_) => Stream<List<StoredPeriodWithDays>>.value([openPwd]));
+      when(
+        () => mockRepo.listOrderedByStartUtc(),
+      ).thenAnswer((_) async => [open]);
+      when(
+        () => mockRepo.upsertDayEntryForPeriod(any(), any()),
+      ).thenAnswer((_) async => 1);
 
-    await pumpHome(tester);
-    await tester.pump();
-    await tester.tap(find.byType(FloatingActionButton));
-    await tester.pumpAndSettle();
-    expect(find.text('Add symptoms'), findsOneWidget);
-    await tapBottomSheetSave(tester);
-    verifyNever(() => mockRepo.insertPeriod(any()));
-    verify(() => mockRepo.upsertDayEntryForPeriod(1, any())).called(1);
-    expect(find.byType(SymptomFormSheet), findsNothing);
-  });
+      await pumpHome(tester);
+      await tester.pump();
+      await tester.tap(find.text('Add symptoms for today'));
+      await tester.pumpAndSettle();
+      expect(find.text('Add symptoms'), findsOneWidget);
+      await tapBottomSheetSave(tester);
+      verifyNever(() => mockRepo.insertPeriod(any()));
+      verify(() => mockRepo.upsertDayEntryForPeriod(1, any())).called(1);
+      expect(find.byType(SymptomFormSheet), findsNothing);
+    },
+  );
 
   testWidgets('today card shows logged flow for today', (tester) async {
     final now = DateTime.now();
@@ -289,13 +352,18 @@ void main() {
         ),
       ],
     );
-    when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
-      (_) => Stream<List<StoredPeriodWithDays>>.value([item]),
-    );
+    when(
+      () => mockRepo.watchPeriodsWithDays(),
+    ).thenAnswer((_) => Stream<List<StoredPeriodWithDays>>.value([item]));
 
     await pumpHome(tester);
     await tester.pump();
     expect(find.text("Today's log"), findsOneWidget);
     expect(find.textContaining('Heavy'), findsWidgets);
+  });
+
+  testWidgets('TabShell has no FloatingActionButton', (tester) async {
+    await pumpHome(tester);
+    expect(find.byType(FloatingActionButton), findsNothing);
   });
 }

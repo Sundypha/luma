@@ -9,7 +9,6 @@ import '../calendar/calendar_screen.dart';
 import '../calendar/calendar_view_model.dart';
 import '../home/home_screen.dart';
 import '../home/home_view_model.dart';
-import '../logging/symptom_form_sheet.dart';
 import '../backup/data_settings_screen.dart';
 import '../pdf_export/pdf_export_screen.dart';
 import '../lock/lock_service.dart';
@@ -77,7 +76,8 @@ class _SettingsScreen extends StatelessWidget {
   }
 }
 
-/// Root shell after onboarding: bottom tabs, drawer, and global FAB for logging.
+/// Root shell after onboarding: bottom tabs and drawer.
+/// Logging uses the Home Today card and the calendar day detail sheet (no global FAB).
 class TabShell extends StatefulWidget {
   const TabShell({
     super.key,
@@ -153,24 +153,6 @@ class _TabShellState extends State<TabShell> {
           },
         ),
       ),
-    );
-  }
-
-  void _onFabPressed(BuildContext context) {
-    if (!_homeVm.isTodayMarked) {
-      _homeVm.markToday();
-      return;
-    }
-    final today = DateTime.now();
-    final dayUtc = DateTime.utc(today.year, today.month, today.day);
-    final periodId = _homeVm.todayPeriodId;
-    if (periodId == null) return;
-    showSymptomFormSheet(
-      context,
-      repository: widget.repository,
-      day: dayUtc,
-      periodId: periodId,
-      existing: _homeVm.todayStoredEntry,
     );
   }
 
@@ -281,17 +263,6 @@ class _TabShellState extends State<TabShell> {
             label: l10n.navCalendar,
           ),
         ],
-      ),
-      floatingActionButton: ListenableBuilder(
-        listenable: _homeVm,
-        builder: (context, _) {
-          final marked = _homeVm.isTodayMarked;
-          return FloatingActionButton(
-            tooltip: marked ? l10n.fabTooltipAddSymptoms : l10n.fabTooltipMarkToday,
-            onPressed: () => _onFabPressed(context),
-            child: const Icon(Icons.add),
-          );
-        },
       ),
     );
   }

@@ -18,7 +18,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Status:** Phase **12** complete; phase **13** in progress (**2/3** plans done; plan 03 not closed until UAT).
 
-Last activity: 2026-04-08 — Implemented **13-03** Tasks 1–2 (export VM/screens, settings + home entry, EN/DE UI strings). Commits `5a4f483`, `3f9cd52`.
+Last activity: 2026-04-08 — Phase **14-01** coded: no shell FAB, ARB + `logging_test` updates (awaiting Task 4 UAT). Earlier: **13-03** Tasks 1–2 (`5a4f483`, `3f9cd52`).
 
 **Progress (v2.0):** Phase 13 **in progress** (2/3 plans). See `ROADMAP.md`.
 
@@ -46,8 +46,11 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 **2026-04-08 (13-02):** PDF document builder: `pdf` package `MultiPage` layout, conditional sections from `PdfSectionConfig`, disclaimer + footer with page numbers, cycle bar chart (`BarDataSet`), tables via `TableHelper`; all strings via `PdfContentStrings` / `pdf*` ARB keys + `toPdfContentStrings()`.
 
+**2026-04-08 (14-01):** Removed global `TabShell` FAB; logging via Home Today card + calendar `DayDetailSheet`. Dropped `fabTooltip*` ARBs; `logging_test` uses bold today-cell finder in `TableCalendar` for calendar flows (mark-only path uses day sheet **I had my period** because Home Today CTA can open the symptom sheet immediately after mark).
+
 ### Pending Todos
 
+- **Phase 14** — **14-01** Tasks 1–3 **done** (FAB removed, ARB/tests updated); **Task 4** `human-verify` per `14-01-PLAN.md`. Then check **UXFAB-01/02** in `REQUIREMENTS.md`, finalize `14-01-SUMMARY.md`, and close the plan in `ROADMAP.md`.
 - **Phase 13** — Complete **13-03** Task 3: human verification of PDF export flow (see `13-03-PLAN.md`). Then write `13-03-SUMMARY.md`, advance STATE/ROADMAP, and final docs commit.
 - Phase 10 plans remain available if i18n foundation still needs execution on other branches.
 - **Remove period projection opacity fade** — no per-cycle opacity decay; tier hatch/spacing already encodes confidence; details view conveys uncertainty (area: ui).
