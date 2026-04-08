@@ -71,6 +71,15 @@ void main() {
       }
     });
 
+    test('fertility-related forbidden phrases are listed and detected', () {
+      expect(
+        predictionCopyForbiddenPhrasesLowercase,
+        allOf(contains('safe days'), contains('birth control')),
+      );
+      expect(predictionCopyTextPassesGuard('These are safe days for you'), isFalse);
+      expect(predictionCopyTextPassesGuard('Use this as birth control'), isFalse);
+    });
+
     test('insufficient-history copy does not invent YYYY-MM-DD dates', () {
       final out = engine.predict([
         PredictionCycleInput(

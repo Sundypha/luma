@@ -1,5 +1,6 @@
-import 'explanation_step.dart';
+import 'ensemble_milestone.dart';
 import 'ensemble_result.dart';
+import 'explanation_step.dart';
 import 'prediction_algorithm.dart';
 import 'prediction_result.dart';
 
@@ -11,6 +12,8 @@ const List<String> predictionCopyForbiddenPhrasesLowercase = [
   'contraception',
   'fertility awareness',
   'medical diagnosis',
+  'safe days',
+  'birth control',
 ];
 
 /// Short disclaimer repeated in narratives (conservative framing).
@@ -55,16 +58,27 @@ String formatEnsembleExplanation({required EnsemblePredictionResult ensemble}) {
     'Treat all dates as uncertain estimates for personal planning only.',
   );
 
-  if (ensemble.milestoneMessage != null &&
-      ensemble.milestoneMessage!.isNotEmpty) {
+  final m = ensemble.milestone;
+  if (m != null) {
     lines.add('');
-    lines.add(ensemble.milestoneMessage!);
+    lines.add(_formatEnsembleMilestoneEn(m));
   }
 
   final text = lines.join('\n').trim();
-  assert(_predictionCopyHasNoForbiddenPhrases(text));
+  assert(predictionCopyTextPassesGuard(text));
   return text;
 }
+
+String _formatEnsembleMilestoneEn(EnsembleMilestone milestone) =>
+    switch (milestone.kind) {
+      EnsembleMilestoneKind.trendDetectionActive =>
+        'Trend detection is now active and contributes to this estimate.',
+      EnsembleMilestoneKind.allCoreMethodsActive =>
+        'All core prediction methods are now contributing.',
+      EnsembleMilestoneKind.expandedMethodCount =>
+        'After ${milestone.cycleCount} logged cycles, '
+        '${milestone.activeAlgorithmCount} methods are contributing.',
+    };
 
 String _algorithmDisplayName(AlgorithmId id) => switch (id) {
       AlgorithmId.median => 'Average spacing',
@@ -73,7 +87,8 @@ String _algorithmDisplayName(AlgorithmId id) => switch (id) {
       AlgorithmId.linearTrend => 'Trend',
     };
 
-bool _predictionCopyHasNoForbiddenPhrases(String text) {
+/// Returns true if [text] passes PRED-04 guardrails (for app-layer copy checks).
+bool predictionCopyTextPassesGuard(String text) {
   final lower = text.toLowerCase();
   for (final phrase in predictionCopyForbiddenPhrasesLowercase) {
     if (lower.contains(phrase)) return false;
