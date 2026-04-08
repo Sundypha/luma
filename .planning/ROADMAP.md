@@ -94,12 +94,15 @@ Plans:
 
 ### Phase 13: PDF export of period statistics and details (user selectable if all or none). Goal is to have a PDF ready for a physician or gynecologist.
 
-**Goal:** [To be planned]
+**Goal:** On-device PDF export of tracked cycle data with user-selectable sections (presets + per-section toggles), locale-aware formatting, scrollable in-app preview, and system share sheet delivery — producing a clinician-readable report for a physician or gynecologist.
 **Depends on:** Phase 12
-**Plans:** 0 plans
+**Requirements:** PDF-01, PDF-02, PDF-03, PDF-04, PDF-05, PDF-06, PDF-07, PDF-08
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 13 to break down)
+- [ ] `13-01-PLAN.md` — TDD section config model, report data model, data collector with stats computation (PDF-01, PDF-02, PDF-04, PDF-05)
+- [ ] `13-02-PLAN.md` — PDF document builder with all content sections + EN/DE ARB strings (PDF-03, PDF-04, PDF-05, PDF-08)
+- [ ] `13-03-PLAN.md` — Export UI (presets, toggles, date range), preview, share, entry points + UI ARB strings (PDF-01, PDF-02, PDF-06, PDF-07, PDF-08)
 
 ### Phase 14: remove deprecated FAB. clicking on a day of the calendar opens the same widget as the FAB and is clearer in the intent than the FAB
 
