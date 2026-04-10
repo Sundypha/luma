@@ -1,0 +1,616 @@
+{
+  "@@locale": "en",
+  "appTitle": "Luma",
+  "@appTitle": {
+    "description": "Application title; brand name stays Luma in all locales for Phase 10."
+  },
+  "predictionDisclaimer": "This is a calendar-based estimate for personal planning only, not medical advice.",
+  "predictionNoMethodsEnabled": "No prediction methods are enabled. Choose at least one under Settings → Prediction.",
+  "predictionNOfMTotalMethods": "{n, plural, one{1 prediction method} other{{n} prediction methods}} of {total} contributed to this estimate.",
+  "@predictionNOfMTotalMethods": {
+    "placeholders": {
+      "n": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "predictionAlgoExpectsLine": "{name}: expects next period around {date}.",
+  "@predictionAlgoExpectsLine": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  },
+  "predictionAgreementClosing": "On days where multiple methods agree, the prediction is more consistent. Treat all dates as uncertain estimates for personal planning only.",
+  "predictionClosingInsufficientHistory": "Add more completed cycles over time to get a clearer estimate. Numbers here are not a substitute for care from a qualified clinician.",
+  "predictionClosingRangeOnly": "For planning purposes, a broad estimate window runs from {start} through {end}. Treat these dates as uncertain.",
+  "@predictionClosingRangeOnly": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "predictionClosingPointWithRange": "A rough estimate for your next period start is {point}. Based on similar past spacing, a wider planning band might be {bandStart} to {bandEnd}.",
+  "@predictionClosingPointWithRange": {
+    "placeholders": {
+      "point": {"type": "String"},
+      "bandStart": {"type": "String"},
+      "bandEnd": {"type": "String"}
+    }
+  },
+  "predStepCyclesConsidered": "Based on {count} recent cycle lengths from your history ({lengths} days).",
+  "@predStepCyclesConsidered": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "lengths": {"type": "String"}
+    }
+  },
+  "predStepCycleExcluded": "One logged cycle was left out of the average for this estimate (reason: {reason}).",
+  "@predStepCycleExcluded": {
+    "placeholders": {
+      "reason": {"type": "String"}
+    }
+  },
+  "predStepMedianCycleLength": "Across included cycles, a typical spacing is about {median} days (spread about {spread} days).",
+  "@predStepMedianCycleLength": {
+    "placeholders": {
+      "median": {"type": "int"},
+      "spread": {"type": "int"}
+    }
+  },
+  "predStepInsufficientHistory": "{avail, plural, one{There are not enough completed cycles yet to estimate a next start. 1 cycle is available after filtering; at least {need} are typically needed.} other{There are not enough completed cycles yet to estimate a next start. {avail} cycles are available after filtering; at least {need} are typically needed.}}",
+  "@predStepInsufficientHistory": {
+    "placeholders": {
+      "avail": {"type": "int"},
+      "need": {"type": "int"}
+    }
+  },
+  "predStepHighVariability": "Because variability is high, a range is shown instead of a single day: approximately {start} through {end}.",
+  "@predStepHighVariability": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "predStepEwma": "Recent-weighted spacing (EWMA, α={alpha}) suggests about {days} days.",
+  "@predStepEwma": {
+    "placeholders": {
+      "alpha": {"type": "String"},
+      "days": {"type": "int"}
+    }
+  },
+  "predStepBayesian": "Pattern-learning estimate (posterior mean) is about {mean} days from {n} cycle lengths.",
+  "@predStepBayesian": {
+    "placeholders": {
+      "mean": {"type": "String"},
+      "n": {"type": "int"}
+    }
+  },
+  "predStepLinearTrend": "Trend line (R²={r2}, slope={slope} days per cycle) projects about {proj} days for the next spacing.",
+  "@predStepLinearTrend": {
+    "placeholders": {
+      "r2": {"type": "String"},
+      "slope": {"type": "String"},
+      "proj": {"type": "int"}
+    }
+  },
+  "predStepAlgoContrib": "{name} contributed an estimate around {date}.",
+  "@predStepAlgoContrib": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  },
+  "algoNameMedian": "Average spacing",
+  "algoNameEwma": "Recent-weighted",
+  "algoNameBayesian": "Pattern-learning",
+  "algoNameLinearTrend": "Trend",
+  "predictionDayAgreement": "{agreement} of {active} methods agree on this day.",
+  "@predictionDayAgreement": {
+    "placeholders": {
+      "agreement": {"type": "int"},
+      "active": {"type": "int"}
+    }
+  },
+  "ensembleMilestoneTrend": "With enough cycles logged, trend detection is now active.",
+  "ensembleMilestoneAllCore": "Three cycles logged — all core methods are now active.",
+  "ensembleMilestoneExpanded": "With {cycles} cycles logged, your prediction now uses {methods, plural, one{1 method} other{{methods} methods}} for better accuracy.",
+  "@ensembleMilestoneExpanded": {
+    "placeholders": {
+      "cycles": {"type": "int"},
+      "methods": {"type": "int"}
+    }
+  },
+  "homePeriodDay": "Period day {n}",
+  "@homePeriodDay": {
+    "placeholders": {
+      "n": {"type": "int"}
+    }
+  },
+  "homeCycleDay": "Cycle day {n}",
+  "@homeCycleDay": {
+    "placeholders": {
+      "n": {"type": "int"}
+    }
+  },
+  "homeNextPeriodExpected": "Next period expected {range}",
+  "@homeNextPeriodExpected": {
+    "placeholders": {
+      "range": {"type": "String"}
+    }
+  },
+  "homeLogMorePeriods": "Log a few more periods to see cycle insights",
+  "homeHowCalculatedLink": "How is this calculated?",
+  "homePredictionSheetTitle": "How your prediction works",
+  "homePredictionMethodsLine": "{n, plural, one{Currently using 1 prediction method.} other{Currently using {n} prediction methods.}}",
+  "@homePredictionMethodsLine": {
+    "placeholders": {
+      "n": {"type": "int"}
+    }
+  },
+  "homeDone": "Done",
+  "homeCouldNotLoadPeriods": "Could not load periods: {error}",
+  "@homeCouldNotLoadPeriods": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "homeCouldNotSaveToday": "Could not save today. Please try again.",
+  "homeCouldNotOpenSymptomForm": "Could not open symptom form.",
+  "tooltipDismiss": "Dismiss",
+  "dayDetailBasedOnRecentCycles": "Based on your recent cycles.",
+  "dayDetailProjectedHop": "Projected by repeating the predicted cycle length.",
+  "dayDetailPeriodExpectedTitle": "Period expected around this day",
+  "dayDetailForecastMonthsTitle": "{months, plural, one{Forecast ≈ 1 month out} other{Forecast ≈ {months} months out}}",
+  "@dayDetailForecastMonthsTitle": {
+    "placeholders": {
+      "months": {"type": "int"}
+    }
+  },
+  "dayDetailDisclaimerHop1": "Rough estimate, about 2 months out — less reliable than the next period.",
+  "dayDetailDisclaimerHop1HighSpread": "Rough estimate, about 2 months out — less reliable than the next period. Your cycle length varies quite a bit, so this date may shift significantly.",
+  "dayDetailDisclaimerHopN": "{months, plural, one{Very rough estimate, about 1 month out — use for general planning only.} other{Very rough estimate, about {months} months out — use for general planning only.}}",
+  "@dayDetailDisclaimerHopN": {
+    "placeholders": {
+      "months": {"type": "int"}
+    }
+  },
+  "dayDetailDisclaimerHopNSpread": "{months, plural, one{Very rough estimate, about 1 month out — use for general planning only. Your cycle length varies quite a bit, so this date may shift significantly.} other{Very rough estimate, about {months} months out — use for general planning only. Your cycle length varies quite a bit, so this date may shift significantly.}}",
+  "@dayDetailDisclaimerHopNSpread": {
+    "placeholders": {
+      "months": {"type": "int"}
+    }
+  },
+  "dayDetailHideDetails": "Hide details",
+  "dayDetailSeeDetails": "See details",
+  "dayDetailEstimatesOnly": "Estimates only — not medical advice.",
+  "dayDetailAlgoExpectsAround": "{name}: expects around {date}",
+  "@dayDetailAlgoExpectsAround": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  },
+  "settingsAppLanguageSectionTitle": "App language",
+  "@settingsAppLanguageSectionTitle": {
+    "description": "Settings section heading for UI language choice."
+  },
+  "appLanguageFollowDevice": "System default (follow device)",
+  "@appLanguageFollowDevice": {
+    "description": "Use the device locale for app strings; unsupported locales fall back to English."
+  },
+  "appLanguageEnglish": "English",
+  "appLanguageGerman": "German",
+  "appLanguageRestartMessage": "Restart the app to apply this change.",
+  "@appLanguageRestartMessage": {
+    "description": "Shown after the user changes app language in Settings."
+  },
+  "settingsMenuLanguageTitle": "Language",
+  "settingsMenuLanguageSubtitle": "System default, English, or German",
+  "settingsMenuPeriodPredictionTitle": "Period prediction",
+  "settingsMenuFertilityTitle": "Fertility prediction",
+  "settingsMenuPrivacySubtitle": "App lock, backup, and export",
+  "settingsMenuDataBackupSubtitle": "Export, import, and automatic local backups",
+  "calendarInsufficientPredictionHint": "No forecast yet — mark at least two separate periods so Luma can measure the gap between them.",
+  "calendarLegendHatching": "Lighter hatching = further out, less certain",
+  "calendarToday": "Today",
+  "settingsTitle": "Settings",
+  "navHome": "Home",
+  "navCalendar": "Calendar",
+  "drawerSettingsLabel": "Settings",
+  "drawerDataLabel": "Data",
+  "drawerAboutLabel": "About",
+  "todaySectionTitle": "Today",
+  "todayUnmarkedBody": "You have not marked today as a period day.",
+  "todayMarkPeriodCta": "I had my period today",
+  "todayAddSymptomsCta": "Add symptoms for today",
+  "todayLogTitle": "Today's log",
+  "todayFlowLine": "Flow: {label}",
+  "@todayFlowLine": {
+    "placeholders": {"label": {"type": "String"}}
+  },
+  "todayPainLine": "Pain: {label}",
+  "@todayPainLine": {
+    "placeholders": {"label": {"type": "String"}}
+  },
+  "todayMoodLine": "Mood: {emoji} {label}",
+  "@todayMoodLine": {
+    "placeholders": {
+      "emoji": {"type": "String"},
+      "label": {"type": "String"}
+    }
+  },
+  "todayEditLogCta": "Edit today's log",
+  "lockUseBiometrics": "Use biometrics",
+  "lockForgotPin": "Forgot PIN?",
+  "lockIncorrectPin": "Incorrect PIN",
+  "lockBiometricUnlockReason": "Authenticate to unlock Luma",
+  "lockBiometricSettingsReason": "Authenticate to change lock settings",
+  "lockSettingsAppBar": "App lock",
+  "lockSettingsSwitchTitle": "App lock",
+  "lockSettingsSwitchSubtitle": "Lock with PIN or biometrics when returning from background.",
+  "lockSettingsChangePin": "Change PIN",
+  "lockSettingsUseBiometrics": "Use biometrics",
+  "lockSettingsLockNow": "Lock now",
+  "lockSettingsLockNowTooltip": "Lock now",
+  "lockPrivacySecurityTile": "Privacy & Security",
+  "lockPrivacySecurityOnSubtitle": "App lock is on",
+  "lockPrivacySecurityOffSubtitle": "Lock with PIN or biometrics when returning from background",
+  "lockReauthTitle": "Confirm it is you",
+  "lockReauthBody": "Enter your PIN to continue.",
+  "forgotPinTitle": "Forgot your PIN?",
+  "forgotPinBody": "There is no way to recover a forgotten PIN without erasing your data.\n\nBefore resetting, export your data from Data settings so you can restore it afterwards.\n\nResetting will erase all period and symptom history from this device.",
+  "forgotPinEraseCta": "Erase all data and reset",
+  "pinSetupTitle": "Set up app lock",
+  "pinSetupAckBody": "App lock encrypts access with a PIN. If you forget your PIN, the only recovery option is a data reset — your period data will be erased. Export your data regularly to avoid data loss.",
+  "pinSetupAckContinue": "I understand, continue",
+  "pinSetupCreateTitle": "Create a PIN",
+  "pinSetupCreateHint": "Choose a PIN of at least 6 digits. Press ✓ when done.",
+  "pinSetupConfirmTitle": "Confirm your PIN",
+  "pinSetupMismatch": "PINs do not match",
+  "pinSetupBioTitle": "Enable biometrics for faster unlock?",
+  "pinSetupEnableBio": "Enable biometrics",
+  "pinSetupSkip": "Skip",
+  "onbPrivacyTitle": "Your data stays here",
+  "onbPrivacyBody": "Everything you log stays on this device. There's no account to create, no cloud sync, and no sign-up — just your phone and your entries.",
+  "onbEstimatesTitle": "Estimates, not medical advice",
+  "onbEstimatesBody": "Forecasts are based on the history you add here. They're personal estimates to help you notice patterns — not a diagnosis, treatment, or substitute for care from a qualified health professional.",
+  "onbReadyTitle": "Ready to start",
+  "onbReadyBody": "Log when your period starts to get going. The more you add over time, the more helpful your estimates can be — and you can always skip for now.",
+  "onbContinue": "Continue",
+  "onbGetStarted": "Get Started",
+  "onbSkip": "Skip",
+  "onbStepSemantics": "Step {current} of {total}",
+  "@onbStepSemantics": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "aboutAppBarTitle": "About Luma",
+  "aboutSectionHeading": "Your privacy & how estimates work",
+  "dataSettingsTitle": "Data",
+  "dataExportTitle": "Export Backup",
+  "dataExportSubtitle": "Save your data as a .luma file",
+  "dataImportTitle": "Import Backup",
+  "dataImportSubtitle": "Restore data from a .luma file",
+  "dataAutoBackupsTitle": "Auto-backups",
+  "dataAutoBackupsSubtitle": "Snapshots created before each import",
+  "exportLeaveTitle": "Leave export?",
+  "exportLeaveBody": "Your current progress in this wizard will be lost.",
+  "exportStay": "Stay",
+  "exportLeave": "Leave",
+  "exportPasswordsMismatch": "Passwords do not match",
+  "exportAppBar": "Export Backup",
+  "exportBackTooltip": "Back",
+  "exportWhatToInclude": "What to include",
+  "exportChipEverything": "Everything",
+  "exportChipPeriodsOnly": "Periods only",
+  "exportTogglePeriods": "Periods",
+  "exportToggleSymptoms": "Symptoms & flow",
+  "exportToggleSymptomsSubtitle": "Flow, pain, mood",
+  "exportToggleNotes": "Notes",
+  "exportNext": "Next",
+  "exportPasswordIntro": "Optionally protect this backup with a password.",
+  "exportPasswordLabel": "Password",
+  "exportConfirmPasswordLabel": "Confirm password",
+  "exportClearPasswordTooltip": "Clear password",
+  "exportSkip": "Skip",
+  "exportCreating": "Creating backup…",
+  "exportReadyTitle": "Export ready",
+  "exportMetaExported": "Exported",
+  "exportMetaContent": "Content",
+  "exportMetaEncrypted": "Encrypted",
+  "exportShare": "Share",
+  "exportDone": "Done",
+  "exportFailedTitle": "Export failed",
+  "exportFailedBody": "Could not complete export. Please try again.",
+  "exportUnknownError": "Unknown error",
+  "exportTryAgain": "Try Again",
+  "exportClose": "Close",
+  "commonYes": "Yes",
+  "commonNo": "No",
+  "commonNotAvailable": "—",
+  "importInProgressSnack": "Import in progress. Please wait.",
+  "importAppBar": "Import Backup",
+  "importSelectingFile": "Selecting file…",
+  "importPasswordProtectedTitle": "This backup is password-protected",
+  "importExportedLine": "Exported: {when}",
+  "@importExportedLine": {
+    "placeholders": {"when": {"type": "String"}}
+  },
+  "importIncludesLine": "Includes: {types}",
+  "@importIncludesLine": {
+    "placeholders": {"types": {"type": "String"}}
+  },
+  "importDecrypt": "Decrypt",
+  "importCancel": "Cancel",
+  "importBackupSummary": "Backup summary",
+  "importPreviewCounts": "Found {periods} period(s) and {entries} day entries.",
+  "@importPreviewCounts": {
+    "placeholders": {
+      "periods": {"type": "int"},
+      "entries": {"type": "int"}
+    }
+  },
+  "importDupWarning": "{count} entries match dates you already logged on this device.",
+  "@importDupWarning": {
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "importNoDupMessage": "No duplicates found — all entries are new for your existing dates.",
+  "importStrategyTitle": "How should duplicates be handled?",
+  "importStrategyExplainer": "Duplicate means the same calendar day already has a log entry on this device. {count} entries are affected.",
+  "@importStrategyExplainer": {
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "importSegmentKeep": "Keep existing",
+  "importSegmentUseImported": "Use imported",
+  "importTooltipKeep": "Entries already on your device stay unchanged. Only new dates are imported.",
+  "importTooltipReplace": "Entries from the backup replace your current data for matching dates.",
+  "importStrategyHintKeep": "Entries already on your device stay unchanged. Only new dates are imported.",
+  "importStrategyHintReplace": "Entries from the backup replace your current data for matching dates.",
+  "importImportCta": "Import",
+  "importCreatingSafetyBackup": "Creating safety backup…",
+  "importImportingEntries": "Importing entries…",
+  "importResultSummary": "{periods} period(s) imported, {entries} new entries, {skipped} skipped, {replaced} replaced.",
+  "@importResultSummary": {
+    "placeholders": {
+      "periods": {"type": "int"},
+      "entries": {"type": "int"},
+      "skipped": {"type": "int"},
+      "replaced": {"type": "int"}
+    }
+  },
+  "importErrorGeneric": "Something went wrong.",
+  "importErrorReadSelected": "Could not read the selected file.",
+  "importErrorWrongExtension": "Please select a .luma backup file",
+  "importErrorReadBackup": "Could not read this backup file.",
+  "importErrorWrongPassword": "Incorrect password. Please try again.",
+  "importErrorDecrypt": "Could not decrypt this backup.",
+  "importErrorApply": "Could not import this backup. Please try again.",
+  "importErrorParser": "{message}",
+  "@importErrorParser": {
+    "placeholders": {"message": {"type": "String"}}
+  },
+  "importTryAgain": "Try again",
+  "importClose": "Close",
+  "commonBackspace": "Backspace",
+  "commonSubmit": "Submit",
+  "dataContentTypesFallback": "Periods and entries",
+  "commonSave": "Save",
+  "commonCancel": "Cancel",
+  "commonDelete": "Delete",
+  "commonRemove": "Remove",
+  "symptomFormTitleAdd": "Add symptoms",
+  "symptomFormTitleEdit": "Edit symptoms",
+  "symptomSectionFlow": "Flow",
+  "symptomSectionPain": "Pain",
+  "symptomSectionMood": "Mood",
+  "symptomNotesLabel": "Notes",
+  "symptomNotSet": "Not set",
+  "symptomClearSymptoms": "Clear symptoms",
+  "dayDetailMarkFailed": "Could not mark this day. Please try again.",
+  "dayDetailDeletePeriodTitle": "Delete entire period?",
+  "dayDetailDeletePeriodOngoingBody": "Remove the ongoing period starting {start} and all of its day logs.",
+  "@dayDetailDeletePeriodOngoingBody": {
+    "placeholders": {"start": {"type": "String"}}
+  },
+  "dayDetailDeletePeriodClosedBody": "Remove the period {start}–{end} and all of its day logs. This cannot be undone.",
+  "@dayDetailDeletePeriodClosedBody": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "dayDetailPeriodOngoing": "ongoing",
+  "dayDetailDeletePeriodFailed": "Could not delete period.",
+  "dayDetailRemoveDayTitle": "Remove this day?",
+  "dayDetailRemoveDayBody": "Unmark {date} as a period day. Logged symptoms for this day will be removed.",
+  "@dayDetailRemoveDayBody": {
+    "placeholders": {"date": {"type": "String"}}
+  },
+  "dayDetailRemoveDayFailed": "Could not remove this day. Please try again.",
+  "dayDetailClearSymptomsFailed": "Could not clear symptoms.",
+  "dayDetailLogWhenArrives": "You can log this once the day arrives.",
+  "dayDetailHadPeriod": "I had my period",
+  "dayDetailFuturePlaceholder": "Future dates — check back when this day arrives.",
+  "dayDetailNoSymptoms": "No symptoms or notes logged for this day.",
+  "dayDetailAddSymptoms": "Add symptoms",
+  "dayDetailRemoveThisDay": "Remove this day",
+  "dayDetailDeleteEntirePeriod": "Delete entire period",
+  "dayDetailEdit": "Edit",
+  "dayDetailClearSymptoms": "Clear symptoms",
+  "firstLogAppBarTitle": "Log your first period",
+  "firstLogStartQuestion": "When did your current or most recent period start?",
+  "firstLogChangeDate": "Change date",
+  "firstLogPeriodEndedTitle": "This period has already ended",
+  "firstLogPeriodEndedSubtitle": "Optional — add a last period day if it is not ongoing.",
+  "firstLogChangeEndDate": "Change end date",
+  "firstLogSaveContinue": "Save & Continue",
+  "firstLogSaveFailed": "Could not save your period. Please try again.",
+  "firstLogSuccessSnack": "Period logged — you're all set!",
+  "predSettingsTileTitle": "Predictions",
+  "predSettingsTileSubtitle": "Forecast display, horizon, and methods",
+  "predSettingsAppBarTitle": "Predictions",
+  "predSettingsSectionHowManyDays": "How many days to show",
+  "predSettingsModeConsensusTitle": "Only strong predictions",
+  "predSettingsModeConsensusSubtitle": "Days where multiple methods agree",
+  "predSettingsModeAllTitle": "All predictions",
+  "predSettingsModeAllSubtitle": "Every predicted day, even less certain ones",
+  "predSettingsModeAllNotesTitle": "All predictions + labels",
+  "predSettingsModeAllNotesSubtitle": "Same as above, with a note on less certain days",
+  "predSettingsSectionHorizon": "How far ahead to forecast",
+  "predSettingsHorizonCaption": "Farther forecasts are less reliable, especially with irregular cycles. Hatch density shows how much prediction methods agree.",
+  "predSettingsHorizonNextOnly": "Next period only",
+  "predSettingsHorizon3Title": "3 months ahead",
+  "predSettingsHorizon3Subtitle": "Good for travel planning",
+  "predSettingsHorizon6Title": "6 months ahead",
+  "predSettingsHorizon6Subtitle": "Rough planning only — uncertainty grows significantly",
+  "predSettingsSectionMethods": "Prediction methods",
+  "predSettingsMethodsCaption": "More methods = stronger predictions when they agree. Turn off any you don't want.",
+  "predSettingsLinearTrendTitle": "Trend detection",
+  "predSettingsHintMedian": "Uses the middle value of your last few cycles",
+  "predSettingsHintEwma": "Gives more weight to your most recent cycles",
+  "predSettingsHintBayesian": "Learns your pattern over time, works from 1 cycle",
+  "predSettingsHintLinearTrend": "Detects if cycles are getting longer or shorter (5+ cycles)",
+  "fertilitySettingsTitle": "Fertile window estimate",
+  "fertilitySettingsSubtitle": "Show estimated fertile days on calendar and home",
+  "fertilityDisclaimerTitle": "Before you begin",
+  "fertilityDisclaimerBody": "This feature shows an estimated fertile window based on your cycle history. It is an educational guide only — not medical or contraceptive advice. Talk to a healthcare provider for personal guidance.",
+  "fertilityDisclaimerAccept": "I understand",
+  "fertilityInputTitle": "Fertile window setup",
+  "fertilityInputCycleLengthLabel": "Average cycle length",
+  "fertilityInputCycleLengthAutoHint": "Computed from your {count} logged cycles",
+  "@fertilityInputCycleLengthAutoHint": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "fertilityInputCycleLengthManualHint": "Adjust if your typical cycle differs",
+  "fertilityInputLutealPhaseLabel": "Luteal phase length",
+  "fertilityInputLutealPhaseExplanation": "Most have around 14 days. Adjust if you know yours.",
+  "fertilityInputLutealPhaseDaysUnit": "{days} days",
+  "@fertilityInputLutealPhaseDaysUnit": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "fertilityInputSave": "Save",
+  "fertilitySettingsSavedSnackbar": "Fertility settings saved",
+  "fertilityInputNotEnoughData": "Log at least 2 complete cycles to auto-fill",
+  "fertilityCalendarLegendLabel": "Fertile (est.)",
+  "fertilityCalendarDayLabel": "Estimated fertile day",
+  "fertilityCalendarDayDetail": "Estimated fertile day — based on your cycle history",
+  "fertilityHomeCardTitle": "Fertile window",
+  "fertilityHomeCardRange": "{start} – {end}",
+  "@fertilityHomeCardRange": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "fertilityHomeCardFooter": "Estimate only",
+  "fertilityHomeCardExplanation": "Based on your average cycle of {days} days",
+  "@fertilityHomeCardExplanation": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "fertilitySuggestionTitle": "Fertile window estimate",
+  "fertilitySuggestionBody": "Get an estimated fertile window on your calendar based on your cycle history.",
+  "fertilitySuggestionEnable": "Enable",
+  "fertilitySuggestionNotEnoughData": "Log more periods to unlock this feature",
+  "fertilityDisabled": "Disabled",
+  "flowValueLight": "Light",
+  "flowValueMedium": "Medium",
+  "flowValueHeavy": "Heavy",
+  "painValueNone": "None",
+  "painValueMild": "Mild",
+  "painValueModerate": "Moderate",
+  "painValueSevere": "Severe",
+  "painValueVerySevere": "Very severe",
+  "moodValueVeryBad": "Very bad",
+  "moodValueBad": "Bad",
+  "moodValueNeutral": "Neutral",
+  "moodValueGood": "Good",
+  "moodValueVeryGood": "Very good",
+  "pdfReportTitle": "Luma — Period Report",
+  "pdfDisclaimer": "This report is an informational export generated from self-reported data. It is not a diagnostic tool. Accuracy depends on the completeness and consistency of user entries. Consult a qualified healthcare professional for medical decisions.",
+  "pdfGeneratedOn": "Generated on {date}",
+  "@pdfGeneratedOn": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "pdfDateRange": "Data from {start} to {end}",
+  "@pdfDateRange": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "pdfOverviewHeading": "Overview",
+  "pdfCycleHistoryHeading": "Cycle History",
+  "pdfCycleChartHeading": "Cycle Length Over Time",
+  "pdfDaySummaryHeading": "Daily Log Summary",
+  "pdfNotesHeading": "Notes",
+  "pdfTotalCycles": "Completed cycles",
+  "pdfAvgCycleLength": "Average cycle length",
+  "pdfAvgPeriodDuration": "Average period duration",
+  "pdfShortestCycle": "Shortest cycle",
+  "pdfLongestCycle": "Longest cycle",
+  "pdfNDays": "{count, plural, one{1 day} other{{count} days}}",
+  "@pdfNDays": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "pdfFlowDistribution": "Flow intensity",
+  "pdfPainDistribution": "Pain levels",
+  "pdfMoodDistribution": "Mood",
+  "pdfDateColumn": "Date",
+  "pdfFlowColumn": "Flow",
+  "pdfPainColumn": "Pain",
+  "pdfMoodColumn": "Mood",
+  "pdfCycleStartColumn": "Cycle start",
+  "pdfCycleLengthColumn": "Length (days)",
+  "pdfNoDataForRange": "No data available for the selected date range.",
+  "pdfNoDayData": "No day-level data for the selected range.",
+  "pdfNoNotes": "No notes for the selected range.",
+  "pdfMetadataOnlyNote": "This report contains metadata only. Enable data sections for cycle details.",
+  "pdfFooterGenerated": "Generated by Luma",
+  "pdfFlowLight": "Light",
+  "pdfFlowMedium": "Medium",
+  "pdfFlowHeavy": "Heavy",
+  "pdfPainNone": "None",
+  "pdfPainMild": "Mild",
+  "pdfPainModerate": "Moderate",
+  "pdfPainSevere": "Severe",
+  "pdfPainVerySevere": "Very severe",
+  "pdfMoodVeryBad": "Very bad",
+  "pdfMoodBad": "Bad",
+  "pdfMoodNeutral": "Neutral",
+  "pdfMoodGood": "Good",
+  "pdfMoodVeryGood": "Very good",
+  "pdfExportTitle": "PDF Report",
+  "pdfExportSubtitle": "Generate a report for your physician",
+  "pdfExportScreenTitle": "Export PDF Report",
+  "pdfPresetSummary": "Summary",
+  "pdfPresetStandard": "Standard",
+  "pdfPresetFull": "Full",
+  "pdfSectionsHeading": "Sections",
+  "pdfSectionOverview": "Overview statistics",
+  "pdfSectionCycleHistory": "Cycle history",
+  "pdfSectionChart": "Cycle length chart",
+  "pdfSectionDaySummary": "Daily log summary",
+  "pdfSectionNotes": "Notes",
+  "pdfDateFrom": "From",
+  "pdfDateTo": "To",
+  "pdfGeneratePreview": "Generate Preview",
+  "pdfGenerating": "Generating report…",
+  "pdfPreviewTitle": "Preview",
+  "pdfShareAction": "Share",
+  "pdfExportError": "Failed to generate report. Please try again.",
+  "pdfSaved": "Report saved",
+  "pdfLinuxPreviewBody": "Preview is not available on this platform. Save the PDF to open it elsewhere.",
+  "pdfSavePdf": "Save PDF"
+}
