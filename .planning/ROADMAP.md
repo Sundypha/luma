@@ -156,12 +156,14 @@ Plans:
 
 ### Phase 17: release management with release bumps, release apks iin github release, and ran apk push to firebase app distribution
 
-**Goal:** [To be planned]
+**Goal:** Automated release pipeline where a version tag on main triggers signed APK build, draft GitHub Release with CHANGELOG notes, and Firebase App Distribution upload to Beta group — with Environment gate, workflow_dispatch fallback, and all-or-nothing failure semantics.
 **Depends on:** Phase 16
-**Plans:** 0 plans
+**Requirements:** REL-01, REL-02, REL-03, REL-04
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 17 to break down)
+- [ ] `17-01-PLAN.md` — Version management tooling: CHANGELOG.md + cross-platform bump script (REL-01)
+- [ ] `17-02-PLAN.md` — Unified release workflow: build → GitHub Release + Firebase App Distribution (REL-02, REL-03, REL-04)
 
 ---
 *Roadmap updated: 2026-04-10 — Phase **16-01** complete: Android release signing + CI guard (SEC-F3). 7 plans remaining. **`13-03`** export UI still awaiting Task 3 human verification.*  
