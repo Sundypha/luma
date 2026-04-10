@@ -92,6 +92,7 @@ Plans:
 | 11 — German + language settings | 3/3 | Complete — 2026-04-07 |
 | 12 — Fertility window | 4/4 | Complete — 2026-04-08 (UAT approved) |
 | 13 — PDF export | 2/3 | In progress — `13-03` Tasks 1–2 done; Task 3 human-verify pending (2026-04-08) |
+| 15 — Code review remediation | 1/3 | In progress — **`15-03` complete** (`15-03-SUMMARY.md`); `15-01`, `15-02` open |
 
 ### Phase 13: PDF export of period statistics and details (user selectable if all or none). Goal is to have a PDF ready for a physician or gynecologist.
 
@@ -115,5 +116,34 @@ Plans:
 Plans:
 - [ ] `14-01-PLAN.md` — Remove `TabShell` FAB, drop `fabTooltip*` ARBs, migrate `logging_test.dart` off FAB (UXFAB-01, UXFAB-02) — **implemented;** Task 4 (`human-verify`) pending before SUMMARY final / requirements checkboxes
 
+### Phase 15: Address full app code review findings
+
+**Goal:** Resolve documented full-app code review items: harden `.luma` import (validation, duplicate keys, orphan refs), make factory-reset / DB delete failures observable, and batch-load day entries in `watchPeriodsWithDays` to remove N+1 queries. Source: [`docs/CODE_REVIEW.md`](../docs/CODE_REVIEW.md).
+
+**Depends on:** Phase 14
+
+**Success criteria (observable):**
+
+1. Invalid or malicious import payloads fail with typed `LumaImportException` and do not leave partial period/entry data; valid round-trip exports still import.
+2. Day entry merge during import keys on `(periodId, dateUtc)`; no ambiguous `getSingleOrNull` on date alone.
+3. Factory reset reports or logs when SQLite file deletion fails; tests cover the failure path where feasible.
+4. `watchPeriodsWithDays` refresh uses batched day-entry reads; repository tests prove snapshot parity for multi-period fixtures.
+
+**Plans:** 1/3 plans executed
+
+Plans:
+- [ ] `15-01-PLAN.md` — Import integrity: domain validation, `(periodId, dateUtc)` conflicts, orphan `periodRefId` (see `docs/CODE_REVIEW.md` findings 1–3)
+- [ ] `15-02-PLAN.md` — Reset flow: structured DB delete result, `_resetApp` handling, tests (finding 4)
+- [x] `15-03-PLAN.md` — `watchPeriodsWithDays` batch query refactor + regression tests (finding 5) — see `15-03-SUMMARY.md`
+
+### Phase 16: Security audit findings remediation
+
+**Goal:** [To be planned]
+**Depends on:** Phase 15
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 16 to break down)
+
 ---
-*Roadmap updated: 2026-04-08 — **`13-03`** export UI / preview / share **coded** (commits on branch); **Task 3** human verification still required to close the plan.*  
+*Roadmap updated: 2026-04-10 — Phase **15** plan **`15-03`** complete (batch `watchPeriodsWithDays`, `15-03-SUMMARY.md`). Earlier: **`13-03`** export UI / preview / share **coded**; **Task 3** human verification still required to close that plan.*  
