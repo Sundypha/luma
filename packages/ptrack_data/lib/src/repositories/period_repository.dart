@@ -402,31 +402,42 @@ class PeriodRepository {
     }
 
     Future<List<StoredPeriodWithDays>> load() async {
+      // Two SQL round-trips per refresh: periods + batched day_entries for all ids.
       final periodRows = await (_db.select(_db.periods)
             ..orderBy([(t) => OrderingTerm.desc(t.startUtc)]))
           .get();
-      final result = <StoredPeriodWithDays>[];
-      for (final r in periodRows) {
-        final dayRows = await (_db.select(_db.dayEntries)
-              ..where((t) => t.periodId.equals(r.id))
-              ..orderBy([(t) => OrderingTerm.asc(t.dateUtc)]))
-            .get();
-        final days = [
-          for (final d in dayRows)
-            StoredDayEntry(
-              id: d.id,
-              periodId: d.periodId,
-              data: dayEntryRowToDomain(d),
-            ),
-        ];
-        result.add(
+      if (periodRows.isEmpty) {
+        return [];
+      }
+
+      final periodIds = [for (final r in periodRows) r.id];
+      final allDayRows = await (_db.select(_db.dayEntries)
+            ..where((t) => t.periodId.isIn(periodIds))
+            ..orderBy([
+              (t) => OrderingTerm.asc(t.periodId),
+              (t) => OrderingTerm.asc(t.dateUtc),
+            ]))
+          .get();
+
+      final byPeriodId = <int, List<DayEntry>>{};
+      for (final d in allDayRows) {
+        byPeriodId.putIfAbsent(d.periodId, () => []).add(d);
+      }
+
+      return [
+        for (final r in periodRows)
           StoredPeriodWithDays(
             period: StoredPeriod(id: r.id, span: periodRowToDomain(r)),
-            dayEntries: days,
+            dayEntries: [
+              for (final d in (byPeriodId[r.id] ?? const <DayEntry>[]))
+                StoredDayEntry(
+                  id: d.id,
+                  periodId: d.periodId,
+                  data: dayEntryRowToDomain(d),
+                ),
+            ],
           ),
-        );
-      }
-      return result;
+      ];
     }
 
     void scheduleEmit() {
