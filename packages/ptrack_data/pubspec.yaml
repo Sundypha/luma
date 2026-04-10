@@ -20,7 +20,7 @@ dependencies:
   ptrack_domain:
     path: ../ptrack_domain
   sqlite3: ^2.9.0
-  sqlite3_flutter_libs: ^0.5.32
+  sqlite3_flutter_libs: ^0.6.0+eol
 
 dev_dependencies:
   async: ^2.13.0
