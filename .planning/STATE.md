@@ -6,7 +6,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** **Milestone v2.0** — Phase **16** security audit findings remediation (planning / execution next).
+**Current focus:** **Milestone v2.0** — Phase **16** security audit findings remediation (executing).
 
 ## Current Position
 
@@ -14,13 +14,13 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Phase:** **16** — Security audit findings remediation.
 
-**Plan:** TBD — run `/gsd-plan-phase 16` or open `.planning/phases/16-security-audit-findings-remediation/`.
+**Plan:** 01 complete — Android release signing + CI guard. Next: `16-02-PLAN.md`.
 
-**Status:** Phase **15** complete (verified `15-VERIFICATION.md`); optional **15-01** Task 3 import smoke on device.
+**Status:** Phase **16** in progress — plan 01 complete (Android release signing).
 
-Last activity: 2026-04-10 — Phase **15** execution + verification: import hardening, reset DB delete observability, `watchPeriodsWithDays` batch load; test fix `fc3cd1a`; docs `5751276`.
+Last activity: 2026-04-10 — Phase **16-01** execution: dedicated release signingConfig, CI signing secret injection, apksigner debug-cert rejection (`fd217f3`, `ccef8c3`).
 
-**Progress (v2.0):** Phase 15 **complete** (3/3 plans). See `ROADMAP.md`.
+**Progress (v2.0):** Phase 16 **in progress** (1/8 plans). See `ROADMAP.md`.
 
 ## Performance Metrics
 
@@ -50,6 +50,8 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 **2026-04-10 (15-01):** `.luma` import uses `PeriodValidation.validateForSave` before period inserts, `PeriodCalendarContext` required on `ImportService` (wired from `DataSettingsScreen`), day upserts on `(periodId, dateUtc)`, orphan `period_ref_id` → `LumaInvalidPeriodRefException`; `ImportPreview` duplicate preview still date-only (apply path is authoritative).
 
+**2026-04-10 (16-01):** Release signingConfig is null (not debug) when key.properties absent — unsigned builds fail explicitly; CI uses `printf` to write key.properties from individual secrets; `apksigner verify --print-certs` grepped for "Android Debug" as release-signing guard.
+
 ### Pending Todos
 
 - **Optional:** `15-01` Task 3 — manual export/re-import smoke (skip/replace) on device.
@@ -73,8 +75,8 @@ None.
 
 **Last session:** 2026-04-10
 
-**Stopped at:** Completed **15-01** automated tasks and planning artifacts (`15-01-SUMMARY.md`, STATE/ROADMAP).
+**Stopped at:** Completed **16-01** (Android release signing + CI guard). SUMMARY written.
 
-**Resume file:** `.planning/phases/15-address-full-app-code-review-findings/15-01-PLAN.md` (Task 3 smoke only, if desired)
+**Resume file:** `.planning/phases/16-security-audit-findings-remediation/16-02-PLAN.md`
 
-**Next:** Optional import smoke UAT; or continue **13-03** / **14-01** human-verify items.
+**Next:** Execute **16-02** (PIN lockout / throttling), or continue remaining Phase 16 plans.
