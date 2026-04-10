@@ -169,6 +169,7 @@ class _LumaAppState extends State<LumaApp> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
     await widget.onboardingState?.reloadFromPlatform();
+    await deleteDbEncryptionKey();
     await closeAndDeletePtrackDatabaseFile(
       closeDatabase: () async {
         await widget.database?.close();
