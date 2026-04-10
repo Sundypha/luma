@@ -35,7 +35,7 @@ CREATE TABLE periods (
 
     db.execute('PRAGMA user_version = 1');
   } finally {
-    db.dispose();
+    db.close();
   }
 
   // ignore: avoid_print

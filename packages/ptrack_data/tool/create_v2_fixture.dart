@@ -57,7 +57,7 @@ VALUES (1, $dayUtc, 2, 2, 4, 'fixture v2');
 
     db.execute('PRAGMA user_version = 2');
   } finally {
-    db.dispose();
+    db.close();
   }
 
   // ignore: avoid_print

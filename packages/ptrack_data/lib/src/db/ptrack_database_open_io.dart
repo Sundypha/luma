@@ -6,34 +6,29 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:sqlite3/open.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
-import 'package:sqlcipher_flutter_libs/sqlcipher_flutter_libs.dart';
 
 import 'db_encryption_key.dart';
 import 'ptrack_database.dart';
 
-/// Drift opens SQLite in a background isolate; [open.overrideFor] must run
-/// there too before any database API. (Platform channel workaround runs only
-/// on the main isolate — see [_prepareSqlcipherOnAndroidMainIsolate].)
-void ptrackDriftAndroidSqlcipherIsolateSetup() {
-  if (Platform.isAndroid) {
-    open.overrideFor(OperatingSystem.android, openCipherOnAndroid);
-  }
+/// PRAGMAs for SQLCipher v4–compatible files via SQLite3MultipleCiphers
+/// (package:sqlite3 with `source: sqlite3mc`). See sqlite3 UPGRADING_TO_V3.md.
+void _applySqlcipherMcKey(sqlite.Database db, String hexKey) {
+  db.execute("PRAGMA cipher = 'sqlcipher';");
+  db.execute('PRAGMA legacy = 4;');
+  db.execute("PRAGMA key = \"x'$hexKey'\";");
 }
 
-Future<void> _prepareSqlcipherOnAndroidMainIsolate() async {
+Future<void> _configureSqliteTempOnAndroid() async {
   if (!Platform.isAndroid) return;
-  // sqlcipher_flutter_libs ships `libsqlcipher.so`; package:sqlite3 defaults
-  // to `libsqlite3.so` on Android.
-  open.overrideFor(OperatingSystem.android, openCipherOnAndroid);
-  await applyWorkaroundToOpenSqlCipherOnOldAndroidVersions();
+  final cacheBase = (await getTemporaryDirectory()).path;
+  sqlite.sqlite3.tempDirectory = cacheBase;
 }
 
 /// Opens a [QueryExecutor] for the ptrack SQLite database, encrypted with
-/// SQLCipher.  On first launch, a 256-bit key is generated and persisted in
-/// platform secure storage.  Existing plaintext databases are migrated
-/// transparently.
+/// SQLCipher-compatible settings (SQLite3MultipleCiphers). On first launch, a
+/// 256-bit key is generated and persisted in platform secure storage. Existing
+/// plaintext databases are migrated transparently (in-place [PRAGMA rekey]).
 ///
 /// [encryptionKeyStorage] overrides where the DB key is read/written (e.g. VM
 /// tests without platform channels). When null, the default
@@ -43,11 +38,7 @@ QueryExecutor openPtrackQueryExecutor({
   FlutterSecureStorage? encryptionKeyStorage,
 }) {
   return LazyDatabase(() async {
-    await _prepareSqlcipherOnAndroidMainIsolate();
-    if (Platform.isAndroid) {
-      final cacheBase = (await getTemporaryDirectory()).path;
-      sqlite.sqlite3.tempDirectory = cacheBase;
-    }
+    await _configureSqliteTempOnAndroid();
 
     final String resolvedPath;
     if (databasePath != null) {
@@ -71,10 +62,7 @@ QueryExecutor openPtrackQueryExecutor({
 
     return NativeDatabase.createInBackground(
       file,
-      setup: (rawDb) {
-        rawDb.execute("PRAGMA key = \"x'$hexKey'\";");
-      },
-      isolateSetup: Platform.isAndroid ? ptrackDriftAndroidSqlcipherIsolateSetup : null,
+      setup: (rawDb) => _applySqlcipherMcKey(rawDb, hexKey),
     );
   });
 }
@@ -92,32 +80,23 @@ PtrackDatabase openPtrackDatabase({
   );
 }
 
-/// Checks whether [file] is an unencrypted SQLite database. If so, migrates
-/// it to an encrypted copy using the `sqlcipher_export` extension, then
-/// replaces the original file.
+/// Checks whether [file] is an unencrypted SQLite database. If so, encrypts
+/// it in place using SQLite3MultipleCiphers ([PRAGMA cipher], [PRAGMA legacy],
+/// [PRAGMA rekey]) so it matches SQLCipher v4–style files used by the app.
 Future<void> _migrateIfPlaintext(File file, String hexKey) async {
   try {
     if (!_isPlaintextSqlite(file)) return;
 
-    final encryptedPath = '${file.path}.encrypted';
-    final encryptedFile = File(encryptedPath);
-
     final plainDb = sqlite.sqlite3.open(file.path);
     try {
-      plainDb.execute(
-        "ATTACH DATABASE '${encryptedPath.replaceAll("'", "''")}' "
-        "AS encrypted KEY \"x'$hexKey'\";",
-      );
-      plainDb.execute("SELECT sqlcipher_export('encrypted');");
-      plainDb.execute('DETACH DATABASE encrypted;');
+      plainDb.execute("PRAGMA cipher = 'sqlcipher';");
+      plainDb.execute('PRAGMA legacy = 4;');
+      plainDb.execute("PRAGMA rekey = \"x'$hexKey'\";");
     } finally {
-      plainDb.dispose();
+      plainDb.close();
     }
 
-    await file.delete();
-    await encryptedFile.rename(file.path);
-
-    debugPrint('ptrack: migrated plaintext database to SQLCipher.');
+    debugPrint('ptrack: migrated plaintext database to SQLCipher (sqlite3mc).');
   } on Object catch (e) {
     debugPrint(
       'ptrack: plaintext→encrypted migration failed ($e). '

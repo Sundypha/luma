@@ -148,7 +148,7 @@ VALUES (2, $dLow, 1), (2, $dHigh, 1);
 ''');
           raw.execute('PRAGMA user_version = 2');
         } finally {
-          raw.dispose();
+          raw.close();
         }
 
         final db = openTestPtrackDatabase(databasePath: path);
@@ -235,7 +235,7 @@ CREATE TABLE periods (
 ''');
         raw.execute('PRAGMA user_version = 99');
       } finally {
-        raw.dispose();
+        raw.close();
       }
 
       final db = openTestPtrackDatabase(databasePath: path);
@@ -259,7 +259,7 @@ CREATE TABLE periods (
         final uv = raw2.select('PRAGMA user_version').first.columnAt(0) as int;
         expect(uv, 99);
       } finally {
-        raw2.dispose();
+        raw2.close();
       }
     });
   });

@@ -21,7 +21,6 @@ dependencies:
     path: ../ptrack_domain
   sqlite3: ^3.3.0
   flutter_secure_storage: ^10.0.0
-  sqlcipher_flutter_libs: ^0.6.0
 
 dev_dependencies:
   async: ^2.13.0
@@ -32,5 +31,12 @@ dev_dependencies:
     sdk: flutter
   mocktail: ^1.0.5
   timezone: ^0.11.0
+
+# sqlite3 v3 bundles native SQLite via hooks; use SQLite3MultipleCiphers for
+# SQLCipher-compatible encryption (see sqlite3 UPGRADING_TO_V3.md).
+hooks:
+  user_defines:
+    sqlite3:
+      source: sqlite3mc
 
 flutter:
