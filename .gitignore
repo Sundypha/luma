@@ -1,0 +1,16 @@
+﻿# FVM — track only .fvm/fvm_config.json (+ .fvmrc). Cache/symlinks are machine-local.
+.fvm/*
+!.fvm/fvm_config.json
+
+# Dart / Flutter
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+build/
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Melos
+.melos_tool/
