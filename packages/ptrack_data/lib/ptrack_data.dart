@@ -10,8 +10,7 @@ export 'src/export/export_schema.dart'
         ExportedPeriod,
         LumaExportData,
         LumaExportMeta,
-        lumaFormatVersion,
-        lumaMinSupportedFormatVersion;
+        lumaFormatVersion;
 export 'src/export/export_service.dart'
     show ExportResult, ExportService, ProgressCallback;
 export 'src/export/backup_service.dart'
@@ -29,7 +28,7 @@ export 'src/export/import_service.dart'
         LumaInvalidFileException,
         LumaInvalidPeriodRefException,
         LumaVersionException;
-export 'src/export/luma_crypto.dart' show LumaCrypto, lumaMinPasswordLength;
+export 'src/export/luma_crypto.dart' show LumaCrypto;
 export 'src/db/db_encryption_key.dart'
     show deleteDbEncryptionKey, getOrCreateDbEncryptionKey;
 export 'src/db/ptrack_database.dart'
