@@ -161,7 +161,13 @@ class _LumaAppState extends State<LumaApp> {
     await prefs.clear();
     await widget.onboardingState?.reloadFromPlatform();
     await widget.database?.close();
-    await deletePtrackDatabaseFileIfExists();
+    switch (await deletePtrackDatabaseFileIfExists()) {
+      case PtrackDbDeleteFailed(:final cause):
+        debugPrint('Ptrack database file delete failed: $cause');
+      case PtrackDbDeleted():
+      case PtrackDbNotFound():
+        break;
+    }
     if (mounted) {
       setState(() => _screen = AppScreen.onboarding);
     }

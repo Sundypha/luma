@@ -2,7 +2,10 @@ import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 
-Future<void> deletePtrackDatabaseFileIfExists() async {
+import 'ptrack_db_delete_result.dart';
+
+/// Removes the default on-disk SQLite file used by [openPtrackDatabase], if present.
+Future<PtrackDbDeleteResult> deletePtrackDatabaseFileIfExists() async {
   try {
     late final String resolvedPath;
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
@@ -13,10 +16,12 @@ Future<void> deletePtrackDatabaseFileIfExists() async {
       resolvedPath = '${dir.path}/ptrack.sqlite';
     }
     final file = File(resolvedPath);
-    if (await file.exists()) {
-      await file.delete();
+    if (!await file.exists()) {
+      return const PtrackDbNotFound();
     }
-  } on Object {
-    // Best-effort wipe; continue reset flow.
+    await file.delete();
+    return const PtrackDbDeleted();
+  } on Object catch (e) {
+    return PtrackDbDeleteFailed(e);
   }
 }
