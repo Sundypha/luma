@@ -16,7 +16,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Plan:** **15-01** — Import integrity — **complete** in repo (Tasks 1–2 committed; Task 3 `human-verify` optional smoke: export → re-import skip/replace).
 
-**Status:** Phase **15** plans **15-01**–**15-03** all have SUMMARY files; phase goals met in code. Phase **13** plan **13-03** still awaiting Task 3 human-verify where applicable.
+**Status:** Ready to plan
 
 Last activity: 2026-04-10 — **15-01** executed: `ImportService` + domain validation, `(periodId, dateUtc)` day keys, `DataSettingsScreen` calendar wiring (`b3df094`, `69e59a4`).
 
