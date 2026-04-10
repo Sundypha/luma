@@ -8,6 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:luma/features/backup/import_view_model.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_data/src/db/ptrack_database.dart';
+import 'package:ptrack_domain/ptrack_domain.dart';
+import 'package:timezone/data/latest.dart' as tz_data;
+import 'package:timezone/timezone.dart' as tz;
 
 Uint8List _utf8(String s) => Uint8List.fromList(utf8.encode(s));
 
@@ -22,6 +25,12 @@ Map<String, dynamic> _metaMap({bool encrypted = false}) => {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() {
+    tz_data.initializeTimeZones();
+  });
+
+  final testCalendar = PeriodCalendarContext(tz.UTC);
 
   group('ImportViewModel', () {
     test('handlePickedFile unencrypted → previewing with counts', () async {
@@ -53,7 +62,7 @@ void main() {
         },
       };
       final vm = ImportViewModel(
-        importService: ImportService(db, backupService: backup),
+        importService: ImportService(db, calendar: testCalendar, backupService: backup),
         db: db,
       );
       await vm.handlePickedFile(
@@ -84,7 +93,7 @@ void main() {
         options: ExportOptions.everything(password: 'secret'),
       );
       final vm = ImportViewModel(
-        importService: ImportService(db, backupService: backup),
+        importService: ImportService(db, calendar: testCalendar, backupService: backup),
         db: db,
       );
       await vm.handlePickedFile(bytes: export.bytes, fileName: 'enc.luma');
@@ -110,7 +119,7 @@ void main() {
         options: ExportOptions.everything(password: 'secret'),
       );
       final vm = ImportViewModel(
-        importService: ImportService(db, backupService: backup),
+        importService: ImportService(db, calendar: testCalendar, backupService: backup),
         db: db,
       );
       await vm.handlePickedFile(bytes: export.bytes, fileName: 'enc.luma');
@@ -137,7 +146,7 @@ void main() {
         options: ExportOptions.everything(password: 'secret'),
       );
       final vm = ImportViewModel(
-        importService: ImportService(db, backupService: backup),
+        importService: ImportService(db, calendar: testCalendar, backupService: backup),
         db: db,
       );
       await vm.handlePickedFile(bytes: export.bytes, fileName: 'enc.luma');
@@ -175,7 +184,7 @@ void main() {
         },
       };
       final vm = ImportViewModel(
-        importService: ImportService(db, backupService: backup),
+        importService: ImportService(db, calendar: testCalendar, backupService: backup),
         db: db,
       );
       await vm.handlePickedFile(
@@ -217,7 +226,7 @@ void main() {
         },
       };
       final vm = ImportViewModel(
-        importService: ImportService(db, backupService: backup),
+        importService: ImportService(db, calendar: testCalendar, backupService: backup),
         db: db,
       );
       await vm.handlePickedFile(
@@ -233,7 +242,7 @@ void main() {
       final db = PtrackDatabase(NativeDatabase.memory());
       addTearDown(() async => db.close());
       final vm = ImportViewModel(
-        importService: ImportService(db),
+        importService: ImportService(db, calendar: testCalendar),
         db: db,
       );
       expect(vm.strategy, DuplicateStrategy.skip);
@@ -264,7 +273,7 @@ void main() {
         },
       };
       final vm = ImportViewModel(
-        importService: ImportService(db, backupService: backup),
+        importService: ImportService(db, calendar: testCalendar, backupService: backup),
         db: db,
       );
       await vm.handlePickedFile(
@@ -282,7 +291,7 @@ void main() {
       final db = PtrackDatabase(NativeDatabase.memory());
       addTearDown(() async => db.close());
       final vm = ImportViewModel(
-        importService: ImportService(db),
+        importService: ImportService(db, calendar: testCalendar),
         db: db,
       );
       await vm.handlePickedFile(bytes: _utf8('{}'), fileName: 'note.txt');
@@ -330,7 +339,7 @@ void main() {
         },
       };
       final vm = ImportViewModel(
-        importService: ImportService(db, backupService: backup),
+        importService: ImportService(db, calendar: testCalendar, backupService: backup),
         db: db,
       );
       await vm.handlePickedFile(

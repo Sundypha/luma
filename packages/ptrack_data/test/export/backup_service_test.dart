@@ -6,6 +6,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_data/src/db/ptrack_database.dart';
+import 'package:ptrack_domain/ptrack_domain.dart';
+import 'package:timezone/data/latest.dart' as tz_data;
+import 'package:timezone/timezone.dart' as tz;
 
 LumaExportMeta _testMeta() => LumaExportMeta(
       formatVersion: lumaFormatVersion,
@@ -19,6 +22,10 @@ LumaExportMeta _testMeta() => LumaExportMeta(
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  setUpAll(() {
+    tz_data.initializeTimeZones();
+  });
+
   group('ImportService.applyImport', () {
     late Directory supportRoot;
     late PtrackDatabase db;
@@ -29,6 +36,7 @@ void main() {
       db = PtrackDatabase(NativeDatabase.memory());
       importService = ImportService(
         db,
+        calendar: PeriodCalendarContext(tz.UTC),
         backupService: BackupService(
           db,
           applicationSupportDirectory: () async => supportRoot,
@@ -92,7 +100,9 @@ void main() {
       expect(entries.length, 3);
     });
 
-    test('skip increments entriesSkipped for same calendar date', () async {
+    test(
+        'skip does not treat same calendar date on another period as duplicate',
+        () async {
       final p1 = await db.into(db.periods).insert(
             PeriodsCompanion.insert(
               startUtc: DateTime.utc(2024, 1, 1),
@@ -130,41 +140,37 @@ void main() {
       );
 
       expect(r.periodsCreated, 1);
-      expect(r.entriesSkipped, 1);
-      expect(r.entriesCreated, 0);
+      expect(r.entriesSkipped, 0);
+      expect(r.entriesCreated, 1);
 
-      final row = await (db.select(db.dayEntries)
-            ..where((t) => t.dateUtc.equals(DateTime.utc(2024, 1, 10))))
-          .getSingle();
-      expect(row.flowIntensity, 1);
+      final rows = await db.select(db.dayEntries).get();
+      expect(rows.length, 2);
+      expect(
+        rows.where((e) => e.flowIntensity == 9).length,
+        1,
+      );
     });
 
-    test('replace updates row for same calendar date', () async {
-      final p1 = await db.into(db.periods).insert(
-            PeriodsCompanion.insert(
-              startUtc: DateTime.utc(2024, 1, 1),
-            ),
-          );
-      await db.into(db.dayEntries).insert(
-            DayEntriesCompanion.insert(
-              periodId: p1,
-              dateUtc: DateTime.utc(2024, 1, 10),
-              flowIntensity: const Value(1),
-            ),
-          );
-
+    test('replace updates same-period row when date repeats in one import',
+        () async {
       final data = LumaExportData(
         meta: _testMeta(),
         periods: [
           ExportedPeriod(
             refId: 1,
-            startUtc: DateTime.utc(2024, 3, 1).toIso8601String(),
+            startUtc: DateTime.utc(2024, 1, 1).toIso8601String(),
+            endUtc: DateTime.utc(2024, 1, 5).toIso8601String(),
           ),
         ],
         dayEntries: [
           ExportedDayEntry(
             periodRefId: 1,
-            dateUtc: DateTime.utc(2024, 1, 10).toIso8601String(),
+            dateUtc: DateTime.utc(2024, 1, 2).toIso8601String(),
+            flowIntensity: 1,
+          ),
+          ExportedDayEntry(
+            periodRefId: 1,
+            dateUtc: DateTime.utc(2024, 1, 2).toIso8601String(),
             flowIntensity: 9,
             painScore: 3,
           ),
@@ -178,7 +184,7 @@ void main() {
 
       expect(r.periodsCreated, 1);
       expect(r.entriesReplaced, 1);
-      expect(r.entriesCreated, 0);
+      expect(r.entriesCreated, 1);
 
       final rows = await db.select(db.dayEntries).get();
       expect(rows.length, 1);
@@ -217,7 +223,7 @@ void main() {
           data: data,
           strategy: DuplicateStrategy.skip,
         ),
-        throwsA(anything),
+        throwsA(isA<LumaInvalidPeriodRefException>()),
       );
 
       final after = await db.select(db.periods).get();
