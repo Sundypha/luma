@@ -9,10 +9,13 @@ inputs:
   repositories:
     required: true
 
-  target:
-    description: "android — enable Android for flutter build apk/appbundle."
+  targets:
+    description: >
+      Comma-separated platforms to enable; all others are disabled.
+      Allowed: web, android, ios, linux, macos, windows, fuchsia.
+      Example: "web" or "android" or "web,linux".
     required: false
-    default: "android"
+    default: "web"
 
 runs:
   using: "composite"
@@ -27,23 +30,38 @@ runs:
     - name: Configure Flutter platforms
       shell: bash
       run: |
-        if [ "${{ inputs.target }}" = "android" ]; then
-          flutter config --enable-android
-          flutter config --no-enable-web
-          flutter config --no-enable-ios
-          flutter config --no-enable-linux-desktop
-          flutter config --no-enable-macos-desktop
-          flutter config --no-enable-windows-desktop
-          flutter config --no-enable-fuchsia
-        else
-          flutter config --enable-web
-          flutter config --no-enable-android
-          flutter config --no-enable-ios
-          flutter config --no-enable-linux-desktop
-          flutter config --no-enable-macos-desktop
-          flutter config --no-enable-windows-desktop
-          flutter config --no-enable-fuchsia
+        set -euo pipefail
+        RAW=$(echo "${{ inputs.targets }}" | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')
+        TARGETS_ARR=()
+        if [ -n "$RAW" ]; then
+          IFS=',' read -ra PARTS <<< "$RAW"
+          for p in "${PARTS[@]}"; do
+            [ -n "$p" ] && TARGETS_ARR+=("$p")
+          done
         fi
+        if [ ${#TARGETS_ARR[@]} -eq 0 ]; then
+          TARGETS_ARR=(web)
+        fi
+        has() {
+          local n="$1"
+          for x in "${TARGETS_ARR[@]}"; do
+            [ "$x" = "$n" ] && return 0
+          done
+          return 1
+        }
+        for t in "${TARGETS_ARR[@]}"; do
+          case "$t" in
+            web|android|ios|linux|macos|windows|fuchsia) ;;
+            *) echo "::error::Unknown flutter-bootstrap targets entry '$t'. Use: web, android, ios, linux, macos, windows, fuchsia"; exit 1 ;;
+          esac
+        done
+        if has web; then flutter config --enable-web; else flutter config --no-enable-web; fi
+        if has android; then flutter config --enable-android; else flutter config --no-enable-android; fi
+        if has ios; then flutter config --enable-ios; else flutter config --no-enable-ios; fi
+        if has linux; then flutter config --enable-linux-desktop; else flutter config --no-enable-linux-desktop; fi
+        if has macos; then flutter config --enable-macos-desktop; else flutter config --no-enable-macos-desktop; fi
+        if has windows; then flutter config --enable-windows-desktop; else flutter config --no-enable-windows-desktop; fi
+        if has fuchsia; then flutter config --enable-fuchsia; else flutter config --no-enable-fuchsia; fi
 
     - name: Cache Flutter dependencies
       uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
