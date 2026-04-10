@@ -38,6 +38,9 @@ void main() {
       final key = invocation.namedArguments[#key] as String;
       return store[key];
     });
+    when(() => mockStorage.delete(key: any(named: 'key'))).thenAnswer((invocation) async {
+      store.remove(invocation.namedArguments[#key] as String);
+    });
   }
 
   test('verifyPin with correct PIN calls onUnlocked and leaves isLoading false',

@@ -14,7 +14,11 @@ void main() {
   group('migrations and schema guard', () {
     test('fresh database creates current schema and rows persist', () async {
       final path = createTempSqlitePath();
-      var db = openPtrackDatabase(databasePath: path);
+      final enc = createTestDbEncryptionStorage();
+      var db = openTestPtrackDatabase(
+        databasePath: path,
+        encryptionKeyStorage: enc,
+      );
       final start = DateTime.utc(2024, 5, 1);
       final end = DateTime.utc(2024, 5, 4);
       await db.into(db.periods).insert(periodSpanToInsertCompanion(
@@ -22,7 +26,10 @@ void main() {
       ));
       await db.close();
 
-      db = openPtrackDatabase(databasePath: path);
+      db = openTestPtrackDatabase(
+        databasePath: path,
+        encryptionKeyStorage: enc,
+      );
       final rows = await db.select(db.periods).get();
       expect(rows, hasLength(1));
       expect(periodRowToDomain(rows.single).startUtc, start);
@@ -39,7 +46,7 @@ void main() {
       final path = createTempSqlitePath();
       await fixture.copy(path);
 
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       final rows = await db.select(db.periods).get();
       expect(rows, hasLength(2));
 
@@ -63,7 +70,7 @@ void main() {
       final path = createTempSqlitePath();
       await fixture.copy(path);
 
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       try {
         expect(await _readUserVersion(db), ptrackSupportedSchemaVersion);
         final periods = await db.select(db.periods).get();
@@ -144,7 +151,7 @@ VALUES (2, $dLow, 1), (2, $dHigh, 1);
           raw.dispose();
         }
 
-        final db = openPtrackDatabase(databasePath: path);
+        final db = openTestPtrackDatabase(databasePath: path);
         try {
           expect(await _readUserVersion(db), 3);
           final periods = await db.select(db.periods).get()..sort((a, b) => a.id.compareTo(b.id));
@@ -170,7 +177,7 @@ VALUES (2, $dLow, 1), (2, $dHigh, 1);
         final path = createTempSqlitePath();
         await fixture.copy(path);
 
-        final db = openPtrackDatabase(databasePath: path);
+        final db = openTestPtrackDatabase(databasePath: path);
         try {
           expect(await _readUserVersion(db), ptrackSupportedSchemaVersion);
 
@@ -231,7 +238,7 @@ CREATE TABLE periods (
         raw.dispose();
       }
 
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       try {
         await expectLater(
           db.customSelect('SELECT 1 AS c').getSingle(),
