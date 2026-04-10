@@ -14,8 +14,15 @@ class PeriodCalendarContext {
   final tz.Location location;
 
   /// Builds a context from an IANA timezone name (e.g. `America/New_York`).
+  ///
+  /// Accepts `UTC` as a synonym for [tz.UTC]; newer `timezone` databases omit a
+  /// bare `UTC` zone name.
   factory PeriodCalendarContext.fromTimeZoneName(String name) {
-    return PeriodCalendarContext(tz.getLocation(name));
+    final trimmed = name.trim();
+    if (trimmed.toUpperCase() == 'UTC') {
+      return PeriodCalendarContext(tz.UTC);
+    }
+    return PeriodCalendarContext(tz.getLocation(trimmed));
   }
 
   /// Local calendar components for [utc] in [location].
