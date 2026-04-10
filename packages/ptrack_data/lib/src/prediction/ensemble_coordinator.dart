@@ -21,12 +21,12 @@ class EnsembleCoordinator {
     ];
   }
 
-  /// Median inclusive bleeding-day count across completed periods; default 5.
+  /// Median inclusive bleeding-day count across periods with both bounds; default 5.
   static int medianBleedingDurationDays(Iterable<StoredPeriod> stored) {
     final durations = <int>[];
     for (final s in stored) {
       final span = s.span;
-      if (!span.isCompleted || span.endUtc == null) continue;
+      if (span.endUtc == null) continue;
       final start = utcCalendarDateOnly(span.startUtc);
       final end = utcCalendarDateOnly(span.endUtc!);
       final days = end.difference(start).inDays + 1;
@@ -40,18 +40,27 @@ class EnsembleCoordinator {
   }
 
   /// Synchronous ensemble from in-memory periods (tests / preloaded data).
+  ///
+  /// [enabledAlgorithmIds]: null → all default algorithms; empty set → none.
+  /// [horizonCycles]: how many future cycles to project (1 = next only, 3 = default).
+  ///   Each additional hop reuses the same per-algorithm predicted cycle length.
   EnsemblePredictionResult predictNext({
     required List<StoredPeriod> storedPeriods,
     required PeriodCalendarContext calendar,
     int? previousActiveCount,
+    Set<AlgorithmId>? enabledAlgorithmIds,
+    int horizonCycles = 3,
   }) {
     final cycles = predictionCycleInputsFromStored(
       stored: storedPeriods,
       calendar: calendar,
     );
     final durationDays = medianBleedingDurationDays(storedPeriods);
-    final algos =
+    var algos =
         _algorithmsOverride ?? _defaultAlgorithmsForDuration(durationDays);
+    if (enabledAlgorithmIds != null) {
+      algos = algos.where((a) => enabledAlgorithmIds.contains(a.id)).toList();
+    }
 
     final outputs = <AlgorithmPrediction>[];
     final merged = <ExplanationStep>[];
@@ -65,7 +74,6 @@ class EnsembleCoordinator {
             kind: ExplanationFactKind.algorithmContribution,
             payload: {
               'algorithmId': o.algorithmId.name,
-              'displayName': algo.displayName,
               'predictedStartUtc': o.predictedStartUtc.toIso8601String(),
               'predictedLengthDays': o.predictedDurationDays,
             },
@@ -75,13 +83,49 @@ class EnsembleCoordinator {
       }
     }
 
-    final dayConfidenceMap = <DateTime, int>{};
-    for (final o in outputs) {
-      for (var i = 0; i < o.predictedDurationDays; i++) {
-        final day = utcCalendarDateOnly(
-          addUtcCalendarDays(o.predictedStartUtc, i),
+    // Compute cycle spread for variability-aware confidence decay.
+    final cycleSpreadDays = _cycleSpreadDays(cycles);
+
+    // Compute the anchor (most recent period start) to derive per-algorithm
+    // cycle lengths for multi-hop projection.
+    final anchor = cycles.isNotEmpty
+        ? utcCalendarDateOnly(cycles.last.periodStartUtc)
+        : null;
+
+    // Build dayConfidenceMap across all projected cycles.
+    // For the same day, keep the entry with the lowest cycleIndex; add to
+    // agreement count when the same cycle index appears from multiple algorithms.
+    final dayConfidenceMap = <DateTime, DayPredictionMeta>{};
+
+    final clampedHorizon = horizonCycles.clamp(1, 12);
+
+    for (var hop = 0; hop < clampedHorizon; hop++) {
+      for (final o in outputs) {
+        // Cycle length = distance from anchor to this algorithm's prediction.
+        // Falls back to a 28-day default if no anchor is available.
+        final cycleLengthDays = anchor != null
+            ? utcCalendarDateOnly(o.predictedStartUtc).difference(anchor).inDays
+            : 28;
+        final effectiveCycleLength = cycleLengthDays.clamp(14, 60);
+
+        final hopStart = addUtcCalendarDays(
+          o.predictedStartUtc,
+          hop * effectiveCycleLength,
         );
-        dayConfidenceMap[day] = (dayConfidenceMap[day] ?? 0) + 1;
+
+        for (var i = 0; i < o.predictedDurationDays; i++) {
+          final day = utcCalendarDateOnly(addUtcCalendarDays(hopStart, i));
+          final current = dayConfidenceMap[day];
+          if (current == null || hop < current.cycleIndex) {
+            // First entry for this day, or this hop is closer → replace.
+            dayConfidenceMap[day] = (agreement: 1, cycleIndex: hop);
+          } else if (hop == current.cycleIndex) {
+            // Same hop, additional algorithm agrees → increment agreement.
+            dayConfidenceMap[day] =
+                (agreement: current.agreement + 1, cycleIndex: hop);
+          }
+          // Higher hop index: ignore (lower-hop entry already recorded).
+        }
       }
     }
 
@@ -89,33 +133,18 @@ class EnsembleCoordinator {
     final totalAlgorithmCount = algos.length;
     final cycleCount = cycles.length;
 
-    final milestoneMessage = _milestoneMessage(
+    final milestone = _ensembleMilestone(
       previousActiveCount: previousActiveCount,
       activeAlgorithmCount: activeAlgorithmCount,
       cycleCount: cycleCount,
     );
 
-    if (milestoneMessage != null) {
-      merged.add(
-        ExplanationStep(
-          kind: ExplanationFactKind.milestoneReached,
-          payload: {
-            'activeCount': activeAlgorithmCount,
-            'message': milestoneMessage,
-          },
-        ),
-      );
-    }
-
-    final agreementSummary =
-        'On days where multiple methods agree, the prediction is more consistent.';
     merged.add(
       ExplanationStep(
         kind: ExplanationFactKind.ensembleConsensus,
         payload: {
           'activeCount': activeAlgorithmCount,
           'totalCount': totalAlgorithmCount,
-          'agreementSummary': agreementSummary,
         },
       ),
     );
@@ -126,27 +155,17 @@ class EnsembleCoordinator {
       calendar: calendar,
     );
 
-    final withoutText = EnsemblePredictionResult(
+    return EnsemblePredictionResult(
       algorithmOutputs: List<AlgorithmPrediction>.unmodifiable(outputs),
-      dayConfidenceMap: Map<DateTime, int>.unmodifiable(dayConfidenceMap),
+      dayConfidenceMap:
+          Map<DateTime, DayPredictionMeta>.unmodifiable(dayConfidenceMap),
       activeAlgorithmCount: activeAlgorithmCount,
       totalAlgorithmCount: totalAlgorithmCount,
-      milestoneMessage: milestoneMessage,
+      milestone: milestone,
       consensusPrediction: coordResult.result,
       mergedExplanationSteps: List<ExplanationStep>.unmodifiable(merged),
       explanationText: '',
-    );
-
-    final text = formatEnsembleExplanation(ensemble: withoutText);
-    return EnsemblePredictionResult(
-      algorithmOutputs: withoutText.algorithmOutputs,
-      dayConfidenceMap: withoutText.dayConfidenceMap,
-      activeAlgorithmCount: withoutText.activeAlgorithmCount,
-      totalAlgorithmCount: withoutText.totalAlgorithmCount,
-      milestoneMessage: withoutText.milestoneMessage,
-      consensusPrediction: withoutText.consensusPrediction,
-      mergedExplanationSteps: withoutText.mergedExplanationSteps,
-      explanationText: text,
+      cycleSpreadDays: cycleSpreadDays,
     );
   }
 
@@ -155,17 +174,29 @@ class EnsembleCoordinator {
     required PeriodRepository repository,
     required PeriodCalendarContext calendar,
     int? previousActiveCount,
+    Set<AlgorithmId>? enabledAlgorithmIds,
+    int horizonCycles = 3,
   }) async {
     final stored = await repository.listOrderedByStartUtc();
     return predictNext(
       storedPeriods: stored,
       calendar: calendar,
       previousActiveCount: previousActiveCount,
+      enabledAlgorithmIds: enabledAlgorithmIds,
+      horizonCycles: horizonCycles,
     );
   }
 }
 
-String? _milestoneMessage({
+/// Max − min of included cycle lengths; 0 when fewer than 2 cycles.
+int _cycleSpreadDays(List<PredictionCycleInput> cycles) {
+  if (cycles.length < 2) return 0;
+  final lengths = cycles.map((c) => c.lengthInDays).toList();
+  return lengths.reduce((a, b) => a > b ? a : b) -
+      lengths.reduce((a, b) => a < b ? a : b);
+}
+
+EnsembleMilestone? _ensembleMilestone({
   required int? previousActiveCount,
   required int activeAlgorithmCount,
   required int cycleCount,
@@ -174,14 +205,21 @@ String? _milestoneMessage({
   if (activeAlgorithmCount <= previousActiveCount) return null;
 
   if (activeAlgorithmCount >= 4 && previousActiveCount < 4) {
-    return 'With 5 cycles, trend detection is now active.';
+    return const EnsembleMilestone(
+      kind: EnsembleMilestoneKind.trendDetectionActive,
+    );
   }
   if (activeAlgorithmCount >= 3 && previousActiveCount < 3) {
-    return '3 cycles logged — all core methods are now active.';
+    return const EnsembleMilestone(
+      kind: EnsembleMilestoneKind.allCoreMethodsActive,
+    );
   }
   if (activeAlgorithmCount >= 2 && previousActiveCount < 2) {
-    return 'With $cycleCount cycles logged, your prediction now uses '
-        '$activeAlgorithmCount methods for better accuracy.';
+    return EnsembleMilestone(
+      kind: EnsembleMilestoneKind.expandedMethodCount,
+      cycleCount: cycleCount,
+      activeAlgorithmCount: activeAlgorithmCount,
+    );
   }
   return null;
 }

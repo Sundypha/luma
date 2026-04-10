@@ -68,7 +68,8 @@ void main() {
       );
       expect(direct.result, isA<PredictionPointWithRange>());
       final p = direct.result as PredictionPointWithRange;
-      expect(p.pointStartUtc, DateTime.utc(2026, 3, 26));
+      // Anchor is last period start (Mar 26) + median 28 = Apr 23
+      expect(p.pointStartUtc, DateTime.utc(2026, 4, 23));
       expect(
         direct.explanationSteps.map((e) => e.kind),
         containsAll([
@@ -76,8 +77,7 @@ void main() {
           ExplanationFactKind.medianCycleLength,
         ]),
       );
-      expect(direct.explanationText.toLowerCase(), contains('estimate'));
-      expect(direct.explanationText, contains('2026-03-26'));
+      expect(direct.explanationText, isEmpty);
     });
 
     test('skips same-local-day consecutive starts; uses next later local start', () {
@@ -112,7 +112,8 @@ void main() {
       );
 
       expect(inputs, hasLength(1));
-      expect(inputs.single.periodStartUtc, DateTime.utc(2024, 6, 15, 8));
+      // periodStartUtc is now the period that *ends* the cycle (Jul 14)
+      expect(inputs.single.periodStartUtc, DateTime.utc(2024, 7, 14, 12));
       expect(inputs.single.lengthInDays, greaterThan(0));
 
       final coordinator = PredictionCoordinator();
@@ -120,6 +121,59 @@ void main() {
       // Only one usable cycle length after skipping the duplicate local-day start;
       // engine may still report insufficient history — must not throw.
       expect(out.result, isA<PredictionInsufficientHistory>());
+    });
+
+    test('predictionCycleInputsFromStored ignores stored list order (newest-first)',
+        () {
+      final oldestFirst = [
+        StoredPeriod(
+          id: 1,
+          span: PeriodSpan(
+            startUtc: DateTime.utc(2026, 2, 4),
+            endUtc: DateTime.utc(2026, 2, 9),
+          ),
+        ),
+        StoredPeriod(
+          id: 2,
+          span: PeriodSpan(
+            startUtc: DateTime.utc(2026, 3, 2),
+            endUtc: DateTime.utc(2026, 3, 8),
+          ),
+        ),
+        StoredPeriod(
+          id: 3,
+          span: PeriodSpan(
+            startUtc: DateTime.utc(2026, 4, 3),
+            endUtc: DateTime.utc(2026, 4, 7),
+          ),
+        ),
+      ];
+      final newestFirst = oldestFirst.reversed.toList();
+
+      final forward = predictionCycleInputsFromStored(
+        stored: oldestFirst,
+        calendar: utcCtx,
+      );
+      final reversedInputOrder = predictionCycleInputsFromStored(
+        stored: newestFirst,
+        calendar: utcCtx,
+      );
+
+      expect(forward, hasLength(2));
+      expect(reversedInputOrder.length, forward.length);
+      for (var i = 0; i < forward.length; i++) {
+        expect(reversedInputOrder[i].lengthInDays, forward[i].lengthInDays);
+        expect(
+          reversedInputOrder[i].periodStartUtc,
+          forward[i].periodStartUtc,
+        );
+      }
+
+      final coord = PredictionCoordinator();
+      final a = coord.predictNext(storedPeriods: oldestFirst, calendar: utcCtx);
+      final b = coord.predictNext(storedPeriods: newestFirst, calendar: utcCtx);
+      expect(b.result, a.result);
+      expect(b.result, isA<PredictionPointWithRange>());
     });
 
     test('open period at end excluded from cycle stats', () {

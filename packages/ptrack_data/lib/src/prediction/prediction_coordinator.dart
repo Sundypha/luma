@@ -15,13 +15,11 @@ class PredictionCoordinatorResult {
   final String explanationText;
 }
 
-/// Derives [PredictionCycleInput] rows from completed periods only (open spans skipped).
+/// Derives [PredictionCycleInput] rows from period spans that have both bounds.
 ///
-/// Periods are ordered by UTC start. Consecutive rows can still share the same
-/// **local** calendar start day (different UTC instants). Those pairs cannot be
-/// turned into a positive cycle length via [completedCycleBetweenStarts], so we
-/// link each period to the next completed period whose local start day is
-/// strictly later—skipping same-day duplicates without throwing.
+/// [stored] may arrive in any order; spans are sorted by [PeriodSpan.startUtc]
+/// ascending before linking. Same-local-day duplicates are skipped because they
+/// cannot produce a positive cycle length via [completedCycleBetweenStarts].
 List<PredictionCycleInput> predictionCycleInputsFromStored({
   required List<StoredPeriod> stored,
   required PeriodCalendarContext calendar,
@@ -33,6 +31,7 @@ List<PredictionCycleInput> predictionCycleInputsFromStored({
   if (completed.length < 2) {
     return const [];
   }
+  completed.sort((a, b) => a.startUtc.compareTo(b.startUtc));
   final out = <PredictionCycleInput>[];
   var i = 0;
   while (i < completed.length - 1) {
@@ -48,7 +47,7 @@ List<PredictionCycleInput> predictionCycleInputsFromStored({
         );
         out.add(
           PredictionCycleInput(
-            periodStartUtc: cycle.periodStartUtc,
+            periodStartUtc: cycle.nextPeriodStartUtc,
             lengthInDays: cycle.lengthInDays,
           ),
         );
@@ -72,7 +71,7 @@ class PredictionCoordinator {
 
   final PredictionEngine engine;
 
-  /// Uses repository rows (closed + open) with [calendar] for local-day cycle math.
+  /// Loads all repository rows, extracts cycle inputs, runs prediction engine.
   Future<PredictionCoordinatorResult> predictNextFromRepository({
     required PeriodRepository repository,
     required PeriodCalendarContext calendar,
@@ -91,14 +90,10 @@ class PredictionCoordinator {
       calendar: calendar,
     );
     final engineResult = engine.predict(inputs);
-    final text = formatPredictionExplanation(
-      result: engineResult.result,
-      steps: engineResult.explanation,
-    );
     return PredictionCoordinatorResult(
       result: engineResult.result,
       explanationSteps: engineResult.explanation,
-      explanationText: text,
+      explanationText: '',
     );
   }
 }

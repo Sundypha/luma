@@ -28,12 +28,14 @@ class BayesianAlgorithm implements PredictionAlgorithm {
   @override
   String get displayName => 'Pattern-learning';
 
+  /// One observed cycle is enough: the weak NIG prior (μ₀, κ₀, α₀, β₀) combines
+  /// with the single length to form a proper posterior mean for the next cycle.
   @override
-  int get minCycles => 2;
+  int get minCycles => 1;
 
   @override
   AlgorithmPrediction? predict(List<PredictionCycleInput> cycles) {
-    if (cycles.length < minCycles) return null;
+    if (cycles.isEmpty) return null;
 
     final lengths = cycles.map((c) => c.lengthInDays.toDouble()).toList();
     final n = lengths.length;

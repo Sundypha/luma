@@ -118,6 +118,56 @@ void main() {
       expect(out.consensusPrediction, isA<PredictionInsufficientHistory>());
     });
 
+    test(
+        '1 cycle (2 closed periods) → Bayesian only, map non-empty, '
+        'consensus still insufficient', () {
+      final coord = EnsembleCoordinator();
+      final twoPeriods = _threePeriods28DayCycles().sublist(0, 2);
+      final out = coord.predictNext(
+        storedPeriods: twoPeriods,
+        calendar: utcCtx,
+      );
+      expect(out.activeAlgorithmCount, 1);
+      expect(out.algorithmOutputs.single.algorithmId, AlgorithmId.bayesian);
+      expect(out.dayConfidenceMap, isNotEmpty);
+      expect(out.consensusPrediction, isA<PredictionInsufficientHistory>());
+    });
+
+    test('enabledAlgorithmIds limits which algorithms run', () {
+      final coord = EnsembleCoordinator();
+      final stored = _threePeriods28DayCycles();
+      final onlyBayesian = coord.predictNext(
+        storedPeriods: stored,
+        calendar: utcCtx,
+        enabledAlgorithmIds: {AlgorithmId.bayesian},
+      );
+      expect(onlyBayesian.algorithmOutputs, hasLength(1));
+      expect(
+        onlyBayesian.algorithmOutputs.single.algorithmId,
+        AlgorithmId.bayesian,
+      );
+      expect(onlyBayesian.totalAlgorithmCount, 1);
+    });
+
+    test('empty enabledAlgorithmIds yields no methods; copy is app-layer l10n',
+        () {
+      final coord = EnsembleCoordinator();
+      final out = coord.predictNext(
+        storedPeriods: _threePeriods28DayCycles(),
+        calendar: utcCtx,
+        enabledAlgorithmIds: {},
+      );
+      expect(out.activeAlgorithmCount, 0);
+      expect(out.totalAlgorithmCount, 0);
+      expect(out.explanationText, isEmpty);
+      expect(out.dayConfidenceMap, isEmpty);
+      final consensus = out.mergedExplanationSteps
+          .where((s) => s.kind == ExplanationFactKind.ensembleConsensus)
+          .single;
+      expect(consensus.payload['activeCount'], 0);
+      expect(consensus.payload['totalCount'], 0);
+    });
+
     test('2 cycle inputs → 3 core algorithms, linear null, map non-empty', () {
       final coord = EnsembleCoordinator();
       final stored = _threePeriods28DayCycles();
@@ -142,9 +192,10 @@ void main() {
         calendar: utcCtx,
       );
       expect(out.activeAlgorithmCount, 4);
-      final counts = out.dayConfidenceMap.values.toSet()..remove(0);
+      final counts = out.dayConfidenceMap.values.map((m) => m.agreement).toSet()
+        ..remove(0);
       expect(counts.isNotEmpty, isTrue);
-      expect(out.dayConfidenceMap.values.any((c) => c >= 1), isTrue);
+      expect(out.dayConfidenceMap.values.any((m) => m.agreement >= 1), isTrue);
     });
 
     test('milestone when crossing 1 → 2 active algorithms', () {
@@ -177,11 +228,12 @@ void main() {
         previousActiveCount: 1,
       );
       expect(twoCycleOut.activeAlgorithmCount, 2);
-      expect(twoCycleOut.milestoneMessage, isNotNull);
+      expect(twoCycleOut.milestone, isNotNull);
       expect(
-        twoCycleOut.milestoneMessage,
-        contains('2 methods for better accuracy'),
+        twoCycleOut.milestone!.kind,
+        EnsembleMilestoneKind.expandedMethodCount,
       );
+      expect(twoCycleOut.milestone!.activeAlgorithmCount, 2);
     });
 
     test('consensusPrediction matches PredictionCoordinator result', () {
@@ -241,15 +293,65 @@ void main() {
       }
     });
 
-    test('ensemble explanation omits forbidden phrases', () {
+    test('multi-cycle: horizonCycles=3 produces cycleIndex 0, 1, 2 entries', () {
+      final out = EnsembleCoordinator().predictNext(
+        storedPeriods: _threePeriods28DayCycles(),
+        calendar: utcCtx,
+        horizonCycles: 3,
+      );
+      final indices =
+          out.dayConfidenceMap.values.map((m) => m.cycleIndex).toSet();
+      expect(indices.contains(0), isTrue);
+      expect(indices.contains(1), isTrue);
+      expect(indices.contains(2), isTrue);
+    });
+
+    test('multi-cycle: horizonCycles=1 produces only cycleIndex 0 entries', () {
+      final out = EnsembleCoordinator().predictNext(
+        storedPeriods: _threePeriods28DayCycles(),
+        calendar: utcCtx,
+        horizonCycles: 1,
+      );
+      final indices =
+          out.dayConfidenceMap.values.map((m) => m.cycleIndex).toSet();
+      expect(indices, equals({0}));
+    });
+
+    test('multi-cycle: cycleSpreadDays is 0 for identical cycle lengths', () {
       final out = EnsembleCoordinator().predictNext(
         storedPeriods: _threePeriods28DayCycles(),
         calendar: utcCtx,
       );
-      final lower = out.explanationText.toLowerCase();
-      for (final phrase in predictionCopyForbiddenPhrasesLowercase) {
-        expect(lower, isNot(contains(phrase)));
+      expect(out.cycleSpreadDays, 0);
+    });
+
+    test('multi-cycle: cycleIndex 0 days come before cycleIndex 1 days', () {
+      final out = EnsembleCoordinator().predictNext(
+        storedPeriods: _threePeriods28DayCycles(),
+        calendar: utcCtx,
+        horizonCycles: 2,
+      );
+      final idx0Days = out.dayConfidenceMap.entries
+          .where((e) => e.value.cycleIndex == 0)
+          .map((e) => e.key)
+          .toList();
+      final idx1Days = out.dayConfidenceMap.entries
+          .where((e) => e.value.cycleIndex == 1)
+          .map((e) => e.key)
+          .toList();
+      if (idx0Days.isNotEmpty && idx1Days.isNotEmpty) {
+        final maxIdx0 = idx0Days.reduce((a, b) => a.isAfter(b) ? a : b);
+        final minIdx1 = idx1Days.reduce((a, b) => a.isBefore(b) ? a : b);
+        expect(maxIdx0.isBefore(minIdx1), isTrue);
       }
+    });
+
+    test('ensemble explanation text is deferred to app-layer localization', () {
+      final out = EnsembleCoordinator().predictNext(
+        storedPeriods: _threePeriods28DayCycles(),
+        calendar: utcCtx,
+      );
+      expect(out.explanationText, isEmpty);
     });
   });
 }

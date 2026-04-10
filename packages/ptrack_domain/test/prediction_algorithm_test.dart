@@ -124,8 +124,17 @@ void main() {
   group('BayesianAlgorithm', () {
     const algo = BayesianAlgorithm();
 
-    test('returns null with fewer than 2 cycles', () {
-      expect(algo.predict(cyclesFromLengths([28])), isNull);
+    test('returns null with no cycles', () {
+      expect(algo.predict([]), isNull);
+    });
+
+    test('single cycle blends data with prior (κ₀=1, μ₀=28)', () {
+      final cycles = cyclesFromLengths([32]);
+      final out = algo.predict(cycles)!;
+      final anchor = cycles.last.periodStartUtc;
+      // μₙ = (κ₀ μ₀ + n x̄) / (κ₀ + n) = (28 + 32) / 2 = 30
+      expect(out.predictedStartUtc, addUtcCalendarDays(anchor, 30));
+      expectUtcMidnight(out.predictedStartUtc);
     });
 
     test('with [28, 28, 28] predicts ~28', () {

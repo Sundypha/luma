@@ -34,6 +34,10 @@ class PredictionThresholds {
 }
 
 /// One completed cycle available for prediction (oldest-first list in [PredictionEngine.predict]).
+///
+/// [periodStartUtc] is the start of the period that **ends** this cycle — i.e.
+/// the most recent period in the pair. Algorithms use `cycles.last.periodStartUtc`
+/// as the anchor from which to project forward.
 @immutable
 class PredictionCycleInput {
   const PredictionCycleInput({
@@ -42,6 +46,9 @@ class PredictionCycleInput {
     this.bleedingDays,
   });
 
+  /// Start of the period that terminates this cycle (the "next" period in the
+  /// pair). For the last cycle entry this equals the most recent period start —
+  /// the anchor from which algorithms project the next predicted start.
   final DateTime periodStartUtc;
   final int lengthInDays;
 
