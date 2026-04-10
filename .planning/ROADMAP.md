@@ -94,7 +94,7 @@ Plans:
 | 13 — PDF export | 2/3 | In progress — `13-03` Tasks 1–2 done; Task 3 human-verify pending (2026-04-08) |
 | 15 — Code review remediation | 3/3 | Complete — `15-01`–`15-03` (`15-01-SUMMARY.md` … `15-03-SUMMARY.md`); optional `15-01` Task 3 import smoke UAT |
 | 16 — Security audit remediation | 1/8 | In progress — `16-01` complete (Android release signing) |
-| 17 — release management (GitHub + Firebase) | 1/2 | In progress — `17-01` complete (2026-04-10) |
+| 17 — release management (GitHub + Firebase) | 1/2 | In progress — `17-01` complete; `17-02` Tasks 1–2 done — Task 3 human-verify pending |
 
 ### Phase 13: PDF export of period statistics and details (user selectable if all or none). Goal is to have a PDF ready for a physician or gynecologist.
 
@@ -160,11 +160,11 @@ Plans:
 **Goal:** Automated release pipeline where a version tag on main triggers signed APK build, draft GitHub Release with CHANGELOG notes, and Firebase App Distribution upload to Beta group — with Environment gate, workflow_dispatch fallback, and all-or-nothing failure semantics.
 **Depends on:** Phase 16
 **Requirements:** REL-01, REL-02, REL-03, REL-04
-**Plans:** 1/2 plans executed
+**Plans:** 1/2 plans executed (second plan implemented; verification pending)
 
 Plans:
 - [x] `17-01-PLAN.md` — Version management tooling: CHANGELOG.md + cross-platform bump script (REL-01) — see `17-01-SUMMARY.md`
-- [ ] `17-02-PLAN.md` — Unified release workflow: build → GitHub Release + Firebase App Distribution (REL-02, REL-03, REL-04)
+- [ ] `17-02-PLAN.md` — Unified release workflow: build → GitHub Release + Firebase App Distribution (REL-02, REL-03, REL-04) — **Tasks 1–2 committed** (`release.yml`, FAD cross-ref); **Task 3 human-verify** pending — see `17-02-SUMMARY.md`
 
 ---
-*Roadmap updated: 2026-04-10 — Phase **17-01** complete: CHANGELOG + `tool/bump_version.dart` (REL-01). Phase **16-01** (Android release signing) also noted above. **`13-03`** export UI still awaiting Task 3 human verification.*  
+*Roadmap updated: 2026-04-10 — Phase **17-02** automation complete; Task 3 human verification outstanding before closing REL-02–REL-04. Phase **16-01** (Android release signing) noted above. **`13-03`** export UI still awaiting Task 3 human verification.*  

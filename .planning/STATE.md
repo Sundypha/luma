@@ -6,7 +6,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** **Milestone v2.0** — Phase **17** release management (executing plan 02 next).
+**Current focus:** **Milestone v2.0** — Phase **17** release management (`17-02` Tasks 1–2 done; Task 3 human-verify pending).
 
 ## Current Position
 
@@ -14,11 +14,11 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Phase:** **17** — Release management (GitHub Release + Firebase App Distribution).
 
-**Plan:** 01 complete — root CHANGELOG + `tool/bump_version.dart`. Next: `17-02-PLAN.md`.
+**Plan:** `17-02` — unified release workflow **implemented** (Tasks 1–2); **Task 3** (`checkpoint:human-verify` per `17-02-PLAN.md`) **pending** before marking REL-02–REL-04 and finalizing `17-02-SUMMARY.md`.
 
-**Status:** Phase **17** in progress — plan 01 complete (version management foundation, REL-01).
+**Status:** Phase **17** in progress — plan 01 complete (REL-01); plan 02 awaiting end-to-end release verification on GitHub.
 
-Last activity: 2026-04-10 — Phase **17-01** execution: `CHANGELOG.md` (Keep a Changelog + v1.0.0 retrospective), cross-platform `tool/bump_version.dart` (`3c36bd3`, `980eb23`).
+Last activity: 2026-04-10 — **17-02** Tasks 1–2: `release.yml` (`9ef364b`), FAD header cross-reference (`22ae7ca`); checkpoint at Task 3.
 
 **Progress (v2.0):** Phase 17 **in progress** (1/2 plans). See `ROADMAP.md`.
 
@@ -60,6 +60,7 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 ### Pending Todos
 
+- **Phase 17** — Complete **17-02** Task 3: human verification of unified Release workflow (see `17-02-PLAN.md`); then finalize `17-02-SUMMARY.md` and mark REL-02–REL-04 if checks pass.
 - **Optional:** `15-01` Task 3 — manual export/re-import smoke (skip/replace) on device.
 - **Phase 13** — Complete **13-03** Task 3: human verification of PDF export flow (see `13-03-PLAN.md`). Then finalize `13-03-SUMMARY.md` and ROADMAP if not already done.
 - **Phase 14** — **14-01** Task 4 `human-verify` per `14-01-PLAN.md` if still open.
@@ -80,10 +81,10 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-10T18:08:13.120Z
+**Last session:** 2026-04-10 (17-02 executor checkpoint)
 
-**Stopped at:** Completed 17-01-PLAN.md
+**Stopped at:** `17-02-PLAN.md` **Task 3** — human verification of Release workflow (draft GitHub Release + FAD + Environment gate); resume signal: `approved` or issues per plan.
 
 **Resume file:** .planning/phases/17-release-management-with-release-bumps-release-apks-iin-github-release-and-ran-apk-push-to-firebase-app-distribution/17-02-PLAN.md
 
-**Next:** Execute **17-02** (unified release workflow), or continue Phase **16** plans (e.g. **16-02** PIN lockout) as prioritized.
+**Next:** Complete **17-02 Task 3** verification on GitHub; then finalize requirements (REL-02–REL-04), `17-02-SUMMARY.md`, and STATE/ROADMAP. Alternatively continue Phase **16** plans (e.g. **16-02** PIN lockout) as prioritized.
