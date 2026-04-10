@@ -24,7 +24,9 @@ export 'src/export/import_service.dart'
         ImportService,
         LumaDecryptionException,
         LumaImportException,
+        LumaImportValidationException,
         LumaInvalidFileException,
+        LumaInvalidPeriodRefException,
         LumaVersionException;
 export 'src/export/luma_crypto.dart' show LumaCrypto;
 export 'src/db/ptrack_database.dart'

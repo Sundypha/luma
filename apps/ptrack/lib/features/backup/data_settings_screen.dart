@@ -64,7 +64,11 @@ class DataSettingsScreen extends StatelessWidget {
               Navigator.of(context).push<void>(
                 MaterialPageRoute<void>(
                   builder: (_) => ImportScreen(
-                    importService: ImportService(db, backupService: backup),
+                    importService: ImportService(
+                      db,
+                      calendar: calendar,
+                      backupService: backup,
+                    ),
                     db: db,
                   ),
                 ),
