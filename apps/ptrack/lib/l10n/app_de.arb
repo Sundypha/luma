@@ -1,0 +1,607 @@
+{
+  "@@locale": "de",
+  "appTitle": "Luma",
+  "@appTitle": {
+    "description": "Application title; brand name stays Luma in all locales for Phase 10."
+  },
+  "predictionDisclaimer": "Dies ist nur eine kalenderbasierte Einschätzung für deine persönliche Planung und ersetzt keine medizinische Beratung.",
+  "predictionNoMethodsEnabled": "Es sind keine Vorhersagemethoden aktiviert. Wähle mindestens eine unter Einstellungen → Vorhersage.",
+  "predictionNOfMTotalMethods": "{n, plural, one{1 Vorhersagemethode} other{{n} Vorhersagemethoden}} von {total} ist in diese Schätzung eingeflossen.",
+  "@predictionNOfMTotalMethods": {
+    "placeholders": {
+      "n": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "predictionAlgoExpectsLine": "{name}: geht von der nächsten Periode ungefähr am {date} aus.",
+  "@predictionAlgoExpectsLine": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  },
+  "predictionAgreementClosing": "An Tagen, an denen mehrere Methoden übereinstimmen, ist die Vorhersage konsistenter. Betrachte alle Termine als unsichere Schätzungen nur für die persönliche Planung.",
+  "predictionClosingInsufficientHistory": "Wenn du im Laufe der Zeit mehr abgeschlossene Zyklen einträgst, wird die Schätzung klarer. Die Angaben hier sind kein Ersatz für die Betreuung durch eine qualifizierte Ärztin oder einen qualifizierten Arzt.",
+  "predictionClosingRangeOnly": "Für die Planung reicht ein grobes Fenster von etwa {start} bis {end}. Betrachte diese Termine als unsicher.",
+  "@predictionClosingRangeOnly": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "predictionClosingPointWithRange": "Eine grobe Schätzung für den Beginn deiner nächsten Periode ist {point}. Basierend auf ähnlichen Abständen in der Vergangenheit könnte ein weiteres Planungsfenster etwa von {bandStart} bis {bandEnd} liegen.",
+  "@predictionClosingPointWithRange": {
+    "placeholders": {
+      "point": {"type": "String"},
+      "bandStart": {"type": "String"},
+      "bandEnd": {"type": "String"}
+    }
+  },
+  "predStepCyclesConsidered": "Basierend auf {count} kürzlichen Zykluslängen aus deiner Historie ({lengths} Tage).",
+  "@predStepCyclesConsidered": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "lengths": {"type": "String"}
+    }
+  },
+  "predStepCycleExcluded": "Ein eingetragener Zyklus fließt in den Durchschnitt für diese Schätzung nicht ein (Grund: {reason}).",
+  "@predStepCycleExcluded": {
+    "placeholders": {
+      "reason": {"type": "String"}
+    }
+  },
+  "predStepMedianCycleLength": "Über die berücksichtigten Zyklen ist ein typischer Abstand etwa {median} Tage (Streuung etwa {spread} Tage).",
+  "@predStepMedianCycleLength": {
+    "placeholders": {
+      "median": {"type": "int"},
+      "spread": {"type": "int"}
+    }
+  },
+  "predStepInsufficientHistory": "{avail, plural, one{Noch reichen die abgeschlossenen Zyklen nicht aus, um den nächsten Beginn abzuschätzen. Nach Filterung steht 1 Zyklus zur Verfügung; normalerweise werden mindestens {need} benötigt.} other{Noch reichen die abgeschlossenen Zyklen nicht aus, um den nächsten Beginn abzuschätzen. Nach Filterung stehen {avail} Zyklen zur Verfügung; normalerweise werden mindestens {need} benötigt.}}",
+  "@predStepInsufficientHistory": {
+    "placeholders": {
+      "avail": {"type": "int"},
+      "need": {"type": "int"}
+    }
+  },
+  "predStepHighVariability": "Weil die Schwankungen groß sind, wird ein Bereich statt eines einzelnen Tages angezeigt: ungefähr {start} bis {end}.",
+  "@predStepHighVariability": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "predStepEwma": "Jüngeren Zyklen höheres Gewicht (EWMA, α={alpha}) spricht für etwa {days} Tage.",
+  "@predStepEwma": {
+    "placeholders": {
+      "alpha": {"type": "String"},
+      "days": {"type": "int"}
+    }
+  },
+  "predStepBayesian": "Die Schätzung durch Mustererkennung (Posterior-Mittelwert) liegt bei etwa {mean} Tagen aus {n} Zykluslängen.",
+  "@predStepBayesian": {
+    "placeholders": {
+      "mean": {"type": "String"},
+      "n": {"type": "int"}
+    }
+  },
+  "predStepLinearTrend": "Trendlinie (R²={r2}, Steigung={slope} Tage pro Zyklus) legt für den nächsten Abstand etwa {proj} Tage nahe.",
+  "@predStepLinearTrend": {
+    "placeholders": {
+      "r2": {"type": "String"},
+      "slope": {"type": "String"},
+      "proj": {"type": "int"}
+    }
+  },
+  "predStepAlgoContrib": "{name} liefert eine Schätzung ungefähr am {date}.",
+  "@predStepAlgoContrib": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  },
+  "algoNameMedian": "Durchschnitts-Abstand",
+  "algoNameEwma": "Gewichtung nach Aktualität",
+  "algoNameBayesian": "Mustererkennung",
+  "algoNameLinearTrend": "Trend",
+  "predictionDayAgreement": "{agreement} von {active} Methoden stimmen an diesem Tag überein.",
+  "@predictionDayAgreement": {
+    "placeholders": {
+      "agreement": {"type": "int"},
+      "active": {"type": "int"}
+    }
+  },
+  "ensembleMilestoneTrend": "Mit genug eingetragenen Zyklen ist die Trenderkennung jetzt aktiv.",
+  "ensembleMilestoneAllCore": "Drei Zyklen eingetragen — alle Kernmethoden sind jetzt aktiv.",
+  "ensembleMilestoneExpanded": "Mit {cycles} eingetragenen Zyklen nutzt deine Vorhersage jetzt {methods, plural, one{1 Methode} other{{methods} Methoden}} für mehr Genauigkeit.",
+  "@ensembleMilestoneExpanded": {
+    "placeholders": {
+      "cycles": {"type": "int"},
+      "methods": {"type": "int"}
+    }
+  },
+  "homePeriodDay": "Periodentag {n}",
+  "@homePeriodDay": {
+    "placeholders": {
+      "n": {"type": "int"}
+    }
+  },
+  "homeCycleDay": "Zyklustag {n}",
+  "@homeCycleDay": {
+    "placeholders": {
+      "n": {"type": "int"}
+    }
+  },
+  "homeNextPeriodExpected": "Nächste Periode erwartet {range}",
+  "@homeNextPeriodExpected": {
+    "placeholders": {
+      "range": {"type": "String"}
+    }
+  },
+  "homeLogMorePeriods": "Trag noch ein paar Perioden ein, um Zyklus-Einblicke zu sehen",
+  "homeHowCalculatedLink": "Wie wird das berechnet?",
+  "homePredictionSheetTitle": "So funktioniert deine Vorhersage",
+  "homePredictionMethodsLine": "{n, plural, one{Aktuell wird 1 Vorhersagemethode genutzt.} other{Aktuell werden {n} Vorhersagemethoden genutzt.}}",
+  "@homePredictionMethodsLine": {
+    "placeholders": {
+      "n": {"type": "int"}
+    }
+  },
+  "homeDone": "Fertig",
+  "homeCouldNotLoadPeriods": "Perioden konnten nicht geladen werden: {error}",
+  "@homeCouldNotLoadPeriods": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "homeCouldNotSaveToday": "Heute konnte nicht gespeichert werden. Bitte versuch es noch einmal.",
+  "homeCouldNotOpenSymptomForm": "Symptom-Formular konnte nicht geöffnet werden.",
+  "tooltipDismiss": "Schließen",
+  "dayDetailBasedOnRecentCycles": "Basierend auf deinen letzten Zyklen.",
+  "dayDetailProjectedHop": "Projiziert durch Wiederholen der vorhergesagten Zykluslänge.",
+  "dayDetailPeriodExpectedTitle": "Periode in etwa an diesem Tag erwartet",
+  "dayDetailForecastMonthsTitle": "{months, plural, one{Vorschau etwa 1 Monat voraus} other{Vorschau etwa {months} Monate voraus}}",
+  "@dayDetailForecastMonthsTitle": {
+    "placeholders": {
+      "months": {"type": "int"}
+    }
+  },
+  "dayDetailDisclaimerHop1": "Grobe Schätzung, etwa 2 Monate voraus — weniger zuverlässig als die nächste Periode.",
+  "dayDetailDisclaimerHop1HighSpread": "Grobe Schätzung, etwa 2 Monate voraus — weniger zuverlässig als die nächste Periode. Deine Zykluslänge schwankt ziemlich stark, dieser Termin kann sich deutlich verschieben.",
+  "dayDetailDisclaimerHopN": "{months, plural, one{Sehr grobe Schätzung, etwa 1 Monat voraus — nur zur allgemeinen Planung.} other{Sehr grobe Schätzung, etwa {months} Monate voraus — nur zur allgemeinen Planung.}}",
+  "@dayDetailDisclaimerHopN": {
+    "placeholders": {
+      "months": {"type": "int"}
+    }
+  },
+  "dayDetailDisclaimerHopNSpread": "{months, plural, one{Sehr grobe Schätzung, etwa 1 Monat voraus — nur zur allgemeinen Planung. Deine Zykluslänge schwankt ziemlich stark, dieser Termin kann sich deutlich verschieben.} other{Sehr grobe Schätzung, etwa {months} Monate voraus — nur zur allgemeinen Planung. Deine Zykluslänge schwankt ziemlich stark, dieser Termin kann sich deutlich verschieben.}}",
+  "@dayDetailDisclaimerHopNSpread": {
+    "placeholders": {
+      "months": {"type": "int"}
+    }
+  },
+  "dayDetailHideDetails": "Details ausblenden",
+  "dayDetailSeeDetails": "Details anzeigen",
+  "dayDetailEstimatesOnly": "Nur Schätzungen — keine medizinische Beratung.",
+  "dayDetailAlgoExpectsAround": "{name}: erwartet ungefähr {date}",
+  "@dayDetailAlgoExpectsAround": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  },
+  "settingsAppLanguageSectionTitle": "App-Sprache",
+  "appLanguageFollowDevice": "Systemstandard (wie Gerät)",
+  "appLanguageEnglish": "Englisch",
+  "appLanguageGerman": "Deutsch",
+  "appLanguageRestartMessage": "Starte die App neu, damit die Änderung wirkt.",
+  "settingsMenuLanguageTitle": "Sprache",
+  "settingsMenuLanguageSubtitle": "Systemstandard, Englisch oder Deutsch",
+  "settingsMenuPeriodPredictionTitle": "Periodenvorhersage",
+  "settingsMenuFertilityTitle": "Fruchtbarkeitsvorhersage",
+  "settingsMenuPrivacySubtitle": "App-Sperre, Backup und Export",
+  "settingsMenuDataBackupSubtitle": "Export, Import und automatische lokale Backups",
+  "calendarInsufficientPredictionHint": "Noch keine Vorhersage — markier mindestens zwei getrennte Perioden, damit Luma den Abstand dazwischen messen kann.",
+  "calendarLegendHatching": "Hellere Schraffur = weiter weg, unsicherer",
+  "calendarToday": "Heute",
+  "settingsTitle": "Einstellungen",
+  "navHome": "Start",
+  "navCalendar": "Kalender",
+  "drawerSettingsLabel": "Einstellungen",
+  "drawerDataLabel": "Daten",
+  "drawerAboutLabel": "Über die App",
+  "todaySectionTitle": "Heute",
+  "todayUnmarkedBody": "Du hast heute noch keinen Periodentag markiert.",
+  "todayMarkPeriodCta": "Ich hatte heute meine Periode",
+  "todayAddSymptomsCta": "Symptome für heute eintragen",
+  "todayLogTitle": "Heutiger Eintrag",
+  "todayFlowLine": "Fluss: {label}",
+  "@todayFlowLine": {
+    "placeholders": {"label": {"type": "String"}}
+  },
+  "todayPainLine": "Schmerzen: {label}",
+  "@todayPainLine": {
+    "placeholders": {"label": {"type": "String"}}
+  },
+  "todayMoodLine": "Stimmung: {emoji} {label}",
+  "@todayMoodLine": {
+    "placeholders": {
+      "emoji": {"type": "String"},
+      "label": {"type": "String"}
+    }
+  },
+  "todayEditLogCta": "Heutigen Eintrag bearbeiten",
+  "lockUseBiometrics": "Biometrie nutzen",
+  "lockForgotPin": "PIN vergessen?",
+  "lockIncorrectPin": "Falsche PIN",
+  "lockBiometricUnlockReason": "Entsperren, um Luma zu öffnen",
+  "lockBiometricSettingsReason": "Entsperren, um die Sperre zu ändern",
+  "lockSettingsAppBar": "App-Sperre",
+  "lockSettingsSwitchTitle": "App-Sperre",
+  "lockSettingsSwitchSubtitle": "Sperre mit PIN oder Biometrie, wenn du zur App zurückkehrst.",
+  "lockSettingsChangePin": "PIN ändern",
+  "lockSettingsUseBiometrics": "Biometrie nutzen",
+  "lockSettingsLockNow": "Jetzt sperren",
+  "lockSettingsLockNowTooltip": "Jetzt sperren",
+  "lockPrivacySecurityTile": "Datenschutz & Sicherheit",
+  "lockPrivacySecurityOnSubtitle": "App-Sperre ist aktiv",
+  "lockPrivacySecurityOffSubtitle": "Sperre mit PIN oder Biometrie, wenn du zur App zurückkehrst",
+  "lockReauthTitle": "Bestätige, dass du es bist",
+  "lockReauthBody": "Gib deine PIN ein, um fortzufahren.",
+  "forgotPinTitle": "PIN vergessen?",
+  "forgotPinBody": "Eine vergessene PIN kannst du nicht wiederherstellen, ohne deine Daten zu löschen.\n\nBevor du zurücksetzt, exportier deine Daten unter Daten, damit du sie danach wieder einspielen kannst.\n\nZurücksetzen löscht alle Perioden- und Symptomdaten auf diesem Gerät.",
+  "forgotPinEraseCta": "Alle Daten löschen und zurücksetzen",
+  "pinSetupTitle": "App-Sperre einrichten",
+  "pinSetupAckBody": "Die App-Sperre schützt den Zugang mit einer PIN. Wenn du die PIN vergisst, bleibt nur ein Daten-Reset — deine Periodendaten gehen dabei verloren. Exportier deine Daten regelmäßig, um nichts zu verlieren.",
+  "pinSetupAckContinue": "Verstanden, weiter",
+  "pinSetupCreateTitle": "PIN festlegen",
+  "pinSetupCreateHint": "Wähle eine PIN mit mindestens 6 Ziffern. Tippe auf ✓, wenn du fertig bist.",
+  "pinSetupConfirmTitle": "PIN bestätigen",
+  "pinSetupMismatch": "PINs stimmen nicht überein",
+  "pinSetupBioTitle": "Biometrie für schnelleres Entsperren aktivieren?",
+  "pinSetupEnableBio": "Biometrie aktivieren",
+  "pinSetupSkip": "Überspringen",
+  "onbPrivacyTitle": "Deine Daten bleiben hier",
+  "onbPrivacyBody": "Alles, was du einträgst, bleibt auf diesem Gerät. Es gibt kein Konto, keinen Cloud-Sync und keine Anmeldung — nur dein Handy und deine Einträge.",
+  "onbEstimatesTitle": "Schätzungen, keine medizinische Beratung",
+  "onbEstimatesBody": "Vorhersagen basieren auf deiner Geschichte hier. Sie sind persönliche Schätzungen, um Muster zu erkennen — keine Diagnose, keine Behandlung und kein Ersatz für die Betreuung durch Fachpersonen.",
+  "onbReadyTitle": "Bereit zum Start",
+  "onbReadyBody": "Trag ein, wann deine Periode beginnt, um loszulegen. Je mehr du über die Zeit einträgst, desto hilfreicher können die Schätzungen werden — und du kannst auch vorerst überspringen.",
+  "onbContinue": "Weiter",
+  "onbGetStarted": "Los geht's",
+  "onbSkip": "Überspringen",
+  "onbStepSemantics": "Schritt {current} von {total}",
+  "@onbStepSemantics": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "aboutAppBarTitle": "Über Luma",
+  "aboutSectionHeading": "Dein Datenschutz & wie Schätzungen funktionieren",
+  "dataSettingsTitle": "Daten",
+  "dataExportTitle": "Backup exportieren",
+  "dataExportSubtitle": "Daten als .luma-Datei speichern",
+  "dataImportTitle": "Backup importieren",
+  "dataImportSubtitle": "Daten aus einer .luma-Datei wiederherstellen",
+  "dataAutoBackupsTitle": "Auto-Backups",
+  "dataAutoBackupsSubtitle": "Schnappschüsse vor jedem Import",
+  "exportLeaveTitle": "Export verlassen?",
+  "exportLeaveBody": "Dein aktueller Fortschritt in diesem Assistenten geht verloren.",
+  "exportStay": "Bleiben",
+  "exportLeave": "Verlassen",
+  "exportPasswordsMismatch": "Passwörter stimmen nicht überein",
+  "exportAppBar": "Backup exportieren",
+  "exportBackTooltip": "Zurück",
+  "exportWhatToInclude": "Was einbeziehen",
+  "exportChipEverything": "Alles",
+  "exportChipPeriodsOnly": "Nur Perioden",
+  "exportTogglePeriods": "Perioden",
+  "exportToggleSymptoms": "Symptome & Fluss",
+  "exportToggleSymptomsSubtitle": "Fluss, Schmerz, Stimmung",
+  "exportToggleNotes": "Notizen",
+  "exportNext": "Weiter",
+  "exportPasswordIntro": "Optional: Dieses Backup mit einem Passwort schützen.",
+  "exportPasswordLabel": "Passwort",
+  "exportConfirmPasswordLabel": "Passwort bestätigen",
+  "exportClearPasswordTooltip": "Passwort löschen",
+  "exportSkip": "Überspringen",
+  "exportCreating": "Backup wird erstellt …",
+  "exportReadyTitle": "Export fertig",
+  "exportMetaExported": "Exportiert",
+  "exportMetaContent": "Inhalt",
+  "exportMetaEncrypted": "Verschlüsselt",
+  "exportShare": "Teilen",
+  "exportDone": "Fertig",
+  "exportFailedTitle": "Export fehlgeschlagen",
+  "exportFailedBody": "Export konnte nicht abgeschlossen werden. Bitte versuch es noch einmal.",
+  "exportUnknownError": "Unbekannter Fehler",
+  "exportTryAgain": "Erneut versuchen",
+  "exportClose": "Schließen",
+  "commonYes": "Ja",
+  "commonNo": "Nein",
+  "commonNotAvailable": "—",
+  "importInProgressSnack": "Import läuft. Bitte warten.",
+  "importAppBar": "Backup importieren",
+  "importSelectingFile": "Datei wird ausgewählt …",
+  "importPasswordProtectedTitle": "Dieses Backup ist passwortgeschützt",
+  "importExportedLine": "Exportiert: {when}",
+  "@importExportedLine": {
+    "placeholders": {"when": {"type": "String"}}
+  },
+  "importIncludesLine": "Enthält: {types}",
+  "@importIncludesLine": {
+    "placeholders": {"types": {"type": "String"}}
+  },
+  "importDecrypt": "Entschlüsseln",
+  "importCancel": "Abbrechen",
+  "importBackupSummary": "Backup-Übersicht",
+  "importPreviewCounts": "{periods} Periode(n) und {entries} Tageseinträge gefunden.",
+  "@importPreviewCounts": {
+    "placeholders": {
+      "periods": {"type": "int"},
+      "entries": {"type": "int"}
+    }
+  },
+  "importDupWarning": "{count} Einträge treffen auf Tage, die du auf diesem Gerät schon geloggt hast.",
+  "@importDupWarning": {
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "importNoDupMessage": "Keine Duplikate — alle Einträge sind für deine bestehenden Tage neu.",
+  "importStrategyTitle": "Wie sollen Duplikate behandelt werden?",
+  "importStrategyExplainer": "Duplikat heißt: derselbe Kalendertag hat schon einen Eintrag auf diesem Gerät. {count} Einträge sind betroffen.",
+  "@importStrategyExplainer": {
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "importSegmentKeep": "Bestehende behalten",
+  "importSegmentUseImported": "Import nutzen",
+  "importTooltipKeep": "Einträge auf deinem Gerät bleiben. Nur neue Tage werden importiert.",
+  "importTooltipReplace": "Einträge aus dem Backup ersetzen deine aktuellen Daten für passende Tage.",
+  "importStrategyHintKeep": "Einträge auf deinem Gerät bleiben. Nur neue Tage werden importiert.",
+  "importStrategyHintReplace": "Einträge aus dem Backup ersetzen deine aktuellen Daten für passende Tage.",
+  "importImportCta": "Importieren",
+  "importCreatingSafetyBackup": "Sicherheits-Backup wird erstellt …",
+  "importImportingEntries": "Einträge werden importiert …",
+  "importResultSummary": "{periods} Periode(n) importiert, {entries} neue Einträge, {skipped} übersprungen, {replaced} ersetzt.",
+  "@importResultSummary": {
+    "placeholders": {
+      "periods": {"type": "int"},
+      "entries": {"type": "int"},
+      "skipped": {"type": "int"},
+      "replaced": {"type": "int"}
+    }
+  },
+  "importErrorGeneric": "Etwas ist schiefgelaufen.",
+  "importErrorReadSelected": "Die ausgewählte Datei konnte nicht gelesen werden.",
+  "importErrorWrongExtension": "Bitte wähle eine .luma-Backup-Datei",
+  "importErrorReadBackup": "Diese Backup-Datei konnte nicht gelesen werden.",
+  "importErrorWrongPassword": "Falsches Passwort. Bitte versuch es noch einmal.",
+  "importErrorDecrypt": "Backup konnte nicht entschlüsselt werden.",
+  "importErrorApply": "Backup konnte nicht importiert werden. Bitte versuch es noch einmal.",
+  "importErrorParser": "{message}",
+  "@importErrorParser": {
+    "placeholders": {"message": {"type": "String"}}
+  },
+  "importTryAgain": "Erneut versuchen",
+  "importClose": "Schließen",
+  "commonBackspace": "Rücktaste",
+  "commonSubmit": "Senden",
+  "dataContentTypesFallback": "Perioden und Einträge",
+  "commonSave": "Speichern",
+  "commonCancel": "Abbrechen",
+  "commonDelete": "Löschen",
+  "commonRemove": "Entfernen",
+  "symptomFormTitleAdd": "Symptome hinzufügen",
+  "symptomFormTitleEdit": "Symptome bearbeiten",
+  "symptomSectionFlow": "Fluss",
+  "symptomSectionPain": "Schmerz",
+  "symptomSectionMood": "Stimmung",
+  "symptomNotesLabel": "Notizen",
+  "symptomNotSet": "Nicht gesetzt",
+  "symptomClearSymptoms": "Symptome löschen",
+  "dayDetailMarkFailed": "Dieser Tag konnte nicht markiert werden. Bitte versuch es noch einmal.",
+  "dayDetailDeletePeriodTitle": "Ganze Periode löschen?",
+  "dayDetailDeletePeriodOngoingBody": "Die laufende Periode ab {start} und alle zugehörigen Tageseinträge entfernen.",
+  "@dayDetailDeletePeriodOngoingBody": {
+    "placeholders": {"start": {"type": "String"}}
+  },
+  "dayDetailDeletePeriodClosedBody": "Die Periode {start}–{end} und alle zugehörigen Tageseinträge entfernen. Das kann nicht rückgängig gemacht werden.",
+  "@dayDetailDeletePeriodClosedBody": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "dayDetailPeriodOngoing": "läuft noch",
+  "dayDetailDeletePeriodFailed": "Periode konnte nicht gelöscht werden.",
+  "dayDetailRemoveDayTitle": "Diesen Tag entfernen?",
+  "dayDetailRemoveDayBody": "{date} als Periodentag abwählen. Getragene Symptome für diesen Tag werden gelöscht.",
+  "@dayDetailRemoveDayBody": {
+    "placeholders": {"date": {"type": "String"}}
+  },
+  "dayDetailRemoveDayFailed": "Dieser Tag konnte nicht entfernt werden. Bitte versuch es noch einmal.",
+  "dayDetailClearSymptomsFailed": "Symptome konnten nicht gelöscht werden.",
+  "dayDetailLogWhenArrives": "Du kannst eintragen, sobald der Tag da ist.",
+  "dayDetailHadPeriod": "Ich hatte meine Periode",
+  "dayDetailFuturePlaceholder": "Zukünftige Tage — schau wieder vorbei, wenn der Tag da ist.",
+  "dayDetailNoSymptoms": "Für diesen Tag sind keine Symptome oder Notizen eingetragen.",
+  "dayDetailAddSymptoms": "Symptome hinzufügen",
+  "dayDetailRemoveThisDay": "Diesen Tag entfernen",
+  "dayDetailDeleteEntirePeriod": "Ganze Periode löschen",
+  "dayDetailEdit": "Bearbeiten",
+  "dayDetailClearSymptoms": "Symptome löschen",
+  "firstLogAppBarTitle": "Erste Periode eintragen",
+  "firstLogStartQuestion": "Wann hat deine aktuelle oder letzte Periode begonnen?",
+  "firstLogChangeDate": "Datum ändern",
+  "firstLogPeriodEndedTitle": "Diese Periode ist schon zu Ende",
+  "firstLogPeriodEndedSubtitle": "Optional — setz den letzten Periodentag, wenn sie nicht mehr läuft.",
+  "firstLogChangeEndDate": "Enddatum ändern",
+  "firstLogSaveContinue": "Speichern & weiter",
+  "firstLogSaveFailed": "Periode konnte nicht gespeichert werden. Bitte versuch es noch einmal.",
+  "firstLogSuccessSnack": "Periode gespeichert — du bist startklar!",
+  "predSettingsTileTitle": "Vorhersagen",
+  "predSettingsTileSubtitle": "Anzeige, Zeithorizont und Methoden",
+  "predSettingsAppBarTitle": "Vorhersagen",
+  "predSettingsSectionHowManyDays": "Wie viele Tage anzeigen",
+  "predSettingsModeConsensusTitle": "Nur übereinstimmende Vorhersagen",
+  "predSettingsModeConsensusSubtitle": "Tage, an denen mehrere Methoden übereinstimmen",
+  "predSettingsModeAllTitle": "Alle Vorhersagen",
+  "predSettingsModeAllSubtitle": "Jeden vorhergesagten Tag, auch weniger sichere",
+  "predSettingsModeAllNotesTitle": "Alle Vorhersagen + Hinweise",
+  "predSettingsModeAllNotesSubtitle": "Wie oben, mit Hinweis an unsicheren Tagen",
+  "predSettingsSectionHorizon": "Wie weit voraus planen",
+  "predSettingsHorizonCaption": "Weiter entfernte Vorhersagen sind weniger zuverlässig, besonders bei unregelmäßigen Zyklen. Die Schraffurdichte zeigt, wie stark die Vorhersagemethoden übereinstimmen.",
+  "predSettingsHorizonNextOnly": "Nur nächste Periode",
+  "predSettingsHorizon3Title": "3 Monate voraus",
+  "predSettingsHorizon3Subtitle": "Gut für Reiseplanung",
+  "predSettingsHorizon6Title": "6 Monate voraus",
+  "predSettingsHorizon6Subtitle": "Nur grobe Planung — Unsicherheit steigt deutlich",
+  "predSettingsSectionMethods": "Vorhersagemethoden",
+  "predSettingsMethodsCaption": "Mehr Methoden = stärkere Vorhersagen, wenn sie übereinstimmen. Schalt aus, was du nicht willst.",
+  "predSettingsLinearTrendTitle": "Trendererkennung",
+  "predSettingsHintMedian": "Nutzt den Mittelwert deiner letzten Zyklen",
+  "predSettingsHintEwma": "Gewichtet neuere Zyklen stärker",
+  "predSettingsHintBayesian": "Erlernt dein Muster über Zeit, ab 1 Zyklus",
+  "predSettingsHintLinearTrend": "Erkennt, ob Zyklen länger oder kürzer werden (5+ Zyklen)",
+  "fertilitySettingsTitle": "Fruchtbarkeitsfenster (Schätzung)",
+  "fertilitySettingsSubtitle": "Geschätzte fruchtbare Tage im Kalender und auf der Startseite anzeigen",
+  "fertilityDisclaimerTitle": "Bevor du startest",
+  "fertilityDisclaimerBody": "Diese Funktion zeigt ein geschätztes Fruchtbarkeitsfenster anhand deiner Zyklushistorie. Sie ist nur eine Bildungshilfe — keine medizinische oder empfängnisverhütende Beratung. Wende dich bei persönlichen Fragen an medizinisches Fachpersonal.",
+  "fertilityDisclaimerAccept": "Ich verstehe",
+  "fertilityInputTitle": "Fruchtbarkeitsfenster einrichten",
+  "fertilityInputCycleLengthLabel": "Durchschnittliche Zykluslänge",
+  "fertilityInputCycleLengthAutoHint": "Berechnet aus deinen {count} erfassten Zyklen",
+  "@fertilityInputCycleLengthAutoHint": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "fertilityInputCycleLengthManualHint": "Passe an, wenn dein typischer Zyklus anders ist",
+  "fertilityInputLutealPhaseLabel": "Lutealphase (Tage)",
+  "fertilityInputLutealPhaseExplanation": "Bei den meisten sind es etwa 14 Tage. Passe an, wenn du deine Länge kennst.",
+  "fertilityInputLutealPhaseDaysUnit": "{days} Tage",
+  "@fertilityInputLutealPhaseDaysUnit": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "fertilityInputSave": "Speichern",
+  "fertilitySettingsSavedSnackbar": "Fruchtbarkeitseinstellungen gespeichert",
+  "fertilityInputNotEnoughData": "Erfasse mindestens 2 vollständige Zyklen für die automatische Berechnung",
+  "fertilityCalendarLegendLabel": "Fruchtbar (geschätzt)",
+  "fertilityCalendarDayLabel": "Geschätzter fruchtbarer Tag",
+  "fertilityCalendarDayDetail": "Geschätzter fruchtbarer Tag — basierend auf deiner Zyklushistorie",
+  "fertilityHomeCardTitle": "Fruchtbarkeitsfenster",
+  "fertilityHomeCardRange": "{start} – {end}",
+  "@fertilityHomeCardRange": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "fertilityHomeCardFooter": "Nur Schätzung",
+  "fertilityHomeCardExplanation": "Basierend auf deinem durchschnittlichen Zyklus von {days} Tagen",
+  "@fertilityHomeCardExplanation": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "fertilitySuggestionTitle": "Fruchtbarkeitsfenster (Schätzung)",
+  "fertilitySuggestionBody": "Sieh ein geschätztes Fruchtbarkeitsfenster im Kalender — basierend auf deiner Zyklushistorie.",
+  "fertilitySuggestionEnable": "Aktivieren",
+  "fertilitySuggestionNotEnoughData": "Erfasse mehr Perioden, um diese Funktion freizuschalten",
+  "fertilityDisabled": "Aus",
+  "flowValueLight": "Leicht",
+  "flowValueMedium": "Mittel",
+  "flowValueHeavy": "Stark",
+  "painValueNone": "Keine",
+  "painValueMild": "Leicht",
+  "painValueModerate": "Mittel",
+  "painValueSevere": "Stark",
+  "painValueVerySevere": "Sehr stark",
+  "moodValueVeryBad": "Sehr schlecht",
+  "moodValueBad": "Schlecht",
+  "moodValueNeutral": "Neutral",
+  "moodValueGood": "Gut",
+  "moodValueVeryGood": "Sehr gut",
+  "pdfReportTitle": "Luma — Periodenbericht",
+  "pdfDisclaimer": "Dieser Bericht ist ein informativer Export aus selbst erfassten Daten. Er ist kein Diagnoseinstrument. Die Genauigkeit hängt von der Vollständigkeit und Konsistenz der Einträge ab. Wenden Sie sich für medizinische Entscheidungen an eine qualifizierte Fachperson.",
+  "pdfGeneratedOn": "Erstellt am {date}",
+  "@pdfGeneratedOn": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "pdfDateRange": "Daten von {start} bis {end}",
+  "@pdfDateRange": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "pdfOverviewHeading": "Überblick",
+  "pdfCycleHistoryHeading": "Zyklusverlauf",
+  "pdfCycleChartHeading": "Zykluslänge im Zeitverlauf",
+  "pdfDaySummaryHeading": "Tägliche Übersicht",
+  "pdfNotesHeading": "Notizen",
+  "pdfTotalCycles": "Abgeschlossene Zyklen",
+  "pdfAvgCycleLength": "Durchschnittliche Zykluslänge",
+  "pdfAvgPeriodDuration": "Durchschnittliche Periodendauer",
+  "pdfShortestCycle": "Kürzester Zyklus",
+  "pdfLongestCycle": "Längster Zyklus",
+  "pdfNDays": "{count, plural, one{1 Tag} other{{count} Tage}}",
+  "@pdfNDays": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "pdfFlowDistribution": "Flussintensität",
+  "pdfPainDistribution": "Schmerzlevel",
+  "pdfMoodDistribution": "Stimmung",
+  "pdfDateColumn": "Datum",
+  "pdfFlowColumn": "Fluss",
+  "pdfPainColumn": "Schmerz",
+  "pdfMoodColumn": "Stimmung",
+  "pdfCycleStartColumn": "Zyklusbeginn",
+  "pdfCycleLengthColumn": "Länge (Tage)",
+  "pdfNoDataForRange": "Für den gewählten Zeitraum liegen keine Daten vor.",
+  "pdfNoDayData": "Keine Tagesdaten für den gewählten Zeitraum.",
+  "pdfNoNotes": "Keine Notizen für den gewählten Zeitraum.",
+  "pdfMetadataOnlyNote": "Dieser Bericht enthält nur Metadaten. Aktiviere Datenbereiche für Zyklusdetails.",
+  "pdfFooterGenerated": "Erstellt mit Luma",
+  "pdfFlowLight": "Leicht",
+  "pdfFlowMedium": "Mittel",
+  "pdfFlowHeavy": "Stark",
+  "pdfPainNone": "Keine",
+  "pdfPainMild": "Leicht",
+  "pdfPainModerate": "Mittel",
+  "pdfPainSevere": "Stark",
+  "pdfPainVerySevere": "Sehr stark",
+  "pdfMoodVeryBad": "Sehr schlecht",
+  "pdfMoodBad": "Schlecht",
+  "pdfMoodNeutral": "Neutral",
+  "pdfMoodGood": "Gut",
+  "pdfMoodVeryGood": "Sehr gut",
+  "pdfExportTitle": "PDF-Bericht",
+  "pdfExportSubtitle": "Bericht für Ihre Ärztin oder Ihren Arzt erstellen",
+  "pdfExportScreenTitle": "PDF-Bericht exportieren",
+  "pdfPresetSummary": "Zusammenfassung",
+  "pdfPresetStandard": "Standard",
+  "pdfPresetFull": "Vollständig",
+  "pdfSectionsHeading": "Abschnitte",
+  "pdfSectionOverview": "Überblick",
+  "pdfSectionCycleHistory": "Zyklusverlauf",
+  "pdfSectionChart": "Zykluslängen-Diagramm",
+  "pdfSectionDaySummary": "Tägliche Übersicht",
+  "pdfSectionNotes": "Notizen",
+  "pdfDateFrom": "Von",
+  "pdfDateTo": "Bis",
+  "pdfGeneratePreview": "Vorschau erstellen",
+  "pdfGenerating": "Bericht wird erstellt…",
+  "pdfPreviewTitle": "Vorschau",
+  "pdfShareAction": "Teilen",
+  "pdfExportError": "Bericht konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+  "pdfSaved": "Bericht gespeichert",
+  "pdfLinuxPreviewBody": "Vorschau ist auf dieser Plattform nicht verfügbar. Speichern Sie die PDF-Datei, um sie woanders zu öffnen.",
+  "pdfSavePdf": "PDF speichern"
+}
