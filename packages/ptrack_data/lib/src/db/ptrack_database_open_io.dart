@@ -5,11 +5,29 @@ import 'package:drift/native.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:sqlite3/open.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 import 'package:sqlcipher_flutter_libs/sqlcipher_flutter_libs.dart';
 
 import 'db_encryption_key.dart';
 import 'ptrack_database.dart';
+
+/// Drift opens SQLite in a background isolate; [open.overrideFor] must run
+/// there too before any database API. (Platform channel workaround runs only
+/// on the main isolate — see [_prepareSqlcipherOnAndroidMainIsolate].)
+void ptrackDriftAndroidSqlcipherIsolateSetup() {
+  if (Platform.isAndroid) {
+    open.overrideFor(OperatingSystem.android, openCipherOnAndroid);
+  }
+}
+
+Future<void> _prepareSqlcipherOnAndroidMainIsolate() async {
+  if (!Platform.isAndroid) return;
+  // sqlcipher_flutter_libs ships `libsqlcipher.so`; package:sqlite3 defaults
+  // to `libsqlite3.so` on Android.
+  open.overrideFor(OperatingSystem.android, openCipherOnAndroid);
+  await applyWorkaroundToOpenSqlCipherOnOldAndroidVersions();
+}
 
 /// Opens a [QueryExecutor] for the ptrack SQLite database, encrypted with
 /// SQLCipher.  On first launch, a 256-bit key is generated and persisted in
@@ -17,8 +35,8 @@ import 'ptrack_database.dart';
 /// transparently.
 QueryExecutor openPtrackQueryExecutor({String? databasePath}) {
   return LazyDatabase(() async {
+    await _prepareSqlcipherOnAndroidMainIsolate();
     if (Platform.isAndroid) {
-      await applyWorkaroundToOpenSqlCipherOnOldAndroidVersions();
       final cacheBase = (await getTemporaryDirectory()).path;
       sqlite.sqlite3.tempDirectory = cacheBase;
     }
@@ -46,6 +64,7 @@ QueryExecutor openPtrackQueryExecutor({String? databasePath}) {
       setup: (rawDb) {
         rawDb.execute("PRAGMA key = \"x'$hexKey'\";");
       },
+      isolateSetup: Platform.isAndroid ? ptrackDriftAndroidSqlcipherIsolateSetup : null,
     );
   });
 }
