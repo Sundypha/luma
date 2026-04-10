@@ -6,19 +6,19 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** **Milestone v2.0** — Phase **15** code review remediation — plan **15-01** automated work complete (`15-01-SUMMARY.md`); optional Task 3 import smoke UAT.
+**Current focus:** **Milestone v2.0** — Phase **16** security audit findings remediation (planning / execution next).
 
 ## Current Position
 
 **Milestone:** v2.0 — i18n, German locale, optional fertility window (**complete**).
 
-**Phase:** **15** — Address full app code review findings.
+**Phase:** **16** — Security audit findings remediation.
 
-**Plan:** **15-01** — Import integrity — **complete** in repo (Tasks 1–2 committed; Task 3 `human-verify` optional smoke: export → re-import skip/replace).
+**Plan:** TBD — run `/gsd-plan-phase 16` or open `.planning/phases/16-security-audit-findings-remediation/`.
 
-**Status:** Ready to plan
+**Status:** Phase **15** complete (verified `15-VERIFICATION.md`); optional **15-01** Task 3 import smoke on device.
 
-Last activity: 2026-04-10 — **15-01** executed: `ImportService` + domain validation, `(periodId, dateUtc)` day keys, `DataSettingsScreen` calendar wiring (`b3df094`, `69e59a4`).
+Last activity: 2026-04-10 — Phase **15** execution + verification: import hardening, reset DB delete observability, `watchPeriodsWithDays` batch load; test fix `fc3cd1a`; docs `5751276`.
 
 **Progress (v2.0):** Phase 15 **complete** (3/3 plans). See `ROADMAP.md`.
 
