@@ -1,11 +1,12 @@
 import 'package:meta/meta.dart';
 
-/// A stored period as UTC instants: [startUtc] is inclusive; [endUtc], when set,
-/// is the inclusive end of bleeding (same-day spans are allowed).
+/// A stored period as UTC instants: [startUtc] is inclusive; [endUtc] is the
+/// inclusive last bleeding day (same-day spans are allowed).
 ///
-/// When [endUtc] is `null`, the period is **open** (ongoing). Open periods must
-/// not be passed to helpers that operate on **completed** cycles only—use
-/// [PeriodSpan.completedOnly] to filter.
+/// In the day-marking model every period has both ends set (`startUtc == endUtc`
+/// for a single-day period). [endUtc] is still technically nullable for
+/// backward compatibility with legacy data; [isCompleted] guards callers that
+/// require both bounds.
 @immutable
 class PeriodSpan {
   const PeriodSpan._(this.startUtc, this.endUtc);
@@ -24,17 +25,19 @@ class PeriodSpan {
 
   final DateTime startUtc;
 
-  /// Inclusive end instant in UTC, or `null` if the period is still open.
+  /// Inclusive end instant in UTC. Nullable only for legacy data; in the
+  /// day-marking model this is always set.
   final DateTime? endUtc;
 
+  /// Legacy: true when [endUtc] is null. Always false in the day-marking model.
   bool get isOpen => endUtc == null;
 
+  /// True when both bounds are set. Always true in the day-marking model.
   bool get isCompleted => endUtc != null;
 
-  /// Whether [dayUtc]'s calendar date (UTC year–month–day) lies within this
-  /// span's inclusive start/end calendar days. Open spans allow through
-  /// [todayLocal]'s calendar date (same convention as logging: local Y-M-D as
-  /// UTC midnight components).
+  /// Whether [dayUtc]'s calendar date (UTC year-month-day) lies within this
+  /// span's inclusive start/end calendar days. If [endUtc] is null (legacy),
+  /// allows through [todayLocal]'s calendar date.
   bool containsCalendarDayUtc(
     DateTime dayUtc, {
     DateTime? todayLocal,

@@ -34,7 +34,7 @@ enum PainScore {
         PainScore.verySevere => 'Very Severe',
       };
 
-  /// Short labels for tight UI (e.g. [SegmentedButton]); [label] stays full text elsewhere.
+  /// Short labels for tight UI; [label] is used for full text (e.g. symptom sliders).
   String get compactLabel => switch (this) {
         PainScore.none => 'None',
         PainScore.mild => 'Mild',
