@@ -723,7 +723,7 @@ abstract class AppLocalizations {
   /// No description provided for @pinSetupCreateHint.
   ///
   /// In en, this message translates to:
-  /// **'Choose a PIN of at least 4 digits. Press ✓ when done.'**
+  /// **'Choose a PIN of at least 6 digits. Press ✓ when done.'**
   String get pinSetupCreateHint;
 
   /// No description provided for @pinSetupConfirmTitle.

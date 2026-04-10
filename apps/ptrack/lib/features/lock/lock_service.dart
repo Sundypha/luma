@@ -13,14 +13,18 @@ final class LockService {
     FlutterSecureStorage? storage,
     LocalAuthentication? localAuth,
     SharedPreferences? prefs,
+    DateTime Function()? clock,
   })  : _storage = storage ?? const FlutterSecureStorage(),
         _auth = localAuth ?? LocalAuthentication(),
-        _prefs = prefs;
+        _prefs = prefs,
+        _clock = clock ?? DateTime.now;
 
   static const _hashKey = 'lock_pin_hash';
   static const _saltKey = 'lock_pin_salt';
   static const _enabledKey = 'lock_enabled';
   static const _biometricsKey = 'lock_biometrics_enabled';
+  static const _failedAttemptsKey = 'lock_failed_attempts';
+  static const _lockoutUntilKey = 'lock_lockout_until';
 
   static final Argon2id _kdf = Argon2id(
     parallelism: 1,
@@ -32,6 +36,14 @@ final class LockService {
   final FlutterSecureStorage _storage;
   final LocalAuthentication _auth;
   final SharedPreferences? _prefs;
+  final DateTime Function() _clock;
+
+  static const _lockoutThresholds = <int, int>{
+    3: 30,
+    5: 60,
+    7: 300,
+    10: 900,
+  };
 
   bool get isEnabled => _prefs?.getBool(_enabledKey) ?? false;
 
@@ -79,7 +91,49 @@ final class LockService {
         return false;
       }
     }
+    await resetLockoutState();
     return true;
+  }
+
+  Future<void> recordFailedAttempt() async {
+    final raw = await _storage.read(key: _failedAttemptsKey);
+    final count = (raw != null ? int.tryParse(raw) : 0) ?? 0;
+    final next = count + 1;
+    await _storage.write(key: _failedAttemptsKey, value: next.toString());
+
+    int? lockoutSeconds;
+    for (final entry in _lockoutThresholds.entries) {
+      if (next >= entry.key) lockoutSeconds = entry.value;
+    }
+    if (lockoutSeconds != null) {
+      final until = _clock().add(Duration(seconds: lockoutSeconds));
+      await _storage.write(
+        key: _lockoutUntilKey,
+        value: until.toUtc().toIso8601String(),
+      );
+    }
+  }
+
+  Future<bool> isLockedOut() async {
+    final raw = await _storage.read(key: _lockoutUntilKey);
+    if (raw == null) return false;
+    final until = DateTime.tryParse(raw);
+    if (until == null) return false;
+    return _clock().isBefore(until);
+  }
+
+  Future<Duration> lockoutRemaining() async {
+    final raw = await _storage.read(key: _lockoutUntilKey);
+    if (raw == null) return Duration.zero;
+    final until = DateTime.tryParse(raw);
+    if (until == null) return Duration.zero;
+    final diff = until.difference(_clock());
+    return diff.isNegative ? Duration.zero : diff;
+  }
+
+  Future<void> resetLockoutState() async {
+    await _storage.delete(key: _failedAttemptsKey);
+    await _storage.delete(key: _lockoutUntilKey);
   }
 
   Future<bool> authenticateWithBiometrics(String localizedReason) async {
@@ -112,6 +166,8 @@ final class LockService {
   Future<void> deletePinData() async {
     await _storage.delete(key: _hashKey);
     await _storage.delete(key: _saltKey);
+    await _storage.delete(key: _failedAttemptsKey);
+    await _storage.delete(key: _lockoutUntilKey);
   }
 
   Future<bool> hasPin() async {
