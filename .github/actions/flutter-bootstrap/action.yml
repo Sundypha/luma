@@ -1,0 +1,60 @@
+name: "Flutter bootstrap via Key Vault (web + private deps)"
+description: "Mints an installation token, configures git, and runs flutter pub get."
+
+inputs:
+  flutter_version:
+    required: true
+  owner:
+    required: true
+  repositories:
+    required: true
+
+  target:
+    description: "android — enable Android for flutter build apk/appbundle."
+    required: false
+    default: "android"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Flutter
+      uses: subosito/flutter-action@fd55f4c5af5b953cc57a2be44cb082c8f6635e8e # v2.22.0
+      with:
+        flutter-version: ${{ inputs.flutter_version }}
+        channel: "stable"
+        cache: true
+
+    - name: Configure Flutter platforms
+      shell: bash
+      run: |
+        if [ "${{ inputs.target }}" = "android" ]; then
+          flutter config --enable-android
+          flutter config --no-enable-web
+          flutter config --no-enable-ios
+          flutter config --no-enable-linux-desktop
+          flutter config --no-enable-macos-desktop
+          flutter config --no-enable-windows-desktop
+          flutter config --no-enable-fuchsia
+        else
+          flutter config --enable-web
+          flutter config --no-enable-android
+          flutter config --no-enable-ios
+          flutter config --no-enable-linux-desktop
+          flutter config --no-enable-macos-desktop
+          flutter config --no-enable-windows-desktop
+          flutter config --no-enable-fuchsia
+        fi
+
+    - name: Cache Flutter dependencies
+      uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+      with:
+        path: |
+          ~/.pub-cache
+          **/.dart_tool/package_config.json
+        key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-flutter-
+
+    - name: Get dependencies
+      shell: bash
+      run: flutter pub get

@@ -1,0 +1,137 @@
+# Upload release builds to Firebase App Distribution using Workload Identity Federation
+# (no long-lived JSON keys in GitHub secrets).
+#
+# --- One-time GCP / GitHub setup (run with gcloud, project = your Firebase GCP project) ---
+#
+#   export PROJECT_ID="your-firebase-project-id"
+#   export PROJECT_NUMBER="954996573636"
+#   export POOL_ID="github-actions"
+#   export PROVIDER_ID="github"
+#   export REPO="Sundypha/luma"
+#   export SA_ID="firebase-app-dist-ci"
+#
+#   gcloud services enable iamcredentials.googleapis.com firebaseappdistribution.googleapis.com --project="$PROJECT_ID"
+#
+#   gcloud iam workload-identity-pools create "$POOL_ID" \
+#     --project="$PROJECT_ID" --location="global" --display-name="GitHub Actions"
+#
+#   gcloud iam workload-identity-pools providers create-oidc "$PROVIDER_ID" \
+#     --project="$PROJECT_ID" --location="global" --workload-identity-pool="$POOL_ID" \
+#     --display-name="GitHub" --issuer-uri="https://token.actions.githubusercontent.com" \
+#     --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository,attribute.repository_owner=assertion.repository_owner" \
+#     --attribute-condition="assertion.repository_owner == 'Sundypha'"
+#
+#   gcloud iam service-accounts create "$SA_ID" \
+#     --project="$PROJECT_ID" --display-name="Firebase App Distribution CI"
+#
+#   gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+#     --member="serviceAccount:${SA_ID}@${PROJECT_ID}.iam.gserviceaccount.com" \
+#     --role="roles/firebaseappdistro.admin"
+#
+#   gcloud iam service-accounts add-iam-policy-binding "${SA_ID}@${PROJECT_ID}.iam.gserviceaccount.com" \
+#     --project="$PROJECT_ID" --role="roles/iam.workloadIdentityUser" \
+#     --member="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/${POOL_ID}/attribute.repository/${REPO}"
+#
+# --- GitHub repository variables (Settings → Secrets and variables → Actions → Variables) ---
+#
+#   GCP_PROJECT_ID                  Firebase / GCP project id (string, e.g. my-luma-prod)
+#   GCP_WORKLOAD_IDENTITY_PROVIDER  Full provider resource name, e.g.
+#                                   projects/954996573636/locations/global/workloadIdentityPools/github-actions/providers/github
+#   GCP_SERVICE_ACCOUNT_EMAIL       Service account email, e.g. firebase-app-dist-ci@PROJECT_ID.iam.gserviceaccount.com
+#   FIREBASE_TESTER_GROUP           App Distribution group alias (create the group in Firebase Console first)
+#
+#   flutter-bootstrap composite (same inputs as .github/actions/flutter-bootstrap) — repository secrets
+#   (names must not start with GITHUB_):
+#     FLUTTER_BOOTSTRAP_APP_ID              GitHub App id for private dependency access
+#     FLUTTER_BOOTSTRAP_APP_PRIVATE_KEY     PEM for that app (full key including BEGIN/END lines)
+#
+name: Firebase App Distribution
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_notes:
+        description: Notes shown to testers (optional)
+        required: false
+        type: string
+      tester_group:
+        description: Overrides FIREBASE_TESTER_GROUP variable when non-empty
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: firebase-app-distribution-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  ANDROID_FIREBASE_APP_ID: 1:954996573636:android:8974fc18b98cd37fd69091
+  IOS_FIREBASE_APP_ID: 1:954996573636:ios:ee6af3093273f5b1d69091
+
+jobs:
+  distribute-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT_EMAIL }}
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Read FVM Flutter version
+        id: fvm
+        run: |
+          echo "version=$(python3 -c "import json; print(json.load(open('.fvm/fvm_config.json'))['flutterSdkVersion'])")" >> "$GITHUB_OUTPUT"
+
+      - uses: ./.github/actions/flutter-bootstrap
+        with:
+          flutter_version: ${{ steps.fvm.outputs.version }}
+          target: android
+          owner: Sundypha
+          repositories: luma
+
+      - name: Melos bootstrap
+        run: |
+          dart pub get
+          dart pub global activate melos
+          melos bootstrap
+
+      - name: Build Android APK (release)
+        working-directory: apps/ptrack
+        run: flutter build apk --release
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Upload to Firebase App Distribution
+        env:
+          GROUP: ${{ inputs.tester_group || vars.FIREBASE_TESTER_GROUP }}
+          NOTES: ${{ inputs.release_notes }}
+        run: |
+          if [ -z "$GROUP" ]; then
+            echo "Set repository variable FIREBASE_TESTER_GROUP or pass workflow input tester_group."
+            exit 1
+          fi
+          ARGS=(--app "${{ env.ANDROID_FIREBASE_APP_ID }}" --groups "$GROUP")
+          if [ -n "$NOTES" ]; then
+            ARGS+=(--release-notes "$NOTES")
+          fi
+          firebase --project "${{ vars.GCP_PROJECT_ID }}" appdistribution:distribute \
+            "apps/ptrack/build/app/outputs/flutter-apk/app-release.apk" \
+            "${ARGS[@]}"
+
+  # iOS needs a macOS runner, signing assets, and flutter build ipa — mirror the auth + firebase steps above after CI signing exists.
+  # Use IOS_FIREBASE_APP_ID with the produced .ipa path.
