@@ -80,6 +80,12 @@ void main() {
   });
 
   Future<void> pumpHome(WidgetTester tester) async {
+    final view = tester.view;
+    view.physicalSize = const Size(900, 1600);
+    view.devicePixelRatio = 1.0;
+    addTearDown(view.resetPhysicalSize);
+    addTearDown(view.resetDevicePixelRatio);
+
     final prefs = await SharedPreferences.getInstance();
     final lockService = LockService(
       prefs: prefs,
