@@ -1,4 +1,4 @@
-﻿# FVM — track only .fvm/fvm_config.json (+ .fvmrc). Cache/symlinks are machine-local.
+# FVM — track only .fvm/fvm_config.json (+ .fvmrc). Cache/symlinks are machine-local.
 .fvm/*
 !.fvm/fvm_config.json
 
@@ -14,3 +14,8 @@ build/
 
 # Melos
 .melos_tool/
+
+# Android release signing — never commit (use key.properties.example; CI uses secrets)
+**/*.jks
+**/*.keystore
+**/android/key.properties
