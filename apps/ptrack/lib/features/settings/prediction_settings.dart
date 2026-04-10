@@ -235,7 +235,7 @@ class _PredictionSettingsScreenState extends State<PredictionSettingsScreen> {
                 _SectionHeader(l10n.predSettingsSectionHowManyDays),
                 RadioGroup<PredictionDisplayMode>(
                   groupValue: _mode,
-                  onChanged: (v) => _onModeChanged(v),
+                  onChanged: _onModeChanged,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -277,7 +277,7 @@ class _PredictionSettingsScreenState extends State<PredictionSettingsScreen> {
                 ),
                 RadioGroup<int>(
                   groupValue: _horizonCycles,
-                  onChanged: (v) => _onHorizonChanged(v),
+                  onChanged: _onHorizonChanged,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [

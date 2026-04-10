@@ -68,7 +68,7 @@ void main() {
 
     test('round-trip domain to row via database', () async {
       final path = createTempSqlitePath();
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       try {
         final periodId = await db.into(db.periods).insert(
               periodSpanToInsertCompanion(

@@ -255,7 +255,7 @@
   "pinSetupAckBody": "Die App-Sperre schützt den Zugang mit einer PIN. Wenn du die PIN vergisst, bleibt nur ein Daten-Reset — deine Periodendaten gehen dabei verloren. Exportier deine Daten regelmäßig, um nichts zu verlieren.",
   "pinSetupAckContinue": "Verstanden, weiter",
   "pinSetupCreateTitle": "PIN festlegen",
-  "pinSetupCreateHint": "Wähle eine PIN mit mindestens 4 Ziffern. Tippe auf ✓, wenn du fertig bist.",
+  "pinSetupCreateHint": "Wähle eine PIN mit mindestens 6 Ziffern. Tippe auf ✓, wenn du fertig bist.",
   "pinSetupConfirmTitle": "PIN bestätigen",
   "pinSetupMismatch": "PINs stimmen nicht überein",
   "pinSetupBioTitle": "Biometrie für schnelleres Entsperren aktivieren?",

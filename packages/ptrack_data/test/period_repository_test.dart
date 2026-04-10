@@ -71,7 +71,7 @@ void main() {
   group('PeriodRepository', () {
     test('successful insert and list round-trip', () async {
       final path = createTempSqlitePath();
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       final repo = PeriodRepository(database: db, calendar: utcCtx);
       final span = PeriodSpan(
         startUtc: DateTime.utc(2024, 5, 1),
@@ -90,7 +90,7 @@ void main() {
 
     test('rejected duplicate start calendar day does not persist', () async {
       final path = createTempSqlitePath();
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       final repo = PeriodRepository(database: db, calendar: utcCtx);
 
       final first = await repo.insertPeriod(
@@ -118,7 +118,11 @@ void main() {
 
     test('create, close, reopen preserves rows (migration path)', () async {
       final path = createTempSqlitePath();
-      var db = openPtrackDatabase(databasePath: path);
+      final enc = createTestDbEncryptionStorage();
+      var db = openTestPtrackDatabase(
+        databasePath: path,
+        encryptionKeyStorage: enc,
+      );
       var repo = PeriodRepository(database: db, calendar: utcCtx);
       await repo.insertPeriod(
         PeriodSpan(
@@ -131,7 +135,10 @@ void main() {
       );
       await db.close();
 
-      db = openPtrackDatabase(databasePath: path);
+      db = openTestPtrackDatabase(
+        databasePath: path,
+        encryptionKeyStorage: enc,
+      );
       repo = PeriodRepository(database: db, calendar: utcCtx);
       final listed = await repo.listOrderedByStartUtc();
       expect(listed, hasLength(2));
@@ -142,7 +149,7 @@ void main() {
 
     test('update succeeds when validation passes', () async {
       final path = createTempSqlitePath();
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       final repo = PeriodRepository(database: db, calendar: utcCtx);
       final inserted = await repo.insertPeriod(
         PeriodSpan(
@@ -170,7 +177,7 @@ void main() {
   group('day entry CRUD and watch', () {
     test('saveDayEntry creates entry linked to period', () async {
       final path = createTempSqlitePath();
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       final repo = PeriodRepository(database: db, calendar: utcCtx);
       final periodId = (await repo.insertPeriod(
         PeriodSpan(
@@ -198,7 +205,7 @@ void main() {
 
     test('saveDayEntry for non-existent period throws', () async {
       final path = createTempSqlitePath();
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       final repo = PeriodRepository(database: db, calendar: utcCtx);
       await expectLater(
         repo.saveDayEntry(
@@ -212,7 +219,7 @@ void main() {
 
     test('updateDayEntry modifies existing entry', () async {
       final path = createTempSqlitePath();
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       final repo = PeriodRepository(database: db, calendar: utcCtx);
       final periodId = (await repo.insertPeriod(
         PeriodSpan(
@@ -245,7 +252,7 @@ void main() {
 
     test('deleteDayEntry removes only the target entry', () async {
       final path = createTempSqlitePath();
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       final repo = PeriodRepository(database: db, calendar: utcCtx);
       final periodId = (await repo.insertPeriod(
         PeriodSpan(
@@ -276,7 +283,7 @@ void main() {
 
     test('deletePeriod cascades to day entries', () async {
       final path = createTempSqlitePath();
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       final repo = PeriodRepository(database: db, calendar: utcCtx);
       final periodId = (await repo.insertPeriod(
         PeriodSpan(
@@ -303,7 +310,7 @@ void main() {
     test('updatePeriod returns blocked when day entries fall outside new span',
         () async {
       final path = createTempSqlitePath();
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       final repo = PeriodRepository(database: db, calendar: utcCtx);
       final periodId = (await repo.insertPeriod(
         PeriodSpan(
@@ -331,7 +338,7 @@ void main() {
 
     test('updatePeriodDeletingOrphanDayEntries applies shrink', () async {
       final path = createTempSqlitePath();
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       final repo = PeriodRepository(database: db, calendar: utcCtx);
       final periodId = (await repo.insertPeriod(
         PeriodSpan(
@@ -366,7 +373,7 @@ void main() {
 
     test('updatePeriodSplittingOrphansIntoNewPeriod moves rows', () async {
       final path = createTempSqlitePath();
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       final repo = PeriodRepository(database: db, calendar: utcCtx);
       final periodId = (await repo.insertPeriod(
         PeriodSpan(
@@ -402,7 +409,7 @@ void main() {
     test('upsertDayEntryForPeriod inserts then updates same calendar day',
         () async {
       final path = createTempSqlitePath();
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       final repo = PeriodRepository(database: db, calendar: utcCtx);
       final periodId = (await repo.insertPeriod(
         PeriodSpan(
@@ -437,7 +444,7 @@ void main() {
 
     test('watchPeriodsWithDays emits updated list after insert', () async {
       final path = createTempSqlitePath();
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       final repo = PeriodRepository(database: db, calendar: utcCtx);
       final periodId = (await repo.insertPeriod(
         PeriodSpan(
@@ -479,7 +486,7 @@ void main() {
       'watchPeriodsWithDays matches direct-query snapshot for many periods',
       () async {
         final path = createTempSqlitePath();
-        final db = openPtrackDatabase(databasePath: path);
+        final db = openTestPtrackDatabase(databasePath: path);
         final repo = PeriodRepository(database: db, calendar: utcCtx);
 
         // Insert order != watch order; watch uses newest [startUtc] first.
@@ -591,7 +598,7 @@ void main() {
   group('markDay/unmarkDay', () {
     test('markDay on empty DB creates single-day period', () async {
       final path = createTempSqlitePath();
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       final repo = PeriodRepository(database: db, calendar: utcCtx);
       final out = await repo.markDay(DateTime.utc(2025, 1, 15));
       expect(out, isA<DayMarkSuccess>());
@@ -605,7 +612,7 @@ void main() {
 
     test('markDay adjacent to existing period extends', () async {
       final path = createTempSqlitePath();
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       final repo = PeriodRepository(database: db, calendar: utcCtx);
       await repo.markDay(DateTime.utc(2025, 2, 1));
       await repo.markDay(DateTime.utc(2025, 2, 2));
@@ -619,7 +626,7 @@ void main() {
     test('markDay bridging two periods merges and reassigns day entries',
         () async {
       final path = createTempSqlitePath();
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       final repo = PeriodRepository(database: db, calendar: utcCtx);
       await repo.markDay(DateTime.utc(2025, 3, 1));
       await repo.markDay(DateTime.utc(2025, 3, 2));
@@ -652,7 +659,7 @@ void main() {
     test('unmarkDay on single-day period deletes period and its day entries',
         () async {
       final path = createTempSqlitePath();
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       final repo = PeriodRepository(database: db, calendar: utcCtx);
       final id =
           (await repo.markDay(DateTime.utc(2025, 4, 1)) as DayMarkSuccess)
@@ -671,7 +678,7 @@ void main() {
     test('unmarkDay on edge of multi-day period shrinks and removes day entry',
         () async {
       final path = createTempSqlitePath();
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       final repo = PeriodRepository(database: db, calendar: utcCtx);
       await repo.markDay(DateTime.utc(2025, 5, 1));
       await repo.markDay(DateTime.utc(2025, 5, 2));
@@ -693,7 +700,7 @@ void main() {
     test('unmarkDay on middle of period splits and distributes day entries',
         () async {
       final path = createTempSqlitePath();
-      final db = openPtrackDatabase(databasePath: path);
+      final db = openTestPtrackDatabase(databasePath: path);
       final repo = PeriodRepository(database: db, calendar: utcCtx);
       for (var d = 1; d <= 7; d++) {
         await repo.markDay(DateTime.utc(2025, 6, d));

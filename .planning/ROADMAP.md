@@ -93,7 +93,7 @@ Plans:
 | 12 — Fertility window | 4/4 | Complete — 2026-04-08 (UAT approved) |
 | 13 — PDF export | 2/3 | In progress — `13-03` Tasks 1–2 done; Task 3 human-verify pending (2026-04-08) |
 | 15 — Code review remediation | 3/3 | Complete — `15-01`–`15-03` (`15-01-SUMMARY.md` … `15-03-SUMMARY.md`); optional `15-01` Task 3 import smoke UAT |
-| 16 — Security audit remediation | 0/8 | Planned — 8 plans across 3 waves |
+| 16 — Security audit remediation | 1/8 | In progress — `16-01` complete (Android release signing) |
 
 ### Phase 13: PDF export of period statistics and details (user selectable if all or none). Goal is to have a PDF ready for a physician or gynecologist.
 
@@ -145,7 +145,7 @@ Plans:
 **Plans:** 8 plans
 
 Plans:
-- [ ] `16-01-PLAN.md` — Android release signing + CI signing guard (SEC-F3)
+- [x] `16-01-PLAN.md` — Android release signing + CI signing guard (SEC-F3) — see `16-01-SUMMARY.md`
 - [ ] `16-02-PLAN.md` — PIN lockout, throttling, stronger PIN minimum (SEC-F2)
 - [ ] `16-03-PLAN.md` — Import size/complexity limits + reset backup cleanup (SEC-F5, SEC-F7)
 - [ ] `16-04-PLAN.md` — Export crypto: password policy, KDF tuning, AEAD metadata binding (SEC-F4, SEC-F8)
@@ -155,4 +155,4 @@ Plans:
 - [ ] `16-08-PLAN.md` — Threat model, release checklist, audit findings closure (SEC-CC)
 
 ---
-*Roadmap updated: 2026-04-10 — Phase **16** planned: 8 plans across 3 waves for security audit findings remediation (all 8 findings + cross-cutting). Phase **15** complete. **`13-03`** export UI still awaiting Task 3 human verification.*  
+*Roadmap updated: 2026-04-10 — Phase **16-01** complete: Android release signing + CI guard (SEC-F3). 7 plans remaining. **`13-03`** export UI still awaiting Task 3 human verification.*  

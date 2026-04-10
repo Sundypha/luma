@@ -180,7 +180,7 @@ class _PinSetupSheetBodyState extends State<_PinSetupSheetBody> {
         const SizedBox(height: 16),
         PinEntryWidget(
           pinLength: 16,
-          minLength: 4,
+          minLength: 6,
           submitOnComplete: false,
           showExpectedLength: false,
           onSubmit: _onFirstEntry,

@@ -29,6 +29,8 @@ export 'src/export/import_service.dart'
         LumaInvalidPeriodRefException,
         LumaVersionException;
 export 'src/export/luma_crypto.dart' show LumaCrypto;
+export 'src/db/db_encryption_key.dart'
+    show deleteDbEncryptionKey, getOrCreateDbEncryptionKey;
 export 'src/db/ptrack_database.dart'
     show PtrackDatabase, ptrackSupportedSchemaVersion;
 export 'src/db/ptrack_database_open.dart'

@@ -45,6 +45,12 @@
 #     FLUTTER_BOOTSTRAP_APP_ID              GitHub App id for private dependency access
 #     FLUTTER_BOOTSTRAP_APP_PRIVATE_KEY     PEM for that app (full key including BEGIN/END lines)
 #
+#   Android release signing secrets:
+#     ANDROID_KEYSTORE_BASE64               Base64-encoded release.jks keystore
+#     ANDROID_KEY_ALIAS                     Key alias (e.g. "release")
+#     ANDROID_KEY_PASSWORD                  Key password
+#     ANDROID_STORE_PASSWORD                Keystore store password
+#
 name: Firebase App Distribution
 
 on:
@@ -95,7 +101,7 @@ jobs:
       - uses: ./.github/actions/flutter-bootstrap
         with:
           flutter_version: ${{ steps.fvm.outputs.version }}
-          target: android
+          targets: android
           owner: Sundypha
           repositories: luma
 
@@ -105,9 +111,38 @@ jobs:
           dart pub global activate melos
           melos bootstrap
 
+      - name: Decode Android signing secrets
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+        run: |
+          for var in KEYSTORE_BASE64 KEY_ALIAS KEY_PASSWORD STORE_PASSWORD; do
+            if [ -z "${!var}" ]; then
+              echo "::error::Secret $var is empty or not set"
+              exit 1
+            fi
+          done
+          mkdir -p apps/ptrack/android/keystore
+          echo "$KEYSTORE_BASE64" | base64 --decode > apps/ptrack/android/keystore/release.jks
+          printf 'storePassword=%s\nkeyPassword=%s\nkeyAlias=%s\nstoreFile=../keystore/release.jks\n' \
+            "$STORE_PASSWORD" "$KEY_PASSWORD" "$KEY_ALIAS" > apps/ptrack/android/key.properties
+
       - name: Build Android APK (release)
         working-directory: apps/ptrack
         run: flutter build apk --release
+
+      - name: Verify release signing certificate
+        run: |
+          APK_PATH="apps/ptrack/build/app/outputs/flutter-apk/app-release.apk"
+          CERT_INFO=$("$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | tail -1)/apksigner" verify --print-certs "$APK_PATH")
+          echo "$CERT_INFO"
+          if echo "$CERT_INFO" | grep -qi "Android Debug"; then
+            echo "::error::Release APK is signed with a debug certificate!"
+            exit 1
+          fi
+          echo "Release signing verified — no debug certificate found."
 
       - uses: actions/setup-node@v4
         with:

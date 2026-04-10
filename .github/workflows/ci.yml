@@ -1,11 +1,10 @@
-# CI uses the same Flutter version as `.fvm/fvm_config.json` via FVM (not ad-hoc channels).
+# CI uses the same Flutter version as `.fvm/fvm_config.json` (passed into flutter-bootstrap).
 name: CI
 
 on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
 
 jobs:
   analyze-test:
@@ -13,27 +12,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: dart-lang/setup-dart@v1
-        with:
-          sdk: stable
+      - name: Read FVM Flutter version
+        id: fvm
+        run: |
+          echo "version=$(python3 -c "import json; print(json.load(open('.fvm/fvm_config.json'))['flutterSdkVersion'])")" >> "$GITHUB_OUTPUT"
 
-      - name: Pub get (workspace root)
-        run: dart pub get
+      - uses: ./.github/actions/flutter-bootstrap
+        with:
+          flutter_version: ${{ steps.fvm.outputs.version }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          targets: android,ios
 
       - name: ARB DE key parity (I18N-05)
         run: dart run tool/arb_de_key_parity.dart
-
-      - name: Install FVM
-        run: |
-          dart pub global activate fvm
-          echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
-          fvm install
-
-      - name: Use FVM Flutter on PATH
-        run: |
-          VER=$(python3 -c "import json; print(json.load(open('.fvm/fvm_config.json'))['flutterSdkVersion'])")
-          echo "$HOME/fvm/versions/${VER}/bin" >> "$GITHUB_PATH"
-          flutter --version
 
       - name: Melos
         run: |

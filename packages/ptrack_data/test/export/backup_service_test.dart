@@ -193,13 +193,8 @@ void main() {
     });
 
     test('invalid periodRefId rolls back entire import', () async {
-      await db.into(db.periods).insert(
-            PeriodsCompanion.insert(
-              startUtc: DateTime.utc(2024, 1, 1),
-              endUtc: Value(DateTime.utc(2024, 1, 7)),
-            ),
-          );
       final before = await db.select(db.periods).get();
+      expect(before, isEmpty);
 
       final data = LumaExportData(
         meta: _testMeta(),
@@ -208,6 +203,11 @@ void main() {
             refId: 1,
             startUtc: DateTime.utc(2024, 5, 1).toIso8601String(),
             endUtc: DateTime.utc(2024, 5, 5).toIso8601String(),
+          ),
+          ExportedPeriod(
+            refId: 2,
+            startUtc: DateTime.utc(2024, 6, 1).toIso8601String(),
+            endUtc: DateTime.utc(2024, 6, 10).toIso8601String(),
           ),
         ],
         dayEntries: [
