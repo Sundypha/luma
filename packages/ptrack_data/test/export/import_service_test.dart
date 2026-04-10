@@ -283,10 +283,10 @@ void main() {
     });
 
     test('orphan periodRefId throws and rolls back new periods', () async {
-      await db.into(db.periods).insert(
-            PeriodsCompanion.insert(startUtc: DateTime.utc(2024, 1, 1)),
-          );
+      // Empty DB: a pre-seeded open-ended period would overlap any later import
+      // and fail validation before day-entry orphan handling runs.
       final before = await db.select(db.periods).get();
+      expect(before, isEmpty);
 
       final data = LumaExportData(
         meta: LumaExportMeta(
