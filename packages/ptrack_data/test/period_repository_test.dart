@@ -1,10 +1,59 @@
 import 'package:async/async.dart';
+import 'package:drift/drift.dart' show OrderingTerm;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 
 import 'test_utils.dart';
+
+/// Mirrors [PeriodRepository.watchPeriodsWithDays] load semantics for assertions.
+Future<List<StoredPeriodWithDays>> _expectedWatchSnapshotFromDb(
+  PtrackDatabase db,
+) async {
+  final periodRows = await (db.select(db.periods)
+        ..orderBy([(t) => OrderingTerm.desc(t.startUtc)]))
+      .get();
+  final result = <StoredPeriodWithDays>[];
+  for (final r in periodRows) {
+    final dayRows = await (db.select(db.dayEntries)
+          ..where((t) => t.periodId.equals(r.id))
+          ..orderBy([(t) => OrderingTerm.asc(t.dateUtc)]))
+        .get();
+    final days = [
+      for (final d in dayRows)
+        StoredDayEntry(
+          id: d.id,
+          periodId: d.periodId,
+          data: dayEntryRowToDomain(d),
+        ),
+    ];
+    result.add(
+      StoredPeriodWithDays(
+        period: StoredPeriod(id: r.id, span: periodRowToDomain(r)),
+        dayEntries: days,
+      ),
+    );
+  }
+  return result;
+}
+
+void _expectStoredPeriodListsEqual(
+  List<StoredPeriodWithDays> actual,
+  List<StoredPeriodWithDays> expected,
+) {
+  expect(actual, hasLength(expected.length));
+  for (var i = 0; i < expected.length; i++) {
+    expect(actual[i].period.id, expected[i].period.id);
+    expect(actual[i].period.span, expected[i].period.span);
+    expect(actual[i].dayEntries, hasLength(expected[i].dayEntries.length));
+    for (var j = 0; j < expected[i].dayEntries.length; j++) {
+      expect(actual[i].dayEntries[j].id, expected[i].dayEntries[j].id);
+      expect(actual[i].dayEntries[j].periodId, expected[i].dayEntries[j].periodId);
+      expect(actual[i].dayEntries[j].data, expected[i].dayEntries[j].data);
+    }
+  }
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -425,6 +474,118 @@ void main() {
         await db.close();
       }
     });
+
+    test(
+      'watchPeriodsWithDays matches direct-query snapshot for many periods',
+      () async {
+        final path = createTempSqlitePath();
+        final db = openPtrackDatabase(databasePath: path);
+        final repo = PeriodRepository(database: db, calendar: utcCtx);
+
+        // Insert order != watch order; watch uses newest [startUtc] first.
+        final spans = <PeriodSpan>[
+          PeriodSpan(
+            startUtc: DateTime.utc(2024, 1, 1),
+            endUtc: DateTime.utc(2024, 1, 4),
+          ),
+          PeriodSpan(
+            startUtc: DateTime.utc(2024, 3, 10),
+            endUtc: DateTime.utc(2024, 3, 14),
+          ),
+          PeriodSpan(
+            startUtc: DateTime.utc(2024, 2, 5),
+            endUtc: DateTime.utc(2024, 2, 9),
+          ),
+          PeriodSpan(
+            startUtc: DateTime.utc(2024, 5, 1),
+            endUtc: DateTime.utc(2024, 5, 6),
+          ),
+          PeriodSpan(
+            startUtc: DateTime.utc(2024, 4, 1),
+            endUtc: DateTime.utc(2024, 4, 5),
+          ),
+        ];
+        final periodIds = <int>[];
+        for (final span in spans) {
+          final id = (await repo.insertPeriod(span) as PeriodWriteSuccess).id;
+          periodIds.add(id);
+        }
+
+        // Multiple days per period; save in reverse date order to assert sort.
+        Future<void> saveDays(int periodIndex, List<DateTime> datesUtc) async {
+          final pid = periodIds[periodIndex];
+          for (final d in datesUtc.reversed) {
+            await repo.saveDayEntry(
+              pid,
+              DayEntryData(
+                dateUtc: d,
+                flowIntensity: FlowIntensity.light,
+              ),
+            );
+          }
+        }
+
+        await saveDays(0, [
+          DateTime.utc(2024, 1, 1),
+          DateTime.utc(2024, 1, 2),
+          DateTime.utc(2024, 1, 3),
+        ]);
+        await saveDays(1, [
+          DateTime.utc(2024, 3, 12),
+          DateTime.utc(2024, 3, 10),
+          DateTime.utc(2024, 3, 11),
+        ]);
+        await saveDays(2, [
+          DateTime.utc(2024, 2, 6),
+          DateTime.utc(2024, 2, 5),
+        ]);
+        await saveDays(3, [
+          DateTime.utc(2024, 5, 1),
+          DateTime.utc(2024, 5, 3),
+          DateTime.utc(2024, 5, 2),
+          DateTime.utc(2024, 5, 4),
+        ]);
+        await saveDays(4, [
+          DateTime.utc(2024, 4, 2),
+          DateTime.utc(2024, 4, 4),
+          DateTime.utc(2024, 4, 3),
+        ]);
+
+        final expected = await _expectedWatchSnapshotFromDb(db);
+        expect(expected, hasLength(5));
+
+        // Newest period first (May → Apr → Mar → Feb → Jan).
+        expect(
+          expected.map((e) => e.period.span.startUtc),
+          orderedEquals([
+            DateTime.utc(2024, 5, 1),
+            DateTime.utc(2024, 4, 1),
+            DateTime.utc(2024, 3, 10),
+            DateTime.utc(2024, 2, 5),
+            DateTime.utc(2024, 1, 1),
+          ]),
+        );
+        for (final block in expected) {
+          final dates = block.dayEntries
+              .map((e) => DateTime.utc(
+                    e.data.dateUtc.year,
+                    e.data.dateUtc.month,
+                    e.data.dateUtc.day,
+                  ))
+              .toList();
+          expect(dates, orderedEquals([...dates]..sort()));
+        }
+
+        final queue = StreamQueue(repo.watchPeriodsWithDays());
+        try {
+          final first = await queue.next;
+          _expectStoredPeriodListsEqual(first, expected);
+        } finally {
+          await queue.cancel();
+          await db.close();
+        }
+      },
+    );
   });
 
   group('markDay/unmarkDay', () {
