@@ -154,5 +154,14 @@ Plans:
 - [ ] `16-07-PLAN.md` — Encrypted auto-backups by default (SEC-F1, backups)
 - [ ] `16-08-PLAN.md` — Threat model, release checklist, audit findings closure (SEC-CC)
 
+### Phase 17: release management with release bumps, release apks iin github release, and ran apk push to firebase app distribution
+
+**Goal:** [To be planned]
+**Depends on:** Phase 16
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 17 to break down)
+
 ---
 *Roadmap updated: 2026-04-10 — Phase **16-01** complete: Android release signing + CI guard (SEC-F3). 7 plans remaining. **`13-03`** export UI still awaiting Task 3 human verification.*  
