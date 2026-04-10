@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-04-10
+
+### Added
+- `tool/bump_version.dart` to bump `apps/ptrack` semver and Android `versionCode` (patch / minor / major, optional `--dry-run`)
+- GitHub Actions **Release** workflow for `v*` tags: signed release APK, draft GitHub Release with changelog slice, optional Firebase App Distribution upload
+
+### Changed
+- Firebase App Distribution workflow documents that version-tagged releases should use the Release workflow; third-party Actions in CI workflows pinned to full commit SHAs
+- App version **1.0.1+2** for release alignment; no functional changes to the Luma app since 1.0.0
+
 ## [1.0.0] - 2026-04-07
 
 ### Added
