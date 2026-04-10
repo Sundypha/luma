@@ -1,0 +1,42 @@
+name: ptrack_data
+description: "Data layer for ptrack."
+version: 0.0.1
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.11.0
+  flutter: ">=1.17.0"
+
+dependencies:
+  cryptography: ^2.9.0
+  cryptography_flutter: ^2.3.4
+  drift: ^2.28.1
+  flutter:
+    sdk: flutter
+  meta: ^1.16.0
+  path: ^1.9.1
+  path_provider: ^2.1.5
+  ptrack_domain:
+    path: ../ptrack_domain
+  sqlite3: ^3.3.0
+  flutter_secure_storage: ^10.0.0
+
+dev_dependencies:
+  async: ^2.13.0
+  build_runner: ^2.4.15
+  drift_dev: ^2.28.0
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.5
+  timezone: ^0.11.0
+
+# sqlite3 v3 bundles native SQLite via hooks; use SQLite3MultipleCiphers for
+# SQLCipher-compatible encryption (see sqlite3 UPGRADING_TO_V3.md).
+hooks:
+  user_defines:
+    sqlite3:
+      source: sqlite3mc
+
+flutter:

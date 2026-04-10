@@ -1,0 +1,44 @@
+# CI uses the same Flutter version as `.fvm/fvm_config.json` (passed into flutter-bootstrap).
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  analyze-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read FVM Flutter version
+        id: fvm
+        run: |
+          echo "version=$(python3 -c "import json; print(json.load(open('.fvm/fvm_config.json'))['flutterSdkVersion'])")" >> "$GITHUB_OUTPUT"
+
+      - uses: ./.github/actions/flutter-bootstrap
+        with:
+          flutter_version: ${{ steps.fvm.outputs.version }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          targets: android,ios
+
+      - name: ARB DE key parity (I18N-05)
+        run: dart run tool/arb_de_key_parity.dart
+
+      - name: Melos
+        run: |
+          dart pub global activate melos
+          melos bootstrap
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Pubspec policy (no git deps; path only under apps/ & packages/)
+        run: uv run --python 3.12 --with pyyaml python3 tool/ci/verify_pubspec_policy.py
+
+      - name: Analyze (errors fail the job)
+        run: melos exec -c 1 -- flutter analyze
+
+      - name: Test all packages with test/
+        run: melos exec -c 1 --dir-exists=test -- flutter test

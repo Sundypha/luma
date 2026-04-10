@@ -1,0 +1,10 @@
+# Android release signing properties — TEMPLATE
+#
+# Copy this file to key.properties (gitignored) and fill in values.
+# CI writes key.properties from GitHub Secrets automatically.
+#
+# See .github/workflows/firebase-app-distribution.yml for CI setup.
+storePassword=
+keyPassword=
+keyAlias=release
+storeFile=../keystore/release.jks

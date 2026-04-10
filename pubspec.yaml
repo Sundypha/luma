@@ -1,0 +1,25 @@
+name: ptrack_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.11.0
+
+workspace:
+  - apps/ptrack
+  - packages/ptrack_domain
+  - packages/ptrack_data
+
+dev_dependencies:
+  melos: ^7.5.1
+
+melos:
+  scripts:
+    ci:analyze:
+      run: melos exec -c 1 -- fvm flutter analyze
+      description: Run flutter analyze in every package via FVM.
+    ci:test:
+      run: melos exec -c 1 --dir-exists=test -- fvm flutter test
+      description: Run all test/ suites via FVM Flutter.
+    ci:arb:
+      run: fvm dart run tool/arb_de_key_parity.dart
+      description: Fail if app_de.arb is missing any app_en.arb message key.
