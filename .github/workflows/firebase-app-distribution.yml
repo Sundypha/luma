@@ -1,4 +1,8 @@
 # Upload release builds to Firebase App Distribution using Workload Identity Federation
+# NOTE: For version-tagged releases, use the Release workflow (.github/workflows/release.yml)
+# which builds once and delivers to both GitHub Releases and Firebase App Distribution.
+# This workflow remains available for ad-hoc testing via workflow_dispatch (e.g., testing
+# a build from a feature branch before tagging a release).
 # (no long-lived JSON keys in GitHub secrets).
 #
 # --- One-time GCP / GitHub setup (run with gcloud, project = your Firebase GCP project) ---
