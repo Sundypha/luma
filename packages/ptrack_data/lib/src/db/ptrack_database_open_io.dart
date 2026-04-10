@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3/open.dart';
@@ -33,7 +34,14 @@ Future<void> _prepareSqlcipherOnAndroidMainIsolate() async {
 /// SQLCipher.  On first launch, a 256-bit key is generated and persisted in
 /// platform secure storage.  Existing plaintext databases are migrated
 /// transparently.
-QueryExecutor openPtrackQueryExecutor({String? databasePath}) {
+///
+/// [encryptionKeyStorage] overrides where the DB key is read/written (e.g. VM
+/// tests without platform channels). When null, the default
+/// [FlutterSecureStorage] is used.
+QueryExecutor openPtrackQueryExecutor({
+  String? databasePath,
+  FlutterSecureStorage? encryptionKeyStorage,
+}) {
   return LazyDatabase(() async {
     await _prepareSqlcipherOnAndroidMainIsolate();
     if (Platform.isAndroid) {
@@ -53,7 +61,9 @@ QueryExecutor openPtrackQueryExecutor({String? databasePath}) {
     }
 
     final file = File(resolvedPath);
-    final hexKey = await getOrCreateDbEncryptionKey();
+    final hexKey = await getOrCreateDbEncryptionKey(
+      storage: encryptionKeyStorage,
+    );
 
     if (file.existsSync()) {
       await _migrateIfPlaintext(file, hexKey);
@@ -70,8 +80,16 @@ QueryExecutor openPtrackQueryExecutor({String? databasePath}) {
 }
 
 /// Opens a [PtrackDatabase] using [openPtrackQueryExecutor].
-PtrackDatabase openPtrackDatabase({String? databasePath}) {
-  return PtrackDatabase(openPtrackQueryExecutor(databasePath: databasePath));
+PtrackDatabase openPtrackDatabase({
+  String? databasePath,
+  FlutterSecureStorage? encryptionKeyStorage,
+}) {
+  return PtrackDatabase(
+    openPtrackQueryExecutor(
+      databasePath: databasePath,
+      encryptionKeyStorage: encryptionKeyStorage,
+    ),
+  );
 }
 
 /// Checks whether [file] is an unencrypted SQLite database. If so, migrates
