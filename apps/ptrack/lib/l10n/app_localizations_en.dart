@@ -445,7 +445,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pinSetupCreateHint =>
-      'Choose a PIN of at least 4 digits. Press ✓ when done.';
+      'Choose a PIN of at least 6 digits. Press ✓ when done.';
 
   @override
   String get pinSetupConfirmTitle => 'Confirm your PIN';

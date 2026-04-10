@@ -264,7 +264,7 @@
   "pinSetupAckBody": "App lock encrypts access with a PIN. If you forget your PIN, the only recovery option is a data reset — your period data will be erased. Export your data regularly to avoid data loss.",
   "pinSetupAckContinue": "I understand, continue",
   "pinSetupCreateTitle": "Create a PIN",
-  "pinSetupCreateHint": "Choose a PIN of at least 4 digits. Press ✓ when done.",
+  "pinSetupCreateHint": "Choose a PIN of at least 6 digits. Press ✓ when done.",
   "pinSetupConfirmTitle": "Confirm your PIN",
   "pinSetupMismatch": "PINs do not match",
   "pinSetupBioTitle": "Enable biometrics for faster unlock?",
