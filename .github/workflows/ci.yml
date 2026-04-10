@@ -22,7 +22,7 @@ jobs:
           flutter_version: ${{ steps.fvm.outputs.version }}
           owner: ${{ github.repository_owner }}
           repositories: ${{ github.event.repository.name }}
-          targets: web
+          targets: android,ios
 
       - name: ARB DE key parity (I18N-05)
         run: dart run tool/arb_de_key_parity.dart

@@ -1,5 +1,5 @@
-name: "Flutter bootstrap via Key Vault (web + private deps)"
-description: "Mints an installation token, configures git, and runs flutter pub get."
+name: "Flutter bootstrap via Key Vault (private deps + platform config)"
+description: "Mints an installation token, configures git, runs flutter pub get, and enables requested Flutter targets."
 
 inputs:
   flutter_version:
@@ -13,9 +13,9 @@ inputs:
     description: >
       Comma-separated platforms to enable; all others are disabled.
       Allowed: web, android, ios, linux, macos, windows, fuchsia.
-      Example: "web" or "android" or "web,linux".
+      Example: "android,ios" or "android" (App Distribution builds).
     required: false
-    default: "web"
+    default: "android,ios"
 
 runs:
   using: "composite"
@@ -40,7 +40,7 @@ runs:
           done
         fi
         if [ ${#TARGETS_ARR[@]} -eq 0 ]; then
-          TARGETS_ARR=(web)
+          TARGETS_ARR=(android ios)
         fi
         has() {
           local n="$1"
