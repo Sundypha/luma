@@ -61,7 +61,7 @@ completed: 2026-04-10
 1. **Task 1: TDD — assert watch snapshot matches for N periods** — `75f8319` (test)
 2. **Task 2: Batch-load day entries and group by periodId** — `94734e5` (perf)
 
-**Plan metadata:** `c4fcdf8` (docs: complete plan)
+**Plan metadata:** `8e93374` (docs: complete plan)
 
 ## Files Created/Modified
 
@@ -93,7 +93,7 @@ None.
 ## Self-Check: PASSED
 
 - `15-03-SUMMARY.md` exists at `.planning/phases/15-address-full-app-code-review-findings/15-03-SUMMARY.md`
-- Commits `75f8319`, `94734e5`, `c4fcdf8` present in `git log`
+- Commits `75f8319`, `94734e5`, `8e93374` present in `git log`
 
 ---
 *Phase: 15-address-full-app-code-review-findings*  

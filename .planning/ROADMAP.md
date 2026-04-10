@@ -92,7 +92,7 @@ Plans:
 | 11 — German + language settings | 3/3 | Complete — 2026-04-07 |
 | 12 — Fertility window | 4/4 | Complete — 2026-04-08 (UAT approved) |
 | 13 — PDF export | 2/3 | In progress — `13-03` Tasks 1–2 done; Task 3 human-verify pending (2026-04-08) |
-| 15 — Code review remediation | 1/3 | In progress — **`15-03` complete** (`15-03-SUMMARY.md`); `15-01`, `15-02` open |
+| 15 — Code review remediation | 2/3 | In progress — **`15-02`**, **`15-03` complete** (`15-02-SUMMARY.md`, `15-03-SUMMARY.md`); **`15-01`** open |
 
 ### Phase 13: PDF export of period statistics and details (user selectable if all or none). Goal is to have a PDF ready for a physician or gynecologist.
 
@@ -129,11 +129,11 @@ Plans:
 3. Factory reset reports or logs when SQLite file deletion fails; tests cover the failure path where feasible.
 4. `watchPeriodsWithDays` refresh uses batched day-entry reads; repository tests prove snapshot parity for multi-period fixtures.
 
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 - [ ] `15-01-PLAN.md` — Import integrity: domain validation, `(periodId, dateUtc)` conflicts, orphan `periodRefId` (see `docs/CODE_REVIEW.md` findings 1–3)
-- [ ] `15-02-PLAN.md` — Reset flow: structured DB delete result, `_resetApp` handling, tests (finding 4)
+- [x] `15-02-PLAN.md` — Reset flow: structured DB delete result, `_resetApp` handling, tests (finding 4) — see `15-02-SUMMARY.md`
 - [x] `15-03-PLAN.md` — `watchPeriodsWithDays` batch query refactor + regression tests (finding 5) — see `15-03-SUMMARY.md`
 
 ### Phase 16: Security audit findings remediation
@@ -146,4 +146,4 @@ Plans:
 - [ ] TBD (run /gsd:plan-phase 16 to break down)
 
 ---
-*Roadmap updated: 2026-04-10 — Phase **15** plan **`15-03`** complete (batch `watchPeriodsWithDays`, `15-03-SUMMARY.md`). Earlier: **`13-03`** export UI / preview / share **coded**; **Task 3** human verification still required to close that plan.*  
+*Roadmap updated: 2026-04-10 — Phase **15** plan **`15-02`** complete (factory reset DB delete observability, `15-02-SUMMARY.md`). **`15-03`** already complete. **`13-03`** export UI still awaiting Task 3 human verification.*  

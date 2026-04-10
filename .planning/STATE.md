@@ -6,7 +6,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** **Milestone v2.0** — Phase **15** code review remediation — plan **`15-03` complete** (`15-03-SUMMARY.md`); plans **15-01**, **15-02** still open. (Phase **13** PDF **13-03** still awaiting Task 3 human-verify elsewhere.)
+**Current focus:** **Milestone v2.0** — Phase **15** code review remediation — plans **`15-02`**, **`15-03` complete** (`15-02-SUMMARY.md`, `15-03-SUMMARY.md`); plan **15-01** still open. (Phase **13** PDF **13-03** still awaiting Task 3 human-verify elsewhere.)
 
 ## Current Position
 
@@ -14,13 +14,13 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Phase:** **15** — Address full app code review findings.
 
-**Plan:** **`15-03`** — `watchPeriodsWithDays` batch-load + regression tests — **complete** — see `.planning/phases/15-address-full-app-code-review-findings/15-03-SUMMARY.md` (commits `75f8319`, `94734e5`).
+**Plan:** **`15-02`** — Factory reset DB delete observability — **complete** — see `.planning/phases/15-address-full-app-code-review-findings/15-02-SUMMARY.md` (commits `c6ab336`, `9577d5b`). Plan **`15-03`** also **complete** (`15-03-SUMMARY.md`).
 
-**Status:** Phase **15** **1/3** plans with completed execution for **`15-03`**; **`15-01`**, **`15-02`** not executed in this session. Phase **13** **13-03** still blocked on Task 3 human-verify.
+**Status:** Phase **15** **2/3** plans with completed SUMMARYs (**`15-02`**, **`15-03`**); **`15-01`** (import integrity) not executed. Phase **13** **13-03** still blocked on Task 3 human-verify.
 
-Last activity: 2026-04-10 — Completed **15-03**: batched day entries in `PeriodRepository.watchPeriodsWithDays`, multi-period watch test. Earlier: 2026-04-08 — **14-01** / **13-03** as below.
+Last activity: 2026-04-10 — Completed **15-02**: `PtrackDbDeleteResult`, `closeAndDeletePtrackDatabaseFile`, `reset_flow_test.dart`. Earlier same day: **15-03** batch `watchPeriodsWithDays`.
 
-**Progress (v2.0):** Phase 15 **in progress** (1/3 plans closed with SUMMARY for **03**). See `ROADMAP.md`.
+**Progress (v2.0):** Phase 15 **in progress** (2/3 plans closed with SUMMARY). See `ROADMAP.md`.
 
 ## Performance Metrics
 
@@ -50,6 +50,8 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 **2026-04-10 (15-03):** `watchPeriodsWithDays` `load()` uses two SQL round-trips (all periods + `day_entries` where `periodId` in ids); ordering unchanged. Regression test seeds five periods with multiple days and compares stream to direct-query snapshot.
 
+**2026-04-10 (15-02):** SQLite file delete returns `PtrackDbDeleteResult` (deleted / notFound / failed); factory reset uses `closeAndDeletePtrackDatabaseFile` with `debugPrint` on failure; `LumaApp` optional `deletePtrackDatabaseOverride` / `onAfterPtrackDbDelete` for tests; `reset_flow_test.dart` covers failed path and close-before-delete ordering.
+
 ### Pending Todos
 
 - **Phase 14** — **14-01** Tasks 1–3 **done** (FAB removed, ARB/tests updated); **Task 4** `human-verify` per `14-01-PLAN.md`. Then check **UXFAB-01/02** in `REQUIREMENTS.md`, finalize `14-01-SUMMARY.md`, and close the plan in `ROADMAP.md`.
@@ -71,8 +73,8 @@ None.
 
 **Last session:** 2026-04-10
 
-**Stopped at:** Phase **15** plan **`15-03`** — complete (`15-03-SUMMARY.md`, STATE/ROADMAP updated).
+**Stopped at:** Completed **15-02-PLAN.md** (`15-02-SUMMARY.md`, STATE/ROADMAP updated).
 
-**Resume file:** `.planning/phases/15-address-full-app-code-review-findings/15-01-PLAN.md` (or **15-02** per priority) for remaining code-review remediation; optional **13-03** Task 3 UAT per prior note.
+**Resume file:** `.planning/phases/15-address-full-app-code-review-findings/15-01-PLAN.md` for remaining code-review remediation; optional **13-03** Task 3 UAT per prior note.
 
-**Next:** Execute **15-01** / **15-02** as planned, or resume **13-03** human-verify / **14-01** Task 4 UAT per product priority.
+**Next:** Execute **15-01** (import integrity), or resume **13-03** human-verify / **14-01** Task 4 UAT per product priority.
