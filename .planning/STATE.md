@@ -66,6 +66,7 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 - Phase 14 added: remove deprecated FAB. clicking on a day of the calendar opens the same widget as the FAB and is clearer in the intent than the FAB
 - Phase 15 added: Address full app code review findings
 - Phase 16 added: Security audit findings remediation
+- Phase 17 added: release management with release bumps, release apks iin github release, and ran apk push to firebase app distribution
 
 ### Blockers/Concerns
 
@@ -73,10 +74,10 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-10
+**Last session:** 2026-04-10T17:43:08.602Z
 
-**Stopped at:** Completed **16-01** (Android release signing + CI guard). SUMMARY written.
+**Stopped at:** Phase 17 context gathered
 
-**Resume file:** `.planning/phases/16-security-audit-findings-remediation/16-02-PLAN.md`
+**Resume file:** .planning/phases/17-release-management-with-release-bumps-release-apks-iin-github-release-and-ran-apk-push-to-firebase-app-distribution/17-CONTEXT.md
 
 **Next:** Execute **16-02** (PIN lockout / throttling), or continue remaining Phase 16 plans.
