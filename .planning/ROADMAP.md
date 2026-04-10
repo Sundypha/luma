@@ -93,6 +93,7 @@ Plans:
 | 12 — Fertility window | 4/4 | Complete — 2026-04-08 (UAT approved) |
 | 13 — PDF export | 2/3 | In progress — `13-03` Tasks 1–2 done; Task 3 human-verify pending (2026-04-08) |
 | 15 — Code review remediation | 3/3 | Complete — `15-01`–`15-03` (`15-01-SUMMARY.md` … `15-03-SUMMARY.md`); optional `15-01` Task 3 import smoke UAT |
+| 16 — Security audit remediation | 0/8 | Planned — 8 plans across 3 waves |
 
 ### Phase 13: PDF export of period statistics and details (user selectable if all or none). Goal is to have a PDF ready for a physician or gynecologist.
 
@@ -138,12 +139,20 @@ Plans:
 
 ### Phase 16: Security audit findings remediation
 
-**Goal:** [To be planned]
+**Goal:** Remediate all 8 security audit findings — encrypting the database and auto-backups at rest (SQLCipher + backup encryption key), hardening PIN lockout against brute force, configuring proper Android release signing, enforcing export password strength with KDF tuning and AEAD metadata binding, adding import size/complexity guardrails, securing temp-file cleanup in share flows, including backup artifacts in the factory-reset flow — with automated regression tests, CI signing checks, and documented threat model.
 **Depends on:** Phase 15
-**Plans:** 0 plans
+**Requirements:** SEC-F1 through SEC-F8, SEC-CC (from `docs/SECURITY_AUDIT_FINDINGS.md`)
+**Plans:** 8 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 16 to break down)
+- [ ] `16-01-PLAN.md` — Android release signing + CI signing guard (SEC-F3)
+- [ ] `16-02-PLAN.md` — PIN lockout, throttling, stronger PIN minimum (SEC-F2)
+- [ ] `16-03-PLAN.md` — Import size/complexity limits + reset backup cleanup (SEC-F5, SEC-F7)
+- [ ] `16-04-PLAN.md` — Export crypto: password policy, KDF tuning, AEAD metadata binding (SEC-F4, SEC-F8)
+- [ ] `16-05-PLAN.md` — Database encryption at rest via SQLCipher (SEC-F1, DB)
+- [ ] `16-06-PLAN.md` — Temp file hygiene + pre-share consent dialog (SEC-F6)
+- [ ] `16-07-PLAN.md` — Encrypted auto-backups by default (SEC-F1, backups)
+- [ ] `16-08-PLAN.md` — Threat model, release checklist, audit findings closure (SEC-CC)
 
 ---
-*Roadmap updated: 2026-04-10 — Phase **15** all plans complete (`15-01-SUMMARY.md` … `15-03-SUMMARY.md`); optional import smoke UAT for `15-01` Task 3. **`13-03`** export UI still awaiting Task 3 human verification.*  
+*Roadmap updated: 2026-04-10 — Phase **16** planned: 8 plans across 3 waves for security audit findings remediation (all 8 findings + cross-cutting). Phase **15** complete. **`13-03`** export UI still awaiting Task 3 human verification.*  
