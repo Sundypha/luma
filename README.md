@@ -1,104 +1,92 @@
 # Luma
 
-Local-first period tracker (Flutter). Product specs live in [`period_tracker_prds/`](period_tracker_prds/).
+A local-first period tracker built with Flutter. Your data stays on your device — no accounts, no cloud sync, no ads, no tracking.
 
-## Security & privacy
+## Why Luma?
 
-Dependency and telemetry rules are documented in **[SECURITY.md](SECURITY.md)**. Read this before adding or upgrading packages.
+Most popular cycle trackers harvest intimate health data to sell ads or feed opaque recommendation engines. Your menstrual cycle is not a product.
 
-**Android-first:** use the **Android SDK and an emulator or device** as your default local run target. Flutter supports iOS as well; iOS setup is not the primary early onboarding path for every contributor.
+Luma exists because **period tracking should be private by default**. It stores everything locally on your phone, never phones home, and ships zero analytics or advertising SDKs. No sign-up, no account, no data leaving your device — ever.
 
-## Flutter SDK (FVM)
+## Features
 
-This repo pins Flutter **3.41.2** via [FVM](https://fvm.app/).
+### Cycle & symptom tracking
+- Mark and unmark period days on a calendar; Luma derives period spans automatically.
+- Log **flow intensity**, **pain**, **mood**, and free-text **notes** for any day.
+- Visual calendar with colour-coded period bands (start/middle/end) and a clear legend.
+
+### Smart predictions
+- **Ensemble prediction engine** — combines up to four algorithms and shows a per-day confidence score:
+  - **Median baseline** — sliding-window average with outlier removal.
+  - **EWMA** — exponentially weighted moving average.
+  - **Bayesian** — Normal–Inverse-Gamma model that works from just one logged cycle.
+  - **Linear trend** — least-squares regression gated by R² (activates at 5+ cycles).
+- Configurable prediction horizon (1, 3, or 6 future cycles).
+- Milestone banners when enough data unlocks a new algorithm.
+
+### Fertility window (optional)
+- Calendar-method fertile-window estimate based on configurable luteal-phase length.
+- Opt-in only, with a clear disclaimer that it is educational, not medical advice.
+
+### Data you control
+- **`.luma` export format** — plain JSON or password-encrypted backups.
+- **Export wizard** — choose what to include (periods, symptoms, notes) and share the file however you like.
+- **Import with preview** — see what's new vs duplicate before merging, with automatic pre-import backup.
+- **Auto-backups** — keeps the three most recent snapshots on-device.
+- **PDF reports** — summary, standard, or full detail; configurable date range, with print and share.
+
+### Privacy & security
+- **No analytics, crash-reporting, or ad SDKs** that touch reproductive-health data (enforced by CI policy).
+- **App lock** — PIN protected with Argon2id hashing, optional biometric unlock.
+- **Encrypted backups** — AES encryption for exported `.luma` files.
+- Everything lives in a local SQLite database; nothing is transmitted.
+
+### Localisation
+- English and German, with device-language detection or manual override.
+
+### Platform support
+- Android-first. iOS, Linux, macOS, Windows, and web targets are present in the Flutter project structure.
+
+## Getting started
+
+### Prerequisites
+
+- [FVM](https://fvm.app/) (Flutter Version Management)
+- Android SDK with an emulator or device
+
+### Setup
 
 ```bash
-# Install FVM, then from repo root:
 fvm install
 fvm use 3.41.2
-fvm flutter --version
-```
-
-## Workspace (Melos + Dart pub workspaces)
-
-Packages live under `apps/` and `packages/`. The root `pubspec.yaml` declares a [pub workspace](https://dart.dev/tools/pub/workspaces).
-
-**Melos calls `flutter` internally.** If `flutter` is not on your `PATH`, bootstrap fails with `'flutter' is not recognized` (common on Windows).
-
-### Recommended (all platforms): run Melos through FVM
-
-From the repo root, use **`fvm exec`** so Melos sees the project’s Flutter SDK:
-
-```bash
 fvm dart pub get
 fvm dart pub global activate melos
 fvm exec melos bootstrap
 ```
 
-Analyze / test across packages:
+### Run the app
 
 ```bash
-fvm exec melos run ci:analyze
-fvm exec melos run ci:test
-```
-
-There is no `fvm melos` subcommand — wrap Melos with `fvm exec` as above.
-
-### Alternative: put Flutter on `PATH`
-
-If you prefer bare `melos`:
-
-- **macOS/Linux:** `export PATH="$HOME/fvm/versions/3.41.2/bin:$PATH"` (adjust version if `.fvm/fvm_config.json` changes).
-- **Windows (PowerShell):** `$env:PATH = "C:\Users\<you>\fvm\versions\3.41.2\bin;" + $env:PATH`
-
-Then `dart pub get`, `melos bootstrap`, etc.
-
-### Windows: “Can’t load Kernel binary” when running `melos`
-
-That usually means the global **Melos** binary was built with a different Dart than the one running it. Activate Melos with the **same** SDK as the project:
-
-```powershell
-fvm dart pub global activate melos
-```
-
-Then always run **`fvm exec melos …`** from this repo (or fix `PATH` as above).
-
-## Run the app (Android-first)
-
-```bash
-cd apps/ptrack   # Flutter app package name: luma
+cd apps/ptrack
 fvm flutter run
 ```
 
-Use an Android emulator or device with the Android SDK installed.
-
-## Useful commands
-
-```bash
-cd apps/ptrack && fvm flutter analyze
-cd apps/ptrack && fvm flutter test
-```
-
-From repo root (all packages), with FVM wrapping Melos:
+### Analyse & test
 
 ```bash
 fvm exec melos run ci:analyze
 fvm exec melos run ci:test
 ```
 
-## CI parity (same idea as GitHub Actions)
+### CI parity
 
-The pubspec policy script needs **PyYAML**. Use **[uv](https://docs.astral.sh/uv/getting-started/installation/)** (not `pip`) so dependencies stay explicit and reproducible:
+The pubspec policy script needs **PyYAML**. Use [uv](https://docs.astral.sh/uv/getting-started/installation/):
 
 ```bash
 uv run --python 3.12 --with pyyaml python3 tool/ci/verify_pubspec_policy.py
 ```
 
-(`uv` downloads a compatible Python if needed.)
-
-From the repository root (after `fvm install` / `fvm use`):
-
-**Linux/macOS (CI adds FVM Flutter to `PATH`, then runs Melos):**
+Full CI mirror (Linux/macOS):
 
 ```bash
 dart pub get
@@ -109,7 +97,7 @@ melos exec -c 1 -- flutter analyze
 melos exec -c 1 --dir-exists=test -- flutter test
 ```
 
-**Windows (PowerShell) — use `fvm exec` so `flutter` is found:**
+Windows (PowerShell) — use `fvm exec` so `flutter` is found:
 
 ```powershell
 fvm dart pub get
@@ -120,4 +108,22 @@ fvm exec melos exec -c 1 -- flutter analyze
 fvm exec melos exec -c 1 --dir-exists=test -- flutter test
 ```
 
-These steps mirror `.github/workflows/ci.yml` (Ubuntu adds FVM’s `bin` to `PATH` before `melos`; CI installs **uv** via `astral-sh/setup-uv`).
+## Project structure
+
+```
+apps/ptrack          Flutter application (package name: luma)
+packages/ptrack_domain   Domain models, prediction algorithms, validation
+packages/ptrack_data     Database, repositories, import/export services
+docs/                Additional documentation
+tool/ci/             CI helper scripts
+```
+
+## Security
+
+See [SECURITY.md](SECURITY.md) for the dependency and telemetry policy.
+
+## License
+
+Luma is released under the **MIT License** with an additional **health disclaimer**. See [LICENSE](LICENSE) for the full text.
+
+**Luma is not a medical device.** Predictions and estimates are statistical approximations based on past data. They are not diagnoses, medical advice, or a substitute for professional healthcare. Do not rely on Luma for contraception, fertility planning, or any health decision. See the LICENSE for the complete disclaimer.
