@@ -94,7 +94,9 @@ jobs:
         run: |
           set -euo pipefail
           VERSION="${{ steps.parse.outputs.version }}"
-          awk -v ver="$VERSION" '
+          # Escape dots so e.g. 1.0.1 does not match ## [1x0y1] under awk regex rules
+          VER_ESC=$(printf '%s\n' "$VERSION" | sed 's/\./\\./g')
+          awk -v ver="$VER_ESC" '
             $0 ~ "^## \\[" ver "\\]" { found=1 }
             found && /^## \[/ && !($0 ~ "^## \\[" ver "\\]") { exit }
             found { print }
@@ -102,6 +104,7 @@ jobs:
           if [ ! -s release-notes.md ]; then
             echo "Release $VERSION" > release-notes.md
           fi
+          echo "release-notes.md size: $(wc -c < release-notes.md) bytes"
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -173,10 +176,19 @@ jobs:
           fi
           echo "Release signing verified — no debug certificate found."
 
+      # upload-artifact preserves path segments; a deep path would land under
+      # artifacts/apps/ptrack/.../app-release.apk after download. Stage at repo root
+      # so publish always uses ./artifacts/app-release.apk.
+      - name: Stage APK for artifact upload
+        run: |
+          set -euo pipefail
+          cp apps/ptrack/build/app/outputs/flutter-apk/app-release.apk ./app-release.apk
+          ls -la ./app-release.apk
+
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: release-apk
-          path: apps/ptrack/build/app/outputs/flutter-apk/app-release.apk
+          path: app-release.apk
           retention-days: 5
 
   publish:
@@ -197,19 +209,46 @@ jobs:
           name: release-notes
           path: ./notes
 
+      - name: Resolve downloaded artifact paths
+        id: assets
+        run: |
+          set -euo pipefail
+          APK=$(find ./artifacts -name 'app-release.apk' -print -quit)
+          if [ -z "${APK:-}" ] || [ ! -f "$APK" ]; then
+            echo "::error::app-release.apk not found under ./artifacts"
+            find ./artifacts -type f -ls 2>/dev/null || true
+            exit 1
+          fi
+          NOTES=./notes/release-notes.md
+          if [ ! -f "$NOTES" ]; then
+            NOTES=$(find ./notes -name 'release-notes.md' -print -quit || true)
+          fi
+          if [ -z "${NOTES:-}" ] || [ ! -f "$NOTES" ]; then
+            echo "::error::release-notes.md not found under ./notes"
+            find ./notes -type f -ls 2>/dev/null || true
+            exit 1
+          fi
+          echo "apk=$APK" >> "$GITHUB_OUTPUT"
+          echo "notes=$NOTES" >> "$GITHUB_OUTPUT"
+          echo "Using APK: $APK ($(wc -c < "$APK") bytes)"
+          echo "Using notes: $NOTES ($(wc -c < "$NOTES") bytes)"
+
       - name: Create draft GitHub Release
         id: gh_release
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_APK: ${{ steps.assets.outputs.apk }}
+          RELEASE_NOTES: ${{ steps.assets.outputs.notes }}
         run: |
           set -euo pipefail
           TAG="${{ needs.validate.outputs.tag }}"
           PRERELEASE="${{ needs.validate.outputs.prerelease }}"
-          ARGS=(--draft --title "$TAG" --notes-file ./notes/release-notes.md)
+          ARGS=(--draft --title "$TAG" --notes-file "$RELEASE_NOTES")
           if [ "$PRERELEASE" = "true" ]; then
             ARGS+=(--prerelease)
           fi
-          gh release create "$TAG" ./artifacts/app-release.apk "${ARGS[@]}"
+          # Flags before asset paths (matches gh examples: tag, options, then files)
+          gh release create "$TAG" "${ARGS[@]}" "$RELEASE_APK"
           echo "release_created=true" >> "$GITHUB_OUTPUT"
 
       - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
@@ -225,13 +264,16 @@ jobs:
         run: npm install -g firebase-tools
 
       - name: Upload to Firebase App Distribution
+        env:
+          RELEASE_APK: ${{ steps.assets.outputs.apk }}
+          RELEASE_NOTES: ${{ steps.assets.outputs.notes }}
         run: |
           set -euo pipefail
           firebase --project "${{ vars.GCP_PROJECT_ID }}" appdistribution:distribute \
-            ./artifacts/app-release.apk \
+            "$RELEASE_APK" \
             --app "1:954996573636:android:8974fc18b98cd37fd69091" \
             --groups "${{ vars.FIREBASE_TESTER_GROUP }}" \
-            --release-notes-file ./notes/release-notes.md
+            --release-notes-file "$RELEASE_NOTES"
 
       - name: Roll back draft GitHub Release on downstream failure
         if: failure() && steps.gh_release.outputs.release_created == 'true'
