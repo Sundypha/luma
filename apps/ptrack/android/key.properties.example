@@ -7,4 +7,5 @@
 storePassword=
 keyPassword=
 keyAlias=release
-storeFile=../keystore/release.jks
+# Relative to apps/ptrack/android (same as Gradle rootProject.file in app/build.gradle.kts)
+storeFile=keystore/release.jks

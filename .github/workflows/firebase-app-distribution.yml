@@ -126,7 +126,8 @@ jobs:
           done
           mkdir -p apps/ptrack/android/keystore
           echo "$KEYSTORE_BASE64" | base64 --decode > apps/ptrack/android/keystore/release.jks
-          printf 'storePassword=%s\nkeyPassword=%s\nkeyAlias=%s\nstoreFile=../keystore/release.jks\n' \
+          # storeFile is resolved from apps/ptrack/android (Gradle rootProject), not apps/ptrack
+          printf 'storePassword=%s\nkeyPassword=%s\nkeyAlias=%s\nstoreFile=keystore/release.jks\n' \
             "$STORE_PASSWORD" "$KEY_PASSWORD" "$KEY_ALIAS" > apps/ptrack/android/key.properties
 
       - name: Build Android APK (release)
