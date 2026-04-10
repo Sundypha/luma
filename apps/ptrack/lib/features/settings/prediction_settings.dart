@@ -233,35 +233,38 @@ class _PredictionSettingsScreenState extends State<PredictionSettingsScreen> {
           : ListView(
               children: [
                 _SectionHeader(l10n.predSettingsSectionHowManyDays),
-                RadioListTile<PredictionDisplayMode>(
-                  title: Text(l10n.predSettingsModeConsensusTitle),
-                  subtitle: Text(
-                    l10n.predSettingsModeConsensusSubtitle,
-                    style: caption,
-                  ),
-                  value: PredictionDisplayMode.consensusOnly,
+                RadioGroup<PredictionDisplayMode>(
                   groupValue: _mode,
                   onChanged: _onModeChanged,
-                ),
-                RadioListTile<PredictionDisplayMode>(
-                  title: Text(l10n.predSettingsModeAllTitle),
-                  subtitle: Text(
-                    l10n.predSettingsModeAllSubtitle,
-                    style: caption,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      RadioListTile<PredictionDisplayMode>(
+                        title: Text(l10n.predSettingsModeConsensusTitle),
+                        subtitle: Text(
+                          l10n.predSettingsModeConsensusSubtitle,
+                          style: caption,
+                        ),
+                        value: PredictionDisplayMode.consensusOnly,
+                      ),
+                      RadioListTile<PredictionDisplayMode>(
+                        title: Text(l10n.predSettingsModeAllTitle),
+                        subtitle: Text(
+                          l10n.predSettingsModeAllSubtitle,
+                          style: caption,
+                        ),
+                        value: PredictionDisplayMode.showAll,
+                      ),
+                      RadioListTile<PredictionDisplayMode>(
+                        title: Text(l10n.predSettingsModeAllNotesTitle),
+                        subtitle: Text(
+                          l10n.predSettingsModeAllNotesSubtitle,
+                          style: caption,
+                        ),
+                        value: PredictionDisplayMode.showAllWithNote,
+                      ),
+                    ],
                   ),
-                  value: PredictionDisplayMode.showAll,
-                  groupValue: _mode,
-                  onChanged: _onModeChanged,
-                ),
-                RadioListTile<PredictionDisplayMode>(
-                  title: Text(l10n.predSettingsModeAllNotesTitle),
-                  subtitle: Text(
-                    l10n.predSettingsModeAllNotesSubtitle,
-                    style: caption,
-                  ),
-                  value: PredictionDisplayMode.showAllWithNote,
-                  groupValue: _mode,
-                  onChanged: _onModeChanged,
                 ),
                 const Divider(),
                 _SectionHeader(l10n.predSettingsSectionHorizon),
@@ -272,29 +275,34 @@ class _PredictionSettingsScreenState extends State<PredictionSettingsScreen> {
                     style: caption,
                   ),
                 ),
-                RadioListTile<int>(
-                  title: Text(l10n.predSettingsHorizonNextOnly),
-                  value: 1,
+                RadioGroup<int>(
                   groupValue: _horizonCycles,
                   onChanged: _onHorizonChanged,
-                ),
-                RadioListTile<int>(
-                  title: Text(l10n.predSettingsHorizon3Title),
-                  subtitle:
-                      Text(l10n.predSettingsHorizon3Subtitle, style: caption),
-                  value: 3,
-                  groupValue: _horizonCycles,
-                  onChanged: _onHorizonChanged,
-                ),
-                RadioListTile<int>(
-                  title: Text(l10n.predSettingsHorizon6Title),
-                  subtitle: Text(
-                    l10n.predSettingsHorizon6Subtitle,
-                    style: caption,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      RadioListTile<int>(
+                        title: Text(l10n.predSettingsHorizonNextOnly),
+                        value: 1,
+                      ),
+                      RadioListTile<int>(
+                        title: Text(l10n.predSettingsHorizon3Title),
+                        subtitle: Text(
+                          l10n.predSettingsHorizon3Subtitle,
+                          style: caption,
+                        ),
+                        value: 3,
+                      ),
+                      RadioListTile<int>(
+                        title: Text(l10n.predSettingsHorizon6Title),
+                        subtitle: Text(
+                          l10n.predSettingsHorizon6Subtitle,
+                          style: caption,
+                        ),
+                        value: 6,
+                      ),
+                    ],
                   ),
-                  value: 6,
-                  groupValue: _horizonCycles,
-                  onChanged: _onHorizonChanged,
                 ),
                 const Divider(),
                 _SectionHeader(l10n.predSettingsSectionMethods),

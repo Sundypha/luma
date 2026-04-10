@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../onboarding/onboarding_content.dart';
-import '../onboarding/onboarding_page.dart';
 
 /// Read-only replay of privacy and estimates disclosures (wizard pages 1–2).
 class AboutScreen extends StatelessWidget {
