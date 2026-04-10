@@ -6,25 +6,29 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** **Milestone v2.0** — Phase **16** security audit findings remediation (executing).
+**Current focus:** **Milestone v2.0** — Phase **17** release management (executing plan 02 next).
 
 ## Current Position
 
 **Milestone:** v2.0 — i18n, German locale, optional fertility window (**complete**).
 
-**Phase:** **16** — Security audit findings remediation.
+**Phase:** **17** — Release management (GitHub Release + Firebase App Distribution).
 
-**Plan:** 01 complete — Android release signing + CI guard. Next: `16-02-PLAN.md`.
+**Plan:** 01 complete — root CHANGELOG + `tool/bump_version.dart`. Next: `17-02-PLAN.md`.
 
-**Status:** Phase **16** in progress — plan 01 complete (Android release signing).
+**Status:** Phase **17** in progress — plan 01 complete (version management foundation, REL-01).
 
-Last activity: 2026-04-10 — Phase **16-01** execution: dedicated release signingConfig, CI signing secret injection, apksigner debug-cert rejection (`fd217f3`, `ccef8c3`).
+Last activity: 2026-04-10 — Phase **17-01** execution: `CHANGELOG.md` (Keep a Changelog + v1.0.0 retrospective), cross-platform `tool/bump_version.dart` (`3c36bd3`, `980eb23`).
 
-**Progress (v2.0):** Phase 16 **in progress** (1/8 plans). See `ROADMAP.md`.
+**Progress (v2.0):** Phase 17 **in progress** (1/2 plans). See `ROADMAP.md`.
 
 ## Performance Metrics
 
-*Reset when v2.0 execution starts; track per-phase durations in phase SUMMARY files.*
+| Phase | Duration | Detail |
+|-------|----------|--------|
+| 17 P01 | 12 min | 2 tasks, 2 files — see `17-01-SUMMARY.md` |
+
+*Also reset when v2.0 execution starts; track per-phase durations in phase SUMMARY files.*
 
 ## Accumulated Context
 
@@ -52,6 +56,8 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 **2026-04-10 (16-01):** Release signingConfig is null (not debug) when key.properties absent — unsigned builds fail explicitly; CI uses `printf` to write key.properties from individual secrets; `apksigner verify --print-certs` grepped for "Android Debug" as release-signing guard.
 
+**2026-04-10 (17-01):** Root `CHANGELOG.md` follows Keep a Changelog; `tool/bump_version.dart` bumps `apps/ptrack/pubspec.yaml` semver + monotonic build, prepends a dated section after `## [Unreleased]`, optional `--tag` (git commit + annotated tag). Run with **`fvm dart run tool/bump_version.dart`** so the SDK matches workspace `^3.11` (plain `dart run` fails on older system Dart).
+
 ### Pending Todos
 
 - **Optional:** `15-01` Task 3 — manual export/re-import smoke (skip/replace) on device.
@@ -74,10 +80,10 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-10T17:43:08.602Z
+**Last session:** 2026-04-10T18:08:13.120Z
 
-**Stopped at:** Phase 17 context gathered
+**Stopped at:** Completed 17-01-PLAN.md
 
-**Resume file:** .planning/phases/17-release-management-with-release-bumps-release-apks-iin-github-release-and-ran-apk-push-to-firebase-app-distribution/17-CONTEXT.md
+**Resume file:** .planning/phases/17-release-management-with-release-bumps-release-apks-iin-github-release-and-ran-apk-push-to-firebase-app-distribution/17-02-PLAN.md
 
-**Next:** Execute **16-02** (PIN lockout / throttling), or continue remaining Phase 16 plans.
+**Next:** Execute **17-02** (unified release workflow), or continue Phase **16** plans (e.g. **16-02** PIN lockout) as prioritized.
