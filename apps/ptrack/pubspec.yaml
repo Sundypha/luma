@@ -51,6 +51,7 @@ dependencies:
   cryptography_flutter: ^2.3.4
   pdf: ^3.11.1
   printing: ^5.13.4
+  sqlite3: ^3.3.0
 
 dev_dependencies:
   flutter_test:
@@ -60,6 +61,13 @@ dev_dependencies:
   mocktail: ^1.0.5
   shared_preferences_platform_interface: ^2.4.2
   drift: ^2.28.1
+
+# Match ptrack_data: bundle SQLite3MultipleCiphers so mobile builds use the same
+# native library as package:sqlite3 (UPGRADING_TO_V3.md#encryption).
+hooks:
+  user_defines:
+    sqlite3:
+      source: sqlite3mc
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

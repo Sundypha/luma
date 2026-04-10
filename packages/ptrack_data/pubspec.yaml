@@ -32,8 +32,9 @@ dev_dependencies:
   mocktail: ^1.0.5
   timezone: ^0.11.0
 
-# sqlite3 v3 bundles native SQLite via hooks; use SQLite3MultipleCiphers for
-# SQLCipher-compatible encryption (see sqlite3 UPGRADING_TO_V3.md).
+# SQLite3MultipleCiphers for SQLCipher-compatible files (sqlite3 v3 — see
+# https://github.com/simolus3/sqlite3.dart/blob/main/UPGRADING_TO_V3.md#encryption
+# and package:sqlite3 sqlite3/doc/hook.md).
 hooks:
   user_defines:
     sqlite3:
