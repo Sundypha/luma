@@ -16,12 +16,6 @@ jobs:
         with:
           sdk: stable
 
-      - name: Pub get (workspace root)
-        run: dart pub get
-
-      - name: ARB DE key parity (I18N-05)
-        run: dart run tool/arb_de_key_parity.dart
-
       - name: Install FVM
         run: |
           dart pub global activate fvm
@@ -33,6 +27,12 @@ jobs:
           VER=$(python3 -c "import json; print(json.load(open('.fvm/fvm_config.json'))['flutterSdkVersion'])")
           echo "$HOME/fvm/versions/${VER}/bin" >> "$GITHUB_PATH"
           flutter --version
+
+      - name: Pub get (workspace root)
+        run: flutter pub get
+
+      - name: ARB DE key parity (I18N-05)
+        run: dart run tool/arb_de_key_parity.dart
 
       - name: Melos
         run: |
