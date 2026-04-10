@@ -9,6 +9,7 @@ import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
 import 'features/lock/delete_ptrack_db_file.dart';
+import 'features/lock/reset_ptrack_database_file.dart';
 import 'features/lock/lock_gate.dart';
 import 'features/lock/lock_service.dart';
 import 'features/settings/app_language_settings.dart';
@@ -84,6 +85,8 @@ class LumaApp extends StatefulWidget {
     this.homeOverride,
     this.appLanguagePreference = AppLanguagePreference.followDevice,
     this.initialPeriodsWithDays,
+    this.deletePtrackDatabaseOverride,
+    this.onAfterPtrackDbDelete,
   }) : assert(
           homeOverride != null ||
               (onboardingState != null &&
@@ -105,6 +108,12 @@ class LumaApp extends StatefulWidget {
   final LockService? lockService;
   final AppLanguagePreference appLanguagePreference;
   final List<StoredPeriodWithDays>? initialPeriodsWithDays;
+
+  /// When set (e.g. tests), replaces [deletePtrackDatabaseFileIfExists] during reset.
+  final Future<PtrackDbDeleteResult> Function()? deletePtrackDatabaseOverride;
+
+  /// Optional hook after the DB file delete attempt (e.g. tests asserting outcomes).
+  final void Function(PtrackDbDeleteResult result)? onAfterPtrackDbDelete;
 
   @override
   State<LumaApp> createState() => _LumaAppState();
@@ -160,14 +169,19 @@ class _LumaAppState extends State<LumaApp> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
     await widget.onboardingState?.reloadFromPlatform();
-    await widget.database?.close();
-    switch (await deletePtrackDatabaseFileIfExists()) {
-      case PtrackDbDeleteFailed(:final cause):
-        debugPrint('Ptrack database file delete failed: $cause');
-      case PtrackDbDeleted():
-      case PtrackDbNotFound():
-        break;
-    }
+    await closeAndDeletePtrackDatabaseFile(
+      closeDatabase: () async {
+        await widget.database?.close();
+      },
+      deleteDatabaseFile: () async {
+        final override = widget.deletePtrackDatabaseOverride;
+        if (override != null) {
+          return override();
+        }
+        return deletePtrackDatabaseFileIfExists();
+      },
+      onAfterDelete: widget.onAfterPtrackDbDelete,
+    );
     if (mounted) {
       setState(() => _screen = AppScreen.onboarding);
     }
