@@ -6,10 +6,22 @@ import 'package:ptrack_domain/ptrack_domain.dart';
 
 import 'symptom_form_view_model.dart';
 
-/// Flow / pain / mood: index `0` = not set; `1..values.length` maps to enum `.values[i - 1]`.
+/// Flow / pain: index `0` = not set; `1..values.length` maps to enum `.values[i - 1]`.
 double _sliderIndexFromNullableEnum(int? enumIndex) {
   if (enumIndex == null) return 0;
   return (enumIndex + 1).toDouble();
+}
+
+/// Mood uses the same “less → more severe” left-to-right as pain/flow: good mood left, distressed right.
+/// Stored enum / DB order is unchanged (`veryBad`..`veryGood`); only the slider direction is inverted.
+double _moodSliderIndexFromMood(Mood? mood) {
+  if (mood == null) return 0;
+  return (Mood.values.length - mood.index).toDouble();
+}
+
+Mood? _moodFromSliderTick(int tick) {
+  if (tick == 0) return null;
+  return Mood.values[Mood.values.length - tick];
 }
 
 String _moodSliderLabel(AppLocalizations l10n, Mood? mood) {
@@ -177,16 +189,11 @@ class _SymptomFormSheetState extends State<SymptomFormSheet> {
               const SizedBox(height: 16),
               _DiscreteSymptomSlider(
                 title: l10n.symptomSectionMood,
-                value: _sliderIndexFromNullableEnum(_vm.mood?.index),
+                value: _moodSliderIndexFromMood(_vm.mood),
                 stepCount: Mood.values.length,
                 displayLabel: _moodSliderLabel(l10n, _vm.mood),
                 onChanged: (v) {
-                  final i = v.round();
-                  if (i == 0) {
-                    _vm.setMood(null);
-                  } else {
-                    _vm.setMood(Mood.values[i - 1]);
-                  }
+                  _vm.setMood(_moodFromSliderTick(v.round()));
                 },
               ),
               const SizedBox(height: 16),
