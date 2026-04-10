@@ -8,6 +8,7 @@ import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../backup/secure_temp_file.dart';
 
 /// Scrollable in-app PDF preview with share (or save on Linux).
 class PdfPreviewScreen extends StatelessWidget {
@@ -37,7 +38,7 @@ class PdfPreviewScreen extends StatelessWidget {
     }
 
     final dir = await getTemporaryDirectory();
-    final file = File('${dir.path}/$filename');
+    final file = File('${dir.path}/luma-report-${randomHex(8)}.pdf');
     try {
       await file.writeAsBytes(pdfBytes);
       await SharePlus.instance.share(
@@ -50,11 +51,7 @@ class PdfPreviewScreen extends StatelessWidget {
         );
       }
     } finally {
-      if (file.existsSync()) {
-        try {
-          file.deleteSync();
-        } catch (_) {}
-      }
+      await secureTempCleanup(file);
     }
   }
 
