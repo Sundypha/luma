@@ -57,8 +57,8 @@ Future<void> main() async {
 
 /// Resolves [PeriodCalendarContext] using the device zone when IANA lookup works.
 ///
-/// Falls back to UTC if names are abbreviations or unknown. Apps may refine this
-/// later (e.g. platform channel for canonical IANA id).
+/// Falls back to `Etc/UTC` if names are abbreviations or unknown. Apps may refine
+/// this later (e.g. platform channel for canonical IANA id).
 PeriodCalendarContext calendarForDevice() {
   for (final name in <String>{tz.local.name, DateTime.now().timeZoneName}) {
     if (name.isEmpty) continue;
@@ -68,7 +68,7 @@ PeriodCalendarContext calendarForDevice() {
       continue;
     }
   }
-  return PeriodCalendarContext.fromTimeZoneName('UTC');
+  return PeriodCalendarContext.fromTimeZoneName('Etc/UTC');
 }
 
 enum AppScreen { onboarding, firstLog, home }

@@ -3,6 +3,18 @@ import 'package:timezone/timezone.dart' as tz;
 
 import 'period_models.dart';
 
+/// Maps common non-IANA labels to ids present in [tzdata](package:timezone).
+///
+/// The `timezone` package database uses `Etc/UTC`, not `UTC`. Device APIs and
+/// Dart may still report `"UTC"`.
+String canonicalTimeZoneIdForLookup(String name) {
+  final trimmed = name.trim();
+  if (trimmed.isEmpty) return trimmed;
+  // Case-insensitive: Android may report "utc".
+  if (trimmed.toUpperCase() == 'UTC') return 'Etc/UTC';
+  return trimmed;
+}
+
 /// Resolves **local calendar dates** (year/month/day) for UTC instants using a
 /// fixed [tz.Location] (IANA zone id). This matches Phase 2 CONTEXT: instants
 /// are stored in UTC; calendar-day rules use an explicit timezone for
@@ -14,8 +26,11 @@ class PeriodCalendarContext {
   final tz.Location location;
 
   /// Builds a context from an IANA timezone name (e.g. `America/New_York`).
+  ///
+  /// Accepts `UTC` as an alias for `Etc/UTC` (see [canonicalTimeZoneIdForLookup]).
   factory PeriodCalendarContext.fromTimeZoneName(String name) {
-    return PeriodCalendarContext(tz.getLocation(name));
+    final id = canonicalTimeZoneIdForLookup(name);
+    return PeriodCalendarContext(tz.getLocation(id));
   }
 
   /// Local calendar components for [utc] in [location].
