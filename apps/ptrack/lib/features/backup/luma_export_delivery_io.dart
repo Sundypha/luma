@@ -6,6 +6,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:share_plus/share_plus.dart';
 
+import 'secure_temp_file.dart';
+
 Future<void> deliverLumaExport(BuildContext context, ExportResult result) async {
   if (Platform.isLinux) {
     final path = await FilePicker.saveFile(
@@ -22,17 +24,13 @@ Future<void> deliverLumaExport(BuildContext context, ExportResult result) async 
   }
 
   final dir = await getTemporaryDirectory();
-  final file = File('${dir.path}/${result.filename}');
+  final file = File('${dir.path}/luma-${randomHex(8)}.luma');
   try {
     await file.writeAsBytes(result.bytes);
     await SharePlus.instance.share(
       ShareParams(files: [XFile(file.path)]),
     );
   } finally {
-    if (file.existsSync()) {
-      try {
-        file.deleteSync();
-      } catch (_) {}
-    }
+    await secureTempCleanup(file);
   }
 }

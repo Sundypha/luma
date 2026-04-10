@@ -9,6 +9,22 @@ class MockFlutterSecureStorage extends Mock implements FlutterSecureStorage {}
 
 class MockLocalAuthentication extends Mock implements LocalAuthentication {}
 
+/// In-memory store helper to simulate FlutterSecureStorage.
+void stubSecureStore(MockFlutterSecureStorage mock, Map<String, String> store) {
+  when(() => mock.write(key: any(named: 'key'), value: any(named: 'value')))
+      .thenAnswer((inv) async {
+    final key = inv.namedArguments[#key] as String;
+    final value = inv.namedArguments[#value] as String?;
+    if (value != null) store[key] = value;
+  });
+  when(() => mock.read(key: any(named: 'key'))).thenAnswer((inv) async {
+    return store[inv.namedArguments[#key] as String];
+  });
+  when(() => mock.delete(key: any(named: 'key'))).thenAnswer((inv) async {
+    store.remove(inv.namedArguments[#key] as String);
+  });
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -58,18 +74,7 @@ void main() {
 
   test('verifyPin returns true for the same PIN used in createPin', () async {
     final store = <String, String>{};
-    when(() => mockStorage.write(key: any(named: 'key'), value: any(named: 'value')))
-        .thenAnswer((invocation) async {
-      final key = invocation.namedArguments[#key] as String;
-      final value = invocation.namedArguments[#value] as String?;
-      if (value != null) {
-        store[key] = value;
-      }
-    });
-    when(() => mockStorage.read(key: any(named: 'key'))).thenAnswer((invocation) async {
-      final key = invocation.namedArguments[#key] as String;
-      return store[key];
-    });
+    stubSecureStore(mockStorage, store);
 
     final service = LockService(
       storage: mockStorage,
@@ -81,18 +86,7 @@ void main() {
 
   test('verifyPin returns false for a wrong PIN', () async {
     final store = <String, String>{};
-    when(() => mockStorage.write(key: any(named: 'key'), value: any(named: 'value')))
-        .thenAnswer((invocation) async {
-      final key = invocation.namedArguments[#key] as String;
-      final value = invocation.namedArguments[#value] as String?;
-      if (value != null) {
-        store[key] = value;
-      }
-    });
-    when(() => mockStorage.read(key: any(named: 'key'))).thenAnswer((invocation) async {
-      final key = invocation.namedArguments[#key] as String;
-      return store[key];
-    });
+    stubSecureStore(mockStorage, store);
 
     final service = LockService(
       storage: mockStorage,
@@ -180,7 +174,7 @@ void main() {
     expect(await service.canUseBiometrics(), isTrue);
   });
 
-  test('deletePinData deletes hash and salt keys', () async {
+  test('deletePinData deletes hash, salt, and lockout keys', () async {
     when(() => mockStorage.delete(key: any(named: 'key'))).thenAnswer((_) async {});
 
     final service = LockService(
@@ -191,5 +185,119 @@ void main() {
 
     verify(() => mockStorage.delete(key: 'lock_pin_hash')).called(1);
     verify(() => mockStorage.delete(key: 'lock_pin_salt')).called(1);
+    verify(() => mockStorage.delete(key: 'lock_failed_attempts')).called(1);
+    verify(() => mockStorage.delete(key: 'lock_lockout_until')).called(1);
+  });
+
+  group('lockout', () {
+    late Map<String, String> store;
+    late DateTime fakeNow;
+
+    setUp(() {
+      store = <String, String>{};
+      stubSecureStore(mockStorage, store);
+      fakeNow = DateTime.utc(2026, 4, 10, 12);
+    });
+
+    LockService serviceWithClock() => LockService(
+          storage: mockStorage,
+          prefs: null,
+          clock: () => fakeNow,
+        );
+
+    test('recordFailedAttempt increments counter in storage', () async {
+      final service = serviceWithClock();
+      await service.recordFailedAttempt();
+      expect(store['lock_failed_attempts'], '1');
+      await service.recordFailedAttempt();
+      expect(store['lock_failed_attempts'], '2');
+    });
+
+    test('isLockedOut returns false before threshold', () async {
+      final service = serviceWithClock();
+      await service.recordFailedAttempt();
+      await service.recordFailedAttempt();
+      expect(await service.isLockedOut(), isFalse);
+    });
+
+    test('isLockedOut returns true after 3 attempts', () async {
+      final service = serviceWithClock();
+      for (var i = 0; i < 3; i++) {
+        await service.recordFailedAttempt();
+      }
+      expect(await service.isLockedOut(), isTrue);
+      final remaining = await service.lockoutRemaining();
+      expect(remaining.inSeconds, 30);
+    });
+
+    test('isLockedOut returns false after lockout expires', () async {
+      final service = serviceWithClock();
+      for (var i = 0; i < 3; i++) {
+        await service.recordFailedAttempt();
+      }
+      expect(await service.isLockedOut(), isTrue);
+
+      fakeNow = fakeNow.add(const Duration(seconds: 31));
+      expect(await service.isLockedOut(), isFalse);
+      expect((await service.lockoutRemaining()), Duration.zero);
+    });
+
+    test('lockout escalates: 5 attempts → 60s', () async {
+      final service = serviceWithClock();
+      for (var i = 0; i < 5; i++) {
+        await service.recordFailedAttempt();
+      }
+      final remaining = await service.lockoutRemaining();
+      expect(remaining.inSeconds, 60);
+    });
+
+    test('lockout escalates: 7 attempts → 300s', () async {
+      final service = serviceWithClock();
+      for (var i = 0; i < 7; i++) {
+        await service.recordFailedAttempt();
+      }
+      final remaining = await service.lockoutRemaining();
+      expect(remaining.inSeconds, 300);
+    });
+
+    test('lockout escalates: 10 attempts → 900s', () async {
+      final service = serviceWithClock();
+      for (var i = 0; i < 10; i++) {
+        await service.recordFailedAttempt();
+      }
+      final remaining = await service.lockoutRemaining();
+      expect(remaining.inSeconds, 900);
+    });
+
+    test('resetLockoutState clears counter and lockout', () async {
+      final service = serviceWithClock();
+      for (var i = 0; i < 3; i++) {
+        await service.recordFailedAttempt();
+      }
+      expect(await service.isLockedOut(), isTrue);
+
+      await service.resetLockoutState();
+      expect(await service.isLockedOut(), isFalse);
+      expect(store.containsKey('lock_failed_attempts'), isFalse);
+      expect(store.containsKey('lock_lockout_until'), isFalse);
+    });
+
+    test('verifyPin success resets lockout state', () async {
+      final service = LockService(
+        storage: mockStorage,
+        prefs: null,
+        clock: () => fakeNow,
+      );
+      await service.createPin('123456');
+      for (var i = 0; i < 3; i++) {
+        await service.recordFailedAttempt();
+      }
+      expect(await service.isLockedOut(), isTrue);
+
+      final ok = await service.verifyPin('123456');
+      expect(ok, isTrue);
+      expect(await service.isLockedOut(), isFalse);
+      expect(store.containsKey('lock_failed_attempts'), isFalse);
+    });
   });
 }

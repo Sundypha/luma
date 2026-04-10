@@ -20,7 +20,8 @@ dependencies:
   ptrack_domain:
     path: ../ptrack_domain
   sqlite3: ^2.9.0
-  sqlite3_flutter_libs: ^0.5.32
+  flutter_secure_storage: ^10.0.0
+  sqlcipher_flutter_libs: ^0.6.0
 
 dev_dependencies:
   async: ^2.13.0
@@ -30,6 +31,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mocktail: ^1.0.5
-  timezone: ^0.10.1
+  timezone: ^0.11.0
 
 flutter:
