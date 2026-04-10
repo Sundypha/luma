@@ -252,7 +252,10 @@ void main() {
       final d2 = DateTime.utc(2025, 11, 20);
       final ensemble = EnsemblePredictionResult(
         algorithmOutputs: const [],
-        dayConfidenceMap: {d1: 3, d2: 1},
+        dayConfidenceMap: {
+          d1: (agreement: 3, cycleIndex: 0),
+          d2: (agreement: 1, cycleIndex: 0),
+        },
         activeAlgorithmCount: 3,
         totalAlgorithmCount: 4,
         consensusPrediction: predictionNone,
@@ -267,8 +270,29 @@ void main() {
       );
       expect(map[d1]?.predictionConfidenceTier, 3);
       expect(map[d1]?.predictionAgreementCount, 3);
+      expect(map[d1]?.predictionCycleIndex, 0);
       expect(map[d2]?.predictionConfidenceTier, 1);
       expect(map[d2]?.predictionAgreementCount, 1);
+    });
+
+    test('predictionCycleIndex propagates from ensemble', () {
+      final d = DateTime.utc(2025, 11, 15);
+      final ensemble = EnsemblePredictionResult(
+        algorithmOutputs: const [],
+        dayConfidenceMap: {d: (agreement: 2, cycleIndex: 2)},
+        activeAlgorithmCount: 2,
+        totalAlgorithmCount: 4,
+        consensusPrediction: predictionNone,
+        mergedExplanationSteps: const [],
+        explanationText: '',
+      );
+      final map = buildCalendarDayDataMap(
+        periodsWithDays: [],
+        ensemble: ensemble,
+        displayMode: PredictionDisplayMode.showAll,
+        today: DateTime.utc(2025, 11, 1),
+      );
+      expect(map[d]?.predictionCycleIndex, 2);
     });
 
     test('consensusOnly excludes tier-1 days when multiple algorithms active', () {
@@ -276,7 +300,10 @@ void main() {
       final high = DateTime.utc(2025, 12, 15);
       final ensemble = EnsemblePredictionResult(
         algorithmOutputs: const [],
-        dayConfidenceMap: {low: 1, high: 2},
+        dayConfidenceMap: {
+          low: (agreement: 1, cycleIndex: 0),
+          high: (agreement: 2, cycleIndex: 0),
+        },
         activeAlgorithmCount: 3,
         totalAlgorithmCount: 4,
         consensusPrediction: predictionNone,
@@ -297,7 +324,7 @@ void main() {
       final day = DateTime.utc(2026, 1, 5);
       final ensemble = EnsemblePredictionResult(
         algorithmOutputs: const [],
-        dayConfidenceMap: {day: 1},
+        dayConfidenceMap: {day: (agreement: 1, cycleIndex: 0)},
         activeAlgorithmCount: 1,
         totalAlgorithmCount: 4,
         consensusPrediction: predictionNone,
@@ -318,7 +345,7 @@ void main() {
       final day = DateTime.utc(2026, 2, 5);
       final ensemble = EnsemblePredictionResult(
         algorithmOutputs: const [],
-        dayConfidenceMap: {day: 1},
+        dayConfidenceMap: {day: (agreement: 1, cycleIndex: 0)},
         activeAlgorithmCount: 3,
         totalAlgorithmCount: 4,
         consensusPrediction: predictionNone,
@@ -338,7 +365,7 @@ void main() {
       final key = DateTime.utc(2026, 3, 10);
       final ensemble = EnsemblePredictionResult(
         algorithmOutputs: const [],
-        dayConfidenceMap: {key: 3},
+        dayConfidenceMap: {key: (agreement: 3, cycleIndex: 0)},
         activeAlgorithmCount: 3,
         totalAlgorithmCount: 4,
         consensusPrediction: predictionNone,
@@ -366,7 +393,7 @@ void main() {
       final d = DateTime.utc(2026, 4, 1);
       final ensemble = EnsemblePredictionResult(
         algorithmOutputs: const [],
-        dayConfidenceMap: {d: 2},
+        dayConfidenceMap: {d: (agreement: 2, cycleIndex: 0)},
         activeAlgorithmCount: 2,
         totalAlgorithmCount: 4,
         consensusPrediction: predictionNone,
@@ -385,7 +412,7 @@ void main() {
     test('empty ensemble day map yields no predicted days', () {
       final ensemble = EnsemblePredictionResult(
         algorithmOutputs: const [],
-        dayConfidenceMap: const {},
+        dayConfidenceMap: const <DateTime, DayPredictionMeta>{},
         activeAlgorithmCount: 0,
         totalAlgorithmCount: 4,
         consensusPrediction: predictionNone,
