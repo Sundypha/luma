@@ -53,6 +53,7 @@ void main() {
             periodId: p2,
             dateUtc: DateTime.utc(2024, 2, 2),
             flowIntensity: const Value(1),
+            personalNotes: const Value('private diary line'),
           ),
         );
   }
@@ -68,7 +69,21 @@ void main() {
     expect((data['periods'] as List).length, 2);
     expect((data['day_entries'] as List).length, 3);
     final meta = map['meta'] as Map<String, dynamic>;
-    expect(meta['content_types'], ['periods', 'symptoms', 'notes']);
+    expect(meta['content_types'], [
+      'periods',
+      'symptoms',
+      'notes',
+      'personal_notes',
+    ]);
+    final entries = data['day_entries'] as List<dynamic>;
+    final withPersonal = entries.cast<Map<String, dynamic>>().where(
+          (e) => e.containsKey('personal_notes'),
+        );
+    expect(withPersonal, isNotEmpty);
+    expect(
+      withPersonal.first['personal_notes'],
+      'private diary line',
+    );
   });
 
   test('periods only produces periods without day_entries', () async {
@@ -149,6 +164,10 @@ void main() {
         includeNotes: false,
       ),
     );
-    expect(result.meta.contentTypes, ['periods', 'symptoms']);
+    expect(result.meta.contentTypes, [
+      'periods',
+      'symptoms',
+      'personal_notes',
+    ]);
   });
 }

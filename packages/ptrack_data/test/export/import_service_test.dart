@@ -461,6 +461,43 @@ void main() {
       expect(await db.select(db.periods).get(), isEmpty);
     });
 
+    test('applyImport writes personal_notes on day entry', () async {
+      final data = LumaExportData(
+        meta: LumaExportMeta(
+          formatVersion: lumaFormatVersion,
+          schemaVersion: ptrackSupportedSchemaVersion,
+          appVersion: 't',
+          exportedAt: DateTime.utc(2024, 6, 1),
+          encrypted: false,
+          contentTypes: const ['periods'],
+        ),
+        periods: [
+          ExportedPeriod(
+            refId: 1,
+            startUtc: DateTime.utc(2024, 1, 1).toIso8601String(),
+            endUtc: DateTime.utc(2024, 1, 5).toIso8601String(),
+          ),
+        ],
+        dayEntries: [
+          ExportedDayEntry(
+            periodRefId: 1,
+            dateUtc: DateTime.utc(2024, 1, 2).toIso8601String(),
+            personalNotes: 'diary only',
+            personalNotesIncludedInExport: true,
+          ),
+        ],
+      );
+
+      final r = await importService.applyImport(
+        data: data,
+        strategy: DuplicateStrategy.skip,
+      );
+      expect(r.entriesCreated, 1);
+      final row = await (db.select(db.dayEntries)).getSingle();
+      expect(row.personalNotes, 'diary only');
+      expect(row.flowIntensity, isNull);
+    });
+
     test('export then applyImport round-trip on empty target DB', () async {
       final source = PtrackDatabase(NativeDatabase.memory());
       final sourceSupport =

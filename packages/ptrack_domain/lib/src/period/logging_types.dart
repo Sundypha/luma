@@ -86,13 +86,17 @@ class DayEntryData {
     this.painScore,
     this.mood,
     this.notes,
+    this.personalNotes,
   });
 
   final DateTime dateUtc;
   final FlowIntensity? flowIntensity;
   final PainScore? painScore;
   final Mood? mood;
+  /// Free text intended for PDF / clinician-facing export.
   final String? notes;
+  /// Private diary text; not included in PDF export.
+  final String? personalNotes;
 
   @override
   bool operator ==(Object other) {
@@ -102,7 +106,8 @@ class DayEntryData {
         other.flowIntensity == flowIntensity &&
         other.painScore == painScore &&
         other.mood == mood &&
-        other.notes == notes;
+        other.notes == notes &&
+        other.personalNotes == personalNotes;
   }
 
   @override
@@ -112,11 +117,13 @@ class DayEntryData {
         painScore,
         mood,
         notes,
+        personalNotes,
       );
 
   @override
   String toString() {
     return 'DayEntryData(dateUtc: $dateUtc, flowIntensity: $flowIntensity, '
-        'painScore: $painScore, mood: $mood, notes: $notes)';
+        'painScore: $painScore, mood: $mood, notes: $notes, '
+        'personalNotes: $personalNotes)';
   }
 }

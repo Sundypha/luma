@@ -812,6 +812,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get symptomNotesLabel => 'Notizen';
 
   @override
+  String get symptomNotesHelper => 'Wird im PDF-Export einbezogen.';
+
+  @override
+  String get symptomPersonalNotesLabel => 'Persönliche Notizen';
+
+  @override
+  String get symptomPersonalNotesHelper => 'Privat. Nicht im PDF-Export.';
+
+  @override
   String get symptomNotSet => 'Nicht gesetzt';
 
   @override

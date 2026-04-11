@@ -800,6 +800,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get symptomNotesLabel => 'Notes';
 
   @override
+  String get symptomNotesHelper => 'Included in PDF export.';
+
+  @override
+  String get symptomPersonalNotesLabel => 'Personal notes';
+
+  @override
+  String get symptomPersonalNotesHelper =>
+      'Private. Not included in PDF export.';
+
+  @override
   String get symptomNotSet => 'Not set';
 
   @override

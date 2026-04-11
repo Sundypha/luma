@@ -76,14 +76,17 @@ void main() {
         painScore: 3,
         mood: 1,
         notes: 'hello',
+        personalNotes: 'diary',
       );
       final json = e.toJson();
       expect(json.keys, contains('flow_intensity'));
+      expect(json['personal_notes'], 'diary');
       final back = ExportedDayEntry.fromJson(json);
       expect(back.flowIntensity, 2);
       expect(back.painScore, 3);
       expect(back.mood, 1);
       expect(back.notes, 'hello');
+      expect(back.personalNotes, 'diary');
     });
 
     test('omits null optional fields from JSON', () {
@@ -96,6 +99,7 @@ void main() {
       expect(json.containsKey('pain_score'), isFalse);
       expect(json.containsKey('mood'), isFalse);
       expect(json.containsKey('notes'), isFalse);
+      expect(json.containsKey('personal_notes'), isFalse);
     });
 
     test('fromJson requires period_ref_id and date_utc', () {

@@ -145,6 +145,19 @@ void main() {
           ),
         ),
       );
+      expect(
+        base,
+        isNot(
+          DayEntryData(
+            dateUtc: d,
+            flowIntensity: FlowIntensity.light,
+            painScore: PainScore.none,
+            mood: Mood.neutral,
+            notes: 'a',
+            personalNotes: 'x',
+          ),
+        ),
+      );
     });
 
     test('all-null optionals is valid and equal', () {

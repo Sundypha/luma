@@ -335,6 +335,17 @@ class $DayEntriesTable extends DayEntries
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _personalNotesMeta = const VerificationMeta(
+    'personalNotes',
+  );
+  @override
+  late final GeneratedColumn<String> personalNotes = GeneratedColumn<String>(
+    'personal_notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -344,6 +355,7 @@ class $DayEntriesTable extends DayEntries
     painScore,
     mood,
     notes,
+    personalNotes,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -403,6 +415,15 @@ class $DayEntriesTable extends DayEntries
         notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
       );
     }
+    if (data.containsKey('personal_notes')) {
+      context.handle(
+        _personalNotesMeta,
+        personalNotes.isAcceptableOrUnknown(
+          data['personal_notes']!,
+          _personalNotesMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -444,6 +465,10 @@ class $DayEntriesTable extends DayEntries
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
       ),
+      personalNotes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}personal_notes'],
+      ),
     );
   }
 
@@ -461,6 +486,7 @@ class DayEntry extends DataClass implements Insertable<DayEntry> {
   final int? painScore;
   final int? mood;
   final String? notes;
+  final String? personalNotes;
   const DayEntry({
     required this.id,
     required this.periodId,
@@ -469,6 +495,7 @@ class DayEntry extends DataClass implements Insertable<DayEntry> {
     this.painScore,
     this.mood,
     this.notes,
+    this.personalNotes,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -488,6 +515,9 @@ class DayEntry extends DataClass implements Insertable<DayEntry> {
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
+    if (!nullToAbsent || personalNotes != null) {
+      map['personal_notes'] = Variable<String>(personalNotes);
+    }
     return map;
   }
 
@@ -506,6 +536,9 @@ class DayEntry extends DataClass implements Insertable<DayEntry> {
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
+      personalNotes: personalNotes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(personalNotes),
     );
   }
 
@@ -522,6 +555,7 @@ class DayEntry extends DataClass implements Insertable<DayEntry> {
       painScore: serializer.fromJson<int?>(json['painScore']),
       mood: serializer.fromJson<int?>(json['mood']),
       notes: serializer.fromJson<String?>(json['notes']),
+      personalNotes: serializer.fromJson<String?>(json['personalNotes']),
     );
   }
   @override
@@ -535,6 +569,7 @@ class DayEntry extends DataClass implements Insertable<DayEntry> {
       'painScore': serializer.toJson<int?>(painScore),
       'mood': serializer.toJson<int?>(mood),
       'notes': serializer.toJson<String?>(notes),
+      'personalNotes': serializer.toJson<String?>(personalNotes),
     };
   }
 
@@ -546,6 +581,7 @@ class DayEntry extends DataClass implements Insertable<DayEntry> {
     Value<int?> painScore = const Value.absent(),
     Value<int?> mood = const Value.absent(),
     Value<String?> notes = const Value.absent(),
+    Value<String?> personalNotes = const Value.absent(),
   }) => DayEntry(
     id: id ?? this.id,
     periodId: periodId ?? this.periodId,
@@ -556,6 +592,9 @@ class DayEntry extends DataClass implements Insertable<DayEntry> {
     painScore: painScore.present ? painScore.value : this.painScore,
     mood: mood.present ? mood.value : this.mood,
     notes: notes.present ? notes.value : this.notes,
+    personalNotes: personalNotes.present
+        ? personalNotes.value
+        : this.personalNotes,
   );
   DayEntry copyWithCompanion(DayEntriesCompanion data) {
     return DayEntry(
@@ -568,6 +607,9 @@ class DayEntry extends DataClass implements Insertable<DayEntry> {
       painScore: data.painScore.present ? data.painScore.value : this.painScore,
       mood: data.mood.present ? data.mood.value : this.mood,
       notes: data.notes.present ? data.notes.value : this.notes,
+      personalNotes: data.personalNotes.present
+          ? data.personalNotes.value
+          : this.personalNotes,
     );
   }
 
@@ -580,14 +622,23 @@ class DayEntry extends DataClass implements Insertable<DayEntry> {
           ..write('flowIntensity: $flowIntensity, ')
           ..write('painScore: $painScore, ')
           ..write('mood: $mood, ')
-          ..write('notes: $notes')
+          ..write('notes: $notes, ')
+          ..write('personalNotes: $personalNotes')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, periodId, dateUtc, flowIntensity, painScore, mood, notes);
+  int get hashCode => Object.hash(
+    id,
+    periodId,
+    dateUtc,
+    flowIntensity,
+    painScore,
+    mood,
+    notes,
+    personalNotes,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -598,7 +649,8 @@ class DayEntry extends DataClass implements Insertable<DayEntry> {
           other.flowIntensity == this.flowIntensity &&
           other.painScore == this.painScore &&
           other.mood == this.mood &&
-          other.notes == this.notes);
+          other.notes == this.notes &&
+          other.personalNotes == this.personalNotes);
 }
 
 class DayEntriesCompanion extends UpdateCompanion<DayEntry> {
@@ -609,6 +661,7 @@ class DayEntriesCompanion extends UpdateCompanion<DayEntry> {
   final Value<int?> painScore;
   final Value<int?> mood;
   final Value<String?> notes;
+  final Value<String?> personalNotes;
   const DayEntriesCompanion({
     this.id = const Value.absent(),
     this.periodId = const Value.absent(),
@@ -617,6 +670,7 @@ class DayEntriesCompanion extends UpdateCompanion<DayEntry> {
     this.painScore = const Value.absent(),
     this.mood = const Value.absent(),
     this.notes = const Value.absent(),
+    this.personalNotes = const Value.absent(),
   });
   DayEntriesCompanion.insert({
     this.id = const Value.absent(),
@@ -626,6 +680,7 @@ class DayEntriesCompanion extends UpdateCompanion<DayEntry> {
     this.painScore = const Value.absent(),
     this.mood = const Value.absent(),
     this.notes = const Value.absent(),
+    this.personalNotes = const Value.absent(),
   }) : periodId = Value(periodId),
        dateUtc = Value(dateUtc);
   static Insertable<DayEntry> custom({
@@ -636,6 +691,7 @@ class DayEntriesCompanion extends UpdateCompanion<DayEntry> {
     Expression<int>? painScore,
     Expression<int>? mood,
     Expression<String>? notes,
+    Expression<String>? personalNotes,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -645,6 +701,7 @@ class DayEntriesCompanion extends UpdateCompanion<DayEntry> {
       if (painScore != null) 'pain_score': painScore,
       if (mood != null) 'mood': mood,
       if (notes != null) 'notes': notes,
+      if (personalNotes != null) 'personal_notes': personalNotes,
     });
   }
 
@@ -656,6 +713,7 @@ class DayEntriesCompanion extends UpdateCompanion<DayEntry> {
     Value<int?>? painScore,
     Value<int?>? mood,
     Value<String?>? notes,
+    Value<String?>? personalNotes,
   }) {
     return DayEntriesCompanion(
       id: id ?? this.id,
@@ -665,6 +723,7 @@ class DayEntriesCompanion extends UpdateCompanion<DayEntry> {
       painScore: painScore ?? this.painScore,
       mood: mood ?? this.mood,
       notes: notes ?? this.notes,
+      personalNotes: personalNotes ?? this.personalNotes,
     );
   }
 
@@ -692,6 +751,9 @@ class DayEntriesCompanion extends UpdateCompanion<DayEntry> {
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
+    if (personalNotes.present) {
+      map['personal_notes'] = Variable<String>(personalNotes.value);
+    }
     return map;
   }
 
@@ -704,7 +766,8 @@ class DayEntriesCompanion extends UpdateCompanion<DayEntry> {
           ..write('flowIntensity: $flowIntensity, ')
           ..write('painScore: $painScore, ')
           ..write('mood: $mood, ')
-          ..write('notes: $notes')
+          ..write('notes: $notes, ')
+          ..write('personalNotes: $personalNotes')
           ..write(')'))
         .toString();
   }
@@ -980,6 +1043,7 @@ typedef $$DayEntriesTableCreateCompanionBuilder =
       Value<int?> painScore,
       Value<int?> mood,
       Value<String?> notes,
+      Value<String?> personalNotes,
     });
 typedef $$DayEntriesTableUpdateCompanionBuilder =
     DayEntriesCompanion Function({
@@ -990,6 +1054,7 @@ typedef $$DayEntriesTableUpdateCompanionBuilder =
       Value<int?> painScore,
       Value<int?> mood,
       Value<String?> notes,
+      Value<String?> personalNotes,
     });
 
 final class $$DayEntriesTableReferences
@@ -1050,6 +1115,11 @@ class $$DayEntriesTableFilterComposer
 
   ColumnFilters<String> get notes => $composableBuilder(
     column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get personalNotes => $composableBuilder(
+    column: $table.personalNotes,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1116,6 +1186,11 @@ class $$DayEntriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get personalNotes => $composableBuilder(
+    column: $table.personalNotes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$PeriodsTableOrderingComposer get periodId {
     final $$PeriodsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -1168,6 +1243,11 @@ class $$DayEntriesTableAnnotationComposer
 
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<String> get personalNotes => $composableBuilder(
+    column: $table.personalNotes,
+    builder: (column) => column,
+  );
 
   $$PeriodsTableAnnotationComposer get periodId {
     final $$PeriodsTableAnnotationComposer composer = $composerBuilder(
@@ -1228,6 +1308,7 @@ class $$DayEntriesTableTableManager
                 Value<int?> painScore = const Value.absent(),
                 Value<int?> mood = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
+                Value<String?> personalNotes = const Value.absent(),
               }) => DayEntriesCompanion(
                 id: id,
                 periodId: periodId,
@@ -1236,6 +1317,7 @@ class $$DayEntriesTableTableManager
                 painScore: painScore,
                 mood: mood,
                 notes: notes,
+                personalNotes: personalNotes,
               ),
           createCompanionCallback:
               ({
@@ -1246,6 +1328,7 @@ class $$DayEntriesTableTableManager
                 Value<int?> painScore = const Value.absent(),
                 Value<int?> mood = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
+                Value<String?> personalNotes = const Value.absent(),
               }) => DayEntriesCompanion.insert(
                 id: id,
                 periodId: periodId,
@@ -1254,6 +1337,7 @@ class $$DayEntriesTableTableManager
                 painScore: painScore,
                 mood: mood,
                 notes: notes,
+                personalNotes: personalNotes,
               ),
           withReferenceMapper: (p0) => p0
               .map(

@@ -145,6 +145,8 @@ final class ExportedDayEntry {
     this.painScore,
     this.mood,
     this.notes,
+    this.personalNotes,
+    this.personalNotesIncludedInExport = false,
   });
 
   final int periodRefId;
@@ -153,6 +155,10 @@ final class ExportedDayEntry {
   final int? painScore;
   final int? mood;
   final String? notes;
+  final String? personalNotes;
+  /// When false, import must not overwrite an existing `personal_notes` value
+  /// (older backups omit the JSON key).
+  final bool personalNotesIncludedInExport;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{
@@ -171,6 +177,9 @@ final class ExportedDayEntry {
     if (notes != null) {
       map['notes'] = notes;
     }
+    if (personalNotes != null) {
+      map['personal_notes'] = personalNotes;
+    }
     return map;
   }
 
@@ -183,6 +192,7 @@ final class ExportedDayEntry {
     if (!json.containsKey('date_utc') || json['date_utc'] == null) {
       throw FormatException('ExportedDayEntry missing required field: date_utc');
     }
+    final personalKeyPresent = json.containsKey('personal_notes');
     return ExportedDayEntry(
       periodRefId: _asInt(json['period_ref_id'], 'period_ref_id'),
       dateUtc: json['date_utc']!.toString(),
@@ -190,6 +200,8 @@ final class ExportedDayEntry {
       painScore: _optionalInt(json['pain_score']),
       mood: _optionalInt(json['mood']),
       notes: json['notes']?.toString(),
+      personalNotes: json['personal_notes']?.toString(),
+      personalNotesIncludedInExport: personalKeyPresent,
     );
   }
 }

@@ -25,6 +25,8 @@ class DayEntries extends Table {
 
   TextColumn get notes => text().nullable()();
 
+  TextColumn get personalNotes => text().nullable()();
+
   @override
   List<Set<Column>> get uniqueKeys => [{periodId, dateUtc}];
 }

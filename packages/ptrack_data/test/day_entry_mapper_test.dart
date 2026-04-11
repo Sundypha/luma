@@ -18,6 +18,7 @@ void main() {
         painScore: PainScore.severe.dbValue,
         mood: Mood.veryGood.dbValue,
         notes: 'note',
+        personalNotes: 'diary',
       );
       final d = dayEntryRowToDomain(row);
       expect(d.dateUtc, row.dateUtc);
@@ -25,6 +26,7 @@ void main() {
       expect(d.painScore, PainScore.severe);
       expect(d.mood, Mood.veryGood);
       expect(d.notes, 'note');
+      expect(d.personalNotes, 'diary');
     });
 
     test('dayEntryRowToDomain maps null optional columns', () {
@@ -84,6 +86,7 @@ void main() {
           painScore: PainScore.moderate,
           mood: Mood.neutral,
           notes: 'x',
+          personalNotes: 'p',
         );
         await db.into(db.dayEntries).insert(
               dayEntryDataToInsertCompanion(periodId, data),

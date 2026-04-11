@@ -317,6 +317,9 @@ final class ImportService {
               painScore: Value(ie.painScore),
               mood: Value(ie.mood),
               notes: Value(ie.notes),
+              personalNotes: ie.personalNotesIncludedInExport
+                  ? Value(ie.personalNotes)
+                  : const Value.absent(),
             ),
           );
           entriesReplaced++;
@@ -329,6 +332,9 @@ final class ImportService {
                   painScore: Value(ie.painScore),
                   mood: Value(ie.mood),
                   notes: Value(ie.notes),
+                  personalNotes: ie.personalNotesIncludedInExport
+                      ? Value(ie.personalNotes)
+                      : const Value.absent(),
                 ),
               );
           entriesCreated++;

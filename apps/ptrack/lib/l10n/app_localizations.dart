@@ -1367,6 +1367,24 @@ abstract class AppLocalizations {
   /// **'Notes'**
   String get symptomNotesLabel;
 
+  /// No description provided for @symptomNotesHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Included in PDF export.'**
+  String get symptomNotesHelper;
+
+  /// No description provided for @symptomPersonalNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal notes'**
+  String get symptomPersonalNotesLabel;
+
+  /// No description provided for @symptomPersonalNotesHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Private. Not included in PDF export.'**
+  String get symptomPersonalNotesHelper;
+
   /// No description provided for @symptomNotSet.
   ///
   /// In en, this message translates to:

@@ -94,6 +94,13 @@ void main() {
             notes: 'fixture v2',
           ),
         );
+        final colInfo =
+            await db.customSelect('PRAGMA table_info(day_entries);').get();
+        expect(
+          colInfo.any((r) => r.read<String>('name') == 'personal_notes'),
+          isTrue,
+          reason: 'schema v4 adds personal_notes for diary field',
+        );
       } finally {
         await db.close();
       }
@@ -153,7 +160,7 @@ VALUES (2, $dLow, 1), (2, $dHigh, 1);
 
         final db = openTestPtrackDatabase(databasePath: path);
         try {
-          expect(await _readUserVersion(db), 3);
+          expect(await _readUserVersion(db), ptrackSupportedSchemaVersion);
           final periods = await db.select(db.periods).get()..sort((a, b) => a.id.compareTo(b.id));
           expect(periods, hasLength(3));
 

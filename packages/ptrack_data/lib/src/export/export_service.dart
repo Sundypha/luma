@@ -109,11 +109,17 @@ final class ExportService {
         final pain = options.includeSymptoms ? row.painScore : null;
         final mood = options.includeSymptoms ? row.mood : null;
         final notes = options.includeNotes ? row.notes : null;
+        final rawPersonal = row.personalNotes?.trim();
+        final personalNotes =
+            includeDayData && rawPersonal != null && rawPersonal.isNotEmpty
+                ? rawPersonal
+                : null;
 
         if (flow == null &&
             pain == null &&
             mood == null &&
-            (notes == null || notes.isEmpty)) {
+            (notes == null || notes.isEmpty) &&
+            personalNotes == null) {
           continue;
         }
 
@@ -125,6 +131,8 @@ final class ExportService {
             painScore: pain,
             mood: mood,
             notes: notes,
+            personalNotes: personalNotes,
+            personalNotesIncludedInExport: personalNotes != null,
           ),
         );
       }
@@ -165,6 +173,9 @@ final class ExportService {
     }
     if (o.includeNotes) {
       t.add('notes');
+    }
+    if (o.includeSymptoms || o.includeNotes) {
+      t.add('personal_notes');
     }
     return t;
   }

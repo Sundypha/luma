@@ -281,6 +281,64 @@ void main() {
       await db.close();
     });
 
+    test('clearClinicalSymptoms deletes row when no personal notes', () async {
+      final path = createTempSqlitePath();
+      final db = openTestPtrackDatabase(databasePath: path);
+      final repo = PeriodRepository(database: db, calendar: utcCtx);
+      final periodId = (await repo.insertPeriod(
+        PeriodSpan(
+          startUtc: DateTime.utc(2024, 11, 1),
+          endUtc: DateTime.utc(2024, 11, 5),
+        ),
+      ) as PeriodWriteSuccess)
+          .id;
+      final id = await repo.saveDayEntry(
+        periodId,
+        DayEntryData(
+          dateUtc: DateTime.utc(2024, 11, 2),
+          flowIntensity: FlowIntensity.light,
+          notes: 'clinical',
+        ),
+      );
+      final ok = await repo.clearClinicalSymptoms(id);
+      expect(ok, isTrue);
+      expect(await db.select(db.dayEntries).get(), isEmpty);
+      await db.close();
+    });
+
+    test('clearClinicalSymptoms keeps row when personal notes non-empty',
+        () async {
+      final path = createTempSqlitePath();
+      final db = openTestPtrackDatabase(databasePath: path);
+      final repo = PeriodRepository(database: db, calendar: utcCtx);
+      final periodId = (await repo.insertPeriod(
+        PeriodSpan(
+          startUtc: DateTime.utc(2024, 11, 1),
+          endUtc: DateTime.utc(2024, 11, 5),
+        ),
+      ) as PeriodWriteSuccess)
+          .id;
+      final id = await repo.saveDayEntry(
+        periodId,
+        DayEntryData(
+          dateUtc: DateTime.utc(2024, 11, 2),
+          flowIntensity: FlowIntensity.light,
+          notes: 'clinical',
+          personalNotes: 'keep me',
+        ),
+      );
+      final ok = await repo.clearClinicalSymptoms(id);
+      expect(ok, isTrue);
+      final rows = await db.select(db.dayEntries).get();
+      expect(rows, hasLength(1));
+      final row = rows.single;
+      expect(row.id, id);
+      expect(row.flowIntensity, isNull);
+      expect(row.notes, isNull);
+      expect(row.personalNotes, 'keep me');
+      await db.close();
+    });
+
     test('deletePeriod cascades to day entries', () async {
       final path = createTempSqlitePath();
       final db = openTestPtrackDatabase(databasePath: path);

@@ -32,6 +32,7 @@ void main() {
     expect(vm.painScore, isNull);
     expect(vm.mood, isNull);
     expect(vm.notes, '');
+    expect(vm.personalNotes, '');
     expect(vm.isEditing, isFalse);
     expect(vm.isSaving, isFalse);
     vm.dispose();
@@ -47,6 +48,7 @@ void main() {
         painScore: PainScore.mild,
         mood: Mood.good,
         notes: 'hello',
+        personalNotes: 'secret',
       ),
     );
     final vm = SymptomFormViewModel(
@@ -59,6 +61,7 @@ void main() {
     expect(vm.painScore, PainScore.mild);
     expect(vm.mood, Mood.good);
     expect(vm.notes, 'hello');
+    expect(vm.personalNotes, 'secret');
     expect(vm.isEditing, isTrue);
     vm.dispose();
   });
@@ -79,7 +82,9 @@ void main() {
     expect(vm.mood, Mood.neutral);
     vm.setNotes('n');
     expect(vm.notes, 'n');
-    expect(count, 4);
+    vm.setPersonalNotes('p');
+    expect(vm.personalNotes, 'p');
+    expect(count, 5);
     vm.dispose();
   });
 
@@ -105,6 +110,7 @@ void main() {
     expect(captured.painScore, PainScore.none);
     expect(captured.mood, Mood.bad);
     expect(captured.notes, 'x');
+    expect(captured.personalNotes, isNull);
     verifyNever(() => mockRepo.updateDayEntry(any(), any()));
     vm.dispose();
   });
@@ -166,13 +172,13 @@ void main() {
     vm.dispose();
   });
 
-  test('clearSymptoms calls deleteDayEntry when editing', () async {
+  test('clearSymptoms calls clearClinicalSymptoms when editing', () async {
     final existing = StoredDayEntry(
       id: 42,
       periodId: periodId,
       data: DayEntryData(dateUtc: day),
     );
-    when(() => mockRepo.deleteDayEntry(42)).thenAnswer((_) async => true);
+    when(() => mockRepo.clearClinicalSymptoms(42)).thenAnswer((_) async => true);
     final vm = SymptomFormViewModel(
       repository: mockRepo,
       day: day,
@@ -181,7 +187,7 @@ void main() {
     );
     final ok = await vm.clearSymptoms();
     expect(ok, isTrue);
-    verify(() => mockRepo.deleteDayEntry(42)).called(1);
+    verify(() => mockRepo.clearClinicalSymptoms(42)).called(1);
     vm.dispose();
   });
 
@@ -193,7 +199,7 @@ void main() {
     );
     final ok = await vm.clearSymptoms();
     expect(ok, isFalse);
-    verifyNever(() => mockRepo.deleteDayEntry(any()));
+    verifyNever(() => mockRepo.clearClinicalSymptoms(any()));
     vm.dispose();
   });
 }

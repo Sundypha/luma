@@ -20,6 +20,7 @@ class SymptomFormViewModel extends ChangeNotifier {
       _painScore = d.painScore;
       _mood = d.mood;
       _notes = d.notes ?? '';
+      _personalNotes = d.personalNotes ?? '';
     }
   }
 
@@ -32,6 +33,7 @@ class SymptomFormViewModel extends ChangeNotifier {
   PainScore? _painScore;
   Mood? _mood;
   String _notes = '';
+  String _personalNotes = '';
   bool _isSaving = false;
   String? _errorText;
 
@@ -39,6 +41,7 @@ class SymptomFormViewModel extends ChangeNotifier {
   PainScore? get painScore => _painScore;
   Mood? get mood => _mood;
   String get notes => _notes;
+  String get personalNotes => _personalNotes;
   bool get isSaving => _isSaving;
   String? get errorText => _errorText;
   bool get isEditing => _existing != null;
@@ -63,6 +66,11 @@ class SymptomFormViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setPersonalNotes(String v) {
+    _personalNotes = v;
+    notifyListeners();
+  }
+
   Future<bool> save() async {
     _isSaving = true;
     _errorText = null;
@@ -74,19 +82,31 @@ class SymptomFormViewModel extends ChangeNotifier {
         painScore: _painScore,
         mood: _mood,
         notes: _notes.trim().isEmpty ? null : _notes.trim(),
+        personalNotes:
+            _personalNotes.trim().isEmpty ? null : _personalNotes.trim(),
       );
       final existing = _existing;
       if (existing != null) {
-        await _repository.updateDayEntry(existing.id, data);
+        final updated = await _repository.updateDayEntry(existing.id, data);
+        if (!updated) {
+          throw StateError('Day entry update affected 0 rows (id=${existing.id})');
+        }
       } else {
         await _repository.upsertDayEntryForPeriod(_periodId, data);
       }
       _isSaving = false;
       notifyListeners();
       return true;
-    } catch (_) {
+    } catch (e, st) {
+      assert(() {
+        debugPrint('SymptomFormViewModel.save failed: $e');
+        debugPrint('$st');
+        return true;
+      }());
       _isSaving = false;
-      _errorText = 'Could not save symptoms. Please try again.';
+      _errorText = kDebugMode
+          ? 'Could not save: $e'
+          : 'Could not save symptoms. Please try again.';
       notifyListeners();
       return false;
     }
@@ -96,8 +116,7 @@ class SymptomFormViewModel extends ChangeNotifier {
     final existing = _existing;
     if (existing == null) return false;
     try {
-      await _repository.deleteDayEntry(existing.id);
-      return true;
+      return await _repository.clearClinicalSymptoms(existing.id);
     } catch (_) {
       _errorText = 'Could not clear symptoms. Please try again.';
       notifyListeners();

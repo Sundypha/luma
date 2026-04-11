@@ -29,7 +29,7 @@ String _moodSliderLabel(AppLocalizations l10n, Mood? mood) {
   return '${mood.emoji} ${LoggingLocalizations.moodLabel(l10n, mood)}';
 }
 
-/// Single-purpose bottom sheet: flow, pain, mood, notes (no date or period UI).
+/// Single-purpose bottom sheet: flow, pain, mood, clinical notes, personal notes.
 class SymptomFormSheet extends StatefulWidget {
   const SymptomFormSheet({
     super.key,
@@ -113,6 +113,7 @@ class _DiscreteSymptomSlider extends StatelessWidget {
 class _SymptomFormSheetState extends State<SymptomFormSheet> {
   late final SymptomFormViewModel _vm;
   late final TextEditingController _notesController;
+  late final TextEditingController _personalNotesController;
 
   @override
   void initState() {
@@ -125,11 +126,16 @@ class _SymptomFormSheetState extends State<SymptomFormSheet> {
     );
     _notesController = TextEditingController(text: _vm.notes)
       ..addListener(() => _vm.setNotes(_notesController.text));
+    _personalNotesController = TextEditingController(text: _vm.personalNotes)
+      ..addListener(
+        () => _vm.setPersonalNotes(_personalNotesController.text),
+      );
   }
 
   @override
   void dispose() {
     _notesController.dispose();
+    _personalNotesController.dispose();
     _vm.dispose();
     super.dispose();
   }
@@ -201,9 +207,20 @@ class _SymptomFormSheetState extends State<SymptomFormSheet> {
                 controller: _notesController,
                 decoration: InputDecoration(
                   labelText: l10n.symptomNotesLabel,
+                  helperText: l10n.symptomNotesHelper,
                   alignLabelWithHint: true,
                 ),
                 maxLines: 3,
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _personalNotesController,
+                decoration: InputDecoration(
+                  labelText: l10n.symptomPersonalNotesLabel,
+                  helperText: l10n.symptomPersonalNotesHelper,
+                  alignLabelWithHint: true,
+                ),
+                maxLines: 4,
               ),
               if (_vm.errorText != null) ...[
                 const SizedBox(height: 8),

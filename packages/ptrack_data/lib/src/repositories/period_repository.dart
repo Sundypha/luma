@@ -561,6 +561,37 @@ class PeriodRepository {
     return count > 0;
   }
 
+  /// Clears flow, pain, mood, and clinical notes for [dayEntryId].
+  ///
+  /// If the row has non-empty [DayEntryData.personalNotes], the row is kept
+  /// with only those notes. Otherwise the row is deleted.
+  Future<bool> clearClinicalSymptoms(int dayEntryId) {
+    return _db.transaction(() async {
+      final row = await (_db.select(_db.dayEntries)
+            ..where((t) => t.id.equals(dayEntryId)))
+          .getSingleOrNull();
+      if (row == null) return false;
+      final personal = row.personalNotes?.trim();
+      final hasPersonal = personal != null && personal.isNotEmpty;
+      if (hasPersonal) {
+        await (_db.update(_db.dayEntries)..where((t) => t.id.equals(dayEntryId)))
+            .write(
+          DayEntriesCompanion(
+            flowIntensity: const Value<int?>(null),
+            painScore: const Value<int?>(null),
+            mood: const Value<int?>(null),
+            notes: const Value<String?>(null),
+          ),
+        );
+        return true;
+      }
+      final count = await (_db.delete(_db.dayEntries)
+            ..where((t) => t.id.equals(dayEntryId)))
+          .go();
+      return count > 0;
+    });
+  }
+
   /// Marks [day] (UTC calendar date) as bleeding: create, extend, merge, or no-op.
   Future<DayMarkOutcome> markDay(DateTime day) {
     return _db.transaction(() async {
