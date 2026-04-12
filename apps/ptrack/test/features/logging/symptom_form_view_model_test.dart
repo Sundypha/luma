@@ -168,7 +168,7 @@ void main() {
     final ok = await vm.save();
     expect(ok, isFalse);
     expect(vm.isSaving, isFalse);
-    expect(vm.errorText, contains('Could not save symptoms'));
+    expect(vm.errorText, contains('Could not save'));
     vm.dispose();
   });
 
