@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-04-12
+
+### Added
+- **Personal diary notes** on logged days: private free-text journaling in the symptom form, stored locally and included in encrypted backup/import, while existing **notes** remain the clinician- and PDF-oriented field
+
 ## [1.0.1] - 2026-04-10
 
 ### Added

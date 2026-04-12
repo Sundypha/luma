@@ -15,7 +15,7 @@ resolution: workspace
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # Build metadata is consumed by Android (versionName/versionCode) and iOS
 # (CFBundleShortVersionString/CFBundleVersion) as documented above.
-version: 1.0.1+2
+version: 1.1.0+3
 environment:
   sdk: ^3.11.0
 
