@@ -1,0 +1,16 @@
+---
+description: Use FVM for all Dart and Flutter CLI commands in this monorepo
+alwaysApply: true
+---
+
+# FVM for Dart and Flutter
+
+The workspace root `pubspec.yaml` pins **Dart ^3.11**. A system `dart` or `flutter` is often older and will fail (for example `dart run tool/bump_version.dart`).
+
+**Always** invoke the toolchain through FVM:
+
+- `fvm dart …` — pub, `dart run`, tests, codegen, `tool/*.dart`
+- `fvm flutter …` — build, run, doctor
+- `fvm exec …` — run commands with FVM’s Flutter/Dart on `PATH` (e.g. `fvm exec melos run ci:test`)
+
+Do not assume bare `dart` or `flutter` in the shell matches this repo unless the user explicitly uses a matching SDK.
