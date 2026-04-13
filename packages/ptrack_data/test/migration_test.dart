@@ -229,6 +229,143 @@ VALUES (2, $dLow, 1), (2, $dHigh, 1);
       },
     );
 
+    test(
+      'v4 database with personal_notes migrates to v5: diary row, column dropped',
+      () async {
+        int sec(DateTime d) => d.toUtc().millisecondsSinceEpoch ~/ 1000;
+
+        final path = createTempSqlitePath();
+        final raw = sqlite.sqlite3.open(path);
+        try {
+          raw.execute('''
+CREATE TABLE periods (
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  start_utc INTEGER NOT NULL,
+  end_utc INTEGER
+);
+''');
+          raw.execute('''
+CREATE TABLE day_entries (
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  period_id INTEGER NOT NULL REFERENCES periods (id),
+  date_utc INTEGER NOT NULL,
+  flow_intensity INTEGER,
+  pain_score INTEGER,
+  mood INTEGER,
+  notes TEXT,
+  personal_notes TEXT,
+  UNIQUE (period_id, date_utc)
+);
+''');
+          final p1 = sec(DateTime.utc(2024, 3, 1));
+          final p1e = sec(DateTime.utc(2024, 3, 31));
+          final p2 = sec(DateTime.utc(2024, 4, 1));
+          final p2e = sec(DateTime.utc(2024, 4, 30));
+          raw.execute(
+            'INSERT INTO periods (start_utc, end_utc) VALUES ($p1, $p1e)',
+          );
+          raw.execute(
+            'INSERT INTO periods (start_utc, end_utc) VALUES ($p2, $p2e)',
+          );
+          final d1 = sec(DateTime.utc(2024, 3, 10));
+          final d2 = sec(DateTime.utc(2024, 3, 11));
+          final d3 = sec(DateTime.utc(2024, 3, 12));
+          raw.execute('''
+INSERT INTO day_entries (period_id, date_utc, personal_notes, mood)
+VALUES
+  (1, $d1, 'My diary entry', ${Mood.good.dbValue}),
+  (1, $d2, '', ${Mood.neutral.dbValue}),
+  (1, $d3, NULL, ${Mood.bad.dbValue});
+''');
+          raw.execute('PRAGMA user_version = 4');
+        } finally {
+          raw.close();
+        }
+
+        final db = openTestPtrackDatabase(databasePath: path);
+        try {
+          expect(await _readUserVersion(db), ptrackSupportedSchemaVersion);
+
+          final diaryRows =
+              await db.customSelect('SELECT * FROM diary_entries').get();
+          expect(diaryRows, hasLength(1));
+          final dr = diaryRows.single;
+          expect(dr.read<int>('mood'), Mood.good.dbValue);
+          expect(dr.read<String?>('notes'), 'My diary entry');
+          final dateRaw = dr.read<int>('date_utc');
+          expect(
+            DateTime.fromMillisecondsSinceEpoch(dateRaw * 1000, isUtc: true),
+            DateTime.utc(2024, 3, 10),
+          );
+
+          final dayCols =
+              await db.customSelect('PRAGMA table_info(day_entries);').get();
+          expect(
+            dayCols.any((r) => r.read<String>('name') == 'personal_notes'),
+            isFalse,
+          );
+
+          final diaryCols =
+              await db.customSelect('PRAGMA table_info(diary_entries);').get();
+          final diaryNames = [for (final c in diaryCols) c.read<String>('name')];
+          expect(diaryNames, containsAll(['id', 'date_utc', 'mood', 'notes']));
+
+          final tagCols =
+              await db.customSelect('PRAGMA table_info(diary_tags);').get();
+          expect(
+            [for (final c in tagCols) c.read<String>('name')],
+            containsAll(['id', 'name']),
+          );
+
+          final joinCols = await db
+              .customSelect('PRAGMA table_info(diary_entry_tag_join);')
+              .get();
+          expect(
+            [for (final c in joinCols) c.read<String>('name')],
+            containsAll(['diary_entry_id', 'tag_id']),
+          );
+        } finally {
+          await db.close();
+        }
+      },
+    );
+
+    test('fresh database creates all five tables at v5 without personal_notes',
+        () async {
+      final path = createTempSqlitePath();
+      final db = openTestPtrackDatabase(databasePath: path);
+      try {
+        expect(await _readUserVersion(db), ptrackSupportedSchemaVersion);
+
+        final tables = await db
+            .customSelect(
+              "SELECT name FROM sqlite_master WHERE type='table' "
+              "AND name NOT LIKE 'sqlite_%' ORDER BY name",
+            )
+            .get();
+        final names = {for (final r in tables) r.read<String>('name')};
+        expect(
+          names,
+          containsAll([
+            'periods',
+            'day_entries',
+            'diary_entries',
+            'diary_tags',
+            'diary_entry_tag_join',
+          ]),
+        );
+
+        final dayCols =
+            await db.customSelect('PRAGMA table_info(day_entries);').get();
+        expect(
+          dayCols.any((r) => r.read<String>('name') == 'personal_notes'),
+          isFalse,
+        );
+      } finally {
+        await db.close();
+      }
+    });
+
     test('on-disk user_version newer than app fails closed', () async {
       final path = createTempSqlitePath();
       final raw = sqlite.sqlite3.open(path);
