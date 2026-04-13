@@ -6,7 +6,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** **Milestone v2.0** — Phase **18** diary table migration (`18-02` complete; next `18-03`). Phase **17** still has optional `17-02` Task 3 human-verify.
+**Current focus:** **Milestone v2.0** — Phase **18** diary table migration (`18-03` complete; next `18-04`). Phase **17** still has optional `17-02` Task 3 human-verify.
 
 ## Current Position
 
@@ -14,13 +14,13 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Phase:** **18** — Diary table migration (schema v5 + data path from v4).
 
-**Plan:** `18-02` — **complete** (see `18-02-SUMMARY.md`). **Next:** `18-03` — export/import `.luma` v2 diary payload.
+**Plan:** `18-03` — **complete** (see `18-03-SUMMARY.md`). **Next:** `18-04` — diary form sheet / symptom `personalNotes` removal.
 
-**Status:** Phase **18** in progress — 2/7 plans complete on branch `feat/18-01-diary-schema-migration`.
+**Status:** Phase **18** in progress — 3/7 plans complete on branch `feat/18-01-diary-schema-migration`.
 
-Last activity: 2026-04-14 — **18-02**: Domain `DiaryEntryData`/`DiaryTag`, `DiaryRepository` (streams + tags), symptom form + tests wired off `DayEntryData.personalNotes`.
+Last activity: 2026-04-14 — **18-03**: `.luma` v2 `diary_entries` export/import, v1 `personal_notes` import path, export wizard Diary toggle.
 
-**Progress (v2.0):** Phase 18 **in progress** (2/7 plans). Phase 17 optional checkpoint remains. See `ROADMAP.md`.
+**Progress (v2.0):** Phase 18 **in progress** (3/7 plans). Phase 17 optional checkpoint remains. See `ROADMAP.md`.
 
 ## Performance Metrics
 
@@ -29,6 +29,7 @@ Last activity: 2026-04-14 — **18-02**: Domain `DiaryEntryData`/`DiaryTag`, `Di
 | 17 P01 | 12 min | 2 tasks, 2 files — see `17-01-SUMMARY.md` |
 | 18-diary-table-migration P01 | 45 min | 2 tasks, 12 files — see `18-01-SUMMARY.md` |
 | 18-diary-table-migration P02 | 40 min | 2 tasks, 17 files — see `18-02-SUMMARY.md` |
+| 18-diary-table-migration P03 | 32 min | 2 tasks, 15 files — see `18-03-SUMMARY.md` |
 
 *Also reset when v2.0 execution starts; track per-phase durations in phase SUMMARY files.*
 
@@ -64,6 +65,8 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 **2026-04-14 (18-02):** `DiaryRepository` is a non-final class so Mocktail mocks compile in app tests; personal diary persistence moved out of `PeriodRepository` into `DiaryRepository` + symptom form preload.
 
+**2026-04-14 (18-03):** `.luma` `lumaFormatVersion` 2 with `diary_entries`; `parseFileMeta` accepts v1 and v2; legacy `personal_notes` only synced from day entries when `formatVersion < 2`; export wizard maps **Diary** to `ExportOptions.includeDiary`.
+
 ### Pending Todos
 
 - **Phase 17** — Complete **17-02** Task 3: human verification of unified Release workflow (see `17-02-PLAN.md`); then finalize `17-02-SUMMARY.md` and mark REL-02–REL-04 if checks pass.
@@ -88,10 +91,10 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-14T12:45:00.000Z
+**Last session:** 2026-04-14T15:05:00.000Z
 
-**Stopped at:** Completed 18-02-PLAN.md
+**Stopped at:** Completed 18-03-PLAN.md
 
 **Resume file:** None
 
-**Next:** Execute **18-03-PLAN.md** (export/import `.luma` v2 diary). Optionally complete **17-02 Task 3** verification on GitHub or continue Phase **16** as prioritized.
+**Next:** Execute **18-04-PLAN.md** (diary form sheet). Optionally complete **17-02 Task 3** verification on GitHub or continue Phase **16** as prioritized.
