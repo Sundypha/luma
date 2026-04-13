@@ -61,28 +61,23 @@ final class ExportService {
         options.includeSymptoms || options.includeNotes;
 
     final List<DayEntry> dayRows;
-    final Map<DateTime, String?> diaryNotesByCalendarDay = {};
     if (includeDayData) {
       dayRows = await (_db.select(_db.dayEntries)
             ..orderBy([(t) => OrderingTerm.asc(t.dateUtc)]))
           .get();
-      final diaryRows = await (_db.select(_db.diaryEntries)
-            ..orderBy([(t) => OrderingTerm.asc(t.dateUtc)]))
-          .get();
-      for (final d in diaryRows) {
-        final key = DateTime.utc(
-          d.dateUtc.year,
-          d.dateUtc.month,
-          d.dateUtc.day,
-        );
-        diaryNotesByCalendarDay[key] = d.notes;
-      }
     } else {
       dayRows = [];
     }
 
-    final totalUnits =
-        periodRows.length + (includeDayData ? dayRows.length : 0);
+    final diaryRowsForExport = options.includeDiary
+        ? await (_db.select(_db.diaryEntries)
+              ..orderBy([(t) => OrderingTerm.asc(t.dateUtc)]))
+            .get()
+        : <DiaryEntryRow>[];
+
+    final totalUnits = periodRows.length +
+        (includeDayData ? dayRows.length : 0) +
+        diaryRowsForExport.length;
     var progressCount = 0;
     void bump() {
       progressCount++;
@@ -121,22 +116,11 @@ final class ExportService {
         final pain = options.includeSymptoms ? row.painScore : null;
         final mood = options.includeSymptoms ? row.mood : null;
         final notes = options.includeNotes ? row.notes : null;
-        final cal = DateTime.utc(
-          row.dateUtc.year,
-          row.dateUtc.month,
-          row.dateUtc.day,
-        );
-        final rawPersonal = diaryNotesByCalendarDay[cal]?.trim();
-        final personalNotes =
-            includeDayData && rawPersonal != null && rawPersonal.isNotEmpty
-                ? rawPersonal
-                : null;
 
         if (flow == null &&
             pain == null &&
             mood == null &&
-            (notes == null || notes.isEmpty) &&
-            personalNotes == null) {
+            (notes == null || notes.isEmpty)) {
           continue;
         }
 
@@ -148,13 +132,38 @@ final class ExportService {
             painScore: pain,
             mood: mood,
             notes: notes,
-            personalNotes: personalNotes,
-            personalNotesIncludedInExport: personalNotes != null,
           ),
         );
       }
       if (exportedDays.isEmpty) {
         exportedDays = null;
+      }
+    }
+
+    List<ExportedDiaryEntry>? exportedDiary;
+    if (diaryRowsForExport.isNotEmpty) {
+      exportedDiary = [];
+      for (final row in diaryRowsForExport) {
+        bump();
+        final joinRows = await (_db.select(_db.diaryEntryTagJoin)
+              ..where((t) => t.diaryEntryId.equals(row.id)))
+            .get();
+        final tagNames = <String>[];
+        if (joinRows.isNotEmpty) {
+          final tagIds = joinRows.map((j) => j.tagId).toList();
+          final tagRows = await (_db.select(_db.diaryTags)
+                ..where((t) => t.id.isIn(tagIds)))
+              .get();
+          tagNames.addAll(tagRows.map((t) => t.name));
+        }
+        exportedDiary.add(
+          ExportedDiaryEntry(
+            dateUtc: row.dateUtc.toUtc().toIso8601String(),
+            mood: row.mood,
+            notes: row.notes,
+            tags: tagNames,
+          ),
+        );
       }
     }
 
@@ -171,6 +180,7 @@ final class ExportService {
       meta: meta,
       periods: exportedPeriods,
       dayEntries: exportedDays,
+      diaryEntries: exportedDiary,
     );
 
     return _finish(
@@ -191,8 +201,8 @@ final class ExportService {
     if (o.includeNotes) {
       t.add('notes');
     }
-    if (o.includeSymptoms || o.includeNotes) {
-      t.add('personal_notes');
+    if (o.includeDiary) {
+      t.add('diary');
     }
     return t;
   }

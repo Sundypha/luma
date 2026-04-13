@@ -300,6 +300,7 @@
   "exportToggleSymptoms": "Symptome & Fluss",
   "exportToggleSymptomsSubtitle": "Fluss, Schmerz, Stimmung",
   "exportToggleNotes": "Notizen",
+  "exportToggleDiary": "Tagebuch",
   "exportNext": "Weiter",
   "exportPasswordIntro": "Optional: Dieses Backup mit einem Passwort schützen.",
   "exportPasswordLabel": "Passwort",

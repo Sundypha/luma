@@ -954,6 +954,12 @@ abstract class AppLocalizations {
   /// **'Notes'**
   String get exportToggleNotes;
 
+  /// No description provided for @exportToggleDiary.
+  ///
+  /// In en, this message translates to:
+  /// **'Diary'**
+  String get exportToggleDiary;
+
   /// No description provided for @exportNext.
   ///
   /// In en, this message translates to:

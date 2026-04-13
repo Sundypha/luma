@@ -577,6 +577,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get exportToggleNotes => 'Notizen';
 
   @override
+  String get exportToggleDiary => 'Tagebuch';
+
+  @override
   String get exportNext => 'Weiter';
 
   @override

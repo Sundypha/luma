@@ -309,6 +309,7 @@
   "exportToggleSymptoms": "Symptoms & flow",
   "exportToggleSymptomsSubtitle": "Flow, pain, mood",
   "exportToggleNotes": "Notes",
+  "exportToggleDiary": "Diary",
   "exportNext": "Next",
   "exportPasswordIntro": "Optionally protect this backup with a password.",
   "exportPasswordLabel": "Password",

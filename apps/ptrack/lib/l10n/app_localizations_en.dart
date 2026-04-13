@@ -568,6 +568,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportToggleNotes => 'Notes';
 
   @override
+  String get exportToggleDiary => 'Diary';
+
+  @override
   String get exportNext => 'Next';
 
   @override

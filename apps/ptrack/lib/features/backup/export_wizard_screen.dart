@@ -155,7 +155,8 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
               label: Text(l10n.exportChipEverything),
               selected: _vm.includePeriods &&
                   _vm.includeSymptoms &&
-                  _vm.includeNotes,
+                  _vm.includeNotes &&
+                  _vm.includeDiary,
               onSelected: (_) => _vm.applyPreset(ExportPreset.everything),
             ),
             ChoiceChip(
@@ -186,6 +187,12 @@ class _ExportWizardScreenState extends State<ExportWizardScreen> {
           value: _vm.includeNotes,
           onChanged:
               _vm.notesOnlySelected ? null : (_) => _vm.toggleNotes(),
+        ),
+        SwitchListTile(
+          title: Text(l10n.exportToggleDiary),
+          value: _vm.includeDiary,
+          onChanged:
+              _vm.diaryOnlySelected ? null : (_) => _vm.toggleDiary(),
         ),
         const SizedBox(height: 32),
         FilledButton(
