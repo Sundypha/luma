@@ -28,6 +28,7 @@ Phase implementation detail remains under `.planning/phases/` for history.
 | **10** | i18n foundation | I18N-01 | gen_l10n, English ARB, migrate strings, wire delegates |
 | **11** | German + language settings | I18N-02 — I18N-05 | de translations, settings, locale formatting, CI guard |
 | **12** | Optional fertility window | FERT-01 — FERT-05 | Opt-in, prompts, on-device estimate, UI, tests, docs |
+| **18** | Diary table migration | — | Decouple diary from symptom; standalone table, data migration |
 
 ### Phase 10: Internationalization foundation
 
@@ -95,6 +96,7 @@ Plans:
 | 15 — Code review remediation | 3/3 | Complete — `15-01`–`15-03` (`15-01-SUMMARY.md` … `15-03-SUMMARY.md`); optional `15-01` Task 3 import smoke UAT |
 | 16 — Security audit remediation | 1/8 | In progress — `16-01` complete (Android release signing) |
 | 17 — release management (GitHub + Firebase) | 2/2 | Complete — 2026-04-10 (`17-UAT.md`; `17-01-SUMMARY.md`, `17-02-SUMMARY.md`) |
+| 18 — Diary table migration | 0/? | Not planned yet |
 
 ### Phase 13: PDF export of period statistics and details (user selectable if all or none). Goal is to have a PDF ready for a physician or gynecologist.
 
@@ -166,5 +168,12 @@ Plans:
 - [x] `17-01-PLAN.md` — Version management tooling: CHANGELOG.md + cross-platform bump script (REL-01) — see `17-01-SUMMARY.md`
 - [x] `17-02-PLAN.md` — Unified release workflow: build → GitHub Release + Firebase App Distribution (REL-02, REL-03, REL-04) — verified end-to-end (`release.yml`, FAD cross-ref, artifact/notes path fix) — see `17-02-SUMMARY.md`, `17-UAT.md`
 
+### Phase 18: Diary table migration — decouple personal diary from symptom logging
+
+**Goal:** Extract the personal diary/notes from the symptom log into its own standalone table so users can add a diary entry on any day — not only during their period. Requires a careful data migration that moves existing diary entries out of the symptom table into the new diary table without data loss, updates all read/write paths, and keeps export/import backward-compatible.
+**Depends on:** Phase 17
+
+**Plans:** *not yet planned*
+
 ---
-*Roadmap updated: 2026-04-10 — Phase **17** complete (2/2 plans; UAT in `17-UAT.md`). Phase **16-01** (Android release signing) noted above. **`13-03`** export UI still awaiting Task 3 human verification.*  
+*Roadmap updated: 2026-04-13 — Phase **18** added (diary table migration). Phase **17** complete (2/2 plans; UAT in `17-UAT.md`). Phase **16-01** (Android release signing) noted above. **`13-03`** export UI still awaiting Task 3 human verification.*  

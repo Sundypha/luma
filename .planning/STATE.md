@@ -74,6 +74,7 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 - Phase 15 added: Address full app code review findings
 - Phase 16 added: Security audit findings remediation
 - Phase 17 added: release management with release bumps, release apks iin github release, and ran apk push to firebase app distribution
+- Phase 18 added: Diary table migration — decouple personal diary from symptom logging so users can add diary entries on any day
 
 ### Blockers/Concerns
 
