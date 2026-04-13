@@ -49,8 +49,9 @@ void main() {
       () async {
     final vm = HomeViewModel(mockRepo, calendar);
     final now = DateTime.now();
-    final todayUtc = DateTime.utc(now.year, now.month, now.day);
-    final startUtc = todayUtc.subtract(const Duration(days: 2));
+    final utc = now.toUtc();
+    final todayCal = DateTime.utc(utc.year, utc.month, utc.day);
+    final startUtc = todayCal.subtract(const Duration(days: 2));
     final item = StoredPeriodWithDays(
       period: StoredPeriod(
         id: 1,
@@ -61,7 +62,7 @@ void main() {
           id: 1,
           periodId: 1,
           data: DayEntryData(
-            dateUtc: todayUtc,
+            dateUtc: todayCal,
             flowIntensity: FlowIntensity.medium,
           ),
         ),

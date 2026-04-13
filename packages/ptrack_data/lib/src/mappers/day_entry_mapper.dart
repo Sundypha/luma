@@ -7,13 +7,7 @@ DateTime _calendarDateAsUtc(DateTime d) =>
     DateTime.utc(d.year, d.month, d.day);
 
 /// Maps a Drift [DayEntry] row to [DayEntryData].
-///
-/// [personalNotes] comes from [DiaryEntries] (same calendar [dateUtc]), not
-/// from the day row.
-DayEntryData dayEntryRowToDomain(
-  DayEntry row, {
-  String? personalNotes,
-}) {
+DayEntryData dayEntryRowToDomain(DayEntry row) {
   return DayEntryData(
     dateUtc: _calendarDateAsUtc(row.dateUtc),
     flowIntensity: row.flowIntensity != null
@@ -23,7 +17,6 @@ DayEntryData dayEntryRowToDomain(
         row.painScore != null ? PainScore.fromDbValue(row.painScore!) : null,
     mood: row.mood != null ? Mood.fromDbValue(row.mood!) : null,
     notes: row.notes,
-    personalNotes: personalNotes,
   );
 }
 

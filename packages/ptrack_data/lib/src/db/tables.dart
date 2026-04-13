@@ -30,6 +30,7 @@ class DayEntries extends Table {
 }
 
 /// Standalone personal diary entries keyed by calendar date (no period FK).
+@DataClassName('DiaryEntryRow')
 class DiaryEntries extends Table {
   IntColumn get id => integer().autoIncrement()();
 
@@ -44,6 +45,7 @@ class DiaryEntries extends Table {
 }
 
 /// Tag definitions for diary entries (flat, no hierarchy).
+@DataClassName('DiaryTagRow')
 class DiaryTags extends Table {
   IntColumn get id => integer().autoIncrement()();
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:luma/l10n/app_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -21,9 +22,16 @@ class MockFlutterSecureStorage extends Mock implements FlutterSecureStorage {}
 
 class MockLocalAuthentication extends Mock implements LocalAuthentication {}
 
+DateTime _utcCalendarDayFromNow() {
+  final u = DateTime.now().toUtc();
+  return DateTime.utc(u.year, u.month, u.day);
+}
+
 /// Today is rendered with a bold day number in the calendar grid.
 Finder findTodayCalendarDayCell() {
-  final day = '${DateTime.now().day}';
+  final utc = DateTime.now().toUtc();
+  final todayKey = DateTime.utc(utc.year, utc.month, utc.day);
+  final day = '${todayKey.day}';
   return find.descendant(
     of: find.byType(TableCalendar<void>),
     matching: find.byWidgetPredicate(
@@ -35,8 +43,7 @@ Finder findTodayCalendarDayCell() {
 
 /// Closed span that includes today so [HomeViewModel.isTodayMarked] is true.
 StoredPeriodWithDays closedPeriodContainingToday() {
-  final now = DateTime.now();
-  final todayUtc = DateTime.utc(now.year, now.month, now.day);
+  final todayUtc = _utcCalendarDayFromNow();
   final startUtc = todayUtc.subtract(const Duration(days: 3));
   final endUtc = todayUtc.add(const Duration(days: 2));
   return StoredPeriodWithDays(
@@ -55,6 +62,7 @@ void main() {
   late MockFlutterSecureStorage mockStorage;
   late MockLocalAuthentication mockAuth;
   late PeriodCalendarContext calendar;
+  late PtrackDatabase memoryDb;
 
   setUpAll(() {
     tzdata.initializeTimeZones();
@@ -70,6 +78,8 @@ void main() {
     mockStorage = MockFlutterSecureStorage();
     mockAuth = MockLocalAuthentication();
     calendar = PeriodCalendarContext.fromTimeZoneName('UTC');
+    memoryDb = PtrackDatabase(NativeDatabase.memory());
+    when(() => mockRepo.database).thenReturn(memoryDb);
     when(() => mockAuth.canCheckBiometrics).thenAnswer((_) async => false);
     when(() => mockAuth.isDeviceSupported()).thenAnswer((_) async => false);
     SharedPreferences.setMockInitialValues({});
@@ -77,6 +87,10 @@ void main() {
       () => mockRepo.watchPeriodsWithDays(),
     ).thenAnswer((_) => Stream<List<StoredPeriodWithDays>>.value(const []));
     when(() => mockRepo.listOrderedByStartUtc()).thenAnswer((_) async => []);
+  });
+
+  tearDown(() async {
+    await memoryDb.close();
   });
 
   Future<void> pumpHome(WidgetTester tester) async {
@@ -165,8 +179,7 @@ void main() {
         () => mockRepo.listOrderedByStartUtc(),
       ).thenAnswer((_) async => [...periods]);
       when(() => mockRepo.markDay(any())).thenAnswer((_) async {
-        final now = DateTime.now();
-        final todayUtc = DateTime.utc(now.year, now.month, now.day);
+        final todayUtc = _utcCalendarDayFromNow();
         final startUtc = todayUtc.subtract(const Duration(days: 1));
         final open = StoredPeriod(
           id: 1,
@@ -203,7 +216,7 @@ void main() {
       final addSymptoms = find.text('Add symptoms for today');
       await tester.ensureVisible(addSymptoms);
       await tester.tap(addSymptoms);
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(periods, isNotEmpty);
       controller.add([
         StoredPeriodWithDays(period: periods[0], dayEntries: const []),
@@ -222,8 +235,7 @@ void main() {
   testWidgets('home shows cycle day when latest period is not active today', (
     tester,
   ) async {
-    final now = DateTime.now();
-    final todayUtc = DateTime.utc(now.year, now.month, now.day);
+    final todayUtc = _utcCalendarDayFromNow();
     final startUtc = todayUtc.subtract(const Duration(days: 7));
     final endUtc = todayUtc.subtract(const Duration(days: 1));
     final item = StoredPeriodWithDays(
@@ -315,8 +327,7 @@ void main() {
   testWidgets(
     'Today card on marked today opens symptom form; save upserts without insertPeriod',
     (tester) async {
-      final now = DateTime.now();
-      final todayUtc = DateTime.utc(now.year, now.month, now.day);
+      final todayUtc = _utcCalendarDayFromNow();
       final startUtc = todayUtc.subtract(const Duration(days: 2));
       final open = StoredPeriod(
         id: 1,
@@ -338,6 +349,7 @@ void main() {
       await tester.tap(find.text('Add symptoms for today'));
       await tester.pumpAndSettle();
       expect(find.text('Add symptoms'), findsOneWidget);
+      await tester.pumpAndSettle();
       await tapBottomSheetSave(tester);
       verifyNever(() => mockRepo.insertPeriod(any()));
       verify(() => mockRepo.upsertDayEntryForPeriod(1, any())).called(1);
@@ -346,8 +358,7 @@ void main() {
   );
 
   testWidgets('today card shows logged flow for today', (tester) async {
-    final now = DateTime.now();
-    final dayUtc = DateTime.utc(now.year, now.month, now.day);
+    final dayUtc = _utcCalendarDayFromNow();
     final startUtc = dayUtc.subtract(const Duration(days: 3));
     final item = StoredPeriodWithDays(
       period: StoredPeriod(

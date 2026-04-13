@@ -711,7 +711,7 @@ class DayEntriesCompanion extends UpdateCompanion<DayEntry> {
 }
 
 class $DiaryEntriesTable extends DiaryEntries
-    with TableInfo<$DiaryEntriesTable, DiaryEntry> {
+    with TableInfo<$DiaryEntriesTable, DiaryEntryRow> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -767,7 +767,7 @@ class $DiaryEntriesTable extends DiaryEntries
   static const String $name = 'diary_entries';
   @override
   VerificationContext validateIntegrity(
-    Insertable<DiaryEntry> instance, {
+    Insertable<DiaryEntryRow> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -805,9 +805,9 @@ class $DiaryEntriesTable extends DiaryEntries
     {dateUtc},
   ];
   @override
-  DiaryEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+  DiaryEntryRow map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return DiaryEntry(
+    return DiaryEntryRow(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -833,12 +833,12 @@ class $DiaryEntriesTable extends DiaryEntries
   }
 }
 
-class DiaryEntry extends DataClass implements Insertable<DiaryEntry> {
+class DiaryEntryRow extends DataClass implements Insertable<DiaryEntryRow> {
   final int id;
   final DateTime dateUtc;
   final int? mood;
   final String? notes;
-  const DiaryEntry({
+  const DiaryEntryRow({
     required this.id,
     required this.dateUtc,
     this.mood,
@@ -869,12 +869,12 @@ class DiaryEntry extends DataClass implements Insertable<DiaryEntry> {
     );
   }
 
-  factory DiaryEntry.fromJson(
+  factory DiaryEntryRow.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return DiaryEntry(
+    return DiaryEntryRow(
       id: serializer.fromJson<int>(json['id']),
       dateUtc: serializer.fromJson<DateTime>(json['dateUtc']),
       mood: serializer.fromJson<int?>(json['mood']),
@@ -892,19 +892,19 @@ class DiaryEntry extends DataClass implements Insertable<DiaryEntry> {
     };
   }
 
-  DiaryEntry copyWith({
+  DiaryEntryRow copyWith({
     int? id,
     DateTime? dateUtc,
     Value<int?> mood = const Value.absent(),
     Value<String?> notes = const Value.absent(),
-  }) => DiaryEntry(
+  }) => DiaryEntryRow(
     id: id ?? this.id,
     dateUtc: dateUtc ?? this.dateUtc,
     mood: mood.present ? mood.value : this.mood,
     notes: notes.present ? notes.value : this.notes,
   );
-  DiaryEntry copyWithCompanion(DiaryEntriesCompanion data) {
-    return DiaryEntry(
+  DiaryEntryRow copyWithCompanion(DiaryEntriesCompanion data) {
+    return DiaryEntryRow(
       id: data.id.present ? data.id.value : this.id,
       dateUtc: data.dateUtc.present ? data.dateUtc.value : this.dateUtc,
       mood: data.mood.present ? data.mood.value : this.mood,
@@ -914,7 +914,7 @@ class DiaryEntry extends DataClass implements Insertable<DiaryEntry> {
 
   @override
   String toString() {
-    return (StringBuffer('DiaryEntry(')
+    return (StringBuffer('DiaryEntryRow(')
           ..write('id: $id, ')
           ..write('dateUtc: $dateUtc, ')
           ..write('mood: $mood, ')
@@ -928,14 +928,14 @@ class DiaryEntry extends DataClass implements Insertable<DiaryEntry> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is DiaryEntry &&
+      (other is DiaryEntryRow &&
           other.id == this.id &&
           other.dateUtc == this.dateUtc &&
           other.mood == this.mood &&
           other.notes == this.notes);
 }
 
-class DiaryEntriesCompanion extends UpdateCompanion<DiaryEntry> {
+class DiaryEntriesCompanion extends UpdateCompanion<DiaryEntryRow> {
   final Value<int> id;
   final Value<DateTime> dateUtc;
   final Value<int?> mood;
@@ -952,7 +952,7 @@ class DiaryEntriesCompanion extends UpdateCompanion<DiaryEntry> {
     this.mood = const Value.absent(),
     this.notes = const Value.absent(),
   }) : dateUtc = Value(dateUtc);
-  static Insertable<DiaryEntry> custom({
+  static Insertable<DiaryEntryRow> custom({
     Expression<int>? id,
     Expression<DateTime>? dateUtc,
     Expression<int>? mood,
@@ -1011,7 +1011,7 @@ class DiaryEntriesCompanion extends UpdateCompanion<DiaryEntry> {
 }
 
 class $DiaryTagsTable extends DiaryTags
-    with TableInfo<$DiaryTagsTable, DiaryTag> {
+    with TableInfo<$DiaryTagsTable, DiaryTagRow> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1047,7 +1047,7 @@ class $DiaryTagsTable extends DiaryTags
   static const String $name = 'diary_tags';
   @override
   VerificationContext validateIntegrity(
-    Insertable<DiaryTag> instance, {
+    Insertable<DiaryTagRow> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -1073,9 +1073,9 @@ class $DiaryTagsTable extends DiaryTags
     {name},
   ];
   @override
-  DiaryTag map(Map<String, dynamic> data, {String? tablePrefix}) {
+  DiaryTagRow map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return DiaryTag(
+    return DiaryTagRow(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -1093,10 +1093,10 @@ class $DiaryTagsTable extends DiaryTags
   }
 }
 
-class DiaryTag extends DataClass implements Insertable<DiaryTag> {
+class DiaryTagRow extends DataClass implements Insertable<DiaryTagRow> {
   final int id;
   final String name;
-  const DiaryTag({required this.id, required this.name});
+  const DiaryTagRow({required this.id, required this.name});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1109,12 +1109,12 @@ class DiaryTag extends DataClass implements Insertable<DiaryTag> {
     return DiaryTagsCompanion(id: Value(id), name: Value(name));
   }
 
-  factory DiaryTag.fromJson(
+  factory DiaryTagRow.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return DiaryTag(
+    return DiaryTagRow(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
     );
@@ -1128,10 +1128,10 @@ class DiaryTag extends DataClass implements Insertable<DiaryTag> {
     };
   }
 
-  DiaryTag copyWith({int? id, String? name}) =>
-      DiaryTag(id: id ?? this.id, name: name ?? this.name);
-  DiaryTag copyWithCompanion(DiaryTagsCompanion data) {
-    return DiaryTag(
+  DiaryTagRow copyWith({int? id, String? name}) =>
+      DiaryTagRow(id: id ?? this.id, name: name ?? this.name);
+  DiaryTagRow copyWithCompanion(DiaryTagsCompanion data) {
+    return DiaryTagRow(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
     );
@@ -1139,7 +1139,7 @@ class DiaryTag extends DataClass implements Insertable<DiaryTag> {
 
   @override
   String toString() {
-    return (StringBuffer('DiaryTag(')
+    return (StringBuffer('DiaryTagRow(')
           ..write('id: $id, ')
           ..write('name: $name')
           ..write(')'))
@@ -1151,10 +1151,10 @@ class DiaryTag extends DataClass implements Insertable<DiaryTag> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is DiaryTag && other.id == this.id && other.name == this.name);
+      (other is DiaryTagRow && other.id == this.id && other.name == this.name);
 }
 
-class DiaryTagsCompanion extends UpdateCompanion<DiaryTag> {
+class DiaryTagsCompanion extends UpdateCompanion<DiaryTagRow> {
   final Value<int> id;
   final Value<String> name;
   const DiaryTagsCompanion({
@@ -1165,7 +1165,7 @@ class DiaryTagsCompanion extends UpdateCompanion<DiaryTag> {
     this.id = const Value.absent(),
     required String name,
   }) : name = Value(name);
-  static Insertable<DiaryTag> custom({
+  static Insertable<DiaryTagRow> custom({
     Expression<int>? id,
     Expression<String>? name,
   }) {
@@ -2071,7 +2071,8 @@ typedef $$DiaryEntriesTableUpdateCompanionBuilder =
     });
 
 final class $$DiaryEntriesTableReferences
-    extends BaseReferences<_$PtrackDatabase, $DiaryEntriesTable, DiaryEntry> {
+    extends
+        BaseReferences<_$PtrackDatabase, $DiaryEntriesTable, DiaryEntryRow> {
   $$DiaryEntriesTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static MultiTypedResultKey<
@@ -2240,14 +2241,14 @@ class $$DiaryEntriesTableTableManager
         RootTableManager<
           _$PtrackDatabase,
           $DiaryEntriesTable,
-          DiaryEntry,
+          DiaryEntryRow,
           $$DiaryEntriesTableFilterComposer,
           $$DiaryEntriesTableOrderingComposer,
           $$DiaryEntriesTableAnnotationComposer,
           $$DiaryEntriesTableCreateCompanionBuilder,
           $$DiaryEntriesTableUpdateCompanionBuilder,
-          (DiaryEntry, $$DiaryEntriesTableReferences),
-          DiaryEntry,
+          (DiaryEntryRow, $$DiaryEntriesTableReferences),
+          DiaryEntryRow,
           PrefetchHooks Function({bool diaryEntryTagJoinRefs})
         > {
   $$DiaryEntriesTableTableManager(_$PtrackDatabase db, $DiaryEntriesTable table)
@@ -2304,7 +2305,7 @@ class $$DiaryEntriesTableTableManager
                 return [
                   if (diaryEntryTagJoinRefs)
                     await $_getPrefetchedData<
-                      DiaryEntry,
+                      DiaryEntryRow,
                       $DiaryEntriesTable,
                       DiaryEntryTagJoinData
                     >(
@@ -2335,14 +2336,14 @@ typedef $$DiaryEntriesTableProcessedTableManager =
     ProcessedTableManager<
       _$PtrackDatabase,
       $DiaryEntriesTable,
-      DiaryEntry,
+      DiaryEntryRow,
       $$DiaryEntriesTableFilterComposer,
       $$DiaryEntriesTableOrderingComposer,
       $$DiaryEntriesTableAnnotationComposer,
       $$DiaryEntriesTableCreateCompanionBuilder,
       $$DiaryEntriesTableUpdateCompanionBuilder,
-      (DiaryEntry, $$DiaryEntriesTableReferences),
-      DiaryEntry,
+      (DiaryEntryRow, $$DiaryEntriesTableReferences),
+      DiaryEntryRow,
       PrefetchHooks Function({bool diaryEntryTagJoinRefs})
     >;
 typedef $$DiaryTagsTableCreateCompanionBuilder =
@@ -2351,7 +2352,7 @@ typedef $$DiaryTagsTableUpdateCompanionBuilder =
     DiaryTagsCompanion Function({Value<int> id, Value<String> name});
 
 final class $$DiaryTagsTableReferences
-    extends BaseReferences<_$PtrackDatabase, $DiaryTagsTable, DiaryTag> {
+    extends BaseReferences<_$PtrackDatabase, $DiaryTagsTable, DiaryTagRow> {
   $$DiaryTagsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static MultiTypedResultKey<
@@ -2494,14 +2495,14 @@ class $$DiaryTagsTableTableManager
         RootTableManager<
           _$PtrackDatabase,
           $DiaryTagsTable,
-          DiaryTag,
+          DiaryTagRow,
           $$DiaryTagsTableFilterComposer,
           $$DiaryTagsTableOrderingComposer,
           $$DiaryTagsTableAnnotationComposer,
           $$DiaryTagsTableCreateCompanionBuilder,
           $$DiaryTagsTableUpdateCompanionBuilder,
-          (DiaryTag, $$DiaryTagsTableReferences),
-          DiaryTag,
+          (DiaryTagRow, $$DiaryTagsTableReferences),
+          DiaryTagRow,
           PrefetchHooks Function({bool diaryEntryTagJoinRefs})
         > {
   $$DiaryTagsTableTableManager(_$PtrackDatabase db, $DiaryTagsTable table)
@@ -2542,7 +2543,7 @@ class $$DiaryTagsTableTableManager
                 return [
                   if (diaryEntryTagJoinRefs)
                     await $_getPrefetchedData<
-                      DiaryTag,
+                      DiaryTagRow,
                       $DiaryTagsTable,
                       DiaryEntryTagJoinData
                     >(
@@ -2571,14 +2572,14 @@ typedef $$DiaryTagsTableProcessedTableManager =
     ProcessedTableManager<
       _$PtrackDatabase,
       $DiaryTagsTable,
-      DiaryTag,
+      DiaryTagRow,
       $$DiaryTagsTableFilterComposer,
       $$DiaryTagsTableOrderingComposer,
       $$DiaryTagsTableAnnotationComposer,
       $$DiaryTagsTableCreateCompanionBuilder,
       $$DiaryTagsTableUpdateCompanionBuilder,
-      (DiaryTag, $$DiaryTagsTableReferences),
-      DiaryTag,
+      (DiaryTagRow, $$DiaryTagsTableReferences),
+      DiaryTagRow,
       PrefetchHooks Function({bool diaryEntryTagJoinRefs})
     >;
 typedef $$DiaryEntryTagJoinTableCreateCompanionBuilder =

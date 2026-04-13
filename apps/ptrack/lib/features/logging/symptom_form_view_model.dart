@@ -2,17 +2,21 @@ import 'package:flutter/foundation.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 
-/// Form state for [SymptomFormSheet] (flow, pain, mood, notes only).
+/// Form state for [SymptomFormSheet] (flow, pain, mood, clinical notes, personal diary).
 class SymptomFormViewModel extends ChangeNotifier {
   SymptomFormViewModel({
     required PeriodRepository repository,
+    required DiaryRepository diaryRepository,
+    required String initialPersonalNotes,
     required DateTime day,
     required int periodId,
     StoredDayEntry? existing,
   })  : _repository = repository,
+        _diary = diaryRepository,
         _day = DateTime.utc(day.year, day.month, day.day),
         _periodId = periodId,
-        _existing = existing {
+        _existing = existing,
+        _personalNotes = initialPersonalNotes {
     final e = existing;
     if (e != null) {
       final d = e.data;
@@ -20,11 +24,11 @@ class SymptomFormViewModel extends ChangeNotifier {
       _painScore = d.painScore;
       _mood = d.mood;
       _notes = d.notes ?? '';
-      _personalNotes = d.personalNotes ?? '';
     }
   }
 
   final PeriodRepository _repository;
+  final DiaryRepository _diary;
   final DateTime _day;
   final int _periodId;
   final StoredDayEntry? _existing;
@@ -71,6 +75,24 @@ class SymptomFormViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> _persistPersonalDiary() async {
+    final trimmed = _personalNotes.trim();
+    if (trimmed.isEmpty) {
+      final existing = await _diary.getEntryForDate(_day);
+      if (existing != null) {
+        await _diary.deleteEntry(existing.id);
+      }
+      return;
+    }
+    await _diary.saveEntry(
+      DiaryEntryData(
+        dateUtc: _day,
+        mood: _mood,
+        notes: trimmed,
+      ),
+    );
+  }
+
   Future<bool> save() async {
     _isSaving = true;
     _errorText = null;
@@ -82,8 +104,6 @@ class SymptomFormViewModel extends ChangeNotifier {
         painScore: _painScore,
         mood: _mood,
         notes: _notes.trim().isEmpty ? null : _notes.trim(),
-        personalNotes:
-            _personalNotes.trim().isEmpty ? null : _personalNotes.trim(),
       );
       final existing = _existing;
       if (existing != null) {
@@ -94,6 +114,7 @@ class SymptomFormViewModel extends ChangeNotifier {
       } else {
         await _repository.upsertDayEntryForPeriod(_periodId, data);
       }
+      await _persistPersonalDiary();
       _isSaving = false;
       notifyListeners();
       return true;

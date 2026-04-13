@@ -15,12 +15,6 @@ Future<List<StoredPeriodWithDays>> _expectedWatchSnapshotFromDb(
         ..orderBy([(t) => OrderingTerm.desc(t.startUtc)]))
       .get();
   final result = <StoredPeriodWithDays>[];
-  final diaryRows = await (db.select(db.diaryEntries)).get();
-  final diaryNotesByCalendarDay = <DateTime, String?>{};
-  for (final e in diaryRows) {
-    final k = DateTime.utc(e.dateUtc.year, e.dateUtc.month, e.dateUtc.day);
-    diaryNotesByCalendarDay[k] = e.notes;
-  }
   for (final r in periodRows) {
     final dayRows = await (db.select(db.dayEntries)
           ..where((t) => t.periodId.equals(r.id))
@@ -28,15 +22,11 @@ Future<List<StoredPeriodWithDays>> _expectedWatchSnapshotFromDb(
         .get();
     final days = <StoredDayEntry>[];
     for (final d in dayRows) {
-      final cal = DateTime.utc(d.dateUtc.year, d.dateUtc.month, d.dateUtc.day);
       days.add(
         StoredDayEntry(
           id: d.id,
           periodId: d.periodId,
-          data: dayEntryRowToDomain(
-            d,
-            personalNotes: diaryNotesByCalendarDay[cal],
-          ),
+          data: dayEntryRowToDomain(d),
         ),
       );
     }
@@ -336,7 +326,12 @@ void main() {
           dateUtc: DateTime.utc(2024, 11, 2),
           flowIntensity: FlowIntensity.light,
           notes: 'clinical',
-          personalNotes: 'keep me',
+        ),
+      );
+      await DiaryRepository(database: db).saveEntry(
+        DiaryEntryData(
+          dateUtc: DateTime.utc(2024, 11, 2),
+          notes: 'keep me',
         ),
       );
       final ok = await repo.clearClinicalSymptoms(id);

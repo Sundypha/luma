@@ -400,36 +400,12 @@ class PeriodRepository {
     return t != null && t.isNotEmpty;
   }
 
-  Future<void> _syncDiaryFromDayData(DayEntryData data) async {
-    final date = DateTime.utc(
-      data.dateUtc.year,
-      data.dateUtc.month,
-      data.dateUtc.day,
-    );
-    final trimmed = data.personalNotes?.trim();
-    if (trimmed == null || trimmed.isEmpty) {
-      await (_db.delete(_db.diaryEntries)..where((t) => t.dateUtc.equals(date)))
-          .go();
-      return;
-    }
-    await (_db.delete(_db.diaryEntries)..where((t) => t.dateUtc.equals(date)))
-        .go();
-    await _db.into(_db.diaryEntries).insert(
-          DiaryEntriesCompanion.insert(
-            dateUtc: date,
-            mood: Value(data.mood?.dbValue),
-            notes: Value(trimmed),
-          ),
-        );
-  }
-
   /// Reactive list of periods (newest [PeriodSpan.startUtc] first) with nested
   /// day entries ([dateUtc] ascending). Updates when either table changes.
   Stream<List<StoredPeriodWithDays>> watchPeriodsWithDays() {
     final controller = StreamController<List<StoredPeriodWithDays>>();
     StreamSubscription<void>? periodSub;
     StreamSubscription<void>? daySub;
-    StreamSubscription<void>? diarySub;
     List<StoredPeriodWithDays>? lastEmitted;
 
     bool sameSnapshot(
@@ -471,17 +447,6 @@ class PeriodRepository {
             ]))
           .get();
 
-      final diaryRows = await (_db.select(_db.diaryEntries)).get();
-      final diaryNotesByCalendarDay = <DateTime, String?>{};
-      for (final e in diaryRows) {
-        final k = DateTime.utc(
-          e.dateUtc.year,
-          e.dateUtc.month,
-          e.dateUtc.day,
-        );
-        diaryNotesByCalendarDay[k] = e.notes;
-      }
-
       final byPeriodId = <int, List<DayEntry>>{};
       for (final d in allDayRows) {
         byPeriodId.putIfAbsent(d.periodId, () => []).add(d);
@@ -494,19 +459,11 @@ class PeriodRepository {
             dayEntries: () {
               final out = <StoredDayEntry>[];
               for (final d in (byPeriodId[r.id] ?? const <DayEntry>[])) {
-                final cal = DateTime.utc(
-                  d.dateUtc.year,
-                  d.dateUtc.month,
-                  d.dateUtc.day,
-                );
                 out.add(
                   StoredDayEntry(
                     id: d.id,
                     periodId: d.periodId,
-                    data: dayEntryRowToDomain(
-                      d,
-                      personalNotes: diaryNotesByCalendarDay[cal],
-                    ),
+                    data: dayEntryRowToDomain(d),
                   ),
                 );
               }
@@ -541,18 +498,13 @@ class PeriodRepository {
       daySub = _db.select(_db.dayEntries).watch().map((_) {}).listen((_) {
         scheduleEmit();
       });
-      diarySub = _db.select(_db.diaryEntries).watch().map((_) {}).listen((_) {
-        scheduleEmit();
-      });
     };
 
     controller.onCancel = () {
       periodSub?.cancel();
       daySub?.cancel();
-      diarySub?.cancel();
       periodSub = null;
       daySub = null;
-      diarySub = null;
     };
 
     return controller.stream;
@@ -594,7 +546,6 @@ class PeriodRepository {
       final id = await _db
           .into(_db.dayEntries)
           .insert(dayEntryDataToInsertCompanion(periodId, data));
-      await _syncDiaryFromDayData(data);
       return id;
     });
   }
@@ -630,13 +581,11 @@ class PeriodRepository {
         final id = await _db
             .into(_db.dayEntries)
             .insert(dayEntryDataToInsertCompanion(periodId, data));
-        await _syncDiaryFromDayData(data);
         return id;
       }
       final id = match.id;
       await (_db.update(_db.dayEntries)..where((t) => t.id.equals(id)))
           .write(dayEntryDataToUpdateCompanion(data));
-      await _syncDiaryFromDayData(data);
       return id;
     });
   }
@@ -646,9 +595,6 @@ class PeriodRepository {
     final updated = await (_db.update(_db.dayEntries)
           ..where((t) => t.id.equals(dayEntryId)))
         .write(dayEntryDataToUpdateCompanion(data));
-    if (updated > 0) {
-      await _syncDiaryFromDayData(data);
-    }
     return updated > 0;
   }
 

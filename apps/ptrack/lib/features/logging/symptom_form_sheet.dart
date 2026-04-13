@@ -34,12 +34,16 @@ class SymptomFormSheet extends StatefulWidget {
   const SymptomFormSheet({
     super.key,
     required this.repository,
+    required this.diaryRepository,
+    required this.initialPersonalNotes,
     required this.day,
     required this.periodId,
     this.existing,
   });
 
   final PeriodRepository repository;
+  final DiaryRepository diaryRepository;
+  final String initialPersonalNotes;
   final DateTime day;
   final int periodId;
   final StoredDayEntry? existing;
@@ -120,6 +124,8 @@ class _SymptomFormSheetState extends State<SymptomFormSheet> {
     super.initState();
     _vm = SymptomFormViewModel(
       repository: widget.repository,
+      diaryRepository: widget.diaryRepository,
+      initialPersonalNotes: widget.initialPersonalNotes,
       day: widget.day,
       periodId: widget.periodId,
       existing: widget.existing,
@@ -277,8 +283,13 @@ Future<void> showSymptomFormSheet(
   required DateTime day,
   required int periodId,
   StoredDayEntry? existing,
-}) {
-  return showModalBottomSheet<void>(
+}) async {
+  final diaryRepository = DiaryRepository(database: repository.database);
+  final dayUtc = DateTime.utc(day.year, day.month, day.day);
+  final diaryRow = await diaryRepository.getEntryForDate(dayUtc);
+  final initialPersonalNotes = diaryRow?.data.notes ?? '';
+  if (!context.mounted) return;
+  await showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     showDragHandle: true,
@@ -290,6 +301,8 @@ Future<void> showSymptomFormSheet(
         ),
         child: SymptomFormSheet(
           repository: repository,
+          diaryRepository: diaryRepository,
+          initialPersonalNotes: initialPersonalNotes,
           day: day,
           periodId: periodId,
           existing: existing,
