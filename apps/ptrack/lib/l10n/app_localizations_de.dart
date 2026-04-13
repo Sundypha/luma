@@ -345,6 +345,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get todaySectionTitle => 'Heute';
 
   @override
+  String get homeDiaryNewEntry => 'Tagebucheintrag schreiben';
+
+  @override
+  String get homeDiaryEditEntry => 'Heutigen Tagebucheintrag bearbeiten';
+
+  @override
   String get todayUnmarkedBody =>
       'Du hast heute noch keinen Periodentag markiert.';
 

@@ -212,6 +212,8 @@
   "drawerDataLabel": "Daten",
   "drawerAboutLabel": "Über die App",
   "todaySectionTitle": "Heute",
+  "homeDiaryNewEntry": "Tagebucheintrag schreiben",
+  "homeDiaryEditEntry": "Heutigen Tagebucheintrag bearbeiten",
   "todayUnmarkedBody": "Du hast heute noch keinen Periodentag markiert.",
   "todayMarkPeriodCta": "Ich hatte heute meine Periode",
   "todayAddSymptomsCta": "Symptome für heute eintragen",

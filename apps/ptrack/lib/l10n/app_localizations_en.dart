@@ -340,6 +340,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get todaySectionTitle => 'Today';
 
   @override
+  String get homeDiaryNewEntry => 'Write diary entry';
+
+  @override
+  String get homeDiaryEditEntry => 'Edit today\'s diary entry';
+
+  @override
   String get todayUnmarkedBody => 'You have not marked today as a period day.';
 
   @override

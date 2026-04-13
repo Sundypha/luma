@@ -221,6 +221,8 @@
   "drawerDataLabel": "Data",
   "drawerAboutLabel": "About",
   "todaySectionTitle": "Today",
+  "homeDiaryNewEntry": "Write diary entry",
+  "homeDiaryEditEntry": "Edit today's diary entry",
   "todayUnmarkedBody": "You have not marked today as a period day.",
   "todayMarkPeriodCta": "I had my period today",
   "todayAddSymptomsCta": "Add symptoms for today",

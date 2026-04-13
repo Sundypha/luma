@@ -534,6 +534,18 @@ abstract class AppLocalizations {
   /// **'Today'**
   String get todaySectionTitle;
 
+  /// No description provided for @homeDiaryNewEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Write diary entry'**
+  String get homeDiaryNewEntry;
+
+  /// No description provided for @homeDiaryEditEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit today\'s diary entry'**
+  String get homeDiaryEditEntry;
+
   /// No description provided for @todayUnmarkedBody.
   ///
   /// In en, this message translates to:
