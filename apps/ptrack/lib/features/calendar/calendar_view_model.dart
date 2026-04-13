@@ -12,7 +12,8 @@ import 'calendar_day_data.dart';
 class CalendarViewModel extends ChangeNotifier {
   CalendarViewModel(
     this._repository,
-    this._calendar, {
+    this._calendar,
+    this._diaryRepository, {
     List<StoredPeriodWithDays>? initialData,
   }) {
     if (initialData != null) {
@@ -22,6 +23,7 @@ class CalendarViewModel extends ChangeNotifier {
       _onData,
       onError: _onStreamError,
     );
+    _diarySub = _diaryRepository.watchAllEntries().listen(_onDiaryEntries);
     unawaited(
       Future.wait([
         PredictionSettings.load(),
@@ -50,6 +52,7 @@ class CalendarViewModel extends ChangeNotifier {
 
   final PeriodRepository _repository;
   final PeriodCalendarContext _calendar;
+  final DiaryRepository _diaryRepository;
   final EnsembleCoordinator _ensembleCoordinator = EnsembleCoordinator();
 
   PredictionDisplayMode _displayMode = PredictionDisplayMode.consensusOnly;
@@ -64,8 +67,12 @@ class CalendarViewModel extends ChangeNotifier {
 
   PeriodRepository get repository => _repository;
   PeriodCalendarContext get calendar => _calendar;
+  DiaryRepository get diaryRepository => _diaryRepository;
 
   StreamSubscription<List<StoredPeriodWithDays>>? _subscription;
+  StreamSubscription<List<StoredDiaryEntry>>? _diarySub;
+
+  Set<DateTime> _diaryDates = {};
 
   List<StoredPeriodWithDays> _periodsWithDays = const [];
   PredictionResult _prediction = const PredictionInsufficientHistory(
@@ -191,6 +198,19 @@ class CalendarViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void _onDiaryEntries(List<StoredDiaryEntry> entries) {
+    _diaryDates = {
+      for (final e in entries)
+        DateTime.utc(
+          e.data.dateUtc.year,
+          e.data.dateUtc.month,
+          e.data.dateUtc.day,
+        ),
+    };
+    _recompute();
+    notifyListeners();
+  }
+
   Set<DateTime>? _fertileDaysForStored(List<StoredPeriod> storedPeriods) {
     if (!_fertilityEnabled || storedPeriods.isEmpty) return null;
 
@@ -241,6 +261,7 @@ class CalendarViewModel extends ChangeNotifier {
       today: DateTime.now(),
       startingDayOfWeek: DateTime.monday,
       fertileDays: fertileDays,
+      diaryDates: _diaryDates,
     );
   }
 
@@ -248,6 +269,7 @@ class CalendarViewModel extends ChangeNotifier {
   void dispose() {
     _disposed = true;
     _subscription?.cancel();
+    _diarySub?.cancel();
     super.dispose();
   }
 }

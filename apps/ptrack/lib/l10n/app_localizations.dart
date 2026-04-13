@@ -480,6 +480,12 @@ abstract class AppLocalizations {
   /// **'Lighter hatching = further out, less certain'**
   String get calendarLegendHatching;
 
+  /// No description provided for @calendarLegendDiaryEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Diary entry'**
+  String get calendarLegendDiaryEntry;
+
   /// No description provided for @calendarToday.
   ///
   /// In en, this message translates to:

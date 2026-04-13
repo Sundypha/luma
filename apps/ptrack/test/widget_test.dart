@@ -13,6 +13,8 @@ import 'package:timezone/data/latest.dart' as tzdata;
 
 class MockPeriodRepository extends Mock implements PeriodRepository {}
 
+class MockDiaryRepository extends Mock implements DiaryRepository {}
+
 class MockFlutterSecureStorage extends Mock implements FlutterSecureStorage {}
 
 class MockLocalAuthentication extends Mock implements LocalAuthentication {}
@@ -22,12 +24,14 @@ void main() {
   tzdata.initializeTimeZones();
 
   late MockPeriodRepository mockRepo;
+  late MockDiaryRepository mockDiary;
   late MockFlutterSecureStorage mockStorage;
   late MockLocalAuthentication mockAuth;
   late PeriodCalendarContext calendar;
 
   setUp(() {
     mockRepo = MockPeriodRepository();
+    mockDiary = MockDiaryRepository();
     mockStorage = MockFlutterSecureStorage();
     mockAuth = MockLocalAuthentication();
     calendar = PeriodCalendarContext.fromTimeZoneName('UTC');
@@ -36,6 +40,9 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
       (_) => Stream<List<StoredPeriodWithDays>>.value(const []),
+    );
+    when(() => mockDiary.watchAllEntries()).thenAnswer(
+      (_) => Stream<List<StoredDiaryEntry>>.value(const []),
     );
   });
 
@@ -57,6 +64,7 @@ void main() {
         home: TabShell(
           repository: mockRepo,
           calendar: calendar,
+          diaryRepository: mockDiary,
           lockService: lockService,
           onReset: () {},
           onLockNow: () {},
@@ -82,6 +90,7 @@ void main() {
         home: TabShell(
           repository: mockRepo,
           calendar: calendar,
+          diaryRepository: mockDiary,
           lockService: lockService,
           onReset: () {},
           onLockNow: () {},

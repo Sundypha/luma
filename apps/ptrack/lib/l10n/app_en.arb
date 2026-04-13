@@ -212,6 +212,7 @@
   "settingsMenuDataBackupSubtitle": "Export, import, and automatic local backups",
   "calendarInsufficientPredictionHint": "No forecast yet — mark at least two separate periods so Luma can measure the gap between them.",
   "calendarLegendHatching": "Lighter hatching = further out, less certain",
+  "calendarLegendDiaryEntry": "Diary entry",
   "calendarToday": "Today",
   "settingsTitle": "Settings",
   "navHome": "Home",

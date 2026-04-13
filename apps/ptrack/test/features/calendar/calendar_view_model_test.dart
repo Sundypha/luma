@@ -10,10 +10,13 @@ import 'package:timezone/data/latest.dart' as tzdata;
 
 class MockPeriodRepository extends Mock implements PeriodRepository {}
 
+class MockDiaryRepository extends Mock implements DiaryRepository {}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late MockPeriodRepository mockRepo;
+  late MockDiaryRepository mockDiary;
   late PeriodCalendarContext calendar;
   late StreamController<List<StoredPeriodWithDays>> controller;
 
@@ -27,9 +30,13 @@ void main() {
   setUp(() {
     SharedPreferences.setMockInitialValues({});
     mockRepo = MockPeriodRepository();
+    mockDiary = MockDiaryRepository();
     calendar = PeriodCalendarContext.fromTimeZoneName('UTC');
     controller = StreamController<List<StoredPeriodWithDays>>.broadcast();
     when(() => mockRepo.watchPeriodsWithDays()).thenAnswer((_) => controller.stream);
+    when(() => mockDiary.watchAllEntries()).thenAnswer(
+      (_) => Stream<List<StoredDiaryEntry>>.value(const []),
+    );
   });
 
   tearDown(() async {
@@ -37,14 +44,14 @@ void main() {
   });
 
   test('starts without initial event until stream emits', () {
-    final vm = CalendarViewModel(mockRepo, calendar);
+    final vm = CalendarViewModel(mockRepo, calendar, mockDiary);
     expect(vm.hasInitialEvent, isFalse);
     expect(vm.dayDataMap, isEmpty);
     vm.dispose();
   });
 
   test('after emitting period data, dayDataMap and prediction update', () async {
-    final vm = CalendarViewModel(mockRepo, calendar);
+    final vm = CalendarViewModel(mockRepo, calendar, mockDiary);
     final start = DateTime.utc(2025, 6, 1);
     final end = DateTime.utc(2025, 6, 3);
     final fixture = StoredPeriodWithDays(
@@ -64,7 +71,7 @@ void main() {
   });
 
   test('selectDay updates selectedDay and focusedDay', () async {
-    final vm = CalendarViewModel(mockRepo, calendar);
+    final vm = CalendarViewModel(mockRepo, calendar, mockDiary);
     controller.add(const []);
     await Future<void>.delayed(Duration.zero);
     final d = DateTime.utc(2025, 7, 15);
@@ -77,7 +84,7 @@ void main() {
 
   test('goToToday resets focusedDay to current month and clears selection',
       () async {
-    final vm = CalendarViewModel(mockRepo, calendar);
+    final vm = CalendarViewModel(mockRepo, calendar, mockDiary);
     controller.add(const []);
     await Future<void>.delayed(Duration.zero);
     vm.changeFocusedMonth(DateTime.utc(2020, 1, 1));
@@ -91,7 +98,7 @@ void main() {
   });
 
   test('dispose cancels subscription without errors on further adds', () async {
-    final vm = CalendarViewModel(mockRepo, calendar);
+    final vm = CalendarViewModel(mockRepo, calendar, mockDiary);
     controller.add(const []);
     await Future<void>.delayed(Duration.zero);
     vm.dispose();
@@ -102,7 +109,7 @@ void main() {
   test('markDay and unmarkDay forward to repository', () async {
     when(() => mockRepo.markDay(any())).thenAnswer((_) async => const DayMarkSuccess());
     when(() => mockRepo.unmarkDay(any())).thenAnswer((_) async => const DayMarkSuccess());
-    final vm = CalendarViewModel(mockRepo, calendar);
+    final vm = CalendarViewModel(mockRepo, calendar, mockDiary);
     controller.add(const []);
     await Future<void>.delayed(Duration.zero);
     final day = DateTime.utc(2025, 8, 10);

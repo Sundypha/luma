@@ -313,6 +313,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Lighter hatching = further out, less certain';
 
   @override
+  String get calendarLegendDiaryEntry => 'Diary entry';
+
+  @override
   String get calendarToday => 'Today';
 
   @override

@@ -126,6 +126,7 @@ class TabShell extends StatefulWidget {
     super.key,
     required this.repository,
     required this.calendar,
+    required this.diaryRepository,
     required this.lockService,
     required this.onReset,
     required this.onLockNow,
@@ -134,6 +135,7 @@ class TabShell extends StatefulWidget {
 
   final PeriodRepository repository;
   final PeriodCalendarContext calendar;
+  final DiaryRepository diaryRepository;
 
   /// When non-null, home and calendar ViewModels start with data (no loading flash).
   final List<StoredPeriodWithDays>? initialPeriodsWithDays;
@@ -156,11 +158,13 @@ class _TabShellState extends State<TabShell> {
     _calendarVm = CalendarViewModel(
       widget.repository,
       widget.calendar,
+      widget.diaryRepository,
       initialData: widget.initialPeriodsWithDays,
     );
     _homeVm = HomeViewModel(
       widget.repository,
       widget.calendar,
+      widget.diaryRepository,
       initialData: widget.initialPeriodsWithDays,
     );
   }

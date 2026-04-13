@@ -18,6 +18,8 @@ import 'package:timezone/data/latest.dart' as tzdata;
 
 class MockPeriodRepository extends Mock implements PeriodRepository {}
 
+class MockDiaryRepository extends Mock implements DiaryRepository {}
+
 class MockFlutterSecureStorage extends Mock implements FlutterSecureStorage {}
 
 class MockLocalAuthentication extends Mock implements LocalAuthentication {}
@@ -59,6 +61,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late MockPeriodRepository mockRepo;
+  late MockDiaryRepository mockDiary;
   late MockFlutterSecureStorage mockStorage;
   late MockLocalAuthentication mockAuth;
   late PeriodCalendarContext calendar;
@@ -75,6 +78,7 @@ void main() {
 
   setUp(() {
     mockRepo = MockPeriodRepository();
+    mockDiary = MockDiaryRepository();
     mockStorage = MockFlutterSecureStorage();
     mockAuth = MockLocalAuthentication();
     calendar = PeriodCalendarContext.fromTimeZoneName('UTC');
@@ -87,6 +91,9 @@ void main() {
       () => mockRepo.watchPeriodsWithDays(),
     ).thenAnswer((_) => Stream<List<StoredPeriodWithDays>>.value(const []));
     when(() => mockRepo.listOrderedByStartUtc()).thenAnswer((_) async => []);
+    when(() => mockDiary.watchAllEntries()).thenAnswer(
+      (_) => Stream<List<StoredDiaryEntry>>.value(const []),
+    );
   });
 
   tearDown(() async {
@@ -113,6 +120,7 @@ void main() {
         home: TabShell(
           repository: mockRepo,
           calendar: calendar,
+          diaryRepository: mockDiary,
           lockService: lockService,
           onReset: () {},
           onLockNow: () {},
@@ -144,7 +152,7 @@ void main() {
     await tester.tap(todayCell);
     await tester.pumpAndSettle();
     await tester.tap(find.text('I had my period'));
-    await tester.pump();
+    await tester.pumpAndSettle();
     verify(() => mockRepo.markDay(any())).called(1);
     expect(find.byType(SymptomFormSheet), findsNothing);
   });

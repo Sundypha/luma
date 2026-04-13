@@ -318,6 +318,9 @@ class AppLocalizationsDe extends AppLocalizations {
       'Hellere Schraffur = weiter weg, unsicherer';
 
   @override
+  String get calendarLegendDiaryEntry => 'Tagebucheintrag';
+
+  @override
   String get calendarToday => 'Heute';
 
   @override

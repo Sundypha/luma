@@ -12,9 +12,16 @@ import 'package:timezone/data/latest.dart' as tzdata;
 
 class MockPeriodRepository extends Mock implements PeriodRepository {}
 
+class MockDiaryRepository extends Mock implements DiaryRepository {}
+
 /// Overrides map/periods for deterministic widget tests without relying on prediction.
 class DayDetailTestViewModel extends CalendarViewModel {
-  DayDetailTestViewModel(super.repo, super.calendar);
+  // ignore: use_super_parameters — superclass stores repos in private fields.
+  DayDetailTestViewModel(
+    PeriodRepository repo,
+    PeriodCalendarContext calendar,
+    DiaryRepository diary,
+  ) : super(repo, calendar, diary);
 
   Map<DateTime, CalendarDayData>? _mapOverride;
   List<StoredPeriodWithDays>? _periodsOverride;
@@ -41,6 +48,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late MockPeriodRepository mockRepo;
+  late MockDiaryRepository mockDiary;
   late PeriodCalendarContext calendar;
 
   setUpAll(() {
@@ -53,9 +61,13 @@ void main() {
   setUp(() {
     SharedPreferences.setMockInitialValues({});
     mockRepo = MockPeriodRepository();
+    mockDiary = MockDiaryRepository();
     calendar = PeriodCalendarContext.fromTimeZoneName('UTC');
     when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
       (_) => Stream<List<StoredPeriodWithDays>>.value(const []),
+    );
+    when(() => mockDiary.watchAllEntries()).thenAnswer(
+      (_) => Stream<List<StoredDiaryEntry>>.value(const []),
     );
     when(() => mockRepo.markDay(any())).thenAnswer(
       (_) async => const DayMarkSuccess(),
@@ -71,7 +83,7 @@ void main() {
     required DateTime selectedDay,
     required void Function(DayDetailTestViewModel vm) configure,
   }) async {
-    final vm = DayDetailTestViewModel(mockRepo, calendar);
+    final vm = DayDetailTestViewModel(mockRepo, calendar, mockDiary);
     await tester.pumpWidget(
       MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,

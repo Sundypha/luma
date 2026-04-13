@@ -18,6 +18,8 @@ import 'package:timezone/data/latest.dart' as tzdata;
 
 class MockPeriodRepository extends Mock implements PeriodRepository {}
 
+class MockDiaryRepository extends Mock implements DiaryRepository {}
+
 bool _hasPeriodBandPainter(Widget widget) =>
     widget is CustomPaint && widget.painter is PeriodBandPainter;
 
@@ -25,6 +27,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late MockPeriodRepository mockRepo;
+  late MockDiaryRepository mockDiary;
   late PeriodCalendarContext calendar;
 
   setUpAll(() {
@@ -38,15 +41,19 @@ void main() {
   setUp(() {
     SharedPreferences.setMockInitialValues({});
     mockRepo = MockPeriodRepository();
+    mockDiary = MockDiaryRepository();
     calendar = PeriodCalendarContext.fromTimeZoneName('UTC');
     when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
       (_) => Stream<List<StoredPeriodWithDays>>.value(const []),
     );
     when(() => mockRepo.listOrderedByStartUtc()).thenAnswer((_) async => []);
+    when(() => mockDiary.watchAllEntries()).thenAnswer(
+      (_) => Stream<List<StoredDiaryEntry>>.value(const []),
+    );
   });
 
   Future<CalendarViewModel> pumpCalendar(WidgetTester tester) async {
-    final vm = CalendarViewModel(mockRepo, calendar);
+    final vm = CalendarViewModel(mockRepo, calendar, mockDiary);
     await tester.pumpWidget(
       MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -181,7 +188,7 @@ void main() {
     final controller = StreamController<List<StoredPeriodWithDays>>.broadcast();
     when(() => mockRepo.watchPeriodsWithDays()).thenAnswer((_) => controller.stream);
 
-    final vm = CalendarViewModel(mockRepo, calendar);
+    final vm = CalendarViewModel(mockRepo, calendar, mockDiary);
     await tester.pumpWidget(
       MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
