@@ -61,10 +61,22 @@ final class ExportService {
         options.includeSymptoms || options.includeNotes;
 
     final List<DayEntry> dayRows;
+    final Map<DateTime, String?> diaryNotesByCalendarDay = {};
     if (includeDayData) {
       dayRows = await (_db.select(_db.dayEntries)
             ..orderBy([(t) => OrderingTerm.asc(t.dateUtc)]))
           .get();
+      final diaryRows = await (_db.select(_db.diaryEntries)
+            ..orderBy([(t) => OrderingTerm.asc(t.dateUtc)]))
+          .get();
+      for (final d in diaryRows) {
+        final key = DateTime.utc(
+          d.dateUtc.year,
+          d.dateUtc.month,
+          d.dateUtc.day,
+        );
+        diaryNotesByCalendarDay[key] = d.notes;
+      }
     } else {
       dayRows = [];
     }
@@ -109,7 +121,12 @@ final class ExportService {
         final pain = options.includeSymptoms ? row.painScore : null;
         final mood = options.includeSymptoms ? row.mood : null;
         final notes = options.includeNotes ? row.notes : null;
-        final rawPersonal = row.personalNotes?.trim();
+        final cal = DateTime.utc(
+          row.dateUtc.year,
+          row.dateUtc.month,
+          row.dateUtc.day,
+        );
+        final rawPersonal = diaryNotesByCalendarDay[cal]?.trim();
         final personalNotes =
             includeDayData && rawPersonal != null && rawPersonal.isNotEmpty
                 ? rawPersonal

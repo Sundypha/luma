@@ -494,8 +494,9 @@ void main() {
       );
       expect(r.entriesCreated, 1);
       final row = await (db.select(db.dayEntries)).getSingle();
-      expect(row.personalNotes, 'diary only');
       expect(row.flowIntensity, isNull);
+      final diary = await (db.select(db.diaryEntries)).getSingle();
+      expect(diary.notes, 'diary only');
     });
 
     test('export then applyImport round-trip on empty target DB', () async {

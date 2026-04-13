@@ -53,7 +53,12 @@ void main() {
             periodId: p2,
             dateUtc: DateTime.utc(2024, 2, 2),
             flowIntensity: const Value(1),
-            personalNotes: const Value('private diary line'),
+          ),
+        );
+    await db.into(db.diaryEntries).insert(
+          DiaryEntriesCompanion.insert(
+            dateUtc: DateTime.utc(2024, 2, 2),
+            notes: const Value('private diary line'),
           ),
         );
   }

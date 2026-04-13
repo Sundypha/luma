@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_data/src/db/ptrack_database.dart';
@@ -18,9 +19,8 @@ void main() {
         painScore: PainScore.severe.dbValue,
         mood: Mood.veryGood.dbValue,
         notes: 'note',
-        personalNotes: 'diary',
       );
-      final d = dayEntryRowToDomain(row);
+      final d = dayEntryRowToDomain(row, personalNotes: 'diary');
       expect(d.dateUtc, row.dateUtc);
       expect(d.flowIntensity, FlowIntensity.heavy);
       expect(d.painScore, PainScore.severe);
@@ -91,9 +91,21 @@ void main() {
         await db.into(db.dayEntries).insert(
               dayEntryDataToInsertCompanion(periodId, data),
             );
+        await db.into(db.diaryEntries).insert(
+              DiaryEntriesCompanion.insert(
+                dateUtc: DateTime.utc(2024, 8, 2),
+                mood: Value(data.mood?.dbValue),
+                notes: const Value('p'),
+              ),
+            );
         final rows = await db.select(db.dayEntries).get();
         expect(rows, hasLength(1));
-        expect(dayEntryRowToDomain(rows.single), data);
+        final diary = await db.select(db.diaryEntries).get();
+        expect(diary, hasLength(1));
+        expect(
+          dayEntryRowToDomain(rows.single, personalNotes: diary.single.notes),
+          data,
+        );
       } finally {
         await db.close();
       }

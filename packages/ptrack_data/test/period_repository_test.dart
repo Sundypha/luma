@@ -15,19 +15,31 @@ Future<List<StoredPeriodWithDays>> _expectedWatchSnapshotFromDb(
         ..orderBy([(t) => OrderingTerm.desc(t.startUtc)]))
       .get();
   final result = <StoredPeriodWithDays>[];
+  final diaryRows = await (db.select(db.diaryEntries)).get();
+  final diaryNotesByCalendarDay = <DateTime, String?>{};
+  for (final e in diaryRows) {
+    final k = DateTime.utc(e.dateUtc.year, e.dateUtc.month, e.dateUtc.day);
+    diaryNotesByCalendarDay[k] = e.notes;
+  }
   for (final r in periodRows) {
     final dayRows = await (db.select(db.dayEntries)
           ..where((t) => t.periodId.equals(r.id))
           ..orderBy([(t) => OrderingTerm.asc(t.dateUtc)]))
         .get();
-    final days = [
-      for (final d in dayRows)
+    final days = <StoredDayEntry>[];
+    for (final d in dayRows) {
+      final cal = DateTime.utc(d.dateUtc.year, d.dateUtc.month, d.dateUtc.day);
+      days.add(
         StoredDayEntry(
           id: d.id,
           periodId: d.periodId,
-          data: dayEntryRowToDomain(d),
+          data: dayEntryRowToDomain(
+            d,
+            personalNotes: diaryNotesByCalendarDay[cal],
+          ),
         ),
-    ];
+      );
+    }
     result.add(
       StoredPeriodWithDays(
         period: StoredPeriod(id: r.id, span: periodRowToDomain(r)),
@@ -335,7 +347,9 @@ void main() {
       expect(row.id, id);
       expect(row.flowIntensity, isNull);
       expect(row.notes, isNull);
-      expect(row.personalNotes, 'keep me');
+      final diary = await db.select(db.diaryEntries).get();
+      expect(diary, hasLength(1));
+      expect(diary.single.notes, 'keep me');
       await db.close();
     });
 

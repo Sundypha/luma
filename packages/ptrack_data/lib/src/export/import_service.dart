@@ -100,6 +100,29 @@ final class ImportService {
     return rows.map(periodRowToDomain).toList();
   }
 
+  Future<void> _syncDiaryFromImportedDayEntry({
+    required DateTime dateUtc,
+    required ExportedDayEntry ie,
+  }) async {
+    if (!ie.personalNotesIncludedInExport) return;
+    final date = _utcCalendarDate(dateUtc);
+    final raw = ie.personalNotes?.trim();
+    if (raw == null || raw.isEmpty) {
+      await (_db.delete(_db.diaryEntries)..where((t) => t.dateUtc.equals(date)))
+          .go();
+      return;
+    }
+    await (_db.delete(_db.diaryEntries)..where((t) => t.dateUtc.equals(date)))
+        .go();
+    await _db.into(_db.diaryEntries).insert(
+          DiaryEntriesCompanion.insert(
+            dateUtc: date,
+            mood: Value(ie.mood),
+            notes: Value(raw),
+          ),
+        );
+  }
+
   String _messageForValidationIssues(List<PeriodValidationIssue> issues) {
     if (issues.isEmpty) {
       return 'This backup contains invalid period data.';
@@ -317,11 +340,9 @@ final class ImportService {
               painScore: Value(ie.painScore),
               mood: Value(ie.mood),
               notes: Value(ie.notes),
-              personalNotes: ie.personalNotesIncludedInExport
-                  ? Value(ie.personalNotes)
-                  : const Value.absent(),
             ),
           );
+          await _syncDiaryFromImportedDayEntry(dateUtc: dateUtc, ie: ie);
           entriesReplaced++;
         } else {
           await _db.into(_db.dayEntries).insert(
@@ -332,11 +353,9 @@ final class ImportService {
                   painScore: Value(ie.painScore),
                   mood: Value(ie.mood),
                   notes: Value(ie.notes),
-                  personalNotes: ie.personalNotesIncludedInExport
-                      ? Value(ie.personalNotes)
-                      : const Value.absent(),
                 ),
               );
+          await _syncDiaryFromImportedDayEntry(dateUtc: dateUtc, ie: ie);
           entriesCreated++;
         }
       }

@@ -372,12 +372,64 @@ class PeriodRepository {
     );
   }
 
+  Future<void> _pruneDiaryIfNoDayEntryOnCalendarDay(DateTime calendarUtc) async {
+    final cal = DateTime.utc(
+      calendarUtc.year,
+      calendarUtc.month,
+      calendarUtc.day,
+    );
+    final remaining = await (_db.select(_db.dayEntries)
+          ..where((t) => t.dateUtc.equals(cal)))
+        .get();
+    if (remaining.isEmpty) {
+      await (_db.delete(_db.diaryEntries)..where((t) => t.dateUtc.equals(cal)))
+          .go();
+    }
+  }
+
+  Future<bool> _diaryHasNonEmptyNotes(DateTime calendarUtc) async {
+    final cal = DateTime.utc(
+      calendarUtc.year,
+      calendarUtc.month,
+      calendarUtc.day,
+    );
+    final d = await (_db.select(_db.diaryEntries)
+          ..where((t) => t.dateUtc.equals(cal)))
+        .getSingleOrNull();
+    final t = d?.notes?.trim();
+    return t != null && t.isNotEmpty;
+  }
+
+  Future<void> _syncDiaryFromDayData(DayEntryData data) async {
+    final date = DateTime.utc(
+      data.dateUtc.year,
+      data.dateUtc.month,
+      data.dateUtc.day,
+    );
+    final trimmed = data.personalNotes?.trim();
+    if (trimmed == null || trimmed.isEmpty) {
+      await (_db.delete(_db.diaryEntries)..where((t) => t.dateUtc.equals(date)))
+          .go();
+      return;
+    }
+    await (_db.delete(_db.diaryEntries)..where((t) => t.dateUtc.equals(date)))
+        .go();
+    await _db.into(_db.diaryEntries).insert(
+          DiaryEntriesCompanion.insert(
+            dateUtc: date,
+            mood: Value(data.mood?.dbValue),
+            notes: Value(trimmed),
+          ),
+        );
+  }
+
   /// Reactive list of periods (newest [PeriodSpan.startUtc] first) with nested
   /// day entries ([dateUtc] ascending). Updates when either table changes.
   Stream<List<StoredPeriodWithDays>> watchPeriodsWithDays() {
     final controller = StreamController<List<StoredPeriodWithDays>>();
     StreamSubscription<void>? periodSub;
     StreamSubscription<void>? daySub;
+    StreamSubscription<void>? diarySub;
     List<StoredPeriodWithDays>? lastEmitted;
 
     bool sameSnapshot(
@@ -419,6 +471,17 @@ class PeriodRepository {
             ]))
           .get();
 
+      final diaryRows = await (_db.select(_db.diaryEntries)).get();
+      final diaryNotesByCalendarDay = <DateTime, String?>{};
+      for (final e in diaryRows) {
+        final k = DateTime.utc(
+          e.dateUtc.year,
+          e.dateUtc.month,
+          e.dateUtc.day,
+        );
+        diaryNotesByCalendarDay[k] = e.notes;
+      }
+
       final byPeriodId = <int, List<DayEntry>>{};
       for (final d in allDayRows) {
         byPeriodId.putIfAbsent(d.periodId, () => []).add(d);
@@ -428,14 +491,27 @@ class PeriodRepository {
         for (final r in periodRows)
           StoredPeriodWithDays(
             period: StoredPeriod(id: r.id, span: periodRowToDomain(r)),
-            dayEntries: [
-              for (final d in (byPeriodId[r.id] ?? const <DayEntry>[]))
-                StoredDayEntry(
-                  id: d.id,
-                  periodId: d.periodId,
-                  data: dayEntryRowToDomain(d),
-                ),
-            ],
+            dayEntries: () {
+              final out = <StoredDayEntry>[];
+              for (final d in (byPeriodId[r.id] ?? const <DayEntry>[])) {
+                final cal = DateTime.utc(
+                  d.dateUtc.year,
+                  d.dateUtc.month,
+                  d.dateUtc.day,
+                );
+                out.add(
+                  StoredDayEntry(
+                    id: d.id,
+                    periodId: d.periodId,
+                    data: dayEntryRowToDomain(
+                      d,
+                      personalNotes: diaryNotesByCalendarDay[cal],
+                    ),
+                  ),
+                );
+              }
+              return out;
+            }(),
           ),
       ];
     }
@@ -465,13 +541,18 @@ class PeriodRepository {
       daySub = _db.select(_db.dayEntries).watch().map((_) {}).listen((_) {
         scheduleEmit();
       });
+      diarySub = _db.select(_db.diaryEntries).watch().map((_) {}).listen((_) {
+        scheduleEmit();
+      });
     };
 
     controller.onCancel = () {
       periodSub?.cancel();
       daySub?.cancel();
+      diarySub?.cancel();
       periodSub = null;
       daySub = null;
+      diarySub = null;
     };
 
     return controller.stream;
@@ -480,12 +561,22 @@ class PeriodRepository {
   /// Deletes [periodId] and all of its day entries in one transaction.
   Future<bool> deletePeriod(int periodId) {
     return _db.transaction(() async {
+      final days = await (_db.select(_db.dayEntries)
+            ..where((t) => t.periodId.equals(periodId)))
+          .get();
+      final affectedDates = <DateTime>{
+        for (final d in days)
+          DateTime.utc(d.dateUtc.year, d.dateUtc.month, d.dateUtc.day),
+      };
       await (_db.delete(_db.dayEntries)
             ..where((t) => t.periodId.equals(periodId)))
           .go();
       final removed = await (_db.delete(_db.periods)
             ..where((t) => t.id.equals(periodId)))
           .go();
+      for (final date in affectedDates) {
+        await _pruneDiaryIfNoDayEntryOnCalendarDay(date);
+      }
       return removed > 0;
     });
   }
@@ -500,9 +591,11 @@ class PeriodRepository {
       if (rows.isEmpty) {
         throw StateError('No period with id $periodId');
       }
-      return _db
+      final id = await _db
           .into(_db.dayEntries)
           .insert(dayEntryDataToInsertCompanion(periodId, data));
+      await _syncDiaryFromDayData(data);
+      return id;
     });
   }
 
@@ -534,13 +627,16 @@ class PeriodRepository {
         }
       }
       if (match == null) {
-        return _db
+        final id = await _db
             .into(_db.dayEntries)
             .insert(dayEntryDataToInsertCompanion(periodId, data));
+        await _syncDiaryFromDayData(data);
+        return id;
       }
       final id = match.id;
       await (_db.update(_db.dayEntries)..where((t) => t.id.equals(id)))
           .write(dayEntryDataToUpdateCompanion(data));
+      await _syncDiaryFromDayData(data);
       return id;
     });
   }
@@ -550,29 +646,48 @@ class PeriodRepository {
     final updated = await (_db.update(_db.dayEntries)
           ..where((t) => t.id.equals(dayEntryId)))
         .write(dayEntryDataToUpdateCompanion(data));
+    if (updated > 0) {
+      await _syncDiaryFromDayData(data);
+    }
     return updated > 0;
   }
 
   /// Deletes a single day entry row; returns whether a row was removed.
   Future<bool> deleteDayEntry(int dayEntryId) async {
+    final row = await (_db.select(_db.dayEntries)
+          ..where((t) => t.id.equals(dayEntryId)))
+        .getSingleOrNull();
+    if (row == null) return false;
+    final cal = DateTime.utc(
+      row.dateUtc.year,
+      row.dateUtc.month,
+      row.dateUtc.day,
+    );
     final count = await (_db.delete(_db.dayEntries)
           ..where((t) => t.id.equals(dayEntryId)))
         .go();
+    if (count > 0) {
+      await _pruneDiaryIfNoDayEntryOnCalendarDay(cal);
+    }
     return count > 0;
   }
 
   /// Clears flow, pain, mood, and clinical notes for [dayEntryId].
   ///
-  /// If the row has non-empty [DayEntryData.personalNotes], the row is kept
-  /// with only those notes. Otherwise the row is deleted.
+  /// If a non-empty diary note exists for that calendar day, the row is kept
+  /// with only symptoms cleared. Otherwise the row is deleted.
   Future<bool> clearClinicalSymptoms(int dayEntryId) {
     return _db.transaction(() async {
       final row = await (_db.select(_db.dayEntries)
             ..where((t) => t.id.equals(dayEntryId)))
           .getSingleOrNull();
       if (row == null) return false;
-      final personal = row.personalNotes?.trim();
-      final hasPersonal = personal != null && personal.isNotEmpty;
+      final cal = DateTime.utc(
+        row.dateUtc.year,
+        row.dateUtc.month,
+        row.dateUtc.day,
+      );
+      final hasPersonal = await _diaryHasNonEmptyNotes(cal);
       if (hasPersonal) {
         await (_db.update(_db.dayEntries)..where((t) => t.id.equals(dayEntryId)))
             .write(

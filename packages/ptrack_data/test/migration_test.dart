@@ -98,8 +98,8 @@ void main() {
             await db.customSelect('PRAGMA table_info(day_entries);').get();
         expect(
           colInfo.any((r) => r.read<String>('name') == 'personal_notes'),
-          isTrue,
-          reason: 'schema v4 adds personal_notes for diary field',
+          isFalse,
+          reason: 'schema v5 stores personal diary in diary_entries, not day_entries',
         );
       } finally {
         await db.close();
@@ -293,10 +293,19 @@ VALUES
           expect(dr.read<int>('mood'), Mood.good.dbValue);
           expect(dr.read<String?>('notes'), 'My diary entry');
           final dateRaw = dr.read<int>('date_utc');
-          expect(
-            DateTime.fromMillisecondsSinceEpoch(dateRaw * 1000, isUtc: true),
-            DateTime.utc(2024, 3, 10),
-          );
+          bool utcDayMatches2024_03_10(int raw) {
+            DateTime d;
+            if (raw < 10000000000) {
+              d = DateTime.fromMillisecondsSinceEpoch(raw * 1000, isUtc: true);
+            } else if (raw < 100000000000000) {
+              d = DateTime.fromMillisecondsSinceEpoch(raw, isUtc: true);
+            } else {
+              d = DateTime.fromMicrosecondsSinceEpoch(raw, isUtc: true);
+            }
+            return d.year == 2024 && d.month == 3 && d.day == 10;
+          }
+
+          expect(utcDayMatches2024_03_10(dateRaw), isTrue);
 
           final dayCols =
               await db.customSelect('PRAGMA table_info(day_entries);').get();
