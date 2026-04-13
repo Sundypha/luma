@@ -96,7 +96,7 @@ Plans:
 | 15 — Code review remediation | 3/3 | Complete — `15-01`–`15-03` (`15-01-SUMMARY.md` … `15-03-SUMMARY.md`); optional `15-01` Task 3 import smoke UAT |
 | 16 — Security audit remediation | 1/8 | In progress — `16-01` complete (Android release signing) |
 | 17 — release management (GitHub + Firebase) | 2/2 | Complete — 2026-04-10 (`17-UAT.md`; `17-01-SUMMARY.md`, `17-02-SUMMARY.md`) |
-| 18 - Diary table migration | 0/7 | Not started |
+| 18 - Diary table migration | 1/7 | In progress — `18-01` complete (see `18-01-SUMMARY.md`) |
 
 ### Phase 13: PDF export of period statistics and details (user selectable if all or none). Goal is to have a PDF ready for a physician or gynecologist.
 
@@ -173,10 +173,10 @@ Plans:
 **Goal:** Extract the personal diary/notes from the symptom log into its own standalone table so users can add a diary entry on any day — not only during their period. Requires a careful data migration that moves existing diary entries out of the symptom table into the new diary table without data loss, updates all read/write paths, and keeps export/import backward-compatible.
 **Depends on:** Phase 17
 **Requirements:** DIARY-01 through DIARY-09 (derived from phase goal)
-**Plans:** 7 plans
+**Plans:** 0/7 plans executed
 
 Plans:
-- [ ] `18-01-PLAN.md` — DB schema v5: DiaryEntries/Tags/Join tables, v4→v5 migration (TDD)
+- [x] `18-01-PLAN.md` — DB schema v5: DiaryEntries/Tags/Join tables, v4→v5 migration (TDD) — see `18-01-SUMMARY.md`
 - [ ] `18-02-PLAN.md` — Domain models (DiaryEntryData, DiaryTag), DiaryRepository CRUD + streams
 - [ ] `18-03-PLAN.md` — Export/import: .luma format v2 with diary_entries, backward-compat v1 import
 - [ ] `18-04-PLAN.md` — Diary form sheet (text + mood + tags), symptom form personalNotes removal

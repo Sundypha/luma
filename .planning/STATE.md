@@ -6,27 +6,28 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** **Milestone v2.0** — Phase **17** release management (`17-02` Tasks 1–2 done; Task 3 human-verify pending).
+**Current focus:** **Milestone v2.0** — Phase **18** diary table migration (`18-01` complete; next `18-02`). Phase **17** still has optional `17-02` Task 3 human-verify.
 
 ## Current Position
 
 **Milestone:** v2.0 — i18n, German locale, optional fertility window (**complete**).
 
-**Phase:** **17** — Release management (GitHub Release + Firebase App Distribution).
+**Phase:** **18** — Diary table migration (schema v5 + data path from v4).
 
-**Plan:** `17-02` — unified release workflow **implemented** (Tasks 1–2); **Task 3** (`checkpoint:human-verify` per `17-02-PLAN.md`) **pending** before marking REL-02–REL-04 and finalizing `17-02-SUMMARY.md`.
+**Plan:** `18-01` — **complete** (see `18-01-SUMMARY.md`). **Next:** `18-02` — domain models + `DiaryRepository`.
 
-**Status:** Phase **17** in progress — plan 01 complete (REL-01); plan 02 awaiting end-to-end release verification on GitHub.
+**Status:** Phase **18** in progress — 1/7 plans complete on branch `feat/18-01-diary-schema-migration`.
 
-Last activity: 2026-04-10 — **17-02** Tasks 1–2: `release.yml` (`9ef364b`), FAD header cross-reference (`22ae7ca`); checkpoint at Task 3.
+Last activity: 2026-04-14 — **18-01**: Drift v5 diary tables, transactional v4→v5 migration, export/import/repository wiring for `diary_entries`.
 
-**Progress (v2.0):** Phase 17 **in progress** (1/2 plans). See `ROADMAP.md`.
+**Progress (v2.0):** Phase 18 **in progress** (1/7 plans). Phase 17 optional checkpoint remains. See `ROADMAP.md`.
 
 ## Performance Metrics
 
 | Phase | Duration | Detail |
 |-------|----------|--------|
 | 17 P01 | 12 min | 2 tasks, 2 files — see `17-01-SUMMARY.md` |
+| 18-diary-table-migration P01 | 45 min | 2 tasks, 12 files — see `18-01-SUMMARY.md` |
 
 *Also reset when v2.0 execution starts; track per-phase durations in phase SUMMARY files.*
 
@@ -58,6 +59,8 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 **2026-04-10 (17-01):** Root `CHANGELOG.md` follows Keep a Changelog; `tool/bump_version.dart` bumps `apps/ptrack/pubspec.yaml` semver + monotonic build, prepends a dated section after `## [Unreleased]`, optional `--tag` (git commit + annotated tag). Run with **`fvm dart run tool/bump_version.dart`** so the SDK matches workspace `^3.11` (plain `dart run` fails on older system Dart).
 
+**2026-04-14 (18-01):** Dropped `personal_notes` from `day_entries` via Drift `alterTable(TableMigration(dayEntries))` (Drift 2.32 has no `Migrator.recreateTable`); diary text lives in `diary_entries` keyed by UTC calendar day.
+
 ### Pending Todos
 
 - **Phase 17** — Complete **17-02** Task 3: human verification of unified Release workflow (see `17-02-PLAN.md`); then finalize `17-02-SUMMARY.md` and mark REL-02–REL-04 if checks pass.
@@ -82,10 +85,10 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-13T22:31:25.868Z
+**Last session:** 2026-04-13T23:09:05.940Z
 
-**Stopped at:** Phase 18 context gathered
+**Stopped at:** Completed 18-01-PLAN.md
 
-**Resume file:** .planning/phases/18-diary-table-migration/18-CONTEXT.md
+**Resume file:** None
 
-**Next:** Complete **17-02 Task 3** verification on GitHub; then finalize requirements (REL-02–REL-04), `17-02-SUMMARY.md`, and STATE/ROADMAP. Alternatively continue Phase **16** plans (e.g. **16-02** PIN lockout) as prioritized.
+**Next:** Execute **18-02-PLAN.md** (domain + `DiaryRepository`). Optionally complete **17-02 Task 3** verification on GitHub or continue Phase **16** as prioritized.
