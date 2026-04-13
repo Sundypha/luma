@@ -546,6 +546,18 @@ abstract class AppLocalizations {
   /// **'Date: {start} – {end}'**
   String diaryDateFilterActive(String start, String end);
 
+  /// No description provided for @settingsMenuDiaryTagsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Diary Tags'**
+  String get settingsMenuDiaryTagsTitle;
+
+  /// No description provided for @settingsMenuDiaryTagsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your diary tag list'**
+  String get settingsMenuDiaryTagsSubtitle;
+
   /// No description provided for @drawerSettingsLabel.
   ///
   /// In en, this message translates to:

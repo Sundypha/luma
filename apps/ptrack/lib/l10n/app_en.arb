@@ -229,6 +229,8 @@
       "end": { "type": "String" }
     }
   },
+  "settingsMenuDiaryTagsTitle": "Diary Tags",
+  "settingsMenuDiaryTagsSubtitle": "Manage your diary tag list",
   "drawerSettingsLabel": "Settings",
   "drawerDataLabel": "Data",
   "drawerAboutLabel": "About",

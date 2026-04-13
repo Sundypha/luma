@@ -220,6 +220,8 @@
       "end": { "type": "String" }
     }
   },
+  "settingsMenuDiaryTagsTitle": "Tagebuch-Tags",
+  "settingsMenuDiaryTagsSubtitle": "Ihre Tag-Liste verwalten",
   "drawerSettingsLabel": "Einstellungen",
   "drawerDataLabel": "Daten",
   "drawerAboutLabel": "Über die App",

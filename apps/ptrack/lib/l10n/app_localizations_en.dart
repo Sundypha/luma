@@ -349,6 +349,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get settingsMenuDiaryTagsTitle => 'Diary Tags';
+
+  @override
+  String get settingsMenuDiaryTagsSubtitle => 'Manage your diary tag list';
+
+  @override
   String get drawerSettingsLabel => 'Settings';
 
   @override
