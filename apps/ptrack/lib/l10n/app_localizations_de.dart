@@ -929,6 +929,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dayDetailClearSymptoms => 'Symptome löschen';
 
   @override
+  String get dayDetailEditDiaryEntry => 'Tagebucheintrag bearbeiten';
+
+  @override
+  String get dayDetailAddDiaryEntry => 'Tagebucheintrag hinzufügen';
+
+  @override
+  String get dayDetailSymptomMoodLabel => 'Symptomstimmung';
+
+  @override
+  String get dayDetailDiaryMoodLabel => 'Tagebuchstimmung';
+
+  @override
+  String get dayDetailEditPeriodRecord => 'Periodenprotokoll bearbeiten';
+
+  @override
   String get firstLogAppBarTitle => 'Erste Periode eintragen';
 
   @override

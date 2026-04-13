@@ -73,6 +73,7 @@ class CalendarViewModel extends ChangeNotifier {
   StreamSubscription<List<StoredDiaryEntry>>? _diarySub;
 
   Set<DateTime> _diaryDates = {};
+  final Map<DateTime, StoredDiaryEntry> _diaryEntriesByDate = {};
 
   List<StoredPeriodWithDays> _periodsWithDays = const [];
   PredictionResult _prediction = const PredictionInsufficientHistory(
@@ -199,16 +200,29 @@ class CalendarViewModel extends ChangeNotifier {
   }
 
   void _onDiaryEntries(List<StoredDiaryEntry> entries) {
-    _diaryDates = {
-      for (final e in entries)
-        DateTime.utc(
-          e.data.dateUtc.year,
-          e.data.dateUtc.month,
-          e.data.dateUtc.day,
+    _diaryEntriesByDate
+      ..clear()
+      ..addEntries(
+        entries.map(
+          (e) => MapEntry(
+            DateTime.utc(
+              e.data.dateUtc.year,
+              e.data.dateUtc.month,
+              e.data.dateUtc.day,
+            ),
+            e,
+          ),
         ),
-    };
+      );
+    _diaryDates = _diaryEntriesByDate.keys.toSet();
     _recompute();
     notifyListeners();
+  }
+
+  /// Diary entry for [dayNorm] (UTC calendar midnight), or null.
+  StoredDiaryEntry? diaryEntryForDay(DateTime dayNorm) {
+    final key = DateTime.utc(dayNorm.year, dayNorm.month, dayNorm.day);
+    return _diaryEntriesByDate[key];
   }
 
   Set<DateTime>? _fertileDaysForStored(List<StoredPeriod> storedPeriods) {

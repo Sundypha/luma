@@ -1571,6 +1571,36 @@ abstract class AppLocalizations {
   /// **'Clear symptoms'**
   String get dayDetailClearSymptoms;
 
+  /// No description provided for @dayDetailEditDiaryEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit diary entry'**
+  String get dayDetailEditDiaryEntry;
+
+  /// No description provided for @dayDetailAddDiaryEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Add diary entry'**
+  String get dayDetailAddDiaryEntry;
+
+  /// No description provided for @dayDetailSymptomMoodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Symptom mood'**
+  String get dayDetailSymptomMoodLabel;
+
+  /// No description provided for @dayDetailDiaryMoodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Diary mood'**
+  String get dayDetailDiaryMoodLabel;
+
+  /// No description provided for @dayDetailEditPeriodRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit period record'**
+  String get dayDetailEditPeriodRecord;
+
   /// No description provided for @firstLogAppBarTitle.
   ///
   /// In en, this message translates to:

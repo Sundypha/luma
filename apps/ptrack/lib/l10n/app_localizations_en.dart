@@ -914,6 +914,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dayDetailClearSymptoms => 'Clear symptoms';
 
   @override
+  String get dayDetailEditDiaryEntry => 'Edit diary entry';
+
+  @override
+  String get dayDetailAddDiaryEntry => 'Add diary entry';
+
+  @override
+  String get dayDetailSymptomMoodLabel => 'Symptom mood';
+
+  @override
+  String get dayDetailDiaryMoodLabel => 'Diary mood';
+
+  @override
+  String get dayDetailEditPeriodRecord => 'Edit period record';
+
+  @override
   String get firstLogAppBarTitle => 'Log your first period';
 
   @override
