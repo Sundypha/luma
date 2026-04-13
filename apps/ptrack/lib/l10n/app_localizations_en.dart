@@ -328,6 +328,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navCalendar => 'Calendar';
 
   @override
+  String get navDiary => 'Diary';
+
+  @override
+  String get diaryListSearchHint => 'Search notes';
+
+  @override
+  String get diaryListNoMatches => 'No entries match your filters.';
+
+  @override
+  String get diaryListEmptyHint =>
+      'No diary entries yet. Tap + to add your first entry.';
+
+  @override
+  String get diaryFilterIconTooltip => 'Filter by date range';
+
+  @override
+  String diaryDateFilterActive(String start, String end) {
+    return 'Date: $start – $end';
+  }
+
+  @override
   String get drawerSettingsLabel => 'Settings';
 
   @override

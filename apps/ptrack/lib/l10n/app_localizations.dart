@@ -510,6 +510,42 @@ abstract class AppLocalizations {
   /// **'Calendar'**
   String get navCalendar;
 
+  /// No description provided for @navDiary.
+  ///
+  /// In en, this message translates to:
+  /// **'Diary'**
+  String get navDiary;
+
+  /// No description provided for @diaryListSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search notes'**
+  String get diaryListSearchHint;
+
+  /// No description provided for @diaryListNoMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'No entries match your filters.'**
+  String get diaryListNoMatches;
+
+  /// No description provided for @diaryListEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'No diary entries yet. Tap + to add your first entry.'**
+  String get diaryListEmptyHint;
+
+  /// No description provided for @diaryFilterIconTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by date range'**
+  String get diaryFilterIconTooltip;
+
+  /// No description provided for @diaryDateFilterActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Date: {start} – {end}'**
+  String diaryDateFilterActive(String start, String end);
+
   /// No description provided for @drawerSettingsLabel.
   ///
   /// In en, this message translates to:

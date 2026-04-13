@@ -208,6 +208,18 @@
   "settingsTitle": "Einstellungen",
   "navHome": "Start",
   "navCalendar": "Kalender",
+  "navDiary": "Tagebuch",
+  "diaryListSearchHint": "Notizen durchsuchen",
+  "diaryListNoMatches": "Keine Einträge entsprechen Ihren Filtern.",
+  "diaryListEmptyHint": "Noch keine Tagebucheinträge. Tippen Sie auf +, um den ersten Eintrag hinzuzufügen.",
+  "diaryFilterIconTooltip": "Nach Datumsbereich filtern",
+  "diaryDateFilterActive": "Datum: {start} – {end}",
+  "@diaryDateFilterActive": {
+    "placeholders": {
+      "start": { "type": "String" },
+      "end": { "type": "String" }
+    }
+  },
   "drawerSettingsLabel": "Einstellungen",
   "drawerDataLabel": "Daten",
   "drawerAboutLabel": "Über die App",

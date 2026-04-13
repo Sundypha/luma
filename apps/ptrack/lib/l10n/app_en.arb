@@ -217,6 +217,18 @@
   "settingsTitle": "Settings",
   "navHome": "Home",
   "navCalendar": "Calendar",
+  "navDiary": "Diary",
+  "diaryListSearchHint": "Search notes",
+  "diaryListNoMatches": "No entries match your filters.",
+  "diaryListEmptyHint": "No diary entries yet. Tap + to add your first entry.",
+  "diaryFilterIconTooltip": "Filter by date range",
+  "diaryDateFilterActive": "Date: {start} – {end}",
+  "@diaryDateFilterActive": {
+    "placeholders": {
+      "start": { "type": "String" },
+      "end": { "type": "String" }
+    }
+  },
   "drawerSettingsLabel": "Settings",
   "drawerDataLabel": "Data",
   "drawerAboutLabel": "About",
