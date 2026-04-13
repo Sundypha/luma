@@ -1,4 +1,4 @@
-# Roadmap: Period Tracker (ptrack)
+﻿# Roadmap: Period Tracker (ptrack)
 
 ## Shipped milestones
 
@@ -28,7 +28,7 @@ Phase implementation detail remains under `.planning/phases/` for history.
 | **10** | i18n foundation | I18N-01 | gen_l10n, English ARB, migrate strings, wire delegates |
 | **11** | German + language settings | I18N-02 — I18N-05 | de translations, settings, locale formatting, CI guard |
 | **12** | Optional fertility window | FERT-01 — FERT-05 | Opt-in, prompts, on-device estimate, UI, tests, docs |
-| **18** | Diary table migration | — | Decouple diary from symptom; standalone table, data migration |
+| **18** | Diary table migration | DIARY-01 — DIARY-09 | Decouple diary from symptom; standalone table, data migration |
 
 ### Phase 10: Internationalization foundation
 
@@ -96,7 +96,7 @@ Plans:
 | 15 — Code review remediation | 3/3 | Complete — `15-01`–`15-03` (`15-01-SUMMARY.md` … `15-03-SUMMARY.md`); optional `15-01` Task 3 import smoke UAT |
 | 16 — Security audit remediation | 1/8 | In progress — `16-01` complete (Android release signing) |
 | 17 — release management (GitHub + Firebase) | 2/2 | Complete — 2026-04-10 (`17-UAT.md`; `17-01-SUMMARY.md`, `17-02-SUMMARY.md`) |
-| 18 — Diary table migration | 0/? | Not planned yet |
+| 18 - Diary table migration | 0/7 | Not started |
 
 ### Phase 13: PDF export of period statistics and details (user selectable if all or none). Goal is to have a PDF ready for a physician or gynecologist.
 
@@ -172,8 +172,17 @@ Plans:
 
 **Goal:** Extract the personal diary/notes from the symptom log into its own standalone table so users can add a diary entry on any day — not only during their period. Requires a careful data migration that moves existing diary entries out of the symptom table into the new diary table without data loss, updates all read/write paths, and keeps export/import backward-compatible.
 **Depends on:** Phase 17
+**Requirements:** DIARY-01 through DIARY-09 (derived from phase goal)
+**Plans:** 7 plans
 
-**Plans:** *not yet planned*
+Plans:
+- [ ] `18-01-PLAN.md` — DB schema v5: DiaryEntries/Tags/Join tables, v4→v5 migration (TDD)
+- [ ] `18-02-PLAN.md` — Domain models (DiaryEntryData, DiaryTag), DiaryRepository CRUD + streams
+- [ ] `18-03-PLAN.md` — Export/import: .luma format v2 with diary_entries, backward-compat v1 import
+- [ ] `18-04-PLAN.md` — Diary form sheet (text + mood + tags), symptom form personalNotes removal
+- [ ] `18-05-PLAN.md` — Calendar blue diary dot + legend; Home Today card diary shortcut
+- [ ] `18-06-PLAN.md` — Day detail routing hub (4 states), DiaryTagsSettingsScreen
+- [ ] `18-07-PLAN.md` — Diary tab screen (paginated list, search, tag filter) + tab shell integration
 
 ---
-*Roadmap updated: 2026-04-13 — Phase **18** added (diary table migration). Phase **17** complete (2/2 plans; UAT in `17-UAT.md`). Phase **16-01** (Android release signing) noted above. **`13-03`** export UI still awaiting Task 3 human verification.*  
+*Roadmap updated: 2026-04-14 — Phase **18** planned (7 plans, 5 waves). Phase **17** complete (2/2 plans; UAT in `17-UAT.md`). Phase **16-01** (Android release signing) noted above. **`13-03`** export UI still awaiting Task 3 human verification.*  
