@@ -7,6 +7,8 @@ export 'src/export/export_schema.dart'
     show
         ExportOptions,
         ExportedDayEntry,
+        ExportedDiaryEntry,
+        ExportedDiaryTag,
         ExportedPeriod,
         LumaExportData,
         LumaExportMeta,

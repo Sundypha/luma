@@ -118,7 +118,7 @@ void main() {
         appVersion: '1.0.0+1',
         exportedAt: DateTime.utc(2026, 1, 1),
         encrypted: false,
-        contentTypes: ['periods', 'symptoms', 'notes'],
+        contentTypes: ['periods', 'symptoms', 'notes', 'diary'],
       );
       final data = LumaExportData(
         meta: meta,
@@ -132,11 +132,21 @@ void main() {
             flowIntensity: 1,
           ),
         ],
+        diaryEntries: const [
+          ExportedDiaryEntry(
+            dateUtc: '2024-01-02T00:00:00.000Z',
+            notes: 'diary line',
+            tags: ['t1'],
+          ),
+        ],
       );
       final map = data.toJson();
       final back = LumaExportData.fromJson(map);
       expect(back.periods!.length, 1);
       expect(back.dayEntries!.length, 1);
+      expect(back.diaryEntries, hasLength(1));
+      expect(back.diaryEntries!.single.notes, 'diary line');
+      expect(back.diaryEntries!.single.tags, ['t1']);
       expect(back.meta.contentTypes, meta.contentTypes);
     });
 
@@ -166,13 +176,52 @@ void main() {
       expect(o.includePeriods, isTrue);
       expect(o.includeSymptoms, isTrue);
       expect(o.includeNotes, isTrue);
+      expect(o.includeDiary, isTrue);
     });
 
-    test('periodsOnly leaves symptoms and notes off', () {
+    test('periodsOnly leaves symptoms, notes, and diary off', () {
       final o = ExportOptions.periodsOnly();
       expect(o.includePeriods, isTrue);
       expect(o.includeSymptoms, isFalse);
       expect(o.includeNotes, isFalse);
+      expect(o.includeDiary, isFalse);
+    });
+  });
+
+  group('ExportedDiaryTag', () {
+    test('round-trip', () {
+      const t = ExportedDiaryTag(name: 'work');
+      final back = ExportedDiaryTag.fromJson(t.toJson());
+      expect(back.name, 'work');
+    });
+  });
+
+  group('ExportedDiaryEntry', () {
+    test('round-trip with tags', () {
+      const e = ExportedDiaryEntry(
+        dateUtc: '2024-01-02T00:00:00.000Z',
+        mood: 2,
+        notes: 'hello',
+        tags: ['a', 'b'],
+      );
+      final back = ExportedDiaryEntry.fromJson(e.toJson());
+      expect(back.dateUtc, e.dateUtc);
+      expect(back.mood, 2);
+      expect(back.notes, 'hello');
+      expect(back.tags, ['a', 'b']);
+    });
+
+    test('fromJson omits tags when absent', () {
+      final back = ExportedDiaryEntry.fromJson({
+        'date_utc': '2024-01-02T00:00:00.000Z',
+      });
+      expect(back.tags, isEmpty);
+    });
+  });
+
+  group('lumaFormatVersion', () {
+    test('is 2 for v2 diary payload', () {
+      expect(lumaFormatVersion, 2);
     });
   });
 }
