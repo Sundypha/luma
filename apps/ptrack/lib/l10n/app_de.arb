@@ -406,6 +406,22 @@
   "@diaryDeleteEntryBody": {
     "placeholders": { "date": { "type": "String" } }
   },
+  "diaryTagsSettingsTitle": "Tagebuch-Tags",
+  "diaryTagsEmptyState": "Noch keine Tags. Fügen Sie unten Ihren ersten Tag hinzu.",
+  "diaryTagsAddLabel": "Neuer Tag-Name",
+  "diaryTagsAddButton": "Hinzufügen",
+  "diaryTagsDeleteTitle": "Tag entfernen?",
+  "diaryTagsDeleteBodyWithCount": "Dieser Tag wird in {count} {count, plural, =1{Eintrag} other{Einträgen}} verwendet. Die Einträge bleiben erhalten.",
+  "@diaryTagsDeleteBodyWithCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "diaryTagsDeleteBodyEmpty": "Dieser Tag hat keine Einträge.",
+  "diaryTagsAddedSnackbar": "Tag hinzugefügt",
+  "diaryTagsDeletedSnackbar": "Tag entfernt",
+  "diaryTagsRenameTitle": "Tag umbenennen",
+  "diaryTagsRenameConfirm": "Umbenennen",
+  "diaryTagsErrorEmpty": "Bitte einen Tag-Namen eingeben.",
+  "diaryTagsErrorDuplicate": "Dieser Tag existiert bereits.",
   "symptomFormTitleAdd": "Symptome hinzufügen",
   "symptomFormTitleEdit": "Symptome bearbeiten",
   "symptomSectionFlow": "Fluss",

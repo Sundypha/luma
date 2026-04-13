@@ -415,6 +415,22 @@
   "@diaryDeleteEntryBody": {
     "placeholders": { "date": { "type": "String" } }
   },
+  "diaryTagsSettingsTitle": "Diary Tags",
+  "diaryTagsEmptyState": "No tags yet. Add your first tag below.",
+  "diaryTagsAddLabel": "New tag name",
+  "diaryTagsAddButton": "Add",
+  "diaryTagsDeleteTitle": "Remove tag?",
+  "diaryTagsDeleteBodyWithCount": "This tag is used in {count} {count, plural, =1{entry} other{entries}}. The entries will be kept.",
+  "@diaryTagsDeleteBodyWithCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "diaryTagsDeleteBodyEmpty": "This tag has no entries.",
+  "diaryTagsAddedSnackbar": "Tag added",
+  "diaryTagsDeletedSnackbar": "Tag removed",
+  "diaryTagsRenameTitle": "Rename tag",
+  "diaryTagsRenameConfirm": "Rename",
+  "diaryTagsErrorEmpty": "Enter a tag name.",
+  "diaryTagsErrorDuplicate": "That tag already exists.",
   "symptomFormTitleAdd": "Add symptoms",
   "symptomFormTitleEdit": "Edit symptoms",
   "symptomSectionFlow": "Flow",

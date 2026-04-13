@@ -820,6 +820,53 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get diaryTagsSettingsTitle => 'Diary Tags';
+
+  @override
+  String get diaryTagsEmptyState => 'No tags yet. Add your first tag below.';
+
+  @override
+  String get diaryTagsAddLabel => 'New tag name';
+
+  @override
+  String get diaryTagsAddButton => 'Add';
+
+  @override
+  String get diaryTagsDeleteTitle => 'Remove tag?';
+
+  @override
+  String diaryTagsDeleteBodyWithCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'entries',
+      one: 'entry',
+    );
+    return 'This tag is used in $count $_temp0. The entries will be kept.';
+  }
+
+  @override
+  String get diaryTagsDeleteBodyEmpty => 'This tag has no entries.';
+
+  @override
+  String get diaryTagsAddedSnackbar => 'Tag added';
+
+  @override
+  String get diaryTagsDeletedSnackbar => 'Tag removed';
+
+  @override
+  String get diaryTagsRenameTitle => 'Rename tag';
+
+  @override
+  String get diaryTagsRenameConfirm => 'Rename';
+
+  @override
+  String get diaryTagsErrorEmpty => 'Enter a tag name.';
+
+  @override
+  String get diaryTagsErrorDuplicate => 'That tag already exists.';
+
+  @override
   String get symptomFormTitleAdd => 'Add symptoms';
 
   @override

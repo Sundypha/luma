@@ -1403,6 +1403,84 @@ abstract class AppLocalizations {
   /// **'This will permanently delete the diary entry for {date}.'**
   String diaryDeleteEntryBody(String date);
 
+  /// No description provided for @diaryTagsSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Diary Tags'**
+  String get diaryTagsSettingsTitle;
+
+  /// No description provided for @diaryTagsEmptyState.
+  ///
+  /// In en, this message translates to:
+  /// **'No tags yet. Add your first tag below.'**
+  String get diaryTagsEmptyState;
+
+  /// No description provided for @diaryTagsAddLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New tag name'**
+  String get diaryTagsAddLabel;
+
+  /// No description provided for @diaryTagsAddButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get diaryTagsAddButton;
+
+  /// No description provided for @diaryTagsDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove tag?'**
+  String get diaryTagsDeleteTitle;
+
+  /// No description provided for @diaryTagsDeleteBodyWithCount.
+  ///
+  /// In en, this message translates to:
+  /// **'This tag is used in {count} {count, plural, =1{entry} other{entries}}. The entries will be kept.'**
+  String diaryTagsDeleteBodyWithCount(int count);
+
+  /// No description provided for @diaryTagsDeleteBodyEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'This tag has no entries.'**
+  String get diaryTagsDeleteBodyEmpty;
+
+  /// No description provided for @diaryTagsAddedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag added'**
+  String get diaryTagsAddedSnackbar;
+
+  /// No description provided for @diaryTagsDeletedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag removed'**
+  String get diaryTagsDeletedSnackbar;
+
+  /// No description provided for @diaryTagsRenameTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename tag'**
+  String get diaryTagsRenameTitle;
+
+  /// No description provided for @diaryTagsRenameConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get diaryTagsRenameConfirm;
+
+  /// No description provided for @diaryTagsErrorEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a tag name.'**
+  String get diaryTagsErrorEmpty;
+
+  /// No description provided for @diaryTagsErrorDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'That tag already exists.'**
+  String get diaryTagsErrorDuplicate;
+
   /// No description provided for @symptomFormTitleAdd.
   ///
   /// In en, this message translates to:
