@@ -65,6 +65,21 @@ final class LumaInvalidPeriodRefException extends LumaImportException {
 
 enum DuplicateStrategy { skip, replace }
 
+/// True when [data.dayEntries] carries non-empty [ExportedDayEntry.personalNotes].
+///
+/// Some backups declare [LumaExportMeta.formatVersion] 2 but still embed legacy
+/// `personal_notes` on day entries (older writers / round-trips). Import must
+/// still promote those fields into [diary_entries].
+bool _dayEntriesHaveNonEmptyPersonalNotes(LumaExportData data) {
+  for (final ie in data.dayEntries ?? const <ExportedDayEntry>[]) {
+    final raw = ie.personalNotes?.trim();
+    if (raw != null && raw.isNotEmpty) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /// Counts written during [ImportService.applyImport].
 final class ImportResult {
   const ImportResult({
@@ -316,7 +331,8 @@ final class ImportService {
         periodsCreated++;
       }
 
-      final legacyPersonalNotes = data.meta.formatVersion < 2;
+      final migratePersonalNotesToDiary = data.meta.formatVersion < 2 ||
+          _dayEntriesHaveNonEmptyPersonalNotes(data);
       final entries = data.dayEntries ?? [];
       final totalEntries = entries.length;
       for (var i = 0; i < entries.length; i++) {
@@ -357,7 +373,7 @@ final class ImportService {
           await _syncDiaryFromImportedDayEntry(
             dateUtc: dateUtc,
             ie: ie,
-            legacyPersonalNotes: legacyPersonalNotes,
+            legacyPersonalNotes: migratePersonalNotesToDiary,
           );
           entriesReplaced++;
         } else {
@@ -374,7 +390,7 @@ final class ImportService {
           await _syncDiaryFromImportedDayEntry(
             dateUtc: dateUtc,
             ie: ie,
-            legacyPersonalNotes: legacyPersonalNotes,
+            legacyPersonalNotes: migratePersonalNotesToDiary,
           );
           entriesCreated++;
         }
@@ -433,7 +449,7 @@ final class ImportService {
         }
       }
 
-      if (data.meta.formatVersion < 2) {
+      if (migratePersonalNotesToDiary) {
         for (final ie in data.dayEntries ?? []) {
           final raw = ie.personalNotes?.trim();
           if (raw == null || raw.isEmpty) {
@@ -449,6 +465,7 @@ final class ImportService {
           await _db.into(_db.diaryEntries).insert(
                 DiaryEntriesCompanion.insert(
                   dateUtc: dateUtc,
+                  mood: Value(ie.mood),
                   notes: Value(raw),
                 ),
               );

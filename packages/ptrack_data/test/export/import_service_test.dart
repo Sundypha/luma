@@ -610,5 +610,50 @@ void main() {
       expect(rows.first.notes, 'My old diary note');
       expect(rows.first.dateUtc.toUtc(), DateTime.utc(2024, 1, 15));
     });
+
+    test(
+        'format_version 2 with legacy personal_notes on day_entries still '
+        'migrates into diary_entries',
+        () async {
+      final data = LumaExportData(
+        meta: LumaExportMeta(
+          formatVersion: lumaFormatVersion,
+          schemaVersion: ptrackSupportedSchemaVersion,
+          appVersion: 't',
+          exportedAt: DateTime.utc(2024, 6, 1),
+          encrypted: false,
+          contentTypes: const ['periods'],
+        ),
+        periods: [
+          ExportedPeriod(
+            refId: 1,
+            startUtc: DateTime.utc(2024, 1, 1).toIso8601String(),
+            endUtc: DateTime.utc(2024, 1, 10).toIso8601String(),
+          ),
+        ],
+        dayEntries: [
+          ExportedDayEntry(
+            periodRefId: 1,
+            dateUtc: '2024-01-15T00:00:00.000Z',
+            mood: 3,
+            personalNotes: 'Legacy field on v2-shaped file',
+            personalNotesIncludedInExport: true,
+          ),
+        ],
+        diaryEntries: null,
+      );
+
+      await importService.applyImport(
+        data: data,
+        strategy: DuplicateStrategy.replace,
+      );
+
+      final rows = await db.select(db.diaryEntries).get();
+      expect(rows, hasLength(1));
+      expect(rows.first.notes, 'Legacy field on v2-shaped file');
+      expect(rows.first.mood, 3);
+      expect(rows.first.dateUtc.toUtc(), DateTime.utc(2024, 1, 15));
+    });
+
   });
 }
