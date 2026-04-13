@@ -8,36 +8,23 @@ import 'package:ptrack_domain/ptrack_domain.dart';
 
 class MockPeriodRepository extends Mock implements PeriodRepository {}
 
-class MockDiaryRepository extends Mock implements DiaryRepository {}
-
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late MockPeriodRepository mockRepo;
-  late MockDiaryRepository mockDiary;
   final day = DateTime.utc(2025, 6, 10);
   const periodId = 7;
 
   setUp(() {
     mockRepo = MockPeriodRepository();
-    mockDiary = MockDiaryRepository();
     registerFallbackValue(
       DayEntryData(dateUtc: DateTime.utc(2020, 1, 1)),
     );
-    registerFallbackValue(
-      DiaryEntryData(dateUtc: DateTime.utc(2020, 1, 1)),
-    );
-    when(() => mockDiary.getEntryForDate(any())).thenAnswer((_) async => null);
-    when(() => mockDiary.saveEntry(any(), tagIds: any(named: 'tagIds')))
-        .thenAnswer((_) async => 1);
-    when(() => mockDiary.deleteEntry(any())).thenAnswer((_) async => true);
   });
 
   test('initial state uses defaults when no existing entry', () {
     final vm = SymptomFormViewModel(
       repository: mockRepo,
-      diaryRepository: mockDiary,
-      initialPersonalNotes: '',
       day: day,
       periodId: periodId,
     );
@@ -45,7 +32,6 @@ void main() {
     expect(vm.painScore, isNull);
     expect(vm.mood, isNull);
     expect(vm.notes, '');
-    expect(vm.personalNotes, '');
     expect(vm.isEditing, isFalse);
     expect(vm.isSaving, isFalse);
     vm.dispose();
@@ -65,8 +51,6 @@ void main() {
     );
     final vm = SymptomFormViewModel(
       repository: mockRepo,
-      diaryRepository: mockDiary,
-      initialPersonalNotes: 'secret',
       day: day,
       periodId: periodId,
       existing: existing,
@@ -75,7 +59,6 @@ void main() {
     expect(vm.painScore, PainScore.mild);
     expect(vm.mood, Mood.good);
     expect(vm.notes, 'hello');
-    expect(vm.personalNotes, 'secret');
     expect(vm.isEditing, isTrue);
     vm.dispose();
   });
@@ -83,8 +66,6 @@ void main() {
   test('setters update state and notify listeners', () {
     final vm = SymptomFormViewModel(
       repository: mockRepo,
-      diaryRepository: mockDiary,
-      initialPersonalNotes: '',
       day: day,
       periodId: periodId,
     );
@@ -98,9 +79,7 @@ void main() {
     expect(vm.mood, Mood.neutral);
     vm.setNotes('n');
     expect(vm.notes, 'n');
-    vm.setPersonalNotes('p');
-    expect(vm.personalNotes, 'p');
-    expect(count, 5);
+    expect(count, 4);
     vm.dispose();
   });
 
@@ -109,8 +88,6 @@ void main() {
         .thenAnswer((_) async => 99);
     final vm = SymptomFormViewModel(
       repository: mockRepo,
-      diaryRepository: mockDiary,
-      initialPersonalNotes: '',
       day: day,
       periodId: periodId,
     );
@@ -129,7 +106,6 @@ void main() {
     expect(captured.mood, Mood.bad);
     expect(captured.notes, 'x');
     verifyNever(() => mockRepo.updateDayEntry(any(), any()));
-    verifyNever(() => mockDiary.saveEntry(any(), tagIds: any(named: 'tagIds')));
     vm.dispose();
   });
 
@@ -142,8 +118,6 @@ void main() {
     when(() => mockRepo.updateDayEntry(any(), any())).thenAnswer((_) async => true);
     final vm = SymptomFormViewModel(
       repository: mockRepo,
-      diaryRepository: mockDiary,
-      initialPersonalNotes: '',
       day: day,
       periodId: periodId,
       existing: existing,
@@ -165,8 +139,6 @@ void main() {
         .thenAnswer((_) => completer.future);
     final vm = SymptomFormViewModel(
       repository: mockRepo,
-      diaryRepository: mockDiary,
-      initialPersonalNotes: '',
       day: day,
       periodId: periodId,
     );
@@ -184,8 +156,6 @@ void main() {
         .thenThrow(StateError('bad'));
     final vm = SymptomFormViewModel(
       repository: mockRepo,
-      diaryRepository: mockDiary,
-      initialPersonalNotes: '',
       day: day,
       periodId: periodId,
     );
@@ -205,8 +175,6 @@ void main() {
     when(() => mockRepo.clearClinicalSymptoms(42)).thenAnswer((_) async => true);
     final vm = SymptomFormViewModel(
       repository: mockRepo,
-      diaryRepository: mockDiary,
-      initialPersonalNotes: '',
       day: day,
       periodId: periodId,
       existing: existing,
@@ -220,8 +188,6 @@ void main() {
   test('clearSymptoms returns false when not editing', () async {
     final vm = SymptomFormViewModel(
       repository: mockRepo,
-      diaryRepository: mockDiary,
-      initialPersonalNotes: '',
       day: day,
       periodId: periodId,
     );

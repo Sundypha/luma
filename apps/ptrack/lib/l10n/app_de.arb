@@ -410,8 +410,6 @@
   "symptomSectionMood": "Stimmung",
   "symptomNotesLabel": "Notizen",
   "symptomNotesHelper": "Wird im PDF-Export einbezogen.",
-  "symptomPersonalNotesLabel": "Persönliche Notizen",
-  "symptomPersonalNotesHelper": "Privat. Nicht im PDF-Export.",
   "symptomNotSet": "Nicht gesetzt",
   "symptomClearSymptoms": "Symptome löschen",
   "dayDetailMarkFailed": "Dieser Tag konnte nicht markiert werden. Bitte versuch es noch einmal.",

@@ -419,8 +419,6 @@
   "symptomSectionMood": "Mood",
   "symptomNotesLabel": "Notes",
   "symptomNotesHelper": "Included in PDF export.",
-  "symptomPersonalNotesLabel": "Personal notes",
-  "symptomPersonalNotesHelper": "Private. Not included in PDF export.",
   "symptomNotSet": "Not set",
   "symptomClearSymptoms": "Clear symptoms",
   "dayDetailMarkFailed": "Could not mark this day. Please try again.",

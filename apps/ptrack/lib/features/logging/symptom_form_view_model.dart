@@ -2,21 +2,17 @@ import 'package:flutter/foundation.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 
-/// Form state for [SymptomFormSheet] (flow, pain, mood, clinical notes, personal diary).
+/// Form state for [SymptomFormSheet] (flow, pain, mood, clinical notes).
 class SymptomFormViewModel extends ChangeNotifier {
   SymptomFormViewModel({
     required PeriodRepository repository,
-    required DiaryRepository diaryRepository,
-    required String initialPersonalNotes,
     required DateTime day,
     required int periodId,
     StoredDayEntry? existing,
   })  : _repository = repository,
-        _diary = diaryRepository,
         _day = DateTime.utc(day.year, day.month, day.day),
         _periodId = periodId,
-        _existing = existing,
-        _personalNotes = initialPersonalNotes {
+        _existing = existing {
     final e = existing;
     if (e != null) {
       final d = e.data;
@@ -28,7 +24,6 @@ class SymptomFormViewModel extends ChangeNotifier {
   }
 
   final PeriodRepository _repository;
-  final DiaryRepository _diary;
   final DateTime _day;
   final int _periodId;
   final StoredDayEntry? _existing;
@@ -37,7 +32,6 @@ class SymptomFormViewModel extends ChangeNotifier {
   PainScore? _painScore;
   Mood? _mood;
   String _notes = '';
-  String _personalNotes = '';
   bool _isSaving = false;
   String? _errorText;
 
@@ -45,7 +39,6 @@ class SymptomFormViewModel extends ChangeNotifier {
   PainScore? get painScore => _painScore;
   Mood? get mood => _mood;
   String get notes => _notes;
-  String get personalNotes => _personalNotes;
   bool get isSaving => _isSaving;
   String? get errorText => _errorText;
   bool get isEditing => _existing != null;
@@ -70,29 +63,6 @@ class SymptomFormViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setPersonalNotes(String v) {
-    _personalNotes = v;
-    notifyListeners();
-  }
-
-  Future<void> _persistPersonalDiary() async {
-    final trimmed = _personalNotes.trim();
-    if (trimmed.isEmpty) {
-      final existing = await _diary.getEntryForDate(_day);
-      if (existing != null) {
-        await _diary.deleteEntry(existing.id);
-      }
-      return;
-    }
-    await _diary.saveEntry(
-      DiaryEntryData(
-        dateUtc: _day,
-        mood: _mood,
-        notes: trimmed,
-      ),
-    );
-  }
-
   Future<bool> save() async {
     _isSaving = true;
     _errorText = null;
@@ -114,7 +84,6 @@ class SymptomFormViewModel extends ChangeNotifier {
       } else {
         await _repository.upsertDayEntryForPeriod(_periodId, data);
       }
-      await _persistPersonalDiary();
       _isSaving = false;
       notifyListeners();
       return true;
