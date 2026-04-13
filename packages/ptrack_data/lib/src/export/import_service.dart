@@ -80,6 +80,22 @@ bool _dayEntriesHaveNonEmptyPersonalNotes(LumaExportData data) {
   return false;
 }
 
+/// Same UTC overlap rule as [PeriodValidation] (open-ended ranges unbounded).
+bool _importUtcRangesOverlap(
+  DateTime aStart,
+  DateTime? aEnd,
+  DateTime bStart,
+  DateTime? bEnd,
+) {
+  final as = aStart.toUtc();
+  final bs = bStart.toUtc();
+  final ae = aEnd?.toUtc();
+  final be = bEnd?.toUtc();
+  if (ae != null && ae.isBefore(bs)) return false;
+  if (be != null && be.isBefore(as)) return false;
+  return true;
+}
+
 /// Counts written during [ImportService.applyImport].
 final class ImportResult {
   const ImportResult({
@@ -108,11 +124,13 @@ final class ImportService {
   final PeriodCalendarContext _calendar;
   final BackupService _backup;
 
-  Future<List<PeriodSpan>> _loadExistingPeriodSpans() async {
+  Future<List<({int id, PeriodSpan span})>> _loadExistingPeriods() async {
     final rows = await (_db.select(_db.periods)
           ..orderBy([(t) => OrderingTerm.asc(t.startUtc)]))
         .get();
-    return rows.map(periodRowToDomain).toList();
+    return [
+      for (final row in rows) (id: row.id, span: periodRowToDomain(row)),
+    ];
   }
 
   Future<void> _syncDiaryFromImportedDayEntry({
@@ -301,16 +319,63 @@ final class ImportService {
       var entriesSkipped = 0;
       var entriesReplaced = 0;
 
-      final accumulated = await _loadExistingPeriodSpans();
+      var periodWorking = await _loadExistingPeriods();
       final periods = data.periods ?? [];
       for (final ip in periods) {
         final startUtc = DateTime.parse(ip.startUtc).toUtc();
         final endUtc =
             ip.endUtc != null ? DateTime.parse(ip.endUtc!).toUtc() : null;
         final candidate = PeriodSpan(startUtc: startUtc, endUtc: endUtc);
+
+        final overlapIdx = <int>[];
+        for (var i = 0; i < periodWorking.length; i++) {
+          final w = periodWorking[i];
+          if (_importUtcRangesOverlap(
+                candidate.startUtc,
+                candidate.endUtc,
+                w.span.startUtc,
+                w.span.endUtc,
+              )) {
+            overlapIdx.add(i);
+          }
+        }
+
+        if (strategy == DuplicateStrategy.replace && overlapIdx.isNotEmpty) {
+          final overlappedIds = {
+            for (final j in overlapIdx) periodWorking[j].id,
+          };
+          if (overlappedIds.length > 1) {
+            throw const LumaImportValidationException(
+              'This backup overlaps more than one existing period. '
+              'Resolve overlaps in the app or use a different backup.',
+            );
+          }
+          final j = overlapIdx.first;
+          final others = <PeriodSpan>[
+            for (var k = 0; k < periodWorking.length; k++)
+              if (k != j) periodWorking[k].span,
+          ];
+          final validation = PeriodValidation.validateForSave(
+            candidate: candidate,
+            existing: others,
+            calendar: _calendar,
+          );
+          if (!validation.isValid) {
+            throw LumaImportValidationException(
+              _messageForValidationIssues(validation.issues),
+            );
+          }
+          final reusedId = periodWorking[j].id;
+          await (_db.update(_db.periods)..where((t) => t.id.equals(reusedId)))
+              .write(periodSpanToUpdateCompanion(candidate));
+          refMap[ip.refId] = reusedId;
+          periodWorking[j] = (id: reusedId, span: candidate);
+          continue;
+        }
+
         final validation = PeriodValidation.validateForSave(
           candidate: candidate,
-          existing: accumulated,
+          existing: periodWorking.map((e) => e.span).toList(),
           calendar: _calendar,
         );
         if (!validation.isValid) {
@@ -327,7 +392,7 @@ final class ImportService {
               ),
             );
         refMap[ip.refId] = id;
-        accumulated.add(candidate);
+        periodWorking = [...periodWorking, (id: id, span: candidate)];
         periodsCreated++;
       }
 

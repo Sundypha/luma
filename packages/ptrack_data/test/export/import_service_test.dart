@@ -470,6 +470,153 @@ void main() {
       expect(await db.select(db.periods).get(), isEmpty);
     });
 
+    test(
+        'DuplicateStrategy.replace reuses one overlapping DB period and '
+        'updates its span',
+        () async {
+      await db.into(db.periods).insert(
+            PeriodsCompanion.insert(
+              startUtc: DateTime.utc(2024, 3, 1),
+              endUtc: Value(DateTime.utc(2024, 3, 5)),
+            ),
+          );
+      final existingId = (await db.select(db.periods).getSingle()).id;
+
+      final data = LumaExportData(
+        meta: LumaExportMeta(
+          formatVersion: lumaFormatVersion,
+          schemaVersion: ptrackSupportedSchemaVersion,
+          appVersion: 't',
+          exportedAt: DateTime.utc(2024, 6, 1),
+          encrypted: false,
+          contentTypes: const ['periods'],
+        ),
+        periods: [
+          ExportedPeriod(
+            refId: 1,
+            startUtc: DateTime.utc(2024, 3, 1).toIso8601String(),
+            endUtc: DateTime.utc(2024, 3, 12).toIso8601String(),
+          ),
+        ],
+        dayEntries: [
+          ExportedDayEntry(
+            periodRefId: 1,
+            dateUtc: DateTime.utc(2024, 3, 3).toIso8601String(),
+            flowIntensity: 7,
+          ),
+        ],
+      );
+
+      final r = await importService.applyImport(
+        data: data,
+        strategy: DuplicateStrategy.replace,
+      );
+      expect(r.periodsCreated, 0);
+      expect(r.entriesCreated, 1);
+
+      final periods = await db.select(db.periods).get();
+      expect(periods, hasLength(1));
+      expect(periods.single.id, existingId);
+      final endUtc = periods.single.endUtc!.toUtc();
+      expect(endUtc.year, 2024);
+      expect(endUtc.month, 3);
+      expect(endUtc.day, 12);
+
+      final day = await (db.select(db.dayEntries)).getSingle();
+      expect(day.periodId, existingId);
+      expect(day.flowIntensity, 7);
+    });
+
+    test(
+        'DuplicateStrategy.replace throws when import period overlaps more '
+        'than one existing period',
+        () async {
+      await db.into(db.periods).insert(
+            PeriodsCompanion.insert(
+              startUtc: DateTime.utc(2024, 4, 1),
+              endUtc: Value(DateTime.utc(2024, 4, 5)),
+            ),
+          );
+      await db.into(db.periods).insert(
+            PeriodsCompanion.insert(
+              startUtc: DateTime.utc(2024, 4, 20),
+              endUtc: Value(DateTime.utc(2024, 4, 25)),
+            ),
+          );
+
+      final data = LumaExportData(
+        meta: LumaExportMeta(
+          formatVersion: lumaFormatVersion,
+          schemaVersion: ptrackSupportedSchemaVersion,
+          appVersion: 't',
+          exportedAt: DateTime.utc(2024, 6, 1),
+          encrypted: false,
+          contentTypes: const ['periods'],
+        ),
+        periods: [
+          ExportedPeriod(
+            refId: 1,
+            startUtc: DateTime.utc(2024, 4, 1).toIso8601String(),
+            endUtc: DateTime.utc(2024, 4, 25).toIso8601String(),
+          ),
+        ],
+      );
+
+      await expectLater(
+        importService.applyImport(
+          data: data,
+          strategy: DuplicateStrategy.replace,
+        ),
+        throwsA(
+          predicate<LumaImportValidationException>(
+            (e) => e.message.contains('more than one existing period'),
+          ),
+        ),
+      );
+
+      expect(await db.select(db.periods).get(), hasLength(2));
+    });
+
+    test(
+        'DuplicateStrategy.skip still rejects import period overlapping an '
+        'existing period',
+        () async {
+      await db.into(db.periods).insert(
+            PeriodsCompanion.insert(
+              startUtc: DateTime.utc(2024, 5, 1),
+              endUtc: Value(DateTime.utc(2024, 5, 10)),
+            ),
+          );
+
+      final data = LumaExportData(
+        meta: LumaExportMeta(
+          formatVersion: lumaFormatVersion,
+          schemaVersion: ptrackSupportedSchemaVersion,
+          appVersion: 't',
+          exportedAt: DateTime.utc(2024, 6, 1),
+          encrypted: false,
+          contentTypes: const ['periods'],
+        ),
+        periods: [
+          ExportedPeriod(
+            refId: 1,
+            startUtc: DateTime.utc(2024, 5, 5).toIso8601String(),
+            endUtc: DateTime.utc(2024, 5, 15).toIso8601String(),
+          ),
+        ],
+      );
+
+      await expectLater(
+        importService.applyImport(
+          data: data,
+          strategy: DuplicateStrategy.skip,
+        ),
+        throwsA(isA<LumaImportValidationException>()),
+      );
+
+      expect(await db.select(db.periods).get(), hasLength(1));
+    });
+
     test('applyImport writes personal_notes on day entry', () async {
       final data = LumaExportData(
         meta: LumaExportMeta(
