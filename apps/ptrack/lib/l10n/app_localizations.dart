@@ -1337,6 +1337,54 @@ abstract class AppLocalizations {
   /// **'Remove'**
   String get commonRemove;
 
+  /// No description provided for @diaryNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal notes'**
+  String get diaryNotesLabel;
+
+  /// No description provided for @diaryMoodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood'**
+  String get diaryMoodLabel;
+
+  /// No description provided for @diaryTagsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get diaryTagsLabel;
+
+  /// No description provided for @diaryAddTagLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Add tag…'**
+  String get diaryAddTagLabel;
+
+  /// No description provided for @diaryFormTitleNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New diary entry'**
+  String get diaryFormTitleNew;
+
+  /// No description provided for @diaryFormTitleEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit diary entry'**
+  String get diaryFormTitleEdit;
+
+  /// No description provided for @diaryDeleteEntryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete diary entry?'**
+  String get diaryDeleteEntryTitle;
+
+  /// No description provided for @diaryDeleteEntryBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete the diary entry for {date}.'**
+  String diaryDeleteEntryBody(String date);
+
   /// No description provided for @symptomFormTitleAdd.
   ///
   /// In en, this message translates to:

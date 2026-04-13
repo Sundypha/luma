@@ -785,6 +785,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonRemove => 'Remove';
 
   @override
+  String get diaryNotesLabel => 'Personal notes';
+
+  @override
+  String get diaryMoodLabel => 'Mood';
+
+  @override
+  String get diaryTagsLabel => 'Tags';
+
+  @override
+  String get diaryAddTagLabel => 'Add tag…';
+
+  @override
+  String get diaryFormTitleNew => 'New diary entry';
+
+  @override
+  String get diaryFormTitleEdit => 'Edit diary entry';
+
+  @override
+  String get diaryDeleteEntryTitle => 'Delete diary entry?';
+
+  @override
+  String diaryDeleteEntryBody(String date) {
+    return 'This will permanently delete the diary entry for $date.';
+  }
+
+  @override
   String get symptomFormTitleAdd => 'Add symptoms';
 
   @override

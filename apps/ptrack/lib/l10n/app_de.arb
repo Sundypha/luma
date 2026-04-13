@@ -392,6 +392,17 @@
   "commonCancel": "Abbrechen",
   "commonDelete": "Löschen",
   "commonRemove": "Entfernen",
+  "diaryNotesLabel": "Persönliche Notizen",
+  "diaryMoodLabel": "Stimmung",
+  "diaryTagsLabel": "Tags",
+  "diaryAddTagLabel": "Tag hinzufügen…",
+  "diaryFormTitleNew": "Neuer Tagebucheintrag",
+  "diaryFormTitleEdit": "Tagebucheintrag bearbeiten",
+  "diaryDeleteEntryTitle": "Tagebucheintrag löschen?",
+  "diaryDeleteEntryBody": "Der Tagebucheintrag für {date} wird dauerhaft gelöscht.",
+  "@diaryDeleteEntryBody": {
+    "placeholders": { "date": { "type": "String" } }
+  },
   "symptomFormTitleAdd": "Symptome hinzufügen",
   "symptomFormTitleEdit": "Symptome bearbeiten",
   "symptomSectionFlow": "Fluss",

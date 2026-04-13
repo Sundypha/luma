@@ -401,6 +401,17 @@
   "commonCancel": "Cancel",
   "commonDelete": "Delete",
   "commonRemove": "Remove",
+  "diaryNotesLabel": "Personal notes",
+  "diaryMoodLabel": "Mood",
+  "diaryTagsLabel": "Tags",
+  "diaryAddTagLabel": "Add tag…",
+  "diaryFormTitleNew": "New diary entry",
+  "diaryFormTitleEdit": "Edit diary entry",
+  "diaryDeleteEntryTitle": "Delete diary entry?",
+  "diaryDeleteEntryBody": "This will permanently delete the diary entry for {date}.",
+  "@diaryDeleteEntryBody": {
+    "placeholders": { "date": { "type": "String" } }
+  },
   "symptomFormTitleAdd": "Add symptoms",
   "symptomFormTitleEdit": "Edit symptoms",
   "symptomSectionFlow": "Flow",

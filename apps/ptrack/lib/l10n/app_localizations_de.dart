@@ -797,6 +797,32 @@ class AppLocalizationsDe extends AppLocalizations {
   String get commonRemove => 'Entfernen';
 
   @override
+  String get diaryNotesLabel => 'Persönliche Notizen';
+
+  @override
+  String get diaryMoodLabel => 'Stimmung';
+
+  @override
+  String get diaryTagsLabel => 'Tags';
+
+  @override
+  String get diaryAddTagLabel => 'Tag hinzufügen…';
+
+  @override
+  String get diaryFormTitleNew => 'Neuer Tagebucheintrag';
+
+  @override
+  String get diaryFormTitleEdit => 'Tagebucheintrag bearbeiten';
+
+  @override
+  String get diaryDeleteEntryTitle => 'Tagebucheintrag löschen?';
+
+  @override
+  String diaryDeleteEntryBody(String date) {
+    return 'Der Tagebucheintrag für $date wird dauerhaft gelöscht.';
+  }
+
+  @override
   String get symptomFormTitleAdd => 'Symptome hinzufügen';
 
   @override
