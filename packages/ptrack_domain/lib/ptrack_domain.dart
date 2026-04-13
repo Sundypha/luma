@@ -3,6 +3,7 @@ library;
 
 export 'src/period/cycle_length.dart';
 export 'src/period/day_marking.dart';
+export 'src/period/diary_types.dart' show DiaryEntryData, DiaryTag;
 export 'src/period/logging_types.dart';
 export 'src/period/period_models.dart';
 export 'src/period/period_validation.dart';

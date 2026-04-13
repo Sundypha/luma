@@ -153,8 +153,7 @@ void main() {
             flowIntensity: FlowIntensity.light,
             painScore: PainScore.none,
             mood: Mood.neutral,
-            notes: 'a',
-            personalNotes: 'x',
+            notes: 'c',
           ),
         ),
       );
