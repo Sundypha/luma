@@ -6,7 +6,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** **Milestone v2.0** — Phase **18** diary table migration (`18-05` complete; next `18-06`). Phase **17** still has optional `17-02` Task 3 human-verify.
+**Current focus:** **Milestone v2.0** — Phase **18** diary table migration (`18-06` complete; next `18-07`). Phase **17** still has optional `17-02` Task 3 human-verify.
 
 ## Current Position
 
@@ -14,13 +14,13 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Phase:** **18** — Diary table migration (schema v5 + data path from v4).
 
-**Plan:** `18-05` — **complete** (see `18-05-SUMMARY.md`). **Next:** `18-06` — day detail routing hub + diary tags settings.
+**Plan:** `18-06` — **complete** (see `18-06-SUMMARY.md`). **Next:** `18-07` — diary tab + tab shell integration.
 
-**Status:** Phase **18** in progress — 5/7 plans complete on branch `feat/18-01-diary-schema-migration`.
+**Status:** Phase **18** in progress — 6/7 plans complete on branch `feat/18-01-diary-schema-migration`.
 
-Last activity: 2026-04-14 — **18-05**: calendar diary dot + legend; Home Today diary shortcut; `DiaryRepository` via `main` → `TabShell`.
+Last activity: 2026-04-14 — **18-06**: day detail period/diary routing hub; `DiaryTagsSettingsScreen`; `diaryEntryForDay` on calendar VM.
 
-**Progress (v2.0):** Phase 18 **in progress** (5/7 plans). Phase 17 optional checkpoint remains. See `ROADMAP.md`.
+**Progress (v2.0):** Phase 18 **in progress** (6/7 plans). Phase 17 optional checkpoint remains. See `ROADMAP.md`.
 
 ## Performance Metrics
 
@@ -32,6 +32,7 @@ Last activity: 2026-04-14 — **18-05**: calendar diary dot + legend; Home Today
 | 18-diary-table-migration P03 | 32 min | 2 tasks, 15 files — see `18-03-SUMMARY.md` |
 | 18-diary-table-migration P04 | 28 min | 2 tasks, 9 files — see `18-04-SUMMARY.md` |
 | 18-diary-table-migration P05 | 35 min | 2 tasks, 20+ files — see `18-05-SUMMARY.md` |
+| 18-diary-table-migration P06 | 50 min | 2 tasks, 8 files — see `18-06-SUMMARY.md` |
 
 *Also reset when v2.0 execution starts; track per-phase durations in phase SUMMARY files.*
 
@@ -73,6 +74,8 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 **2026-04-14 (18-05):** Calendar shows `hasDiaryEntry` primary dot (with symptom chip when both); legend always includes diary line; `HomeViewModel` tracks `todayDiaryEntry`; Today card opens `showDiaryFormSheet`; `DiaryRepository` created in `main` and passed through `TabShell`.
 
+**2026-04-14 (18-06):** Day detail past/today is a routing hub (period × diary presence) with dual mood labels when both exist; diary actions use `showDiaryFormSheet` after sheet pop; `DiaryTagsSettingsScreen` for tag CRUD (navigation wiring deferred to 18-07).
+
 ### Pending Todos
 
 - **Phase 17** — Complete **17-02** Task 3: human verification of unified Release workflow (see `17-02-PLAN.md`); then finalize `17-02-SUMMARY.md` and mark REL-02–REL-04 if checks pass.
@@ -97,10 +100,10 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-14T16:40:00.000Z
+**Last session:** 2026-04-14T18:30:00.000Z
 
-**Stopped at:** Completed 18-05-PLAN.md
+**Stopped at:** Completed 18-06-PLAN.md
 
 **Resume file:** None
 
-**Next:** Execute **18-06-PLAN.md** (day detail routing hub). Optionally complete **17-02 Task 3** verification on GitHub or continue Phase **16** as prioritized.
+**Next:** Execute **18-07-PLAN.md** (diary tab + tab shell). Optionally complete **17-02 Task 3** verification on GitHub or continue Phase **16** as prioritized.
