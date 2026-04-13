@@ -6,7 +6,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** **Milestone v2.0** — Phase **18** diary table migration (`18-01` complete; next `18-02`). Phase **17** still has optional `17-02` Task 3 human-verify.
+**Current focus:** **Milestone v2.0** — Phase **18** diary table migration (`18-02` complete; next `18-03`). Phase **17** still has optional `17-02` Task 3 human-verify.
 
 ## Current Position
 
@@ -14,13 +14,13 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Phase:** **18** — Diary table migration (schema v5 + data path from v4).
 
-**Plan:** `18-01` — **complete** (see `18-01-SUMMARY.md`). **Next:** `18-02` — domain models + `DiaryRepository`.
+**Plan:** `18-02` — **complete** (see `18-02-SUMMARY.md`). **Next:** `18-03` — export/import `.luma` v2 diary payload.
 
-**Status:** Phase **18** in progress — 1/7 plans complete on branch `feat/18-01-diary-schema-migration`.
+**Status:** Phase **18** in progress — 2/7 plans complete on branch `feat/18-01-diary-schema-migration`.
 
-Last activity: 2026-04-14 — **18-01**: Drift v5 diary tables, transactional v4→v5 migration, export/import/repository wiring for `diary_entries`.
+Last activity: 2026-04-14 — **18-02**: Domain `DiaryEntryData`/`DiaryTag`, `DiaryRepository` (streams + tags), symptom form + tests wired off `DayEntryData.personalNotes`.
 
-**Progress (v2.0):** Phase 18 **in progress** (1/7 plans). Phase 17 optional checkpoint remains. See `ROADMAP.md`.
+**Progress (v2.0):** Phase 18 **in progress** (2/7 plans). Phase 17 optional checkpoint remains. See `ROADMAP.md`.
 
 ## Performance Metrics
 
@@ -28,6 +28,7 @@ Last activity: 2026-04-14 — **18-01**: Drift v5 diary tables, transactional v4
 |-------|----------|--------|
 | 17 P01 | 12 min | 2 tasks, 2 files — see `17-01-SUMMARY.md` |
 | 18-diary-table-migration P01 | 45 min | 2 tasks, 12 files — see `18-01-SUMMARY.md` |
+| 18-diary-table-migration P02 | 40 min | 2 tasks, 17 files — see `18-02-SUMMARY.md` |
 
 *Also reset when v2.0 execution starts; track per-phase durations in phase SUMMARY files.*
 
@@ -61,6 +62,8 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 **2026-04-14 (18-01):** Dropped `personal_notes` from `day_entries` via Drift `alterTable(TableMigration(dayEntries))` (Drift 2.32 has no `Migrator.recreateTable`); diary text lives in `diary_entries` keyed by UTC calendar day.
 
+**2026-04-14 (18-02):** `DiaryRepository` is a non-final class so Mocktail mocks compile in app tests; personal diary persistence moved out of `PeriodRepository` into `DiaryRepository` + symptom form preload.
+
 ### Pending Todos
 
 - **Phase 17** — Complete **17-02** Task 3: human verification of unified Release workflow (see `17-02-PLAN.md`); then finalize `17-02-SUMMARY.md` and mark REL-02–REL-04 if checks pass.
@@ -85,10 +88,10 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-13T23:09:05.940Z
+**Last session:** 2026-04-14T12:45:00.000Z
 
-**Stopped at:** Completed 18-01-PLAN.md
+**Stopped at:** Completed 18-02-PLAN.md
 
 **Resume file:** None
 
-**Next:** Execute **18-02-PLAN.md** (domain + `DiaryRepository`). Optionally complete **17-02 Task 3** verification on GitHub or continue Phase **16** as prioritized.
+**Next:** Execute **18-03-PLAN.md** (export/import `.luma` v2 diary). Optionally complete **17-02 Task 3** verification on GitHub or continue Phase **16** as prioritized.
