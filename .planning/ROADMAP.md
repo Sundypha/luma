@@ -96,7 +96,7 @@ Plans:
 | 15 — Code review remediation | 3/3 | Complete — `15-01`–`15-03` (`15-01-SUMMARY.md` … `15-03-SUMMARY.md`); optional `15-01` Task 3 import smoke UAT |
 | 16 — Security audit remediation | 1/8 | In progress — `16-01` complete (Android release signing) |
 | 17 — release management (GitHub + Firebase) | 2/2 | Complete — 2026-04-10 (`17-UAT.md`; `17-01-SUMMARY.md`, `17-02-SUMMARY.md`) |
-| 18 - Diary table migration | 3/7 | In progress — `18-01`–`18-03` complete (see `18-03-SUMMARY.md`) |
+| 18 - Diary table migration | 4/7 | In progress — `18-01`–`18-04` complete (see `18-04-SUMMARY.md`) |
 
 ### Phase 13: PDF export of period statistics and details (user selectable if all or none). Goal is to have a PDF ready for a physician or gynecologist.
 
@@ -173,16 +173,16 @@ Plans:
 **Goal:** Extract the personal diary/notes from the symptom log into its own standalone table so users can add a diary entry on any day — not only during their period. Requires a careful data migration that moves existing diary entries out of the symptom table into the new diary table without data loss, updates all read/write paths, and keeps export/import backward-compatible.
 **Depends on:** Phase 17
 **Requirements:** DIARY-01 through DIARY-09 (derived from phase goal)
-**Plans:** 2/7 plans executed
+**Plans:** 4/7 plans executed
 
 Plans:
 - [x] `18-01-PLAN.md` — DB schema v5: DiaryEntries/Tags/Join tables, v4→v5 migration (TDD) — see `18-01-SUMMARY.md`
 - [x] `18-02-PLAN.md` — Domain models (DiaryEntryData, DiaryTag), DiaryRepository CRUD + streams — see `18-02-SUMMARY.md`
 - [x] `18-03-PLAN.md` — Export/import: .luma format v2 with diary_entries, backward-compat v1 import — see `18-03-SUMMARY.md`
-- [ ] `18-04-PLAN.md` — Diary form sheet (text + mood + tags), symptom form personalNotes removal
+- [x] `18-04-PLAN.md` — Diary form sheet (text + mood + tags), symptom form personalNotes removal — see `18-04-SUMMARY.md`
 - [ ] `18-05-PLAN.md` — Calendar blue diary dot + legend; Home Today card diary shortcut
 - [ ] `18-06-PLAN.md` — Day detail routing hub (4 states), DiaryTagsSettingsScreen
 - [ ] `18-07-PLAN.md` — Diary tab screen (paginated list, search, tag filter) + tab shell integration
 
 ---
-*Roadmap updated: 2026-04-14 — Phase **18** planned (7 plans, 5 waves). Phase **17** complete (2/2 plans; UAT in `17-UAT.md`). Phase **16-01** (Android release signing) noted above. **`13-03`** export UI still awaiting Task 3 human verification.*  
+*Roadmap updated: 2026-04-14 — Phase **18** in progress (4/7 plans complete). Phase **17** complete (2/2 plans; UAT in `17-UAT.md`). Phase **16-01** (Android release signing) noted above. **`13-03`** export UI still awaiting Task 3 human verification.*  
