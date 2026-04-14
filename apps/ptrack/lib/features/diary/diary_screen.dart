@@ -41,6 +41,7 @@ Widget diaryTabFloatingActionButton(BuildContext context, DiaryViewModel vm) {
       // Match [showDiaryFormSheet]'s calendar key: local Y-M-D as UTC midnight.
       final dayKey = DateTime.utc(now.year, now.month, now.day);
       final existing = await vm.diaryRepository.getEntryForDate(dayKey);
+      if (!context.mounted) return;
       await showDiaryFormSheet(
         context,
         diaryRepository: vm.diaryRepository,

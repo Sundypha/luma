@@ -28,16 +28,28 @@ class DiaryRepository {
 
   /// Stream of all diary entries (ordered by date desc) with their tags.
   Stream<List<StoredDiaryEntry>> watchAllEntries() {
-    return _db.select(_db.diaryEntries).watch().asyncMap((rows) async {
-      final sorted = rows.toList()
-        ..sort((a, b) => b.dateUtc.compareTo(a.dateUtc));
-      final result = <StoredDiaryEntry>[];
-      for (final row in sorted) {
-        final tags = await _tagsForEntry(row.id);
-        result.add(_rowToStored(row, tags));
-      }
-      return result;
-    });
+    return _db.select(_db.diaryEntries).watch().asyncMap(_storedEntriesFromRows);
+  }
+
+  /// Loads every diary entry with tags, newest first.
+  Future<List<StoredDiaryEntry>> getAllEntries() async {
+    final rows = await (_db.select(_db.diaryEntries)
+          ..orderBy([(t) => OrderingTerm.desc(t.dateUtc)]))
+        .get();
+    return _storedEntriesFromRows(rows);
+  }
+
+  Future<List<StoredDiaryEntry>> _storedEntriesFromRows(
+    List<DiaryEntryRow> rows,
+  ) async {
+    final sorted = rows.toList()
+      ..sort((a, b) => b.dateUtc.compareTo(a.dateUtc));
+    final result = <StoredDiaryEntry>[];
+    for (final row in sorted) {
+      final tags = await _tagsForEntry(row.id);
+      result.add(_rowToStored(row, tags));
+    }
+    return result;
   }
 
   /// Returns a page of diary entries for paginated display (ordered by date desc).
@@ -50,12 +62,7 @@ class DiaryRepository {
           ..orderBy([(t) => OrderingTerm.desc(t.dateUtc)])
           ..limit(limit, offset: offset))
         .get();
-    final result = <StoredDiaryEntry>[];
-    for (final row in rows) {
-      final tags = await _tagsForEntry(row.id);
-      result.add(_rowToStored(row, tags));
-    }
-    return result;
+    return _storedEntriesFromRows(rows);
   }
 
   /// Stream of diary entries matching [query] in notes text and/or [tagIds].

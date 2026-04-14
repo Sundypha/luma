@@ -3,19 +3,18 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 
-const _kPageSize = 30;
-
 class DiaryViewModel extends ChangeNotifier {
   DiaryViewModel(this.diaryRepository) {
-    unawaited(loadNextPage());
+    _entriesSub = diaryRepository.watchAllEntries().listen(_applyEntriesSnapshot);
   }
 
   final DiaryRepository diaryRepository;
 
+  StreamSubscription<List<StoredDiaryEntry>>? _entriesSub;
+
   final List<StoredDiaryEntry> _loadedEntries = [];
-  bool _hasMore = true;
+  bool _hasMore = false;
   bool _isLoadingMore = false;
-  int get _currentOffset => _loadedEntries.length;
 
   String _searchQuery = '';
   Set<int> _activeTagIds = {};
@@ -30,24 +29,27 @@ class DiaryViewModel extends ChangeNotifier {
   bool get hasMore => _hasMore;
   bool get isLoadingMore => _isLoadingMore;
 
-  Future<void> loadNextPage() async {
-    if (_isLoadingMore || !_hasMore) return;
-    _isLoadingMore = true;
-    notifyListeners();
-    final page = await diaryRepository.getEntriesPage(
-      offset: _currentOffset,
-      limit: _kPageSize,
-    );
-    _loadedEntries.addAll(page);
-    _hasMore = page.length == _kPageSize;
+  /// Legacy hook: list is kept in sync via [watchAllEntries]; incremental pages
+  /// are not used. Scroll listeners may still call this safely.
+  Future<void> loadNextPage() async {}
+
+  void _applyEntriesSnapshot(List<StoredDiaryEntry> all) {
+    _loadedEntries
+      ..clear()
+      ..addAll(all);
+    _hasMore = false;
     _isLoadingMore = false;
     _rebuildFiltered();
   }
 
   Future<void> reload() async {
-    _loadedEntries.clear();
-    _hasMore = true;
-    await loadNextPage();
+    _applyEntriesSnapshot(await diaryRepository.getAllEntries());
+  }
+
+  @override
+  void dispose() {
+    _entriesSub?.cancel();
+    super.dispose();
   }
 
   void updateSearch(String query) {
