@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-04-14
+
+### Added
+- **Standalone diary**: dedicated tab, entries on any calendar day (not only logged period days), paginated list with search, date range filter, tag filters, and floating action button
+- **Diary tags**: create, edit, and delete tags in settings; filter entries and assign multiple tags per entry
+- **Schema v5** with `diary_entries`, `diary_tags`, and join table; upgrade from v4 migrates former in-row personal diary text into diary rows while **notes** stay on the day entry for clinical / PDF use
+- **Backup format v2** can include diary data when export options enable it; importing older `.luma` files still maps legacy personal notes into diary entries
+
+### Changed
+- **Calendar** and **Today** surfaces show diary activity (day marker, legend) with shortcuts into the diary composer
+- **Day detail** presents symptom logging and diary as separate moods and actions from one hub
+- **Symptom form** no longer hosts personal free-text journaling; use Diary instead (supersedes the in-form personal notes flow introduced in 1.1.0)
+
+### Fixed
+- **Diary list** could show duplicate rows when a save and a database invalidation both triggered reload; reloads are now serialized with a pending pass so the list stays consistent
+
 ## [1.1.0] - 2026-04-12
 
 ### Added
