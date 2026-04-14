@@ -94,6 +94,20 @@ void main() {
     when(() => mockDiary.watchAllEntries()).thenAnswer(
       (_) => Stream<List<StoredDiaryEntry>>.value(const []),
     );
+    when(() => mockDiary.seedStarterTags()).thenAnswer((_) async {});
+    when(() => mockDiary.watchEntryCount()).thenAnswer(
+      (_) => Stream<int>.value(0),
+    );
+    when(
+      () => mockDiary.getEntriesPage(
+        offset: any(named: 'offset'),
+        limit: any(named: 'limit'),
+      ),
+    ).thenAnswer((_) async => <StoredDiaryEntry>[]);
+    when(() => mockDiary.watchTags()).thenAnswer(
+      (_) => Stream<List<DiaryTag>>.value(const []),
+    );
+    when(() => mockDiary.getEntryForDate(any())).thenAnswer((_) async => null);
   });
 
   tearDown(() async {
@@ -327,7 +341,7 @@ void main() {
     await tester.ensureVisible(todayCell);
     await tester.tap(todayCell);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Add symptoms').first);
+    await tester.tap(find.text('Edit period record'));
     await tester.pumpAndSettle();
     expect(find.byType(SymptomFormSheet), findsOneWidget);
   });

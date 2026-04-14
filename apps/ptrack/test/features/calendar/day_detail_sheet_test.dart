@@ -193,7 +193,8 @@ void main() {
     vm.dispose();
   });
 
-  testWidgets('period day without entry shows Add symptoms and Remove this day',
+  testWidgets(
+      'period day without entry shows Edit period record, Add diary entry, and Remove this day',
       (tester) async {
     final dayNorm = DateTime.utc(2025, 4, 10);
     final fixture = StoredPeriodWithDays(
@@ -221,13 +222,14 @@ void main() {
         vm.setTestData(map: map, periods: [fixture]);
       },
     );
-    expect(find.text('Add symptoms'), findsOneWidget);
+    expect(find.text('Edit period record'), findsOneWidget);
+    expect(find.text('Add diary entry'), findsOneWidget);
     expect(find.text('Remove this day'), findsOneWidget);
     vm.dispose();
   });
 
   testWidgets(
-      'period day with entry shows data and Edit, Clear symptoms, Remove this day',
+      'period day with entry shows symptom data and period/diary actions without Clear symptoms row',
       (tester) async {
     final dayNorm = DateTime.utc(2025, 4, 10);
     final entry = StoredDayEntry(
@@ -267,8 +269,8 @@ void main() {
       },
     );
     expect(find.text('Light'), findsWidgets);
-    expect(find.text('Edit'), findsOneWidget);
-    expect(find.text('Clear symptoms'), findsOneWidget);
+    expect(find.text('Edit period record'), findsOneWidget);
+    expect(find.text('Add diary entry'), findsOneWidget);
     expect(find.text('Remove this day'), findsOneWidget);
     vm.dispose();
   });

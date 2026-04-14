@@ -44,6 +44,20 @@ void main() {
     when(() => mockDiary.watchAllEntries()).thenAnswer(
       (_) => Stream<List<StoredDiaryEntry>>.value(const []),
     );
+    when(() => mockDiary.seedStarterTags()).thenAnswer((_) async {});
+    when(() => mockDiary.watchEntryCount()).thenAnswer(
+      (_) => Stream<int>.value(0),
+    );
+    when(
+      () => mockDiary.getEntriesPage(
+        offset: any(named: 'offset'),
+        limit: any(named: 'limit'),
+      ),
+    ).thenAnswer((_) async => <StoredDiaryEntry>[]);
+    when(() => mockDiary.watchTags()).thenAnswer(
+      (_) => Stream<List<DiaryTag>>.value(const []),
+    );
+    when(() => mockDiary.getEntryForDate(any())).thenAnswer((_) async => null);
   });
 
   Future<LockService> lockServiceForTest() async {
@@ -79,6 +93,7 @@ void main() {
     );
     expect(find.text('Home'), findsWidgets);
     expect(find.text('Calendar'), findsWidgets);
+    expect(find.text('Diary'), findsWidgets);
   });
 
   testWidgets('About opens from drawer', (tester) async {
