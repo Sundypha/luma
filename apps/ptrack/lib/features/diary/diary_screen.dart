@@ -32,15 +32,20 @@ List<Widget> diaryTabAppBarActions(BuildContext context, DiaryViewModel vm) {
   ];
 }
 
-/// FAB for creating today's diary entry from the shell.
+/// FAB for creating or editing today's diary entry from the shell.
 Widget diaryTabFloatingActionButton(BuildContext context, DiaryViewModel vm) {
   final l10n = AppLocalizations.of(context);
   return FloatingActionButton(
     onPressed: () async {
+      final now = DateTime.now();
+      // Match [showDiaryFormSheet]'s calendar key: local Y-M-D as UTC midnight.
+      final dayKey = DateTime.utc(now.year, now.month, now.day);
+      final existing = await vm.diaryRepository.getEntryForDate(dayKey);
       await showDiaryFormSheet(
         context,
         diaryRepository: vm.diaryRepository,
-        day: DateTime.now(),
+        day: now,
+        existing: existing,
       );
       await vm.reload();
     },
