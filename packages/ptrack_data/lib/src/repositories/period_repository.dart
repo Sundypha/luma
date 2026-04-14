@@ -372,6 +372,34 @@ class PeriodRepository {
     );
   }
 
+  Future<void> _pruneDiaryIfNoDayEntryOnCalendarDay(DateTime calendarUtc) async {
+    final cal = DateTime.utc(
+      calendarUtc.year,
+      calendarUtc.month,
+      calendarUtc.day,
+    );
+    final remaining = await (_db.select(_db.dayEntries)
+          ..where((t) => t.dateUtc.equals(cal)))
+        .get();
+    if (remaining.isEmpty) {
+      await (_db.delete(_db.diaryEntries)..where((t) => t.dateUtc.equals(cal)))
+          .go();
+    }
+  }
+
+  Future<bool> _diaryHasNonEmptyNotes(DateTime calendarUtc) async {
+    final cal = DateTime.utc(
+      calendarUtc.year,
+      calendarUtc.month,
+      calendarUtc.day,
+    );
+    final d = await (_db.select(_db.diaryEntries)
+          ..where((t) => t.dateUtc.equals(cal)))
+        .getSingleOrNull();
+    final t = d?.notes?.trim();
+    return t != null && t.isNotEmpty;
+  }
+
   /// Reactive list of periods (newest [PeriodSpan.startUtc] first) with nested
   /// day entries ([dateUtc] ascending). Updates when either table changes.
   Stream<List<StoredPeriodWithDays>> watchPeriodsWithDays() {
@@ -428,14 +456,19 @@ class PeriodRepository {
         for (final r in periodRows)
           StoredPeriodWithDays(
             period: StoredPeriod(id: r.id, span: periodRowToDomain(r)),
-            dayEntries: [
-              for (final d in (byPeriodId[r.id] ?? const <DayEntry>[]))
-                StoredDayEntry(
-                  id: d.id,
-                  periodId: d.periodId,
-                  data: dayEntryRowToDomain(d),
-                ),
-            ],
+            dayEntries: () {
+              final out = <StoredDayEntry>[];
+              for (final d in (byPeriodId[r.id] ?? const <DayEntry>[])) {
+                out.add(
+                  StoredDayEntry(
+                    id: d.id,
+                    periodId: d.periodId,
+                    data: dayEntryRowToDomain(d),
+                  ),
+                );
+              }
+              return out;
+            }(),
           ),
       ];
     }
@@ -480,12 +513,22 @@ class PeriodRepository {
   /// Deletes [periodId] and all of its day entries in one transaction.
   Future<bool> deletePeriod(int periodId) {
     return _db.transaction(() async {
+      final days = await (_db.select(_db.dayEntries)
+            ..where((t) => t.periodId.equals(periodId)))
+          .get();
+      final affectedDates = <DateTime>{
+        for (final d in days)
+          DateTime.utc(d.dateUtc.year, d.dateUtc.month, d.dateUtc.day),
+      };
       await (_db.delete(_db.dayEntries)
             ..where((t) => t.periodId.equals(periodId)))
           .go();
       final removed = await (_db.delete(_db.periods)
             ..where((t) => t.id.equals(periodId)))
           .go();
+      for (final date in affectedDates) {
+        await _pruneDiaryIfNoDayEntryOnCalendarDay(date);
+      }
       return removed > 0;
     });
   }
@@ -500,9 +543,10 @@ class PeriodRepository {
       if (rows.isEmpty) {
         throw StateError('No period with id $periodId');
       }
-      return _db
+      final id = await _db
           .into(_db.dayEntries)
           .insert(dayEntryDataToInsertCompanion(periodId, data));
+      return id;
     });
   }
 
@@ -534,9 +578,10 @@ class PeriodRepository {
         }
       }
       if (match == null) {
-        return _db
+        final id = await _db
             .into(_db.dayEntries)
             .insert(dayEntryDataToInsertCompanion(periodId, data));
+        return id;
       }
       final id = match.id;
       await (_db.update(_db.dayEntries)..where((t) => t.id.equals(id)))
@@ -555,24 +600,40 @@ class PeriodRepository {
 
   /// Deletes a single day entry row; returns whether a row was removed.
   Future<bool> deleteDayEntry(int dayEntryId) async {
+    final row = await (_db.select(_db.dayEntries)
+          ..where((t) => t.id.equals(dayEntryId)))
+        .getSingleOrNull();
+    if (row == null) return false;
+    final cal = DateTime.utc(
+      row.dateUtc.year,
+      row.dateUtc.month,
+      row.dateUtc.day,
+    );
     final count = await (_db.delete(_db.dayEntries)
           ..where((t) => t.id.equals(dayEntryId)))
         .go();
+    if (count > 0) {
+      await _pruneDiaryIfNoDayEntryOnCalendarDay(cal);
+    }
     return count > 0;
   }
 
   /// Clears flow, pain, mood, and clinical notes for [dayEntryId].
   ///
-  /// If the row has non-empty [DayEntryData.personalNotes], the row is kept
-  /// with only those notes. Otherwise the row is deleted.
+  /// If a non-empty diary note exists for that calendar day, the row is kept
+  /// with only symptoms cleared. Otherwise the row is deleted.
   Future<bool> clearClinicalSymptoms(int dayEntryId) {
     return _db.transaction(() async {
       final row = await (_db.select(_db.dayEntries)
             ..where((t) => t.id.equals(dayEntryId)))
           .getSingleOrNull();
       if (row == null) return false;
-      final personal = row.personalNotes?.trim();
-      final hasPersonal = personal != null && personal.isNotEmpty;
+      final cal = DateTime.utc(
+        row.dateUtc.year,
+        row.dateUtc.month,
+        row.dateUtc.day,
+      );
+      final hasPersonal = await _diaryHasNonEmptyNotes(cal);
       if (hasPersonal) {
         await (_db.update(_db.dayEntries)..where((t) => t.id.equals(dayEntryId)))
             .write(

@@ -65,6 +65,21 @@ final class LumaInvalidPeriodRefException extends LumaImportException {
 
 enum DuplicateStrategy { skip, replace }
 
+/// True when [data.dayEntries] carries non-empty [ExportedDayEntry.personalNotes].
+///
+/// Some backups declare [LumaExportMeta.formatVersion] 2 but still embed legacy
+/// `personal_notes` on day entries (older writers / round-trips). Import must
+/// still promote those fields into [diary_entries].
+bool _dayEntriesHaveNonEmptyPersonalNotes(LumaExportData data) {
+  for (final ie in data.dayEntries ?? const <ExportedDayEntry>[]) {
+    final raw = ie.personalNotes?.trim();
+    if (raw != null && raw.isNotEmpty) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /// Counts written during [ImportService.applyImport].
 final class ImportResult {
   const ImportResult({
@@ -98,6 +113,33 @@ final class ImportService {
           ..orderBy([(t) => OrderingTerm.asc(t.startUtc)]))
         .get();
     return rows.map(periodRowToDomain).toList();
+  }
+
+  Future<void> _syncDiaryFromImportedDayEntry({
+    required DateTime dateUtc,
+    required ExportedDayEntry ie,
+    required bool legacyPersonalNotes,
+  }) async {
+    if (!legacyPersonalNotes) {
+      return;
+    }
+    if (!ie.personalNotesIncludedInExport) return;
+    final date = _utcCalendarDate(dateUtc);
+    final raw = ie.personalNotes?.trim();
+    if (raw == null || raw.isEmpty) {
+      await (_db.delete(_db.diaryEntries)..where((t) => t.dateUtc.equals(date)))
+          .go();
+      return;
+    }
+    await (_db.delete(_db.diaryEntries)..where((t) => t.dateUtc.equals(date)))
+        .go();
+    await _db.into(_db.diaryEntries).insert(
+          DiaryEntriesCompanion.insert(
+            dateUtc: date,
+            mood: Value(ie.mood),
+            notes: Value(raw),
+          ),
+        );
   }
 
   String _messageForValidationIssues(List<PeriodValidationIssue> issues) {
@@ -149,11 +191,18 @@ final class ImportService {
       );
     }
 
-    if (meta.formatVersion != lumaFormatVersion) {
+    if (meta.formatVersion > lumaFormatVersion) {
       throw LumaVersionException(
-        message: meta.formatVersion > lumaFormatVersion
-            ? 'This backup was created by a newer version of the app and cannot be imported here.'
-            : 'This backup uses an export format that is no longer supported.',
+        message:
+            'This backup was created by a newer version of the app and cannot be imported here.',
+        fileVersion: meta.formatVersion,
+        supportedVersion: lumaFormatVersion,
+      );
+    }
+
+    if (meta.formatVersion < 1) {
+      throw LumaVersionException(
+        message: 'This backup uses an export format that is no longer supported.',
         fileVersion: meta.formatVersion,
         supportedVersion: lumaFormatVersion,
       );
@@ -282,6 +331,8 @@ final class ImportService {
         periodsCreated++;
       }
 
+      final migratePersonalNotesToDiary = data.meta.formatVersion < 2 ||
+          _dayEntriesHaveNonEmptyPersonalNotes(data);
       final entries = data.dayEntries ?? [];
       final totalEntries = entries.length;
       for (var i = 0; i < entries.length; i++) {
@@ -317,10 +368,12 @@ final class ImportService {
               painScore: Value(ie.painScore),
               mood: Value(ie.mood),
               notes: Value(ie.notes),
-              personalNotes: ie.personalNotesIncludedInExport
-                  ? Value(ie.personalNotes)
-                  : const Value.absent(),
             ),
+          );
+          await _syncDiaryFromImportedDayEntry(
+            dateUtc: dateUtc,
+            ie: ie,
+            legacyPersonalNotes: migratePersonalNotesToDiary,
           );
           entriesReplaced++;
         } else {
@@ -332,12 +385,90 @@ final class ImportService {
                   painScore: Value(ie.painScore),
                   mood: Value(ie.mood),
                   notes: Value(ie.notes),
-                  personalNotes: ie.personalNotesIncludedInExport
-                      ? Value(ie.personalNotes)
-                      : const Value.absent(),
                 ),
               );
+          await _syncDiaryFromImportedDayEntry(
+            dateUtc: dateUtc,
+            ie: ie,
+            legacyPersonalNotes: migratePersonalNotesToDiary,
+          );
           entriesCreated++;
+        }
+      }
+
+      final diaryEntries = data.diaryEntries ?? [];
+      for (final ie in diaryEntries) {
+        final dateUtc = _utcCalendarDate(DateTime.parse(ie.dateUtc).toUtc());
+        final existing = await (_db.select(_db.diaryEntries)
+              ..where((t) => t.dateUtc.equals(dateUtc)))
+            .getSingleOrNull();
+        if (existing != null && strategy == DuplicateStrategy.skip) {
+          continue;
+        }
+        final int entryId;
+        if (existing != null) {
+          await (_db.update(_db.diaryEntries)
+                ..where((t) => t.id.equals(existing.id)))
+              .write(
+            DiaryEntriesCompanion(
+              mood: Value(ie.mood),
+              notes: Value(ie.notes),
+            ),
+          );
+          entryId = existing.id;
+        } else {
+          entryId = await _db.into(_db.diaryEntries).insert(
+                DiaryEntriesCompanion.insert(
+                  dateUtc: dateUtc,
+                  mood: Value(ie.mood),
+                  notes: Value(ie.notes),
+                ),
+              );
+        }
+        await (_db.delete(_db.diaryEntryTagJoin)
+              ..where((t) => t.diaryEntryId.equals(entryId)))
+            .go();
+        for (final tagName in ie.tags) {
+          final trimmed = tagName.trim();
+          if (trimmed.isEmpty) {
+            continue;
+          }
+          final existingTag = await (_db.select(_db.diaryTags)
+                ..where((t) => t.name.equals(trimmed)))
+              .getSingleOrNull();
+          final tagId = existingTag?.id ??
+              await _db.into(_db.diaryTags).insert(
+                    DiaryTagsCompanion.insert(name: trimmed),
+                  );
+          await _db.into(_db.diaryEntryTagJoin).insert(
+                DiaryEntryTagJoinCompanion.insert(
+                  diaryEntryId: entryId,
+                  tagId: tagId,
+                ),
+              );
+        }
+      }
+
+      if (migratePersonalNotesToDiary) {
+        for (final ie in data.dayEntries ?? []) {
+          final raw = ie.personalNotes?.trim();
+          if (raw == null || raw.isEmpty) {
+            continue;
+          }
+          final dateUtc = _utcCalendarDate(DateTime.parse(ie.dateUtc).toUtc());
+          final exists = await (_db.select(_db.diaryEntries)
+                ..where((t) => t.dateUtc.equals(dateUtc)))
+              .getSingleOrNull();
+          if (exists != null) {
+            continue;
+          }
+          await _db.into(_db.diaryEntries).insert(
+                DiaryEntriesCompanion.insert(
+                  dateUtc: dateUtc,
+                  mood: Value(ie.mood),
+                  notes: Value(raw),
+                ),
+              );
         }
       }
 

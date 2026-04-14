@@ -6,27 +6,34 @@ See: `.planning/PROJECT.md` (updated 2026-04-07)
 
 **Core value:** Trustworthy local-first cycle tracking without accounts or required network, with verifiable data ownership via export/import.
 
-**Current focus:** **Milestone v2.0** — Phase **17** release management (`17-02` Tasks 1–2 done; Task 3 human-verify pending).
+**Current focus:** **Milestone v2.0** — Phase **18** diary table migration (**complete**; all seven plans shipped). Phase **17** still has optional `17-02` Task 3 human-verify.
 
 ## Current Position
 
 **Milestone:** v2.0 — i18n, German locale, optional fertility window (**complete**).
 
-**Phase:** **17** — Release management (GitHub Release + Firebase App Distribution).
+**Phase:** **18** — Diary table migration (schema v5 + data path from v4).
 
-**Plan:** `17-02` — unified release workflow **implemented** (Tasks 1–2); **Task 3** (`checkpoint:human-verify` per `17-02-PLAN.md`) **pending** before marking REL-02–REL-04 and finalizing `17-02-SUMMARY.md`.
+**Plan:** `18-07` — **complete** (see `18-07-SUMMARY.md`). Phase **18** has no remaining engineering plans.
 
-**Status:** Phase **17** in progress — plan 01 complete (REL-01); plan 02 awaiting end-to-end release verification on GitHub.
+**Status:** Phase **18** **complete** — 7/7 plans on branch `feat/18-01-diary-schema-migration`.
 
-Last activity: 2026-04-10 — **17-02** Tasks 1–2: `release.yml` (`9ef364b`), FAD header cross-reference (`22ae7ca`); checkpoint at Task 3.
+Last activity: 2026-04-14 — **18-07**: Diary tab (`DiaryViewModel` + `DiaryScreen`), third bottom nav destination, shell-level diary AppBar/FAB, settings tile → `DiaryTagsSettingsScreen`, starter tag seeding.
 
-**Progress (v2.0):** Phase 17 **in progress** (1/2 plans). See `ROADMAP.md`.
+**Progress (v2.0):** Phase 18 **complete** (7/7 plans). Phase 17 optional checkpoint remains. See `ROADMAP.md`.
 
 ## Performance Metrics
 
 | Phase | Duration | Detail |
 |-------|----------|--------|
 | 17 P01 | 12 min | 2 tasks, 2 files — see `17-01-SUMMARY.md` |
+| 18-diary-table-migration P01 | 45 min | 2 tasks, 12 files — see `18-01-SUMMARY.md` |
+| 18-diary-table-migration P02 | 40 min | 2 tasks, 17 files — see `18-02-SUMMARY.md` |
+| 18-diary-table-migration P03 | 32 min | 2 tasks, 15 files — see `18-03-SUMMARY.md` |
+| 18-diary-table-migration P04 | 28 min | 2 tasks, 9 files — see `18-04-SUMMARY.md` |
+| 18-diary-table-migration P05 | 35 min | 2 tasks, 20+ files — see `18-05-SUMMARY.md` |
+| 18-diary-table-migration P06 | 50 min | 2 tasks, 8 files — see `18-06-SUMMARY.md` |
+| 18-diary-table-migration P07 | 35 min | 2 tasks, 7 files — see `18-07-SUMMARY.md` |
 
 *Also reset when v2.0 execution starts; track per-phase durations in phase SUMMARY files.*
 
@@ -58,6 +65,20 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 
 **2026-04-10 (17-01):** Root `CHANGELOG.md` follows Keep a Changelog; `tool/bump_version.dart` bumps `apps/ptrack/pubspec.yaml` semver + monotonic build, prepends a dated section after `## [Unreleased]`, optional `--tag` (git commit + annotated tag). Run with **`fvm dart run tool/bump_version.dart`** so the SDK matches workspace `^3.11` (plain `dart run` fails on older system Dart).
 
+**2026-04-14 (18-01):** Dropped `personal_notes` from `day_entries` via Drift `alterTable(TableMigration(dayEntries))` (Drift 2.32 has no `Migrator.recreateTable`); diary text lives in `diary_entries` keyed by UTC calendar day.
+
+**2026-04-14 (18-02):** `DiaryRepository` is a non-final class so Mocktail mocks compile in app tests; personal diary persistence moved out of `PeriodRepository` into `DiaryRepository` + symptom form preload.
+
+**2026-04-14 (18-03):** `.luma` `lumaFormatVersion` 2 with `diary_entries`; `parseFileMeta` accepts v1 and v2; legacy `personal_notes` only synced from day entries when `formatVersion < 2`; export wizard maps **Diary** to `ExportOptions.includeDiary`.
+
+**2026-04-14 (18-04):** `DiaryFormSheet` / `showDiaryFormSheet` for notes + mood + tags via `DiaryRepository`; symptom form no longer edits diary text (personal-notes field and `_persistPersonalDiary` removed). Diary mood slider uses direct enum ticks; symptom sheet keeps inverted mood for clinical logging.
+
+**2026-04-14 (18-05):** Calendar shows `hasDiaryEntry` primary dot (with symptom chip when both); legend always includes diary line; `HomeViewModel` tracks `todayDiaryEntry`; Today card opens `showDiaryFormSheet`; `DiaryRepository` created in `main` and passed through `TabShell`.
+
+**2026-04-14 (18-06):** Day detail past/today is a routing hub (period × diary presence) with dual mood labels when both exist; diary actions use `showDiaryFormSheet` after sheet pop; `DiaryTagsSettingsScreen` for tag CRUD (navigation wiring deferred to 18-07).
+
+**2026-04-14 (18-07):** Diary browser tab with paginated `getEntriesPage`, search/tag/date filters, cards → `showDiaryFormSheet`; `TabShell` owns Diary AppBar title, filter icon, and FAB on tab index 2; settings drawer opens tag settings; `seedStarterTags()` on shell init.
+
 ### Pending Todos
 
 - **Phase 17** — Complete **17-02** Task 3: human verification of unified Release workflow (see `17-02-PLAN.md`); then finalize `17-02-SUMMARY.md` and mark REL-02–REL-04 if checks pass.
@@ -74,6 +95,7 @@ See `PROJECT.md` Key Decisions. v1 decisions and phase notes remain under `.plan
 - Phase 15 added: Address full app code review findings
 - Phase 16 added: Security audit findings remediation
 - Phase 17 added: release management with release bumps, release apks iin github release, and ran apk push to firebase app distribution
+- Phase 18 added: Diary table migration — decouple personal diary from symptom logging so users can add diary entries on any day
 
 ### Blockers/Concerns
 
@@ -81,10 +103,10 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-10 (17-02 executor checkpoint)
+**Last session:** 2026-04-14T20:00:00.000Z
 
-**Stopped at:** `17-02-PLAN.md` **Task 3** — human verification of Release workflow (draft GitHub Release + FAD + Environment gate); resume signal: `approved` or issues per plan.
+**Stopped at:** Completed 18-07-PLAN.md
 
-**Resume file:** .planning/phases/17-release-management-with-release-bumps-release-apks-iin-github-release-and-ran-apk-push-to-firebase-app-distribution/17-02-PLAN.md
+**Resume file:** None
 
-**Next:** Complete **17-02 Task 3** verification on GitHub; then finalize requirements (REL-02–REL-04), `17-02-SUMMARY.md`, and STATE/ROADMAP. Alternatively continue Phase **16** plans (e.g. **16-02** PIN lockout) as prioritized.
+**Next:** Continue **Phase 16** security remediation, **13-03** / **14-01** human-verify items, or **17-02 Task 3** as prioritized.

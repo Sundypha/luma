@@ -81,7 +81,8 @@ int? _todayPeriodId(
 class HomeViewModel extends ChangeNotifier {
   HomeViewModel(
     this._repository,
-    this._calendar, {
+    this._calendar,
+    this._diaryRepository, {
     List<StoredPeriodWithDays>? initialData,
   }) {
     if (initialData != null) {
@@ -91,6 +92,7 @@ class HomeViewModel extends ChangeNotifier {
       _onData,
       onError: _onStreamError,
     );
+    _diarySub = _diaryRepository.watchAllEntries().listen(_onDiaryEntries);
     unawaited(
       Future.wait([
         PredictionSettings.loadEnabledAlgorithms(),
@@ -118,6 +120,7 @@ class HomeViewModel extends ChangeNotifier {
 
   final PeriodRepository _repository;
   final PeriodCalendarContext _calendar;
+  final DiaryRepository _diaryRepository;
   final EnsembleCoordinator _ensembleCoordinator = EnsembleCoordinator();
   Set<AlgorithmId> _enabledAlgorithmIds =
       Set<AlgorithmId>.from(PredictionSettings.defaultEnabledAlgorithms);
@@ -131,8 +134,12 @@ class HomeViewModel extends ChangeNotifier {
 
   PeriodRepository get repository => _repository;
   PeriodCalendarContext get calendar => _calendar;
+  DiaryRepository get diaryRepository => _diaryRepository;
 
   StreamSubscription<List<StoredPeriodWithDays>>? _subscription;
+  StreamSubscription<List<StoredDiaryEntry>>? _diarySub;
+
+  StoredDiaryEntry? _todayDiaryEntry;
 
   List<StoredPeriodWithDays> _periodsWithDays = const [];
   CyclePosition? _cyclePosition;
@@ -187,6 +194,23 @@ class HomeViewModel extends ChangeNotifier {
   /// Today's [StoredDayEntry] row for the symptom sheet, if any.
   StoredDayEntry? get todayStoredEntry =>
       _findTodayStoredEntry(_periodsWithDays, DateTime.now());
+
+  /// Today's standalone diary row, if any.
+  StoredDiaryEntry? get todayDiaryEntry => _todayDiaryEntry;
+
+  void _onDiaryEntries(List<StoredDiaryEntry> entries) {
+    if (_disposed) return;
+    final today = _utcCalendarDay(DateTime.now());
+    StoredDiaryEntry? found;
+    for (final e in entries) {
+      if (_utcCalendarDay(e.data.dateUtc) == today) {
+        found = e;
+        break;
+      }
+    }
+    _todayDiaryEntry = found;
+    notifyListeners();
+  }
 
   void _applyData(List<StoredPeriodWithDays> data) {
     _loadError = null;
@@ -291,6 +315,7 @@ class HomeViewModel extends ChangeNotifier {
   void dispose() {
     _disposed = true;
     _subscription?.cancel();
+    _diarySub?.cancel();
     super.dispose();
   }
 }

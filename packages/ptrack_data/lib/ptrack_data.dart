@@ -7,6 +7,8 @@ export 'src/export/export_schema.dart'
     show
         ExportOptions,
         ExportedDayEntry,
+        ExportedDiaryEntry,
+        ExportedDiaryTag,
         ExportedPeriod,
         LumaExportData,
         LumaExportMeta,
@@ -35,7 +37,8 @@ export 'src/db/ptrack_database.dart'
     show PtrackDatabase, ptrackSupportedSchemaVersion;
 export 'src/db/ptrack_database_open.dart'
     show openPtrackDatabase, openPtrackQueryExecutor;
-export 'package:ptrack_domain/ptrack_domain.dart' show DayEntryData;
+export 'package:ptrack_domain/ptrack_domain.dart'
+    show DayEntryData, DiaryEntryData, DiaryTag;
 export 'src/mappers/day_entry_mapper.dart'
     show
         dayEntryDataToInsertCompanion,
@@ -46,6 +49,8 @@ export 'src/mappers/period_mapper.dart'
         periodRowToDomain,
         periodSpanToInsertCompanion,
         periodSpanToUpdateCompanion;
+export 'src/repositories/diary_repository.dart'
+    show DiaryRepository, StoredDiaryEntry;
 export 'src/repositories/period_repository.dart'
     show
         DayMarkFailure,

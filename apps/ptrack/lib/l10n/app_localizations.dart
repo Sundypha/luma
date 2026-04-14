@@ -480,6 +480,12 @@ abstract class AppLocalizations {
   /// **'Lighter hatching = further out, less certain'**
   String get calendarLegendHatching;
 
+  /// No description provided for @calendarLegendDiaryEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Diary entry'**
+  String get calendarLegendDiaryEntry;
+
   /// No description provided for @calendarToday.
   ///
   /// In en, this message translates to:
@@ -504,6 +510,54 @@ abstract class AppLocalizations {
   /// **'Calendar'**
   String get navCalendar;
 
+  /// No description provided for @navDiary.
+  ///
+  /// In en, this message translates to:
+  /// **'Diary'**
+  String get navDiary;
+
+  /// No description provided for @diaryListSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search notes'**
+  String get diaryListSearchHint;
+
+  /// No description provided for @diaryListNoMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'No entries match your filters.'**
+  String get diaryListNoMatches;
+
+  /// No description provided for @diaryListEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'No diary entries yet. Tap + to add your first entry.'**
+  String get diaryListEmptyHint;
+
+  /// No description provided for @diaryFilterIconTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by date range'**
+  String get diaryFilterIconTooltip;
+
+  /// No description provided for @diaryDateFilterActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Date: {start} – {end}'**
+  String diaryDateFilterActive(String start, String end);
+
+  /// No description provided for @settingsMenuDiaryTagsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Diary Tags'**
+  String get settingsMenuDiaryTagsTitle;
+
+  /// No description provided for @settingsMenuDiaryTagsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your diary tag list'**
+  String get settingsMenuDiaryTagsSubtitle;
+
   /// No description provided for @drawerSettingsLabel.
   ///
   /// In en, this message translates to:
@@ -527,6 +581,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Today'**
   String get todaySectionTitle;
+
+  /// No description provided for @homeDiaryNewEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Write diary entry'**
+  String get homeDiaryNewEntry;
+
+  /// No description provided for @homeDiaryEditEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit today\'s diary entry'**
+  String get homeDiaryEditEntry;
 
   /// No description provided for @todayUnmarkedBody.
   ///
@@ -954,6 +1020,12 @@ abstract class AppLocalizations {
   /// **'Notes'**
   String get exportToggleNotes;
 
+  /// No description provided for @exportToggleDiary.
+  ///
+  /// In en, this message translates to:
+  /// **'Diary'**
+  String get exportToggleDiary;
+
   /// No description provided for @exportNext.
   ///
   /// In en, this message translates to:
@@ -1331,6 +1403,132 @@ abstract class AppLocalizations {
   /// **'Remove'**
   String get commonRemove;
 
+  /// No description provided for @diaryNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal notes'**
+  String get diaryNotesLabel;
+
+  /// No description provided for @diaryMoodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood'**
+  String get diaryMoodLabel;
+
+  /// No description provided for @diaryTagsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get diaryTagsLabel;
+
+  /// No description provided for @diaryAddTagLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Add tag…'**
+  String get diaryAddTagLabel;
+
+  /// No description provided for @diaryFormTitleNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New diary entry'**
+  String get diaryFormTitleNew;
+
+  /// No description provided for @diaryFormTitleEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit diary entry'**
+  String get diaryFormTitleEdit;
+
+  /// No description provided for @diaryDeleteEntryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete diary entry?'**
+  String get diaryDeleteEntryTitle;
+
+  /// No description provided for @diaryDeleteEntryBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete the diary entry for {date}.'**
+  String diaryDeleteEntryBody(String date);
+
+  /// No description provided for @diaryTagsSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Diary Tags'**
+  String get diaryTagsSettingsTitle;
+
+  /// No description provided for @diaryTagsEmptyState.
+  ///
+  /// In en, this message translates to:
+  /// **'No tags yet. Add your first tag below.'**
+  String get diaryTagsEmptyState;
+
+  /// No description provided for @diaryTagsAddLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New tag name'**
+  String get diaryTagsAddLabel;
+
+  /// No description provided for @diaryTagsAddButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get diaryTagsAddButton;
+
+  /// No description provided for @diaryTagsDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove tag?'**
+  String get diaryTagsDeleteTitle;
+
+  /// No description provided for @diaryTagsDeleteBodyWithCount.
+  ///
+  /// In en, this message translates to:
+  /// **'This tag is used in {count} {count, plural, =1{entry} other{entries}}. The entries will be kept.'**
+  String diaryTagsDeleteBodyWithCount(int count);
+
+  /// No description provided for @diaryTagsDeleteBodyEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'This tag has no entries.'**
+  String get diaryTagsDeleteBodyEmpty;
+
+  /// No description provided for @diaryTagsAddedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag added'**
+  String get diaryTagsAddedSnackbar;
+
+  /// No description provided for @diaryTagsDeletedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag removed'**
+  String get diaryTagsDeletedSnackbar;
+
+  /// No description provided for @diaryTagsRenameTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename tag'**
+  String get diaryTagsRenameTitle;
+
+  /// No description provided for @diaryTagsRenameConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get diaryTagsRenameConfirm;
+
+  /// No description provided for @diaryTagsErrorEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a tag name.'**
+  String get diaryTagsErrorEmpty;
+
+  /// No description provided for @diaryTagsErrorDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'That tag already exists.'**
+  String get diaryTagsErrorDuplicate;
+
   /// No description provided for @symptomFormTitleAdd.
   ///
   /// In en, this message translates to:
@@ -1372,18 +1570,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Included in PDF export.'**
   String get symptomNotesHelper;
-
-  /// No description provided for @symptomPersonalNotesLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Personal notes'**
-  String get symptomPersonalNotesLabel;
-
-  /// No description provided for @symptomPersonalNotesHelper.
-  ///
-  /// In en, this message translates to:
-  /// **'Private. Not included in PDF export.'**
-  String get symptomPersonalNotesHelper;
 
   /// No description provided for @symptomNotSet.
   ///
@@ -1510,6 +1696,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Clear symptoms'**
   String get dayDetailClearSymptoms;
+
+  /// No description provided for @dayDetailEditDiaryEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit diary entry'**
+  String get dayDetailEditDiaryEntry;
+
+  /// No description provided for @dayDetailAddDiaryEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Add diary entry'**
+  String get dayDetailAddDiaryEntry;
+
+  /// No description provided for @dayDetailSymptomMoodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Symptom mood'**
+  String get dayDetailSymptomMoodLabel;
+
+  /// No description provided for @dayDetailDiaryMoodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Diary mood'**
+  String get dayDetailDiaryMoodLabel;
+
+  /// No description provided for @dayDetailEditPeriodRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit period record'**
+  String get dayDetailEditPeriodRecord;
 
   /// No description provided for @firstLogAppBarTitle.
   ///

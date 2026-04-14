@@ -10,10 +10,13 @@ import 'package:timezone/data/latest.dart' as tzdata;
 
 class MockPeriodRepository extends Mock implements PeriodRepository {}
 
+class MockDiaryRepository extends Mock implements DiaryRepository {}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late MockPeriodRepository mockRepo;
+  late MockDiaryRepository mockDiary;
   late PeriodCalendarContext calendar;
   late StreamController<List<StoredPeriodWithDays>> controller;
 
@@ -27,9 +30,13 @@ void main() {
   setUp(() {
     SharedPreferences.setMockInitialValues({});
     mockRepo = MockPeriodRepository();
+    mockDiary = MockDiaryRepository();
     calendar = PeriodCalendarContext.fromTimeZoneName('UTC');
     controller = StreamController<List<StoredPeriodWithDays>>.broadcast();
     when(() => mockRepo.watchPeriodsWithDays()).thenAnswer((_) => controller.stream);
+    when(() => mockDiary.watchAllEntries()).thenAnswer(
+      (_) => Stream<List<StoredDiaryEntry>>.value(const []),
+    );
   });
 
   tearDown(() async {
@@ -37,7 +44,7 @@ void main() {
   });
 
   test('starts with null cycle snapshot, null todayEntry, not marked', () {
-    final vm = HomeViewModel(mockRepo, calendar);
+    final vm = HomeViewModel(mockRepo, calendar, mockDiary);
     expect(vm.hasInitialEvent, isFalse);
     expect(vm.cyclePosition, isNull);
     expect(vm.todayEntry, isNull);
@@ -47,10 +54,11 @@ void main() {
 
   test('when today lies in a period span, isTodayMarked and todayEntry update',
       () async {
-    final vm = HomeViewModel(mockRepo, calendar);
+    final vm = HomeViewModel(mockRepo, calendar, mockDiary);
     final now = DateTime.now();
-    final todayUtc = DateTime.utc(now.year, now.month, now.day);
-    final startUtc = todayUtc.subtract(const Duration(days: 2));
+    final utc = now.toUtc();
+    final todayCal = DateTime.utc(utc.year, utc.month, utc.day);
+    final startUtc = todayCal.subtract(const Duration(days: 2));
     final item = StoredPeriodWithDays(
       period: StoredPeriod(
         id: 1,
@@ -61,7 +69,7 @@ void main() {
           id: 1,
           periodId: 1,
           data: DayEntryData(
-            dateUtc: todayUtc,
+            dateUtc: todayCal,
             flowIntensity: FlowIntensity.medium,
           ),
         ),
@@ -80,7 +88,7 @@ void main() {
   test('markToday calls repository.markDay with calendar day matching now',
       () async {
     when(() => mockRepo.markDay(any())).thenAnswer((_) async => const DayMarkSuccess());
-    final vm = HomeViewModel(mockRepo, calendar);
+    final vm = HomeViewModel(mockRepo, calendar, mockDiary);
     controller.add(const []);
     await Future<void>.delayed(Duration.zero);
     await vm.markToday();

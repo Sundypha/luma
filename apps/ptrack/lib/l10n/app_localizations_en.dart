@@ -313,6 +313,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Lighter hatching = further out, less certain';
 
   @override
+  String get calendarLegendDiaryEntry => 'Diary entry';
+
+  @override
   String get calendarToday => 'Today';
 
   @override
@@ -325,6 +328,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navCalendar => 'Calendar';
 
   @override
+  String get navDiary => 'Diary';
+
+  @override
+  String get diaryListSearchHint => 'Search notes';
+
+  @override
+  String get diaryListNoMatches => 'No entries match your filters.';
+
+  @override
+  String get diaryListEmptyHint =>
+      'No diary entries yet. Tap + to add your first entry.';
+
+  @override
+  String get diaryFilterIconTooltip => 'Filter by date range';
+
+  @override
+  String diaryDateFilterActive(String start, String end) {
+    return 'Date: $start – $end';
+  }
+
+  @override
+  String get settingsMenuDiaryTagsTitle => 'Diary Tags';
+
+  @override
+  String get settingsMenuDiaryTagsSubtitle => 'Manage your diary tag list';
+
+  @override
   String get drawerSettingsLabel => 'Settings';
 
   @override
@@ -335,6 +365,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get todaySectionTitle => 'Today';
+
+  @override
+  String get homeDiaryNewEntry => 'Write diary entry';
+
+  @override
+  String get homeDiaryEditEntry => 'Edit today\'s diary entry';
 
   @override
   String get todayUnmarkedBody => 'You have not marked today as a period day.';
@@ -568,6 +604,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportToggleNotes => 'Notes';
 
   @override
+  String get exportToggleDiary => 'Diary';
+
+  @override
   String get exportNext => 'Next';
 
   @override
@@ -782,6 +821,79 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonRemove => 'Remove';
 
   @override
+  String get diaryNotesLabel => 'Personal notes';
+
+  @override
+  String get diaryMoodLabel => 'Mood';
+
+  @override
+  String get diaryTagsLabel => 'Tags';
+
+  @override
+  String get diaryAddTagLabel => 'Add tag…';
+
+  @override
+  String get diaryFormTitleNew => 'New diary entry';
+
+  @override
+  String get diaryFormTitleEdit => 'Edit diary entry';
+
+  @override
+  String get diaryDeleteEntryTitle => 'Delete diary entry?';
+
+  @override
+  String diaryDeleteEntryBody(String date) {
+    return 'This will permanently delete the diary entry for $date.';
+  }
+
+  @override
+  String get diaryTagsSettingsTitle => 'Diary Tags';
+
+  @override
+  String get diaryTagsEmptyState => 'No tags yet. Add your first tag below.';
+
+  @override
+  String get diaryTagsAddLabel => 'New tag name';
+
+  @override
+  String get diaryTagsAddButton => 'Add';
+
+  @override
+  String get diaryTagsDeleteTitle => 'Remove tag?';
+
+  @override
+  String diaryTagsDeleteBodyWithCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'entries',
+      one: 'entry',
+    );
+    return 'This tag is used in $count $_temp0. The entries will be kept.';
+  }
+
+  @override
+  String get diaryTagsDeleteBodyEmpty => 'This tag has no entries.';
+
+  @override
+  String get diaryTagsAddedSnackbar => 'Tag added';
+
+  @override
+  String get diaryTagsDeletedSnackbar => 'Tag removed';
+
+  @override
+  String get diaryTagsRenameTitle => 'Rename tag';
+
+  @override
+  String get diaryTagsRenameConfirm => 'Rename';
+
+  @override
+  String get diaryTagsErrorEmpty => 'Enter a tag name.';
+
+  @override
+  String get diaryTagsErrorDuplicate => 'That tag already exists.';
+
+  @override
   String get symptomFormTitleAdd => 'Add symptoms';
 
   @override
@@ -801,13 +913,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get symptomNotesHelper => 'Included in PDF export.';
-
-  @override
-  String get symptomPersonalNotesLabel => 'Personal notes';
-
-  @override
-  String get symptomPersonalNotesHelper =>
-      'Private. Not included in PDF export.';
 
   @override
   String get symptomNotSet => 'Not set';
@@ -881,6 +986,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dayDetailClearSymptoms => 'Clear symptoms';
+
+  @override
+  String get dayDetailEditDiaryEntry => 'Edit diary entry';
+
+  @override
+  String get dayDetailAddDiaryEntry => 'Add diary entry';
+
+  @override
+  String get dayDetailSymptomMoodLabel => 'Symptom mood';
+
+  @override
+  String get dayDetailDiaryMoodLabel => 'Diary mood';
+
+  @override
+  String get dayDetailEditPeriodRecord => 'Edit period record';
 
   @override
   String get firstLogAppBarTitle => 'Log your first period';

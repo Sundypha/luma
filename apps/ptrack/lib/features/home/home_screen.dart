@@ -157,6 +157,8 @@ class HomeScreen extends StatelessWidget {
               isTodayMarked: viewModel.isTodayMarked,
               todayEntry: viewModel.todayEntry,
               onTodayAction: () => unawaited(_handleTodayQuickAction(context)),
+              diaryRepository: viewModel.diaryRepository,
+              todayDiaryEntry: viewModel.todayDiaryEntry,
             ),
             if (viewModel.ensembleMilestone != null)
               Padding(

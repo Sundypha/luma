@@ -232,16 +232,54 @@ Widget _logMarkerChip() {
   );
 }
 
-Widget _calendarBottomMarkers(CalendarDayData data) {
-  if (!data.hasLoggedData) return const SizedBox.shrink();
+Widget _diaryDotChip(Color primary) {
+  return Container(
+    width: 6,
+    height: 6,
+    decoration: BoxDecoration(
+      color: primary,
+      shape: BoxShape.circle,
+      border: Border.all(color: Colors.white, width: 1.1),
+      boxShadow: [
+        BoxShadow(
+          color: primary.withValues(alpha: 0.35),
+          blurRadius: 3,
+          spreadRadius: 0,
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _calendarBottomMarkers(CalendarDayData data, Color diaryPrimary) {
+  if (!data.hasLoggedData && !data.hasDiaryEntry) {
+    return const SizedBox.shrink();
+  }
+  if (data.hasLoggedData && data.hasDiaryEntry) {
+    return Center(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _logMarkerChip(),
+          const SizedBox(width: 5),
+          _diaryDotChip(diaryPrimary),
+        ],
+      ),
+    );
+  }
+  if (data.hasDiaryEntry) {
+    return Center(child: _diaryDotChip(diaryPrimary));
+  }
   return Center(child: _logMarkerChip());
 }
 
 /// Stacks period band, prediction hatch, today ring, and day number; marker sits below.
 Widget buildCalendarDayCell(
+  BuildContext context,
   DateTime day,
   CalendarDayData data,
 ) {
+  final diaryPrimary = Theme.of(context).colorScheme.primary;
   final hasPeriod = data.loggedPeriodState != PeriodDayState.none;
   final showPredictionHatch =
       data.predictionConfidenceTier > 0 && !hasPeriod;
@@ -301,7 +339,7 @@ Widget buildCalendarDayCell(
       ),
       SizedBox(
         height: kCalendarLogMarkerStripHeight,
-        child: _calendarBottomMarkers(data),
+        child: _calendarBottomMarkers(data, diaryPrimary),
       ),
     ],
   );
@@ -312,6 +350,7 @@ Widget buildConfidenceLegend(
   BuildContext context, {
   bool showFertilityLegend = false,
   bool showPredictionTierLegend = true,
+  bool showDiaryLegend = true,
 }) {
   final theme = Theme.of(context);
   final l10n = AppLocalizations.of(context);
@@ -360,6 +399,23 @@ Widget buildConfidenceLegend(
           ),
           const SizedBox(width: 6),
           Text(l10n.fertilityCalendarLegendLabel, style: style),
+        ],
+      ),
+    );
+  }
+  if (showDiaryLegend) {
+    final primary = theme.colorScheme.primary;
+    children.add(
+      Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 16,
+            height: 16,
+            child: Center(child: _diaryDotChip(primary)),
+          ),
+          const SizedBox(width: 6),
+          Text(l10n.calendarLegendDiaryEntry, style: style),
         ],
       ),
     );

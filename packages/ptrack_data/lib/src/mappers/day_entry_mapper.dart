@@ -17,7 +17,6 @@ DayEntryData dayEntryRowToDomain(DayEntry row) {
         row.painScore != null ? PainScore.fromDbValue(row.painScore!) : null,
     mood: row.mood != null ? Mood.fromDbValue(row.mood!) : null,
     notes: row.notes,
-    personalNotes: row.personalNotes,
   );
 }
 
@@ -33,9 +32,6 @@ DayEntriesCompanion dayEntryDataToInsertCompanion(
     painScore: Value(data.painScore?.dbValue),
     mood: Value(data.mood?.dbValue),
     notes: Value(data.notes),
-    // Omit nullable text columns when null so INSERT matches DBs that only gained
-    // personal_notes via ALTER (implicit NULL) and avoids some driver edge cases.
-    personalNotes: Value.absentIfNull(data.personalNotes),
   );
 }
 
@@ -47,6 +43,5 @@ DayEntriesCompanion dayEntryDataToUpdateCompanion(DayEntryData data) {
     painScore: Value(data.painScore?.dbValue),
     mood: Value(data.mood?.dbValue),
     notes: Value(data.notes),
-    personalNotes: Value(data.personalNotes),
   );
 }

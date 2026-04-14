@@ -17,10 +17,14 @@ import '../settings/fertility_settings.dart';
 import '../settings/language_settings_screen.dart';
 import '../settings/prediction_settings.dart';
 import '../settings/privacy_security_settings_screen.dart';
+import '../diary/diary_screen.dart';
+import '../diary/diary_tags_settings_screen.dart';
+import '../diary/diary_view_model.dart';
 
 class _SettingsScreen extends StatelessWidget {
   const _SettingsScreen({
     required this.repository,
+    required this.diaryRepository,
     required this.calendar,
     required this.lockService,
     required this.onReset,
@@ -32,6 +36,7 @@ class _SettingsScreen extends StatelessWidget {
   });
 
   final PeriodRepository repository;
+  final DiaryRepository diaryRepository;
   final PeriodCalendarContext calendar;
   final LockService lockService;
   final VoidCallback onReset;
@@ -113,6 +118,21 @@ class _SettingsScreen extends StatelessWidget {
               );
             },
           ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.label_outlined),
+            title: Text(l10n.settingsMenuDiaryTagsTitle),
+            subtitle: Text(l10n.settingsMenuDiaryTagsSubtitle),
+            onTap: () {
+              Navigator.of(context).push<void>(
+                MaterialPageRoute<void>(
+                  builder: (_) => DiaryTagsSettingsScreen(
+                    diaryRepository: diaryRepository,
+                  ),
+                ),
+              );
+            },
+          ),
         ],
       ),
     );
@@ -126,6 +146,7 @@ class TabShell extends StatefulWidget {
     super.key,
     required this.repository,
     required this.calendar,
+    required this.diaryRepository,
     required this.lockService,
     required this.onReset,
     required this.onLockNow,
@@ -134,6 +155,7 @@ class TabShell extends StatefulWidget {
 
   final PeriodRepository repository;
   final PeriodCalendarContext calendar;
+  final DiaryRepository diaryRepository;
 
   /// When non-null, home and calendar ViewModels start with data (no loading flash).
   final List<StoredPeriodWithDays>? initialPeriodsWithDays;
@@ -149,18 +171,23 @@ class _TabShellState extends State<TabShell> {
   int _tabIndex = 0;
   late final CalendarViewModel _calendarVm;
   late final HomeViewModel _homeVm;
+  late final DiaryViewModel _diaryVm;
 
   @override
   void initState() {
     super.initState();
+    unawaited(widget.diaryRepository.seedStarterTags());
+    _diaryVm = DiaryViewModel(widget.diaryRepository);
     _calendarVm = CalendarViewModel(
       widget.repository,
       widget.calendar,
+      widget.diaryRepository,
       initialData: widget.initialPeriodsWithDays,
     );
     _homeVm = HomeViewModel(
       widget.repository,
       widget.calendar,
+      widget.diaryRepository,
       initialData: widget.initialPeriodsWithDays,
     );
   }
@@ -169,6 +196,7 @@ class _TabShellState extends State<TabShell> {
   void dispose() {
     _calendarVm.dispose();
     _homeVm.dispose();
+    _diaryVm.dispose();
     super.dispose();
   }
 
@@ -177,6 +205,7 @@ class _TabShellState extends State<TabShell> {
       MaterialPageRoute<void>(
         builder: (_) => _SettingsScreen(
           repository: widget.repository,
+          diaryRepository: widget.diaryRepository,
           calendar: widget.calendar,
           lockService: widget.lockService,
           onReset: widget.onReset,
@@ -204,8 +233,16 @@ class _TabShellState extends State<TabShell> {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.appTitle),
+        title: Text(_tabIndex == 2 ? l10n.navDiary : l10n.appTitle),
         actions: [
+          if (_tabIndex == 2)
+            ListenableBuilder(
+              listenable: _diaryVm,
+              builder: (context, _) => Row(
+                mainAxisSize: MainAxisSize.min,
+                children: diaryTabAppBarActions(context, _diaryVm),
+              ),
+            ),
           if (_tabIndex == 0)
             IconButton(
               icon: const Icon(Icons.picture_as_pdf_outlined),
@@ -223,6 +260,8 @@ class _TabShellState extends State<TabShell> {
             ),
         ],
       ),
+      floatingActionButton:
+          _tabIndex == 2 ? diaryTabFloatingActionButton(context, _diaryVm) : null,
       drawer: NavigationDrawer(
         onDestinationSelected: (index) {
           Navigator.pop(context);
@@ -289,6 +328,7 @@ class _TabShellState extends State<TabShell> {
             onOpenSettings: () => _openSettings(context),
           ),
           CalendarScreen(viewModel: _calendarVm),
+          DiaryScreen(viewModel: _diaryVm),
         ],
       ),
       bottomNavigationBar: NavigationBar(
@@ -304,6 +344,11 @@ class _TabShellState extends State<TabShell> {
             icon: const Icon(Icons.calendar_month_outlined),
             selectedIcon: const Icon(Icons.calendar_month),
             label: l10n.navCalendar,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.book_outlined),
+            selectedIcon: const Icon(Icons.book),
+            label: l10n.navDiary,
           ),
         ],
       ),

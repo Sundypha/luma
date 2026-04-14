@@ -18,6 +18,7 @@ final class ExportViewModel extends ChangeNotifier {
   bool _includePeriods = true;
   bool _includeSymptoms = true;
   bool _includeNotes = true;
+  bool _includeDiary = true;
   String? _password;
   double _progress = 0;
   ExportResult? _result;
@@ -26,6 +27,7 @@ final class ExportViewModel extends ChangeNotifier {
   bool get includePeriods => _includePeriods;
   bool get includeSymptoms => _includeSymptoms;
   bool get includeNotes => _includeNotes;
+  bool get includeDiary => _includeDiary;
   String? get password => _password;
   double get progress => _progress;
   ExportResult? get result => _result;
@@ -34,13 +36,16 @@ final class ExportViewModel extends ChangeNotifier {
       _includePeriods || _includeSymptoms || _includeNotes;
 
   bool get periodsOnlySelected =>
-      _includePeriods && !_includeSymptoms && !_includeNotes;
+      _includePeriods && !_includeSymptoms && !_includeNotes && !_includeDiary;
 
   bool get symptomsOnlySelected =>
-      !_includePeriods && _includeSymptoms && !_includeNotes;
+      !_includePeriods && _includeSymptoms && !_includeNotes && !_includeDiary;
 
   bool get notesOnlySelected =>
-      !_includePeriods && !_includeSymptoms && _includeNotes;
+      !_includePeriods && !_includeSymptoms && _includeNotes && !_includeDiary;
+
+  bool get diaryOnlySelected =>
+      !_includePeriods && !_includeSymptoms && !_includeNotes && _includeDiary;
 
   void applyPreset(ExportPreset preset) {
     switch (preset) {
@@ -48,10 +53,12 @@ final class ExportViewModel extends ChangeNotifier {
         _includePeriods = true;
         _includeSymptoms = true;
         _includeNotes = true;
+        _includeDiary = true;
       case ExportPreset.periodsOnly:
         _includePeriods = true;
         _includeSymptoms = false;
         _includeNotes = false;
+        _includeDiary = false;
     }
     notifyListeners();
   }
@@ -68,6 +75,11 @@ final class ExportViewModel extends ChangeNotifier {
 
   void toggleNotes() {
     _includeNotes = !_includeNotes;
+    notifyListeners();
+  }
+
+  void toggleDiary() {
+    _includeDiary = !_includeDiary;
     notifyListeners();
   }
 
@@ -108,6 +120,7 @@ final class ExportViewModel extends ChangeNotifier {
         includePeriods: _includePeriods,
         includeSymptoms: _includeSymptoms,
         includeNotes: _includeNotes,
+        includeDiary: _includeDiary,
         password: _password,
       );
       _result = await exportData(
@@ -135,6 +148,7 @@ final class ExportViewModel extends ChangeNotifier {
     _includePeriods = true;
     _includeSymptoms = true;
     _includeNotes = true;
+    _includeDiary = true;
     _password = null;
     _progress = 0;
     _result = null;

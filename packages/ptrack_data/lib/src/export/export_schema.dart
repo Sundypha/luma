@@ -1,7 +1,7 @@
 /// JSON types for Luma `.luma` export files.
 library;
 
-const int lumaFormatVersion = 1;
+const int lumaFormatVersion = 2;
 
 /// Options controlling what is included in an export.
 final class ExportOptions {
@@ -9,6 +9,7 @@ final class ExportOptions {
     required this.includePeriods,
     required this.includeSymptoms,
     required this.includeNotes,
+    required this.includeDiary,
     this.password,
   });
 
@@ -16,6 +17,7 @@ final class ExportOptions {
         includePeriods: true,
         includeSymptoms: true,
         includeNotes: true,
+        includeDiary: true,
         password: password,
       );
 
@@ -23,12 +25,14 @@ final class ExportOptions {
         includePeriods: true,
         includeSymptoms: false,
         includeNotes: false,
+        includeDiary: false,
         password: password,
       );
 
   final bool includePeriods;
   final bool includeSymptoms;
   final bool includeNotes;
+  final bool includeDiary;
   final String? password;
 }
 
@@ -206,17 +210,82 @@ final class ExportedDayEntry {
   }
 }
 
+/// One exported diary tag definition.
+final class ExportedDiaryTag {
+  const ExportedDiaryTag({required this.name});
+
+  final String name;
+
+  Map<String, dynamic> toJson() => {'name': name};
+
+  factory ExportedDiaryTag.fromJson(Map<String, dynamic> json) {
+    if (!json.containsKey('name') || json['name'] == null) {
+      throw FormatException('ExportedDiaryTag missing required field: name');
+    }
+    return ExportedDiaryTag(name: json['name']!.toString());
+  }
+}
+
+/// One exported diary entry with its tag names (denormalized for portability).
+final class ExportedDiaryEntry {
+  const ExportedDiaryEntry({
+    required this.dateUtc,
+    this.mood,
+    this.notes,
+    this.tags = const [],
+  });
+
+  final String dateUtc;
+  final int? mood;
+  final String? notes;
+  final List<String> tags;
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{'date_utc': dateUtc};
+    if (mood != null) {
+      map['mood'] = mood;
+    }
+    if (notes != null) {
+      map['notes'] = notes;
+    }
+    if (tags.isNotEmpty) {
+      map['tags'] = tags;
+    }
+    return map;
+  }
+
+  factory ExportedDiaryEntry.fromJson(Map<String, dynamic> json) {
+    if (!json.containsKey('date_utc') || json['date_utc'] == null) {
+      throw FormatException(
+        'ExportedDiaryEntry missing required field: date_utc',
+      );
+    }
+    final rawTags = json['tags'];
+    final tagList = rawTags is List
+        ? rawTags.map((e) => e.toString()).toList()
+        : <String>[];
+    return ExportedDiaryEntry(
+      dateUtc: json['date_utc']!.toString(),
+      mood: _optionalInt(json['mood']),
+      notes: json['notes']?.toString(),
+      tags: tagList,
+    );
+  }
+}
+
 /// Full export payload (unencrypted JSON shape).
 final class LumaExportData {
   const LumaExportData({
     required this.meta,
     this.periods,
     this.dayEntries,
+    this.diaryEntries,
   });
 
   final LumaExportMeta meta;
   final List<ExportedPeriod>? periods;
   final List<ExportedDayEntry>? dayEntries;
+  final List<ExportedDiaryEntry>? diaryEntries;
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
@@ -225,6 +294,9 @@ final class LumaExportData {
     }
     if (dayEntries != null) {
       data['day_entries'] = dayEntries!.map((e) => e.toJson()).toList();
+    }
+    if (diaryEntries != null) {
+      data['diary_entries'] = diaryEntries!.map((e) => e.toJson()).toList();
     }
     return {
       'meta': meta.toJson(),
@@ -278,10 +350,26 @@ final class LumaExportData {
           .toList();
     }
 
+    List<ExportedDiaryEntry>? diaryList;
+    if (dataMap.containsKey('diary_entries')) {
+      final raw = dataMap['diary_entries'];
+      if (raw is! List) {
+        throw FormatException('data.diary_entries must be a List');
+      }
+      diaryList = raw
+          .map(
+            (e) => ExportedDiaryEntry.fromJson(
+              Map<String, dynamic>.from(e as Map),
+            ),
+          )
+          .toList();
+    }
+
     return LumaExportData(
       meta: meta,
       periods: periodsList,
       dayEntries: dayList,
+      diaryEntries: diaryList,
     );
   }
 }

@@ -12,7 +12,7 @@ double _sliderIndexFromNullableEnum(int? enumIndex) {
   return (enumIndex + 1).toDouble();
 }
 
-/// Mood uses the same “less → more severe” left-to-right as pain/flow: good mood left, distressed right.
+/// Mood uses the same "less → more severe" left-to-right as pain/flow: good mood left, distressed right.
 /// Stored enum / DB order is unchanged (`veryBad`..`veryGood`); only the slider direction is inverted.
 double _moodSliderIndexFromMood(Mood? mood) {
   if (mood == null) return 0;
@@ -29,7 +29,7 @@ String _moodSliderLabel(AppLocalizations l10n, Mood? mood) {
   return '${mood.emoji} ${LoggingLocalizations.moodLabel(l10n, mood)}';
 }
 
-/// Single-purpose bottom sheet: flow, pain, mood, clinical notes, personal notes.
+/// Single-purpose bottom sheet: flow, pain, mood, clinical notes.
 class SymptomFormSheet extends StatefulWidget {
   const SymptomFormSheet({
     super.key,
@@ -48,7 +48,7 @@ class SymptomFormSheet extends StatefulWidget {
   State<SymptomFormSheet> createState() => _SymptomFormSheetState();
 }
 
-/// Discrete [Slider]: one stop for “not set”, then one per enum value.
+/// Discrete [Slider]: one stop for "not set", then one per enum value.
 class _DiscreteSymptomSlider extends StatelessWidget {
   const _DiscreteSymptomSlider({
     required this.title,
@@ -113,7 +113,6 @@ class _DiscreteSymptomSlider extends StatelessWidget {
 class _SymptomFormSheetState extends State<SymptomFormSheet> {
   late final SymptomFormViewModel _vm;
   late final TextEditingController _notesController;
-  late final TextEditingController _personalNotesController;
 
   @override
   void initState() {
@@ -126,16 +125,11 @@ class _SymptomFormSheetState extends State<SymptomFormSheet> {
     );
     _notesController = TextEditingController(text: _vm.notes)
       ..addListener(() => _vm.setNotes(_notesController.text));
-    _personalNotesController = TextEditingController(text: _vm.personalNotes)
-      ..addListener(
-        () => _vm.setPersonalNotes(_personalNotesController.text),
-      );
   }
 
   @override
   void dispose() {
     _notesController.dispose();
-    _personalNotesController.dispose();
     _vm.dispose();
     super.dispose();
   }
@@ -212,16 +206,6 @@ class _SymptomFormSheetState extends State<SymptomFormSheet> {
                 ),
                 maxLines: 3,
               ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _personalNotesController,
-                decoration: InputDecoration(
-                  labelText: l10n.symptomPersonalNotesLabel,
-                  helperText: l10n.symptomPersonalNotesHelper,
-                  alignLabelWithHint: true,
-                ),
-                maxLines: 4,
-              ),
               if (_vm.errorText != null) ...[
                 const SizedBox(height: 8),
                 Text(
@@ -277,8 +261,8 @@ Future<void> showSymptomFormSheet(
   required DateTime day,
   required int periodId,
   StoredDayEntry? existing,
-}) {
-  return showModalBottomSheet<void>(
+}) async {
+  await showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     showDragHandle: true,

@@ -32,7 +32,6 @@ void main() {
     expect(vm.painScore, isNull);
     expect(vm.mood, isNull);
     expect(vm.notes, '');
-    expect(vm.personalNotes, '');
     expect(vm.isEditing, isFalse);
     expect(vm.isSaving, isFalse);
     vm.dispose();
@@ -48,7 +47,6 @@ void main() {
         painScore: PainScore.mild,
         mood: Mood.good,
         notes: 'hello',
-        personalNotes: 'secret',
       ),
     );
     final vm = SymptomFormViewModel(
@@ -61,7 +59,6 @@ void main() {
     expect(vm.painScore, PainScore.mild);
     expect(vm.mood, Mood.good);
     expect(vm.notes, 'hello');
-    expect(vm.personalNotes, 'secret');
     expect(vm.isEditing, isTrue);
     vm.dispose();
   });
@@ -82,9 +79,7 @@ void main() {
     expect(vm.mood, Mood.neutral);
     vm.setNotes('n');
     expect(vm.notes, 'n');
-    vm.setPersonalNotes('p');
-    expect(vm.personalNotes, 'p');
-    expect(count, 5);
+    expect(count, 4);
     vm.dispose();
   });
 
@@ -110,7 +105,6 @@ void main() {
     expect(captured.painScore, PainScore.none);
     expect(captured.mood, Mood.bad);
     expect(captured.notes, 'x');
-    expect(captured.personalNotes, isNull);
     verifyNever(() => mockRepo.updateDayEntry(any(), any()));
     vm.dispose();
   });

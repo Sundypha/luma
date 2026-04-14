@@ -20,14 +20,16 @@ Future<List<StoredPeriodWithDays>> _expectedWatchSnapshotFromDb(
           ..where((t) => t.periodId.equals(r.id))
           ..orderBy([(t) => OrderingTerm.asc(t.dateUtc)]))
         .get();
-    final days = [
-      for (final d in dayRows)
+    final days = <StoredDayEntry>[];
+    for (final d in dayRows) {
+      days.add(
         StoredDayEntry(
           id: d.id,
           periodId: d.periodId,
           data: dayEntryRowToDomain(d),
         ),
-    ];
+      );
+    }
     result.add(
       StoredPeriodWithDays(
         period: StoredPeriod(id: r.id, span: periodRowToDomain(r)),
@@ -324,7 +326,12 @@ void main() {
           dateUtc: DateTime.utc(2024, 11, 2),
           flowIntensity: FlowIntensity.light,
           notes: 'clinical',
-          personalNotes: 'keep me',
+        ),
+      );
+      await DiaryRepository(database: db).saveEntry(
+        DiaryEntryData(
+          dateUtc: DateTime.utc(2024, 11, 2),
+          notes: 'keep me',
         ),
       );
       final ok = await repo.clearClinicalSymptoms(id);
@@ -335,7 +342,9 @@ void main() {
       expect(row.id, id);
       expect(row.flowIntensity, isNull);
       expect(row.notes, isNull);
-      expect(row.personalNotes, 'keep me');
+      final diary = await db.select(db.diaryEntries).get();
+      expect(diary, hasLength(1));
+      expect(diary.single.notes, 'keep me');
       await db.close();
     });
 

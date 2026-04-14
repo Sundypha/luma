@@ -29,6 +29,7 @@ Future<void> main() async {
   final db = openPtrackDatabase();
   final calendar = calendarForDevice();
   final repository = PeriodRepository(database: db, calendar: calendar);
+  final diaryRepository = DiaryRepository(database: db);
   final periods = await repository.listOrderedByStartUtc();
   final periodsWithDays = await repository.watchPeriodsWithDays().first;
 
@@ -45,6 +46,7 @@ Future<void> main() async {
     LumaApp(
       onboardingState: onboardingState,
       repository: repository,
+      diaryRepository: diaryRepository,
       database: db,
       calendar: calendar,
       initialScreen: initialScreen,
@@ -78,6 +80,7 @@ class LumaApp extends StatefulWidget {
     super.key,
     this.onboardingState,
     this.repository,
+    this.diaryRepository,
     this.database,
     this.calendar,
     this.initialScreen,
@@ -91,6 +94,7 @@ class LumaApp extends StatefulWidget {
           homeOverride != null ||
               (onboardingState != null &&
                   repository != null &&
+                  diaryRepository != null &&
                   database != null &&
                   calendar != null &&
                   initialScreen != null &&
@@ -102,6 +106,7 @@ class LumaApp extends StatefulWidget {
 
   final OnboardingState? onboardingState;
   final PeriodRepository? repository;
+  final DiaryRepository? diaryRepository;
   final PtrackDatabase? database;
   final PeriodCalendarContext? calendar;
   final AppScreen? initialScreen;
@@ -242,6 +247,7 @@ class _LumaAppState extends State<LumaApp> {
           child: TabShell(
             repository: repository,
             calendar: calendar,
+            diaryRepository: widget.diaryRepository!,
             lockService: widget.lockService!,
             onReset: () {
               _resetApp();

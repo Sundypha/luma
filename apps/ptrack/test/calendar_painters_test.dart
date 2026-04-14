@@ -63,9 +63,12 @@ void main() {
             child: SizedBox(
               width: 48,
               height: 56,
-              child: buildCalendarDayCell(
-                DateTime(2026, 4, 1),
-                const CalendarDayData(predictionConfidenceTier: 2),
+              child: Builder(
+                builder: (context) => buildCalendarDayCell(
+                  context,
+                  DateTime(2026, 4, 1),
+                  const CalendarDayData(predictionConfidenceTier: 2),
+                ),
               ),
             ),
           ),
@@ -91,10 +94,13 @@ void main() {
             child: SizedBox(
               width: 48,
               height: 56,
-              child: buildCalendarDayCell(
-                DateTime(2026, 4, 1),
-                const CalendarDayData(
-                  isFertileDay: true,
+              child: Builder(
+                builder: (context) => buildCalendarDayCell(
+                  context,
+                  DateTime(2026, 4, 1),
+                  const CalendarDayData(
+                    isFertileDay: true,
+                  ),
                 ),
               ),
             ),
@@ -122,9 +128,12 @@ void main() {
             child: SizedBox(
               width: 48,
               height: 56,
-              child: buildCalendarDayCell(
-                DateTime(2026, 4, 1),
-                const CalendarDayData(predictionConfidenceTier: 0),
+              child: Builder(
+                builder: (context) => buildCalendarDayCell(
+                  context,
+                  DateTime(2026, 4, 1),
+                  const CalendarDayData(predictionConfidenceTier: 0),
+                ),
               ),
             ),
           ),
@@ -153,5 +162,6 @@ void main() {
     expect(find.text('1 method'), findsOneWidget);
     expect(find.text('2 methods'), findsOneWidget);
     expect(find.text('3+ methods'), findsOneWidget);
+    expect(find.text('Diary entry'), findsOneWidget);
   });
 }

@@ -53,12 +53,18 @@ void main() {
             periodId: p2,
             dateUtc: DateTime.utc(2024, 2, 2),
             flowIntensity: const Value(1),
-            personalNotes: const Value('private diary line'),
+          ),
+        );
+    await db.into(db.diaryEntries).insert(
+          DiaryEntriesCompanion.insert(
+            dateUtc: DateTime.utc(2024, 2, 2),
+            notes: const Value('private diary line'),
           ),
         );
   }
 
-  test('everything options produces JSON with periods and day entries', () async {
+  test('everything options produces JSON with periods, day entries, and diary',
+      () async {
     await seedTwoPeriodsWithDays();
     final service = ExportService(db);
     final result = await service.exportData(
@@ -73,17 +79,17 @@ void main() {
       'periods',
       'symptoms',
       'notes',
-      'personal_notes',
+      'diary',
     ]);
+    expect(meta['format_version'], 2);
+    final diaryExported = data['diary_entries'] as List<dynamic>;
+    expect(diaryExported, hasLength(1));
+    expect(diaryExported.first['notes'], 'private diary line');
     final entries = data['day_entries'] as List<dynamic>;
     final withPersonal = entries.cast<Map<String, dynamic>>().where(
           (e) => e.containsKey('personal_notes'),
         );
-    expect(withPersonal, isNotEmpty);
-    expect(
-      withPersonal.first['personal_notes'],
-      'private diary line',
-    );
+    expect(withPersonal, isEmpty);
   });
 
   test('periods only produces periods without day_entries', () async {
@@ -144,11 +150,11 @@ void main() {
       options: ExportOptions.everything(),
       onProgress: (c, t) => calls.add([c, t]),
     );
-    expect(calls.last, [5, 5]);
-    expect(calls.length, 5);
+    expect(calls.last, [6, 6]);
+    expect(calls.length, 6);
     for (final c in calls) {
       expect(c[0], lessThanOrEqualTo(c[1]));
-      expect(c[1], 5);
+      expect(c[1], 6);
     }
   });
 
@@ -162,12 +168,12 @@ void main() {
         includePeriods: true,
         includeSymptoms: true,
         includeNotes: false,
+        includeDiary: false,
       ),
     );
     expect(result.meta.contentTypes, [
       'periods',
       'symptoms',
-      'personal_notes',
     ]);
   });
 }

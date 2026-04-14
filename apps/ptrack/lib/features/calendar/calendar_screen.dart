@@ -44,7 +44,7 @@ class CalendarScreen extends StatelessWidget {
   ) {
     final key = DateTime.utc(day.year, day.month, day.day);
     final data = viewModel.dayDataMap[key] ?? const CalendarDayData();
-    return buildCalendarDayCell(day, data);
+    return buildCalendarDayCell(context, day, data);
   }
 
   Widget _buildCalendar(BuildContext context) {
@@ -86,31 +86,28 @@ class CalendarScreen extends StatelessWidget {
             startingDayOfWeek: _startingDayOfWeekFor(context),
           ),
         ),
-        if ((viewModel.ensembleResult?.activeAlgorithmCount ?? 0) > 0 ||
-            viewModel.fertilityEnabled) ...[
-          Padding(
-            padding: const EdgeInsets.only(top: 4, bottom: 2),
-            child: buildConfidenceLegend(
-              context,
-              showFertilityLegend: viewModel.fertilityEnabled,
-              showPredictionTierLegend:
-                  (viewModel.ensembleResult?.activeAlgorithmCount ?? 0) > 0,
-            ),
+        Padding(
+          padding: const EdgeInsets.only(top: 4, bottom: 2),
+          child: buildConfidenceLegend(
+            context,
+            showFertilityLegend: viewModel.fertilityEnabled,
+            showPredictionTierLegend:
+                (viewModel.ensembleResult?.activeAlgorithmCount ?? 0) > 0,
           ),
-          if (_hasMultiCyclePredictions &&
-              (viewModel.ensembleResult?.activeAlgorithmCount ?? 0) > 0)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 6),
-              child: Text(
-                l10n.calendarLegendHatching,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: onVariant,
-                  fontStyle: FontStyle.italic,
-                ),
+        ),
+        if (_hasMultiCyclePredictions &&
+            (viewModel.ensembleResult?.activeAlgorithmCount ?? 0) > 0)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 6),
+            child: Text(
+              l10n.calendarLegendHatching,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: onVariant,
+                fontStyle: FontStyle.italic,
               ),
             ),
-        ],
+          ),
         if (viewModel.showTodayButton)
           Center(
             child: TextButton.icon(

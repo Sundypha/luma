@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_domain/ptrack_domain.dart';
 
-/// Form state for [SymptomFormSheet] (flow, pain, mood, notes only).
+/// Form state for [SymptomFormSheet] (flow, pain, mood, clinical notes).
 class SymptomFormViewModel extends ChangeNotifier {
   SymptomFormViewModel({
     required PeriodRepository repository,
@@ -20,7 +20,6 @@ class SymptomFormViewModel extends ChangeNotifier {
       _painScore = d.painScore;
       _mood = d.mood;
       _notes = d.notes ?? '';
-      _personalNotes = d.personalNotes ?? '';
     }
   }
 
@@ -33,7 +32,6 @@ class SymptomFormViewModel extends ChangeNotifier {
   PainScore? _painScore;
   Mood? _mood;
   String _notes = '';
-  String _personalNotes = '';
   bool _isSaving = false;
   String? _errorText;
 
@@ -41,7 +39,6 @@ class SymptomFormViewModel extends ChangeNotifier {
   PainScore? get painScore => _painScore;
   Mood? get mood => _mood;
   String get notes => _notes;
-  String get personalNotes => _personalNotes;
   bool get isSaving => _isSaving;
   String? get errorText => _errorText;
   bool get isEditing => _existing != null;
@@ -66,11 +63,6 @@ class SymptomFormViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setPersonalNotes(String v) {
-    _personalNotes = v;
-    notifyListeners();
-  }
-
   Future<bool> save() async {
     _isSaving = true;
     _errorText = null;
@@ -82,8 +74,6 @@ class SymptomFormViewModel extends ChangeNotifier {
         painScore: _painScore,
         mood: _mood,
         notes: _notes.trim().isEmpty ? null : _notes.trim(),
-        personalNotes:
-            _personalNotes.trim().isEmpty ? null : _personalNotes.trim(),
       );
       final existing = _existing;
       if (existing != null) {

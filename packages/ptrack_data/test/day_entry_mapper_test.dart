@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 import 'package:ptrack_data/src/db/ptrack_database.dart';
@@ -18,7 +19,6 @@ void main() {
         painScore: PainScore.severe.dbValue,
         mood: Mood.veryGood.dbValue,
         notes: 'note',
-        personalNotes: 'diary',
       );
       final d = dayEntryRowToDomain(row);
       expect(d.dateUtc, row.dateUtc);
@@ -26,7 +26,6 @@ void main() {
       expect(d.painScore, PainScore.severe);
       expect(d.mood, Mood.veryGood);
       expect(d.notes, 'note');
-      expect(d.personalNotes, 'diary');
     });
 
     test('dayEntryRowToDomain maps null optional columns', () {
@@ -86,14 +85,23 @@ void main() {
           painScore: PainScore.moderate,
           mood: Mood.neutral,
           notes: 'x',
-          personalNotes: 'p',
         );
         await db.into(db.dayEntries).insert(
               dayEntryDataToInsertCompanion(periodId, data),
             );
+        await db.into(db.diaryEntries).insert(
+              DiaryEntriesCompanion.insert(
+                dateUtc: DateTime.utc(2024, 8, 2),
+                mood: Value(data.mood?.dbValue),
+                notes: const Value('p'),
+              ),
+            );
         final rows = await db.select(db.dayEntries).get();
         expect(rows, hasLength(1));
+        final diary = await db.select(db.diaryEntries).get();
+        expect(diary, hasLength(1));
         expect(dayEntryRowToDomain(rows.single), data);
+        expect(diary.single.notes, 'p');
       } finally {
         await db.close();
       }

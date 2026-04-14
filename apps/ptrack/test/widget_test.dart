@@ -13,6 +13,8 @@ import 'package:timezone/data/latest.dart' as tzdata;
 
 class MockPeriodRepository extends Mock implements PeriodRepository {}
 
+class MockDiaryRepository extends Mock implements DiaryRepository {}
+
 class MockFlutterSecureStorage extends Mock implements FlutterSecureStorage {}
 
 class MockLocalAuthentication extends Mock implements LocalAuthentication {}
@@ -22,12 +24,14 @@ void main() {
   tzdata.initializeTimeZones();
 
   late MockPeriodRepository mockRepo;
+  late MockDiaryRepository mockDiary;
   late MockFlutterSecureStorage mockStorage;
   late MockLocalAuthentication mockAuth;
   late PeriodCalendarContext calendar;
 
   setUp(() {
     mockRepo = MockPeriodRepository();
+    mockDiary = MockDiaryRepository();
     mockStorage = MockFlutterSecureStorage();
     mockAuth = MockLocalAuthentication();
     calendar = PeriodCalendarContext.fromTimeZoneName('UTC');
@@ -37,6 +41,23 @@ void main() {
     when(() => mockRepo.watchPeriodsWithDays()).thenAnswer(
       (_) => Stream<List<StoredPeriodWithDays>>.value(const []),
     );
+    when(() => mockDiary.watchAllEntries()).thenAnswer(
+      (_) => Stream<List<StoredDiaryEntry>>.value(const []),
+    );
+    when(() => mockDiary.seedStarterTags()).thenAnswer((_) async {});
+    when(() => mockDiary.watchEntryCount()).thenAnswer(
+      (_) => Stream<int>.value(0),
+    );
+    when(
+      () => mockDiary.getEntriesPage(
+        offset: any(named: 'offset'),
+        limit: any(named: 'limit'),
+      ),
+    ).thenAnswer((_) async => <StoredDiaryEntry>[]);
+    when(() => mockDiary.watchTags()).thenAnswer(
+      (_) => Stream<List<DiaryTag>>.value(const []),
+    );
+    when(() => mockDiary.getEntryForDate(any())).thenAnswer((_) async => null);
   });
 
   Future<LockService> lockServiceForTest() async {
@@ -57,6 +78,7 @@ void main() {
         home: TabShell(
           repository: mockRepo,
           calendar: calendar,
+          diaryRepository: mockDiary,
           lockService: lockService,
           onReset: () {},
           onLockNow: () {},
@@ -71,6 +93,7 @@ void main() {
     );
     expect(find.text('Home'), findsWidgets);
     expect(find.text('Calendar'), findsWidgets);
+    expect(find.text('Diary'), findsWidgets);
   });
 
   testWidgets('About opens from drawer', (tester) async {
@@ -82,6 +105,7 @@ void main() {
         home: TabShell(
           repository: mockRepo,
           calendar: calendar,
+          diaryRepository: mockDiary,
           lockService: lockService,
           onReset: () {},
           onLockNow: () {},

@@ -79,6 +79,15 @@ void main() {
       );
     });
 
+    test('format_version=1 is accepted for import', () {
+      final map = {
+        'meta': _validMetaJson(formatVersion: 1),
+        'data': <String, dynamic>{},
+      };
+      final meta = service.parseFileMeta(_utf8Bytes(jsonEncode(map)));
+      expect(meta.formatVersion, 1);
+    });
+
     test('format_version=99 throws LumaVersionException with descriptive message',
         () {
       final map = {
@@ -464,7 +473,7 @@ void main() {
     test('applyImport writes personal_notes on day entry', () async {
       final data = LumaExportData(
         meta: LumaExportMeta(
-          formatVersion: lumaFormatVersion,
+          formatVersion: 1,
           schemaVersion: ptrackSupportedSchemaVersion,
           appVersion: 't',
           exportedAt: DateTime.utc(2024, 6, 1),
@@ -494,8 +503,9 @@ void main() {
       );
       expect(r.entriesCreated, 1);
       final row = await (db.select(db.dayEntries)).getSingle();
-      expect(row.personalNotes, 'diary only');
       expect(row.flowIntensity, isNull);
+      final diary = await (db.select(db.diaryEntries)).getSingle();
+      expect(diary.notes, 'diary only');
     });
 
     test('export then applyImport round-trip on empty target DB', () async {
@@ -534,5 +544,116 @@ void main() {
         }
       }
     });
+  });
+
+  group('backward compatibility', () {
+    late Directory supportRoot;
+    late PtrackDatabase db;
+    late ImportService importService;
+
+    setUp(() async {
+      supportRoot = await Directory.systemTemp.createTemp('import_v1_diary_');
+      db = PtrackDatabase(NativeDatabase.memory());
+      importService = ImportService(
+        db,
+        calendar: utcCalendar,
+        backupService: BackupService(
+          db,
+          applicationSupportDirectory: () async => supportRoot,
+        ),
+      );
+    });
+
+    tearDown(() async {
+      await db.close();
+      if (await supportRoot.exists()) {
+        await supportRoot.delete(recursive: true);
+      }
+    });
+
+    test('imports personal_notes from v1 day_entries into diary_entries',
+        () async {
+      final v1Data = LumaExportData(
+        meta: LumaExportMeta(
+          formatVersion: 1,
+          schemaVersion: ptrackSupportedSchemaVersion,
+          appVersion: 't',
+          exportedAt: DateTime.utc(2024, 6, 1),
+          encrypted: false,
+          contentTypes: const ['periods'],
+        ),
+        periods: [
+          ExportedPeriod(
+            refId: 1,
+            startUtc: DateTime.utc(2024, 1, 1).toIso8601String(),
+            endUtc: DateTime.utc(2024, 1, 10).toIso8601String(),
+          ),
+        ],
+        dayEntries: [
+          ExportedDayEntry(
+            periodRefId: 1,
+            dateUtc: '2024-01-15T00:00:00.000Z',
+            personalNotes: 'My old diary note',
+            personalNotesIncludedInExport: true,
+          ),
+        ],
+        diaryEntries: null,
+      );
+
+      await importService.applyImport(
+        data: v1Data,
+        strategy: DuplicateStrategy.replace,
+      );
+
+      final rows = await db.select(db.diaryEntries).get();
+      expect(rows, hasLength(1));
+      expect(rows.first.notes, 'My old diary note');
+      expect(rows.first.dateUtc.toUtc(), DateTime.utc(2024, 1, 15));
+    });
+
+    test(
+        'format_version 2 with legacy personal_notes on day_entries still '
+        'migrates into diary_entries',
+        () async {
+      final data = LumaExportData(
+        meta: LumaExportMeta(
+          formatVersion: lumaFormatVersion,
+          schemaVersion: ptrackSupportedSchemaVersion,
+          appVersion: 't',
+          exportedAt: DateTime.utc(2024, 6, 1),
+          encrypted: false,
+          contentTypes: const ['periods'],
+        ),
+        periods: [
+          ExportedPeriod(
+            refId: 1,
+            startUtc: DateTime.utc(2024, 1, 1).toIso8601String(),
+            endUtc: DateTime.utc(2024, 1, 10).toIso8601String(),
+          ),
+        ],
+        dayEntries: [
+          ExportedDayEntry(
+            periodRefId: 1,
+            dateUtc: '2024-01-15T00:00:00.000Z',
+            mood: 3,
+            personalNotes: 'Legacy field on v2-shaped file',
+            personalNotesIncludedInExport: true,
+          ),
+        ],
+        diaryEntries: null,
+      );
+
+      await importService.applyImport(
+        data: data,
+        strategy: DuplicateStrategy.replace,
+      );
+
+      final rows = await db.select(db.diaryEntries).get();
+      expect(rows, hasLength(1));
+      expect(rows.first.notes, 'Legacy field on v2-shaped file');
+      expect(rows.first.mood, 3);
+      expect(rows.first.dateUtc.toUtc(), DateTime.utc(2024, 1, 15));
+    });
+
   });
 }

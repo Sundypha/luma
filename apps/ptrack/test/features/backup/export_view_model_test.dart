@@ -14,6 +14,7 @@ void main() {
       expect(vm.includePeriods, isTrue);
       expect(vm.includeSymptoms, isTrue);
       expect(vm.includeNotes, isTrue);
+      expect(vm.includeDiary, isTrue);
     });
 
     test('preset periodsOnly sets only periods true', () {
@@ -23,6 +24,7 @@ void main() {
       expect(vm.includePeriods, isTrue);
       expect(vm.includeSymptoms, isFalse);
       expect(vm.includeNotes, isFalse);
+      expect(vm.includeDiary, isFalse);
     });
 
     test('toggleSymptoms flips the value and notifies', () {
@@ -69,7 +71,8 @@ void main() {
       final vm = ExportViewModel()
         ..togglePeriods()
         ..toggleSymptoms()
-        ..toggleNotes();
+        ..toggleNotes()
+        ..toggleDiary();
       expect(vm.hasContentSelection, isFalse);
       vm.nextStep();
       expect(vm.step, ExportStep.selectContent);

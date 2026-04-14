@@ -37,6 +37,7 @@ class CalendarDayData {
     this.predictionAgreementCount = 0,
     this.predictionCycleIndex = 0,
     this.hasLoggedData = false,
+    this.hasDiaryEntry = false,
     this.isToday = false,
     this.isFertileDay = false,
   });
@@ -56,6 +57,10 @@ class CalendarDayData {
   bool get isPredictedPeriod => predictionConfidenceTier > 0;
 
   final bool hasLoggedData;
+
+  /// True when a standalone diary row exists for this UTC calendar day.
+  final bool hasDiaryEntry;
+
   final bool isToday;
 
   /// Estimated fertile window day (opt-in); never true on logged bleeding days.
@@ -153,6 +158,7 @@ Map<DateTime, CalendarDayData> buildCalendarDayDataMap({
   PredictionDisplayMode displayMode = PredictionDisplayMode.consensusOnly,
   PredictionResult? prediction,
   Set<DateTime>? fertileDays,
+  Set<DateTime> diaryDates = const {},
 }) {
   assert(
     (ensemble != null) ^ (prediction != null),
@@ -239,6 +245,7 @@ Map<DateTime, CalendarDayData> buildCalendarDayDataMap({
     ...loggedDataDays,
     todayNorm,
     if (fertileDays != null) ...fertileDays,
+    ...diaryDates,
   };
 
   return {
@@ -249,6 +256,7 @@ Map<DateTime, CalendarDayData> buildCalendarDayDataMap({
         predictionAgreementCount: predictionMeta[day]?.agreementCount ?? 0,
         predictionCycleIndex: predictionMeta[day]?.cycleIndex ?? 0,
         hasLoggedData: loggedDataDays.contains(day),
+        hasDiaryEntry: diaryDates.contains(day),
         isToday: day == todayNorm,
         isFertileDay: (fertileDays?.contains(day) ?? false) &&
             !loggedBleedingCoversCalendarDay(day, periodsWithDays, today),

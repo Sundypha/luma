@@ -318,6 +318,9 @@ class AppLocalizationsDe extends AppLocalizations {
       'Hellere Schraffur = weiter weg, unsicherer';
 
   @override
+  String get calendarLegendDiaryEntry => 'Tagebucheintrag';
+
+  @override
   String get calendarToday => 'Heute';
 
   @override
@@ -330,6 +333,33 @@ class AppLocalizationsDe extends AppLocalizations {
   String get navCalendar => 'Kalender';
 
   @override
+  String get navDiary => 'Tagebuch';
+
+  @override
+  String get diaryListSearchHint => 'Notizen durchsuchen';
+
+  @override
+  String get diaryListNoMatches => 'Keine Einträge entsprechen Ihren Filtern.';
+
+  @override
+  String get diaryListEmptyHint =>
+      'Noch keine Tagebucheinträge. Tippen Sie auf +, um den ersten Eintrag hinzuzufügen.';
+
+  @override
+  String get diaryFilterIconTooltip => 'Nach Datumsbereich filtern';
+
+  @override
+  String diaryDateFilterActive(String start, String end) {
+    return 'Datum: $start – $end';
+  }
+
+  @override
+  String get settingsMenuDiaryTagsTitle => 'Tagebuch-Tags';
+
+  @override
+  String get settingsMenuDiaryTagsSubtitle => 'Ihre Tag-Liste verwalten';
+
+  @override
   String get drawerSettingsLabel => 'Einstellungen';
 
   @override
@@ -340,6 +370,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get todaySectionTitle => 'Heute';
+
+  @override
+  String get homeDiaryNewEntry => 'Tagebucheintrag schreiben';
+
+  @override
+  String get homeDiaryEditEntry => 'Heutigen Tagebucheintrag bearbeiten';
 
   @override
   String get todayUnmarkedBody =>
@@ -577,6 +613,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get exportToggleNotes => 'Notizen';
 
   @override
+  String get exportToggleDiary => 'Tagebuch';
+
+  @override
   String get exportNext => 'Weiter';
 
   @override
@@ -794,6 +833,80 @@ class AppLocalizationsDe extends AppLocalizations {
   String get commonRemove => 'Entfernen';
 
   @override
+  String get diaryNotesLabel => 'Persönliche Notizen';
+
+  @override
+  String get diaryMoodLabel => 'Stimmung';
+
+  @override
+  String get diaryTagsLabel => 'Tags';
+
+  @override
+  String get diaryAddTagLabel => 'Tag hinzufügen…';
+
+  @override
+  String get diaryFormTitleNew => 'Neuer Tagebucheintrag';
+
+  @override
+  String get diaryFormTitleEdit => 'Tagebucheintrag bearbeiten';
+
+  @override
+  String get diaryDeleteEntryTitle => 'Tagebucheintrag löschen?';
+
+  @override
+  String diaryDeleteEntryBody(String date) {
+    return 'Der Tagebucheintrag für $date wird dauerhaft gelöscht.';
+  }
+
+  @override
+  String get diaryTagsSettingsTitle => 'Tagebuch-Tags';
+
+  @override
+  String get diaryTagsEmptyState =>
+      'Noch keine Tags. Fügen Sie unten Ihren ersten Tag hinzu.';
+
+  @override
+  String get diaryTagsAddLabel => 'Neuer Tag-Name';
+
+  @override
+  String get diaryTagsAddButton => 'Hinzufügen';
+
+  @override
+  String get diaryTagsDeleteTitle => 'Tag entfernen?';
+
+  @override
+  String diaryTagsDeleteBodyWithCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Einträgen',
+      one: 'Eintrag',
+    );
+    return 'Dieser Tag wird in $count $_temp0 verwendet. Die Einträge bleiben erhalten.';
+  }
+
+  @override
+  String get diaryTagsDeleteBodyEmpty => 'Dieser Tag hat keine Einträge.';
+
+  @override
+  String get diaryTagsAddedSnackbar => 'Tag hinzugefügt';
+
+  @override
+  String get diaryTagsDeletedSnackbar => 'Tag entfernt';
+
+  @override
+  String get diaryTagsRenameTitle => 'Tag umbenennen';
+
+  @override
+  String get diaryTagsRenameConfirm => 'Umbenennen';
+
+  @override
+  String get diaryTagsErrorEmpty => 'Bitte einen Tag-Namen eingeben.';
+
+  @override
+  String get diaryTagsErrorDuplicate => 'Dieser Tag existiert bereits.';
+
+  @override
   String get symptomFormTitleAdd => 'Symptome hinzufügen';
 
   @override
@@ -813,12 +926,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get symptomNotesHelper => 'Wird im PDF-Export einbezogen.';
-
-  @override
-  String get symptomPersonalNotesLabel => 'Persönliche Notizen';
-
-  @override
-  String get symptomPersonalNotesHelper => 'Privat. Nicht im PDF-Export.';
 
   @override
   String get symptomNotSet => 'Nicht gesetzt';
@@ -895,6 +1002,21 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get dayDetailClearSymptoms => 'Symptome löschen';
+
+  @override
+  String get dayDetailEditDiaryEntry => 'Tagebucheintrag bearbeiten';
+
+  @override
+  String get dayDetailAddDiaryEntry => 'Tagebucheintrag hinzufügen';
+
+  @override
+  String get dayDetailSymptomMoodLabel => 'Symptomstimmung';
+
+  @override
+  String get dayDetailDiaryMoodLabel => 'Tagebuchstimmung';
+
+  @override
+  String get dayDetailEditPeriodRecord => 'Periodenprotokoll bearbeiten';
 
   @override
   String get firstLogAppBarTitle => 'Erste Periode eintragen';

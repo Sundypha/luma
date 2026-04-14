@@ -5,6 +5,7 @@ import 'package:ptrack_domain/ptrack_domain.dart';
 import '../../l10n/app_localizations.dart';
 import '../../l10n/logging_localizations.dart';
 import '../../l10n/prediction_localizations.dart';
+import '../diary/diary_form_sheet.dart';
 import '../logging/symptom_form_sheet.dart';
 import 'calendar_day_data.dart';
 import 'calendar_view_model.dart';
@@ -103,6 +104,27 @@ Future<void> _openSymptomFormAfterPop({
       repository: repo,
       day: dayNorm,
       periodId: periodId,
+      existing: existing,
+    );
+  });
+}
+
+Future<void> _openDiaryFormAfterPop({
+  required BuildContext sheetContext,
+  required CalendarViewModel viewModel,
+  required DateTime dayNorm,
+  StoredDiaryEntry? existing,
+}) async {
+  final nav = Navigator.of(sheetContext);
+  final overlay = nav.overlay;
+  nav.pop();
+  if (overlay == null) return;
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (!overlay.context.mounted) return;
+    showDiaryFormSheet(
+      overlay.context,
+      diaryRepository: viewModel.diaryRepository,
+      day: dayNorm,
       existing: existing,
     );
   });
@@ -334,36 +356,386 @@ class DayDetailSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildPredictedPastOrToday(
+  String _moodDisplay(AppLocalizations l10n, Mood? mood) {
+    if (mood == null) return l10n.commonNotAvailable;
+    return '${mood.emoji} ${LoggingLocalizations.moodLabel(l10n, mood)}';
+  }
+
+  /// Past or today: optional prediction card + period/diary routing hub.
+  Widget _buildPastTodayRoutingHub(
     BuildContext context,
     MaterialLocalizations loc,
     AppLocalizations l10n,
     DateTime dayNorm,
     CalendarDayData dayData,
-  ) {
+    StoredPeriodWithDays? pwd,
+    StoredDayEntry? entry,
+    StoredDiaryEntry? diary, {
+      required bool showPrediction,
+    }) {
+    final todayNorm = _utcMidnight(DateTime.now());
+    final isOnPeriod = dayData.loggedPeriodState != PeriodDayState.none;
+    final hasPeriod = pwd != null && isOnPeriod;
+    final hasDiary = diary != null;
+    final periodDay =
+        pwd != null ? _periodDayNumber(pwd.period, dayNorm, todayNorm) : null;
+
+    final children = <Widget>[
+      Text(
+        loc.formatFullDate(_localCalendarDate(dayNorm)),
+        style: Theme.of(context).textTheme.titleLarge,
+      ),
+      if (periodDay != null) ...[
+        const SizedBox(height: 4),
+        Text(
+          l10n.homePeriodDay(periodDay),
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+        ),
+      ],
+      ..._fertilityDetailNote(context, l10n, dayData),
+      if (showPrediction) ...[
+        const SizedBox(height: 16),
+        _predictionCard(
+          context,
+          dayData: dayData,
+          ensemble: viewModel.ensembleResult,
+          dayNormUtc: dayNorm,
+        ),
+      ],
+      const SizedBox(height: 16),
+    ];
+
+    if (hasPeriod && hasDiary) {
+      final StoredDiaryEntry dEntry = diary;
+      final e = entry;
+      final d = dEntry.data;
+      if (e != null) {
+        final data = e.data;
+        children.addAll([
+          _chipRow(
+            context,
+            l10n.symptomSectionFlow,
+            data.flowIntensity != null
+                ? LoggingLocalizations.flowLabel(l10n, data.flowIntensity!)
+                : l10n.commonNotAvailable,
+          ),
+          _chipRow(
+            context,
+            l10n.symptomSectionPain,
+            data.painScore != null
+                ? LoggingLocalizations.painLabel(l10n, data.painScore!)
+                : l10n.commonNotAvailable,
+          ),
+          _chipRow(
+            context,
+            l10n.dayDetailSymptomMoodLabel,
+            _moodDisplay(l10n, data.mood),
+          ),
+          _chipRow(
+            context,
+            l10n.dayDetailDiaryMoodLabel,
+            _moodDisplay(l10n, d.mood),
+          ),
+          Text(
+            l10n.symptomNotesLabel,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            (data.notes != null && data.notes!.isNotEmpty)
+                ? data.notes!
+                : l10n.commonNotAvailable,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            l10n.diaryNotesLabel,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            (d.notes != null && d.notes!.isNotEmpty)
+                ? d.notes!
+                : l10n.commonNotAvailable,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ]);
+      } else {
+        children.addAll([
+          Text(
+            l10n.dayDetailNoSymptoms,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+          ),
+          const SizedBox(height: 12),
+          _chipRow(
+            context,
+            l10n.dayDetailDiaryMoodLabel,
+            _moodDisplay(l10n, d.mood),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            l10n.diaryNotesLabel,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            (d.notes != null && d.notes!.isNotEmpty)
+                ? d.notes!
+                : l10n.commonNotAvailable,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ]);
+      }
+      if (dEntry.tags.isNotEmpty) {
+        children.add(const SizedBox(height: 8));
+        children.add(
+          Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: [
+              for (final t in dEntry.tags)
+                Chip(
+                  label: Text(t.name),
+                  visualDensity: VisualDensity.compact,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+            ],
+          ),
+        );
+      }
+    } else if (hasPeriod && !hasDiary) {
+      final e = entry;
+      if (e != null) {
+        final data = e.data;
+        children.addAll([
+          _chipRow(
+            context,
+            l10n.symptomSectionFlow,
+            data.flowIntensity != null
+                ? LoggingLocalizations.flowLabel(l10n, data.flowIntensity!)
+                : l10n.commonNotAvailable,
+          ),
+          _chipRow(
+            context,
+            l10n.symptomSectionPain,
+            data.painScore != null
+                ? LoggingLocalizations.painLabel(l10n, data.painScore!)
+                : l10n.commonNotAvailable,
+          ),
+          _chipRow(
+            context,
+            l10n.symptomSectionMood,
+            _moodDisplay(l10n, data.mood),
+          ),
+          Text(
+            l10n.symptomNotesLabel,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            (data.notes != null && data.notes!.isNotEmpty)
+                ? data.notes!
+                : l10n.commonNotAvailable,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ]);
+      } else {
+        children.add(
+          Text(
+            l10n.dayDetailNoSymptoms,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+          ),
+        );
+      }
+    } else if (!hasPeriod && hasDiary) {
+      final StoredDiaryEntry de = diary;
+      final d = de.data;
+      children.addAll([
+        _chipRow(context, l10n.diaryMoodLabel, _moodDisplay(l10n, d.mood)),
+        Text(
+          l10n.diaryNotesLabel,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          (d.notes != null && d.notes!.isNotEmpty)
+              ? d.notes!
+              : l10n.commonNotAvailable,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+      ]);
+      if (de.tags.isNotEmpty) {
+        children.add(const SizedBox(height: 8));
+        children.add(
+          Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: [
+              for (final t in de.tags)
+                Chip(
+                  label: Text(t.name),
+                  visualDensity: VisualDensity.compact,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+            ],
+          ),
+        );
+      }
+    }
+
+    children.add(const SizedBox(height: 24));
+
+    if (hasPeriod && hasDiary) {
+      children.addAll([
+        FilledButton(
+          onPressed: () => _openSymptomFormAfterPop(
+            sheetContext: context,
+            viewModel: viewModel,
+            dayNorm: dayNorm,
+            periodId: pwd.period.id,
+            existing: entry,
+          ),
+          child: Text(l10n.dayDetailEditPeriodRecord),
+        ),
+        const SizedBox(height: 8),
+        OutlinedButton(
+          onPressed: () => _openDiaryFormAfterPop(
+            sheetContext: context,
+            viewModel: viewModel,
+            dayNorm: dayNorm,
+            existing: diary,
+          ),
+          child: Text(l10n.dayDetailEditDiaryEntry),
+        ),
+      ]);
+      final e = entry;
+      if (e != null) {
+        children.addAll([
+          const SizedBox(height: 8),
+          TextButton(
+            onPressed: () => _clearSymptoms(context, e.id, l10n),
+            child: Text(l10n.dayDetailClearSymptoms),
+          ),
+          const SizedBox(height: 8),
+          TextButton(
+            onPressed: () => _removeThisDay(context, dayNorm, e, l10n),
+            child: Text(l10n.dayDetailRemoveThisDay),
+          ),
+        ]);
+      } else {
+        children.addAll([
+          const SizedBox(height: 8),
+          TextButton(
+            onPressed: () => _removeThisDay(context, dayNorm, entry, l10n),
+            child: Text(l10n.dayDetailRemoveThisDay),
+          ),
+        ]);
+      }
+      children.addAll([
+        const SizedBox(height: 4),
+        TextButton(
+          onPressed: () =>
+              _confirmDeleteEntirePeriod(context, loc, l10n, pwd.period),
+          style: TextButton.styleFrom(
+            foregroundColor: Theme.of(context).colorScheme.error,
+          ),
+          child: Text(l10n.dayDetailDeleteEntirePeriod),
+        ),
+      ]);
+    } else if (hasPeriod && !hasDiary) {
+      children.addAll([
+        FilledButton(
+          onPressed: () => _openSymptomFormAfterPop(
+            sheetContext: context,
+            viewModel: viewModel,
+            dayNorm: dayNorm,
+            periodId: pwd.period.id,
+            existing: entry,
+          ),
+          child: Text(l10n.dayDetailEditPeriodRecord),
+        ),
+        const SizedBox(height: 8),
+        OutlinedButton(
+          onPressed: () => _openDiaryFormAfterPop(
+            sheetContext: context,
+            viewModel: viewModel,
+            dayNorm: dayNorm,
+            existing: null,
+          ),
+          child: Text(l10n.dayDetailAddDiaryEntry),
+        ),
+        const SizedBox(height: 8),
+        TextButton(
+          onPressed: () => _removeThisDay(context, dayNorm, entry, l10n),
+          child: Text(l10n.dayDetailRemoveThisDay),
+        ),
+        const SizedBox(height: 4),
+        TextButton(
+          onPressed: () =>
+              _confirmDeleteEntirePeriod(context, loc, l10n, pwd.period),
+          style: TextButton.styleFrom(
+            foregroundColor: Theme.of(context).colorScheme.error,
+          ),
+          child: Text(l10n.dayDetailDeleteEntirePeriod),
+        ),
+      ]);
+    } else if (!hasPeriod && hasDiary) {
+      children.addAll([
+        FilledButton(
+          onPressed: () => _markDayAndPop(context, dayNorm, l10n),
+          child: Text(l10n.dayDetailHadPeriod),
+        ),
+        const SizedBox(height: 8),
+        OutlinedButton(
+          onPressed: () => _openDiaryFormAfterPop(
+            sheetContext: context,
+            viewModel: viewModel,
+            dayNorm: dayNorm,
+            existing: diary,
+          ),
+          child: Text(l10n.dayDetailEditDiaryEntry),
+        ),
+      ]);
+    } else {
+      children.addAll([
+        FilledButton(
+          onPressed: () => _markDayAndPop(context, dayNorm, l10n),
+          child: Text(l10n.dayDetailHadPeriod),
+        ),
+        const SizedBox(height: 8),
+        OutlinedButton(
+          onPressed: () => _openDiaryFormAfterPop(
+            sheetContext: context,
+            viewModel: viewModel,
+            dayNorm: dayNorm,
+            existing: null,
+          ),
+          child: Text(l10n.dayDetailAddDiaryEntry),
+        ),
+      ]);
+    }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            loc.formatFullDate(_localCalendarDate(dayNorm)),
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          ..._fertilityDetailNote(context, l10n, dayData),
-          const SizedBox(height: 16),
-          _predictionCard(
-            context,
-            dayData: dayData,
-            ensemble: viewModel.ensembleResult,
-            dayNormUtc: dayNorm,
-          ),
-          const SizedBox(height: 24),
-          FilledButton(
-            onPressed: () => _markDayAndPop(context, dayNorm, l10n),
-            child: Text(l10n.dayDetailHadPeriod),
-          ),
-        ],
+        children: children,
       ),
     );
   }
@@ -397,266 +769,34 @@ class DayDetailSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyPastOrToday(
-    BuildContext context,
-    MaterialLocalizations loc,
-    AppLocalizations l10n,
-    DateTime dayNorm,
-    CalendarDayData dayData,
-  ) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            loc.formatFullDate(_localCalendarDate(dayNorm)),
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          ..._fertilityDetailNote(context, l10n, dayData),
-          const SizedBox(height: 24),
-          FilledButton(
-            onPressed: () => _markDayAndPop(context, dayNorm, l10n),
-            child: Text(l10n.dayDetailHadPeriod),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPeriodNoSymptoms(
-    BuildContext context,
-    MaterialLocalizations loc,
-    AppLocalizations l10n,
-    DateTime dayNorm,
-    CalendarDayData dayData,
-    StoredPeriodWithDays pwd,
-    StoredDayEntry? entry,
-  ) {
-    final todayNorm = _utcMidnight(DateTime.now());
-    final periodDay = _periodDayNumber(pwd.period, dayNorm, todayNorm);
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            loc.formatFullDate(_localCalendarDate(dayNorm)),
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          if (periodDay != null) ...[
-            const SizedBox(height: 4),
-            Text(
-              l10n.homePeriodDay(periodDay),
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-            ),
-          ],
-          ..._fertilityDetailNote(context, l10n, dayData),
-          const SizedBox(height: 16),
-          Text(
-            l10n.dayDetailNoSymptoms,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-          ),
-          const SizedBox(height: 24),
-          FilledButton(
-            onPressed: () => _openSymptomFormAfterPop(
-              sheetContext: context,
-              viewModel: viewModel,
-              dayNorm: dayNorm,
-              periodId: pwd.period.id,
-            ),
-            child: Text(l10n.dayDetailAddSymptoms),
-          ),
-          const SizedBox(height: 8),
-          TextButton(
-            onPressed: () => _removeThisDay(context, dayNorm, entry, l10n),
-            child: Text(l10n.dayDetailRemoveThisDay),
-          ),
-          const SizedBox(height: 4),
-          TextButton(
-            onPressed: () =>
-                _confirmDeleteEntirePeriod(context, loc, l10n, pwd.period),
-            style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.error,
-            ),
-            child: Text(l10n.dayDetailDeleteEntirePeriod),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPeriodWithSymptoms(
-    BuildContext context,
-    MaterialLocalizations loc,
-    AppLocalizations l10n,
-    DateTime dayNorm,
-    CalendarDayData dayData,
-    StoredPeriodWithDays pwd,
-    StoredDayEntry entry,
-  ) {
-    final todayNorm = _utcMidnight(DateTime.now());
-    final periodDay = _periodDayNumber(pwd.period, dayNorm, todayNorm);
-    final data = entry.data;
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            loc.formatFullDate(_localCalendarDate(dayNorm)),
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          if (periodDay != null) ...[
-            const SizedBox(height: 4),
-            Text(
-              l10n.homePeriodDay(periodDay),
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-            ),
-          ],
-          ..._fertilityDetailNote(context, l10n, dayData),
-          const SizedBox(height: 16),
-          _chipRow(
-            context,
-            l10n.symptomSectionFlow,
-            data.flowIntensity != null
-                ? LoggingLocalizations.flowLabel(l10n, data.flowIntensity!)
-                : l10n.commonNotAvailable,
-          ),
-          _chipRow(
-            context,
-            l10n.symptomSectionPain,
-            data.painScore != null
-                ? LoggingLocalizations.painLabel(l10n, data.painScore!)
-                : l10n.commonNotAvailable,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 120,
-                  child: Text(
-                    l10n.symptomSectionMood,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    data.mood != null
-                        ? '${data.mood!.emoji} ${LoggingLocalizations.moodLabel(l10n, data.mood!)}'
-                        : l10n.commonNotAvailable,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Text(
-            l10n.symptomNotesLabel,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            (data.notes != null && data.notes!.isNotEmpty)
-                ? data.notes!
-                : l10n.commonNotAvailable,
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-          const SizedBox(height: 24),
-          FilledButton(
-            onPressed: () => _openSymptomFormAfterPop(
-              sheetContext: context,
-              viewModel: viewModel,
-              dayNorm: dayNorm,
-              periodId: pwd.period.id,
-              existing: entry,
-            ),
-            child: Text(l10n.dayDetailEdit),
-          ),
-          const SizedBox(height: 8),
-          TextButton(
-            onPressed: () => _clearSymptoms(context, entry.id, l10n),
-            child: Text(l10n.dayDetailClearSymptoms),
-          ),
-          const SizedBox(height: 8),
-          TextButton(
-            onPressed: () => _removeThisDay(context, dayNorm, entry, l10n),
-            child: Text(l10n.dayDetailRemoveThisDay),
-          ),
-          const SizedBox(height: 4),
-          TextButton(
-            onPressed: () =>
-                _confirmDeleteEntirePeriod(context, loc, l10n, pwd.period),
-            style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.error,
-            ),
-            child: Text(l10n.dayDetailDeleteEntirePeriod),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildBody(BuildContext context) {
     final loc = MaterialLocalizations.of(context);
     final l10n = AppLocalizations.of(context);
     final dayNorm = _utcMidnight(selectedDay);
-    final todayNorm = _utcMidnight(DateTime.now());
-    final isFuture = dayNorm.isAfter(todayNorm);
+    final isFuture = dayNorm.isAfter(_utcMidnight(DateTime.now()));
     final dayData = viewModel.dayDataMap[dayNorm] ?? const CalendarDayData();
     final isPredicted = dayData.isPredictedPeriod;
-    final isOnPeriod = dayData.loggedPeriodState != PeriodDayState.none;
-    final hasLoggedData = dayData.hasLoggedData;
     final pwd = _periodCoveringDay(dayNorm, viewModel.periodsWithDays);
     final entry = pwd != null ? _entryForDay(dayNorm, pwd) : null;
+    final diary = viewModel.diaryEntryForDay(dayNorm);
 
     if (isPredicted && isFuture) {
       return _buildPredictedFuture(context, loc, l10n, dayNorm, dayData);
     }
-    if (isPredicted && !isFuture) {
-      return _buildPredictedPastOrToday(context, loc, l10n, dayNorm, dayData);
-    }
-    if (isOnPeriod && hasLoggedData && entry != null && pwd != null) {
-      return _buildPeriodWithSymptoms(
-        context,
-        loc,
-        l10n,
-        dayNorm,
-        dayData,
-        pwd,
-        entry,
-      );
-    }
-    if (isOnPeriod && pwd != null) {
-      return _buildPeriodNoSymptoms(
-        context,
-        loc,
-        l10n,
-        dayNorm,
-        dayData,
-        pwd,
-        entry,
-      );
-    }
     if (isFuture) {
       return _buildEmptyFuture(context, loc, l10n, dayNorm, dayData);
     }
-    return _buildEmptyPastOrToday(context, loc, l10n, dayNorm, dayData);
+    return _buildPastTodayRoutingHub(
+      context,
+      loc,
+      l10n,
+      dayNorm,
+      dayData,
+      pwd,
+      entry,
+      diary,
+      showPrediction: isPredicted,
+    );
   }
 
   @override
