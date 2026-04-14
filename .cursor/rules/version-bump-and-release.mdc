@@ -32,6 +32,10 @@ The script prepends a dated `## [X.Y.Z]` section with empty **Added / Changed / 
 
 After version + changelog edits are ready (and any other release files are included):
 
+**Run analyze locally before push or PR** so obvious analyzer failures are fixed without waiting on CI. From the repo root (FVM per `fvm-dart-flutter.mdc`): run `melos bootstrap` if workspace packages changed, then **`fvm exec melos run ci:analyze`**. That matches the workspace `ci:analyze` script (`melos exec -c 1 -- fvm flutter analyze` per package). CI runs the equivalent `melos exec -c 1 -- flutter analyze` after its Flutter bootstrap.
+
+Then:
+
 1. **Ask** whether they want you to **prepare a pull request** (branch, commit, push, open or describe the PR).
 2. If yes: open a PR targeting **`main`** (or the repo’s default release branch if different), then **wait for CI** to finish.
 3. **If CI succeeds**: merge into `main` when the user wants (or when merge is appropriate for their process).
