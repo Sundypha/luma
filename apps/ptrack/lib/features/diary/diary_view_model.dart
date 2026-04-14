@@ -3,18 +3,24 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:ptrack_data/ptrack_data.dart';
 
+const _kPageSize = 30;
+
 class DiaryViewModel extends ChangeNotifier {
   DiaryViewModel(this.diaryRepository) {
-    _entriesSub = diaryRepository.watchAllEntries().listen(_applyEntriesSnapshot);
+    _invalidationSub = diaryRepository.watchEntryCount().listen((_) {
+      unawaited(reload());
+    });
   }
 
   final DiaryRepository diaryRepository;
 
-  StreamSubscription<List<StoredDiaryEntry>>? _entriesSub;
+  StreamSubscription<int>? _invalidationSub;
 
   final List<StoredDiaryEntry> _loadedEntries = [];
-  bool _hasMore = false;
+  bool _hasMore = true;
   bool _isLoadingMore = false;
+  bool _reloadPending = false;
+  int get _currentOffset => _loadedEntries.length;
 
   String _searchQuery = '';
   Set<int> _activeTagIds = {};
@@ -29,26 +35,38 @@ class DiaryViewModel extends ChangeNotifier {
   bool get hasMore => _hasMore;
   bool get isLoadingMore => _isLoadingMore;
 
-  /// Legacy hook: list is kept in sync via [watchAllEntries]; incremental pages
-  /// are not used. Scroll listeners may still call this safely.
-  Future<void> loadNextPage() async {}
-
-  void _applyEntriesSnapshot(List<StoredDiaryEntry> all) {
-    _loadedEntries
-      ..clear()
-      ..addAll(all);
-    _hasMore = false;
+  Future<void> loadNextPage() async {
+    if (_isLoadingMore || !_hasMore) return;
+    _isLoadingMore = true;
+    notifyListeners();
+    final page = await diaryRepository.getEntriesPage(
+      offset: _currentOffset,
+      limit: _kPageSize,
+    );
+    _loadedEntries.addAll(page);
+    _hasMore = page.length == _kPageSize;
     _isLoadingMore = false;
     _rebuildFiltered();
   }
 
   Future<void> reload() async {
-    _applyEntriesSnapshot(await diaryRepository.getAllEntries());
+    if (_isLoadingMore) {
+      _reloadPending = true;
+      return;
+    }
+    _reloadPending = false;
+    _loadedEntries.clear();
+    _hasMore = true;
+    await loadNextPage();
+    if (_reloadPending) {
+      _reloadPending = false;
+      return reload();
+    }
   }
 
   @override
   void dispose() {
-    _entriesSub?.cancel();
+    _invalidationSub?.cancel();
     super.dispose();
   }
 

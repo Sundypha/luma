@@ -1,0 +1,40 @@
+---
+description: Release workflow — bump version with tool/bump_version.dart, CHANGELOG from GSD phases, PR/CI/merge to main
+alwaysApply: false
+---
+
+# Version bump, changelog, and release PR
+
+When the user wants to **bump the version**, **cut a release**, or **ship a new version**, follow this workflow end to end.
+
+## 1. Choose bump level and run the version tool
+
+- **Do not** hand-edit `apps/ptrack/pubspec.yaml` for semver/`+build` bumps; use the repo script.
+- **Always** run it with FVM from the repo root (see `fvm-dart-flutter.mdc`):
+
+  `fvm dart run tool/bump_version.dart <major|minor|patch>`
+
+- **Ask the user** which bump they want: `major`, `minor`, or `patch` (the tool only supports these levels; it also increments the `+build` segment). Optionally run with `--dry-run` first if they want a preview without writing files.
+- Do **not** use bare `dart run` for this repo unless the user’s environment is already the pinned SDK.
+
+Avoid `tool/bump_version.dart --tag` unless the user explicitly wants an immediate local commit+tag from the script; default path is: bump files → edit CHANGELOG → commit via the normal project commit conventions.
+
+## 2. Fill `CHANGELOG.md` for the new version
+
+The script prepends a dated `## [X.Y.Z]` section with empty **Added / Changed / Fixed** bullets under `## [Unreleased]`.
+
+- Summarize **what actually changed** since the previous release using:
+  - **GSD / phase work**: read `.planning/phases/**` (e.g. phase `CONTEXT.md`, `VERIFICATION.md`, or plan summaries) for shipped scope and user-facing behavior.
+  - **Git history / diff** against the prior release tag or the previous changelog section as a sanity check.
+- Move or consolidate bullets so the new **\[X.Y.Z\]** section is accurate and readable; keep **\[Unreleased\]** empty or minimal until the next work lands.
+
+## 3. PR, CI, and merge
+
+After version + changelog edits are ready (and any other release files are included):
+
+1. **Ask** whether they want you to **prepare a pull request** (branch, commit, push, open or describe the PR).
+2. If yes: open a PR targeting **`main`** (or the repo’s default release branch if different), then **wait for CI** to finish.
+3. **If CI succeeds**: merge into `main` when the user wants (or when merge is appropriate for their process).
+4. **If CI fails**: diagnose from logs, implement fixes, push updates, and re-check CI until green — do not merge a broken pipeline unless the user explicitly overrides.
+
+Stay aligned with the project’s existing PR, review, and commit message conventions for release commits (e.g. `release: vX.Y.Z`).

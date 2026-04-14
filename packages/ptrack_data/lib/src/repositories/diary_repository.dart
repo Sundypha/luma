@@ -27,16 +27,18 @@ class DiaryRepository {
   // ── Diary entries ─────────────────────────────────────────────────────────
 
   /// Stream of all diary entries (ordered by date desc) with their tags.
+  /// Used by CalendarViewModel / HomeViewModel for diary dots and today entry.
   Stream<List<StoredDiaryEntry>> watchAllEntries() {
     return _db.select(_db.diaryEntries).watch().asyncMap(_storedEntriesFromRows);
   }
 
-  /// Loads every diary entry with tags, newest first.
-  Future<List<StoredDiaryEntry>> getAllEntries() async {
-    final rows = await (_db.select(_db.diaryEntries)
-          ..orderBy([(t) => OrderingTerm.desc(t.dateUtc)]))
-        .get();
-    return _storedEntriesFromRows(rows);
+  /// Cheap invalidation signal: emits the current row count whenever
+  /// `diary_entries` changes. Consumers use this to trigger a paginated
+  /// reload without pulling all rows.
+  Stream<int> watchEntryCount() {
+    final countExpr = countAll();
+    final query = _db.selectOnly(_db.diaryEntries)..addColumns([countExpr]);
+    return query.watchSingle().map((row) => row.read(countExpr)!);
   }
 
   Future<List<StoredDiaryEntry>> _storedEntriesFromRows(

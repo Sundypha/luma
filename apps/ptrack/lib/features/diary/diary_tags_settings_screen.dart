@@ -89,7 +89,6 @@ class _DiaryTagsSettingsScreenState extends State<DiaryTagsSettingsScreen> {
         );
       },
     );
-    controller.dispose();
   }
 
   Future<void> _confirmDeleteTag(

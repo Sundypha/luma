@@ -48,7 +48,6 @@ Widget diaryTabFloatingActionButton(BuildContext context, DiaryViewModel vm) {
         day: now,
         existing: existing,
       );
-      await vm.reload();
     },
     tooltip: l10n.diaryFormTitleNew,
     child: const Icon(Icons.add),
