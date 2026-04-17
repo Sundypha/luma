@@ -19,7 +19,7 @@ dependencies:
   path_provider: ^2.1.5
   ptrack_domain:
     path: ../ptrack_domain
-  sqlite3: ^3.3.0
+  sqlite3: ^3.3.1
   flutter_secure_storage: ^10.0.0
 
 dev_dependencies:
